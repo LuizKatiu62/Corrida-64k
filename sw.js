@@ -1,0 +1,87 @@
+const CACHE = 'desafio64-v15';
+
+// Core app files — cached on install
+const CORE_ASSETS = [
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+];
+
+// External scripts — cached on first fetch, served from cache when offline
+const EXT_URLS = [
+  'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+  'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js',
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(async c => {
+      // Cache core assets (must succeed)
+      await c.addAll(CORE_ASSETS);
+      // Cache external scripts best-effort (don't fail install if offline)
+      await Promise.allSettled(
+        EXT_URLS.map(url =>
+          fetch(url, {cache:'force-cache'})
+            .then(res => { if(res.ok) c.put(url, res); })
+            .catch(()=>{})
+        )
+      );
+    })
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  if(e.request.method !== 'GET') return;
+
+  const url = e.request.url;
+
+  // For external CDN/Firebase scripts: cache-first, no network fallback needed
+  const isExt = EXT_URLS.some(u => url.startsWith(u) || url.includes('gstatic.com') || url.includes('cloudflare.com'));
+
+  if(isExt){
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        if(cached) return cached;
+        return fetch(e.request).then(res => {
+          if(res.ok){
+            caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+          }
+          return res;
+        }).catch(() => new Response('', {status:503}));
+      })
+    );
+    return;
+  }
+
+  // For Firebase realtime database calls — network only (don't cache dynamic data)
+  if(url.includes('firebaseio.com') || url.includes('firebase.googleapis.com')){
+    e.respondWith(fetch(e.request).catch(() => new Response('', {status:503})));
+    return;
+  }
+
+  // For everything else (app files, weather API, etc.): cache-first, fallback to index.html
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if(cached) return cached;
+      return fetch(e.request).then(res => {
+        if(res.ok){
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match('./index.html'));
+    })
+  );
+});
