@@ -1802,7 +1802,10 @@ function buildGarminComparePanel(day, gData){
       <div class="cmp-bar-fill" style="width:${barWidth}%;background:${barColor}"></div>
     </div>
     ${paceRow}${duraRow}${hrRow}${elevRow}
-    <div class="garmin-filename">📄 ${gData.filename}${dateDiffWarn}</div>
+    <div class="garmin-filename" style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+      <span>📄 ${gData.filename}${dateDiffWarn}</span>
+      ${gData.raw ? `<button onclick="event.stopPropagation();downloadGPXRaw('${day.date}')" style="background:#e8f5e9;color:var(--verde-esc);border:1px solid #c8f0d4;border-radius:999px;padding:.2rem .75rem;font-size:.72rem;font-weight:700;cursor:pointer">⬇️ Baixar GPX</button>` : ''}
+    </div>
   </div>`;
 }
 
