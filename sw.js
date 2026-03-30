@@ -1,4 +1,4 @@
-const CACHE = 'desafio64-v22';
+const CACHE = 'desafio64-v23';
 
 // Core app files — cached on install
 const CORE_ASSETS = [
@@ -37,7 +37,11 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+    ).then(() => {
+      // Tell all open tabs to reload so they get the new version
+      return self.clients.matchAll({ includeUncontrolled: true, type: 'window' })
+        .then(clients => clients.forEach(client => client.postMessage({ type: 'SW_UPDATED' })));
+    })
   );
   self.clients.claim();
 });
