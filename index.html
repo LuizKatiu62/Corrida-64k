@@ -5910,10 +5910,10 @@ function handleStravaCallback(){
       expiresAt:    data.expires_at,
       athleteName:  data.athlete?.firstname+' '+data.athlete?.lastname
     });
-    const pendingDate = sessionStorage.getItem('strava_pending_date');
+    const pendingDate = pendingDateFromState || sessionStorage.getItem('strava_pending_date') || '';
     sessionStorage.removeItem('strava_pending_date');
     if(pendingDate) setTimeout(()=>fetchStravaActivities(pendingDate), 300);
-    else alert('✅ Strava conectado com sucesso! Agora toque no botão 🟠 Strava em qualquer dia de treino.');
+    else alert('✅ Strava conectado! Toque em 🟠 Strava em qualquer dia de treino.');
   })
   .catch(e=>{ alert('Erro de rede ao conectar Strava: '+e.message); });
 }
