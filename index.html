@@ -837,6 +837,10 @@
       <p id="auth-subtitle">Entre com suas credenciais</p>
     </div>
     <div id="auth-form-login">
+      <button class="auth-bio-btn" id="auth-bio-btn" onclick="doLoginBiometric()" style="display:none">
+        <span style="font-size:1.4rem">🫆</span><span id="auth-bio-label">Touch ID / Face ID</span>
+      </button>
+      <div id="auth-bio-divider" style="display:none;text-align:center;font-size:.72rem;color:#ccc;margin:.6rem 0">ou entre com senha</div>
       <div class="auth-field"><label>Usuário</label><input type="text" id="auth-user" autocomplete="username" placeholder="Seu usuário"></div>
       <div class="auth-field"><label>Senha</label><input type="password" id="auth-pass" autocomplete="current-password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="auth-submit" onclick="doLogin()">Entrar</button>
