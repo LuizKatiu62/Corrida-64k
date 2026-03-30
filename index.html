@@ -6233,18 +6233,106 @@ function doLogout(){
   location.reload();
 }
 
-// Check auth on load
-(function initAuth(){
+// ── BIOMETRIC (WebAuthn) ─────────────────────────────────
+const BIOMETRIC_KEY = 'd64_biometric';
+
+function b64url(buf){
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function b64urlDecode(s){
+  s = s.replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4) s+='=';
+  return Uint8Array.from(atob(s), c=>c.charCodeAt(0));
+}
+
+async function isBiometricSupported(){
+  return !!(window.PublicKeyCredential &&
+    await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false));
+}
+
+async function registerBiometric(){
   const data = loadAuthData();
-  if(!data){
-    // No account yet — show create form
-    showAuthCreate();
-    return;
+  if(!data) return false;
+  try{
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId    = crypto.getRandomValues(new Uint8Array(16));
+    const cred = await navigator.credentials.create({ publicKey:{
+      challenge,
+      rp:{ name:'Desafio 64km', id: location.hostname },
+      user:{ id:userId, name:data.username, displayName:data.username },
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
+      timeout:60000, attestation:'none'
+    }});
+    localStorage.setItem(BIOMETRIC_KEY, JSON.stringify({ credId: b64url(cred.rawId) }));
+    return true;
+  }catch(e){ return false; }
+}
+
+async function authenticateBiometric(){
+  const stored = JSON.parse(localStorage.getItem(BIOMETRIC_KEY)||'null');
+  if(!stored) return false;
+  try{
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const assertion = await navigator.credentials.get({ publicKey:{
+      challenge,
+      allowCredentials:[{ type:'public-key', id: b64urlDecode(stored.credId), transports:['internal'] }],
+      userVerification:'required',
+      timeout:60000
+    }});
+    return !!assertion;
+  }catch(e){ return false; }
+}
+
+async function doLoginBiometric(){
+  authMsg('login','','');
+  const ok = await authenticateBiometric();
+  if(ok){ setSession(); unlockApp(); }
+  else authMsg('login','Biometria não reconhecida.','err');
+}
+
+async function offerBiometricSetup(){
+  const supported = await isBiometricSupported();
+  if(!supported) return;
+  const already = localStorage.getItem(BIOMETRIC_KEY);
+  if(already) return; // already registered
+  const overlay = document.createElement('div');
+  overlay.id = 'bio-setup-overlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:1.5rem';
+  overlay.innerHTML=`<div style="background:#fff;border-radius:20px;padding:1.8rem;max-width:320px;width:100%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">🫆</div>
+    <h3 style="margin-bottom:.5rem;color:#2c3e50">Ativar biometria?</h3>
+    <p style="font-size:.8rem;color:#888;margin-bottom:1.2rem;line-height:1.5">Use Touch ID ou Face ID para entrar mais rápido nas próximas vezes.</p>
+    <button id="bio-yes" style="width:100%;padding:.75rem;background:var(--azul);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:.5rem">Ativar Touch ID / Face ID</button>
+    <button onclick="document.getElementById('bio-setup-overlay').remove()" style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.82rem;font-family:inherit">Agora não</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('bio-yes').onclick = async ()=>{
+    const ok = await registerBiometric();
+    overlay.remove();
+    if(ok) alert('✅ Biometria ativada! Na próxima vez use Touch ID / Face ID para entrar.');
+    else alert('Não foi possível ativar biometria. Verifique as permissões do app.');
+  };
+}
+
+// Check auth on load
+(async function initAuth(){
+  const data = loadAuthData();
+  if(!data){ showAuthCreate(); return; }
+  if(isSessionValid()){ unlockApp(); return; }
+  // Show biometric button if registered
+  if(localStorage.getItem(BIOMETRIC_KEY)){
+    const supported = await isBiometricSupported();
+    if(supported){
+      document.getElementById('auth-bio-btn').style.display='flex';
+      document.getElementById('auth-bio-divider').style.display='block';
+      // Detect Face ID vs Touch ID
+      const ua = navigator.userAgent;
+      const label = /iPad|iPhone/.test(ua) ? 'Face ID / Touch ID' : 'Touch ID / Windows Hello';
+      document.getElementById('auth-bio-label').textContent = label;
+    }
   }
-  if(isSessionValid()){
-    unlockApp();
-  }
-  // else wall stays visible — user must log in
 })();
 
 </script>
