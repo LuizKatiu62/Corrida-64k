@@ -1679,6 +1679,18 @@ function removeGarminData(date){
   rebuildDayCard(date);
 }
 
+function downloadGPXRaw(date){
+  const g = loadGarmin();
+  const gData = g[date];
+  if(!gData || !gData.raw){ alert('Arquivo GPX original não disponível. Reimporte o arquivo.'); return; }
+  const blob = new Blob([gData.raw], {type:'application/gpx+xml'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = gData.filename || `treino-${date}.gpx`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 function rebuildDayCard(date){
   const card = document.getElementById('card-'+date);
   if(!card) return;
