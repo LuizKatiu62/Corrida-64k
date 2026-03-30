@@ -6153,6 +6153,93 @@ function disconnectStrava(){
 // Must run AFTER all Strava consts are defined (const has TDZ — cannot call earlier)
 handleStravaCallback();
 
+// ============================================================
+// AUTH SYSTEM
+// ============================================================
+const AUTH_KEY     = 'd64_auth';
+const SESSION_KEY  = 'd64_session';
+
+async function hashPass(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function loadAuthData(){ try{ return JSON.parse(localStorage.getItem(AUTH_KEY))||null; }catch(e){ return null; } }
+function saveAuthData(d){ localStorage.setItem(AUTH_KEY, JSON.stringify(d)); }
+function isSessionValid(){ return sessionStorage.getItem(SESSION_KEY)==='ok'; }
+function setSession(){ sessionStorage.setItem(SESSION_KEY,'ok'); }
+function clearSession(){ sessionStorage.removeItem(SESSION_KEY); }
+
+function authMsg(form, msg, type){
+  const el = document.getElementById('auth-msg-'+form);
+  if(el){ el.textContent=msg; el.className='auth-msg '+(type||''); }
+}
+
+function showAuthLogin(){
+  document.getElementById('auth-form-login').style.display='';
+  document.getElementById('auth-form-create').style.display='none';
+  document.getElementById('auth-subtitle').textContent='Entre com suas credenciais';
+}
+function showAuthCreate(){
+  document.getElementById('auth-form-login').style.display='none';
+  document.getElementById('auth-form-create').style.display='';
+  document.getElementById('auth-subtitle').textContent='Crie sua conta';
+}
+
+function unlockApp(){
+  document.getElementById('auth-wall').classList.add('hidden');
+}
+
+async function doLogin(){
+  const user = (document.getElementById('auth-user').value||'').trim().toLowerCase();
+  const pass = document.getElementById('auth-pass').value||'';
+  if(!user||!pass){ authMsg('login','Preencha usuário e senha.','err'); return; }
+  const data = loadAuthData();
+  if(!data){ authMsg('login','Nenhuma conta criada. Crie uma primeiro.','err'); return; }
+  const hash = await hashPass(pass);
+  if(data.username===user && data.passwordHash===hash){
+    setSession();
+    unlockApp();
+  } else {
+    authMsg('login','Usuário ou senha incorretos.','err');
+  }
+}
+
+async function doCreateAccount(){
+  const user  = (document.getElementById('auth-new-user').value||'').trim().toLowerCase();
+  const pass  = document.getElementById('auth-new-pass').value||'';
+  const pass2 = document.getElementById('auth-new-pass2').value||'';
+  if(!user||!pass){ authMsg('create','Preencha todos os campos.','err'); return; }
+  if(pass!==pass2){ authMsg('create','As senhas não coincidem.','err'); return; }
+  if(pass.length<4){ authMsg('create','Senha deve ter ao menos 4 caracteres.','err'); return; }
+  const existing = loadAuthData();
+  if(existing){ authMsg('create','Conta já existe. Faça login.','err'); showAuthLogin(); return; }
+  const hash = await hashPass(pass);
+  saveAuthData({ username:user, passwordHash:hash });
+  authMsg('create','Conta criada! Entrando...','ok');
+  setTimeout(()=>{ setSession(); unlockApp(); }, 600);
+}
+
+function doLogout(){
+  if(!confirm('Sair do app?')) return;
+  clearSession();
+  location.reload();
+}
+
+// Check auth on load
+(function initAuth(){
+  const data = loadAuthData();
+  if(!data){
+    // No account yet — show create form
+    showAuthCreate();
+    return;
+  }
+  if(isSessionValid()){
+    unlockApp();
+  }
+  // else wall stays visible — user must log in
+})();
+
 </script>
 
 <!-- SHOPPING LIST MODAL -->
