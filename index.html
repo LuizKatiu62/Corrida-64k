@@ -5376,6 +5376,15 @@ function saveGoalSetup(type){
 
 function loadGoalData(type){ try{ return JSON.parse(localStorage.getItem('d64_goal_'+type))||null; }catch(e){ return null; } }
 function saveGoalData(type,data){ localStorage.setItem('d64_goal_'+type,JSON.stringify(data)); }
+function deleteGoalData(type){
+  const meta = GOAL_META[type];
+  if(!confirm(`Apagar o objetivo "${meta.label}"?\n\nO plano gerado e todos os dados deste objetivo serão removidos.`)) return;
+  localStorage.removeItem('d64_goal_'+type);
+  localStorage.removeItem('d64_gp_'+type);
+  document.getElementById('goal-modal-overlay')?.remove();
+  if(activeGoal === type){ switchToGoal('64k'); }
+  else { openGoalSelector(); }
+}
 function loadGoalProgress(type){ try{ return JSON.parse(localStorage.getItem('d64_gp_'+type))||{}; }catch(e){ return {}; } }
 function saveGoalProgress(type,p){ localStorage.setItem('d64_gp_'+type,JSON.stringify(p)); }
 
