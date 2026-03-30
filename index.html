@@ -1439,7 +1439,15 @@ function fbForcePush(){
   fbPush('progress', localStorage.getItem(STORAGE_KEY)||'{}');
   fbPush('events',   localStorage.getItem(EVENTS_KEY)||'[]');
   fbPush('garmin',   localStorage.getItem(GARMIN_KEY)||'{}');
-  fbMsgEl('✅ Dados enviados ao Firebase.','ok');
+  openPhotoDB().then(function(db){
+    var tx = db.transaction('photos','readonly');
+    tx.objectStore('photos').getAll().onsuccess = function(e){
+      var photos = e.target.result || [];
+      photos.forEach(function(p){ fbPushPhoto(p); });
+      fbMsgEl('✅ Dados e ' + photos.length + ' foto(s) enviados ao Firebase.', 'ok');
+    };
+    tx.onerror = function(){ fbMsgEl('✅ Dados enviados (erro ao ler fotos locais).','ok'); };
+  }).catch(function(){ fbMsgEl('✅ Dados enviados (sem acesso ao banco de fotos).','ok'); });
 }
 
 function deactivateFBSync(){
