@@ -2194,7 +2194,7 @@ function renderEventsSection(){
     const pace  = estPace(ev);
     return `<div class="event-card">
       <div class="event-card-header" onclick="openAddEventModal('${ev.id}')">
-        <div class="event-type-badge" style="${ev.type==='maratona'?'background:#fadbd8;color:#922b21':ev.type==='meia'?'background:#d6eaf8;color:#1a5276':''}">${typeLabels[ev.type]||'Evento'}</div>
+        <div class="event-type-badge" style="${ev.type==='64k'?'background:#d5f5e3;color:#1a7a42;font-size:.72rem':ev.type==='maratona'?'background:#fadbd8;color:#922b21':ev.type==='meia'?'background:#d6eaf8;color:#1a5276':''}">${typeLabels[ev.type]||'Evento'}</div>
         <div class="event-title">${ev.title}</div>
         <div class="event-meta">
           📅 ${dateLabel(ev.date)}
