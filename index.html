@@ -6104,6 +6104,9 @@ function disconnectStrava(){
   }
 })();
 
+// Must run AFTER all Strava consts are defined (const has TDZ — cannot call earlier)
+handleStravaCallback();
+
 </script>
 
 <!-- SHOPPING LIST MODAL -->
