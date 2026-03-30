@@ -5795,6 +5795,256 @@ function goalNutri(dayType){
 }
 
 // ============================================================
+// STRAVA INTEGRATION
+// ============================================================
+const STRAVA_CFG_KEY    = 'd64_strava_cfg';
+const STRAVA_TOKEN_KEY  = 'd64_strava_tok';
+const STRAVA_REDIRECT   = 'https://luizkatiu62.github.io/Corrida-64k/';
+const STRAVA_SCOPE      = 'activity:read_all';
+
+function loadStravaCfg(){ try{ return JSON.parse(localStorage.getItem(STRAVA_CFG_KEY))||null; }catch(e){ return null; } }
+function saveStravaCfg(c){ localStorage.setItem(STRAVA_CFG_KEY, JSON.stringify(c)); }
+function loadStravaToken(){ try{ return JSON.parse(localStorage.getItem(STRAVA_TOKEN_KEY))||null; }catch(e){ return null; } }
+function saveStravaToken(t){ localStorage.setItem(STRAVA_TOKEN_KEY, JSON.stringify(t)); }
+
+// Called when user clicks Strava button on a day card
+function openStravaForDate(date){
+  const tok = loadStravaToken();
+  if(!tok || !tok.accessToken){
+    openStravaSetup(date);
+  } else {
+    fetchStravaActivities(date);
+  }
+}
+
+// Setup modal — asks for Client ID and Client Secret
+function openStravaSetup(pendingDate){
+  if(document.getElementById('strava-modal-overlay')) return;
+  const cfg = loadStravaCfg() || {};
+  const overlay = document.createElement('div');
+  overlay.className = 'strava-modal-overlay';
+  overlay.id = 'strava-modal-overlay';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `<div class="strava-modal">
+    <h3><span style="color:#fc4c02;font-size:1.4rem">🟠</span> Conectar ao Strava</h3>
+    <p style="font-size:.78rem;color:#888;margin-bottom:1rem;line-height:1.5">Cole aqui o seu Client ID e Client Secret do app Strava que você já criou em <strong>strava.com/settings/api</strong>.</p>
+    <div class="strava-field">
+      <label>Client ID</label>
+      <input type="text" id="strava-client-id" value="${cfg.clientId||''}" placeholder="Ex: 12345">
+    </div>
+    <div class="strava-field">
+      <label>Client Secret</label>
+      <input type="password" id="strava-client-secret" value="${cfg.clientSecret||''}" placeholder="Cole o client secret aqui">
+    </div>
+    <button class="strava-btn-primary" onclick="startStravaOAuth('${pendingDate||''}')">🟠 Autorizar com o Strava</button>
+    <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.5rem;font-family:inherit" id="strava-close-btn">Fechar</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('strava-close-btn').onclick = () => overlay.remove();
+}
+
+function startStravaOAuth(pendingDate){
+  const clientId = (document.getElementById('strava-client-id').value||'').trim();
+  const clientSecret = (document.getElementById('strava-client-secret').value||'').trim();
+  if(!clientId || !clientSecret){ alert('Preencha o Client ID e o Client Secret.'); return; }
+  saveStravaCfg({ clientId, clientSecret });
+  if(pendingDate) sessionStorage.setItem('strava_pending_date', pendingDate);
+  const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(STRAVA_REDIRECT)}&response_type=code&approval_prompt=auto&scope=${STRAVA_SCOPE}`;
+  window.location.href = url;
+}
+
+// Handle OAuth callback — called on page load if ?code= is present
+function handleStravaCallback(){
+  const params = new URLSearchParams(window.location.search);
+  const code  = params.get('code');
+  const error = params.get('error');
+  if(!code && !error) return;
+
+  // Clean URL
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  if(error){
+    alert('Autorização Strava cancelada.');
+    return;
+  }
+
+  const cfg = loadStravaCfg();
+  if(!cfg){ alert('Configuração Strava não encontrada. Tente novamente.'); return; }
+
+  // Exchange code for token
+  fetch('https://www.strava.com/oauth/token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      client_id: cfg.clientId,
+      client_secret: cfg.clientSecret,
+      code,
+      grant_type: 'authorization_code'
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.errors || !data.access_token){
+      alert('Erro ao obter token Strava: '+(data.message||JSON.stringify(data)));
+      return;
+    }
+    saveStravaToken({
+      accessToken:  data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt:    data.expires_at,
+      athleteName:  data.athlete?.firstname+' '+data.athlete?.lastname
+    });
+    const pendingDate = sessionStorage.getItem('strava_pending_date');
+    sessionStorage.removeItem('strava_pending_date');
+    if(pendingDate) setTimeout(()=>fetchStravaActivities(pendingDate), 300);
+    else alert('✅ Strava conectado com sucesso! Agora toque no botão 🟠 Strava em qualquer dia de treino.');
+  })
+  .catch(e=>{ alert('Erro de rede ao conectar Strava: '+e.message); });
+}
+
+async function ensureStravaToken(){
+  let tok = loadStravaToken();
+  if(!tok) return null;
+  // Refresh if expired (with 5 min margin)
+  if(tok.expiresAt < (Date.now()/1000 + 300)){
+    const cfg = loadStravaCfg();
+    if(!cfg) return null;
+    try{
+      const r = await fetch('https://www.strava.com/oauth/token', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          client_id: cfg.clientId,
+          client_secret: cfg.clientSecret,
+          refresh_token: tok.refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+      const data = await r.json();
+      if(!data.access_token) return null;
+      tok = { ...tok, accessToken: data.access_token, refreshToken: data.refresh_token, expiresAt: data.expires_at };
+      saveStravaToken(tok);
+    } catch(e){ return null; }
+  }
+  return tok.accessToken;
+}
+
+async function fetchStravaActivities(date){
+  const token = await ensureStravaToken();
+  if(!token){ openStravaSetup(date); return; }
+
+  // Show loading
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'strava-modal-overlay';
+  loadingOverlay.id = 'strava-loading';
+  loadingOverlay.innerHTML = `<div class="strava-modal" style="text-align:center;padding:2rem">
+    <div style="font-size:2rem;margin-bottom:.75rem">🟠</div>
+    <div style="font-weight:700;margin-bottom:.5rem">Buscando atividades no Strava...</div>
+    <div style="font-size:.8rem;color:#aaa">${dateLabel(date)}</div>
+  </div>`;
+  document.body.appendChild(loadingOverlay);
+
+  // Fetch activities around the date (±1 day window)
+  const d = new Date(date+'T00:00:00');
+  const after  = Math.floor(d.getTime()/1000) - 3600;
+  const before = Math.floor(d.getTime()/1000) + 86400 + 3600;
+
+  try{
+    const r = await fetch(`https://www.strava.com/api/v3/athlete/activities?after=${after}&before=${before}&per_page=10`, {
+      headers:{ 'Authorization': 'Bearer '+token }
+    });
+    const acts = await r.json();
+    loadingOverlay.remove();
+    if(!Array.isArray(acts) || acts.length===0){
+      showStravaNoActivity(date);
+      return;
+    }
+    const runs = acts.filter(a=>['Run','TrailRun','VirtualRun'].includes(a.type)||['Run','TrailRun','VirtualRun'].includes(a.sport_type));
+    showStravaActivityList(date, runs.length > 0 ? runs : acts);
+  } catch(e){
+    loadingOverlay.remove();
+    alert('Erro ao buscar atividades Strava: '+e.message);
+  }
+}
+
+function showStravaNoActivity(date){
+  const overlay = document.createElement('div');
+  overlay.className = 'strava-modal-overlay';
+  overlay.id = 'strava-modal-overlay';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `<div class="strava-modal" style="text-align:center">
+    <h3>🟠 Strava</h3>
+    <p style="color:#888;font-size:.85rem;margin:1rem 0">Nenhuma atividade encontrada para <strong>${dateLabel(date)}</strong>.</p>
+    <button class="strava-btn-primary" onclick="document.getElementById('strava-modal-overlay').remove()">Fechar</button>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function showStravaActivityList(date, activities){
+  const overlay = document.createElement('div');
+  overlay.className = 'strava-modal-overlay';
+  overlay.id = 'strava-modal-overlay';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+
+  const items = activities.map(act=>{
+    const km = (act.distance/1000).toFixed(2);
+    const secs = act.moving_time;
+    const h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
+    const dur = h>0 ? `${h}h${String(m).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+    const paceS = act.distance>0 ? secs/(act.distance/1000) : 0;
+    const paceStr = paceS>0 ? `${Math.floor(paceS/60)}:${String(Math.floor(paceS%60)).padStart(2,'0')}/km` : '';
+    const actDate = act.start_date_local?.split('T')[0] || date;
+    const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const d = new Date(actDate+'T12:00:00');
+    return `<div class="strava-activity-item" onclick="importStravaActivity('${date}','${act.id}','${act.name.replace(/'/g,'`')}',${act.distance},${act.moving_time},${act.total_elevation_gain||0},'${act.average_heartrate||0}','${actDate}')">
+      <div style="font-weight:700;font-size:.88rem;color:#fc4c02">${act.name}</div>
+      <div style="font-size:.75rem;color:#555;margin-top:.2rem">${act.sport_type||act.type} · ${d.getDate()} ${months[d.getMonth()]}</div>
+      <div style="font-size:.78rem;color:#777;margin-top:.25rem">📏 ${km} km &nbsp;·&nbsp; ⏱ ${dur}${paceStr?' &nbsp;·&nbsp; ⚡ '+paceStr:''}${act.average_heartrate?' &nbsp;·&nbsp; ❤️ '+Math.round(act.average_heartrate)+' bpm':''}</div>
+    </div>`;
+  }).join('');
+
+  overlay.innerHTML = `<div class="strava-modal">
+    <h3>🟠 Atividades do Strava</h3>
+    <p style="font-size:.78rem;color:#888;margin-bottom:.85rem">Selecione a atividade para importar os dados para ${dateLabel(date)}.</p>
+    ${items}
+    <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.5rem;font-family:inherit" id="strava-list-close">Fechar</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('strava-list-close').onclick = () => overlay.remove();
+}
+
+function importStravaActivity(date, actId, name, distM, movingSecs, elevGain, hr, actDate){
+  document.getElementById('strava-modal-overlay')?.remove();
+
+  const dist = Math.round(distM/10)/100;
+  const h=Math.floor(movingSecs/3600), m=Math.floor((movingSecs%3600)/60), s=movingSecs%60;
+  const duration = h>0 ? `${h}h${String(m).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+  const paceS = dist>0 ? movingSecs/dist : 0;
+  const pace = paceS>0 ? `${Math.floor(paceS/60)}:${String(Math.floor(paceS%60)).padStart(2,'0')}/km` : null;
+  const hrVal = hr && +hr > 0 ? Math.round(+hr) : null;
+
+  const result = {
+    dist, duration, pace, hr: hrVal,
+    elevGain: Math.round(elevGain),
+    actDate, filename: name,
+    stravaId: String(actId),
+    importedAt: new Date().toISOString()
+  };
+
+  const g = loadGarmin();
+  g[date] = result;
+  saveGarmin(g);
+  rebuildDayCard(date);
+}
+
+// Disconnect Strava
+function disconnectStrava(){
+  if(!confirm('Desconectar o Strava? Os dados já importados não serão apagados.')) return;
+  localStorage.removeItem(STRAVA_TOKEN_KEY);
+  alert('Strava desconectado.');
+}
+
+// ============================================================
 // INIT GOAL SYSTEM
 // ============================================================
 (function initGoalSystem(){
