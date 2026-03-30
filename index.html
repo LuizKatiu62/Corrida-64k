@@ -5616,8 +5616,8 @@ function toggleGoalCheck(date, field, goalType){
   saveGoalProgress(goalType, p);
   const day = activeGeneratedPlan?.find(d=>d.date===date);
   if(day){
-    const card = document.getElementById('gcard-'+date);
-    if(card){ activeGoalCardOpen[date]=true; card.outerHTML = buildGoalCard(day, date===getToday(), p, goalType); }
+    const card = document.getElementById('card-'+date);
+    if(card){ card.outerHTML = buildGoalCard(day, date===getToday(), p, goalType); }
   }
 }
 
