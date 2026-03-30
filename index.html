@@ -5312,9 +5312,8 @@ function openGoalSelector(){
 function selectGoalType(type){
   document.getElementById('goal-modal-overlay')?.remove();
   if(type === '64k'){ switchToGoal('64k'); return; }
-  const gd = loadGoalData(type);
-  if(gd && gd.eventDate) switchToGoal(type);
-  else openGoalSetupForm(type);
+  // Always open form so user can review/edit details
+  openGoalSetupForm(type);
 }
 
 function openGoalSetupForm(type){
