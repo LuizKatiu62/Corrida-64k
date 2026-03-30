@@ -6207,6 +6207,7 @@ async function doLogin(){
   if(data.username===user && data.passwordHash===hash){
     setSession();
     unlockApp();
+    setTimeout(offerBiometricSetup, 500);
   } else {
     authMsg('login','Usuário ou senha incorretos.','err');
   }
