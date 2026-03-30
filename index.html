@@ -1653,7 +1653,7 @@ function parseGPX(text, filename){
 
   const actDate=times[0]?times[0].toISOString().split('T')[0]:null;
 
-  return {dist,duration,pace,hr,elevGain:Math.round(elevGain),actDate,filename,importedAt:new Date().toISOString()};
+  return {dist,duration,pace,hr,elevGain:Math.round(elevGain),actDate,filename,importedAt:new Date().toISOString(),raw:text};
 }
 
 function importGPX(date){
