@@ -2047,10 +2047,10 @@ function openAddEventModal(editId){
   const modal = document.createElement('div');
   modal.className = 'event-modal-overlay';
   modal.id = 'event-modal';
-  const typeOpts = ['5k','10k','meia','maratona','trail','treino','outro'];
+  const typeOpts = ['5k','10k','meia','maratona','64k','trail','treino','outro'];
   const typeLabels2 = {
     '5k':'Corrida 5km','10k':'Corrida 10km','meia':'Meia Maratona (21km)',
-    'maratona':'Maratona (42km)','trail':'Trail / Trilha','treino':'Treino de corrida','outro':'Outro evento'
+    'maratona':'Maratona (42km)','64k':'Desafio 64km — Luiz 🎂','trail':'Trail / Trilha','treino':'Treino de corrida','outro':'Outro evento'
   };
   const opts = typeOpts.map(v=>`<option value="${v}"${ev&&ev.type===v?' selected':''}>${typeLabels2[v]}</option>`).join('');
   modal.innerHTML = `<div class="event-modal">
