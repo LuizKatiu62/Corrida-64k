@@ -75,6 +75,20 @@ self.addEventListener('fetch', e => {
     return;
   }
 
+  // For HTML files: network-first so updates are always visible
+  if(e.request.headers.get('accept')&&e.request.headers.get('accept').includes('text/html')){
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if(res.ok){
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
+    );
+    return;
+  }
+
   // For everything else (app files, weather API, etc.): cache-first, fallback to index.html
   e.respondWith(
     caches.match(e.request).then(cached => {
