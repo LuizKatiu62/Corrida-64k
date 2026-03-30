@@ -848,9 +848,13 @@
 </div>
 
 <div id="goal-bar" class="goal-bar" onclick="openGoalSelector()">
-  <span class="goal-bar-badge" id="goal-bar-badge" style="background:var(--verde)">64km</span>
-  <span class="goal-bar-label" id="goal-bar-label">Desafio 64km — Luiz 🎂</span>
-  <span class="goal-bar-change">Mudar objetivo ›</span>
+  <span class="goal-bar-icon" id="goal-bar-icon">🏆</span>
+  <div class="goal-bar-center">
+    <span class="goal-bar-badge" id="goal-bar-badge" style="background:var(--verde)">64km</span>
+    <span class="goal-bar-label" id="goal-bar-label">Desafio 64km — Luiz 🎂</span>
+    <span class="goal-bar-sub" id="goal-bar-sub">Toque para ver ou mudar seu objetivo de corrida</span>
+  </div>
+  <button class="goal-bar-btn" onclick="event.stopPropagation();openGoalSelector()">🎯 Objetivo</button>
 </div>
 
 <div class="week-nav" id="week-nav">
