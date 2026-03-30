@@ -5583,7 +5583,7 @@ function buildGoalCard(day, isToday, progress, goalType){
     </div>
   </div>
   <div class="day-body${openTab==='run'?' active':''}" id="body-${day.date}-run">
-    <div class="loc">${day.run.notes||''}</div>
+    ${day.run.notes?`<p style="font-size:.8rem;color:#888;font-style:italic;margin-bottom:.5rem;line-height:1.5">${day.run.notes}</p>`:''}
     <ul>${runItems}</ul>
     ${calChipHtml(runCal, day.run.km+' km')}
     ${buildShoeRec(day)}
