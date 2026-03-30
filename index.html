@@ -1413,12 +1413,13 @@ function applyFBSyncId(){
   if(val.length !== 8){ fbMsgEl('O código deve ter 8 caracteres.','err'); return; }
   // Save new syncId and reconnect listener
   localStorage.setItem(FB_SYNCID_KEY, val);
+  const oldSyncId = fbSyncId;
   fbSyncId = val;
   // Backup to IDB so iOS ITP can't wipe it
   const cfg = localStorage.getItem(FB_CFG_KEY);
   if(cfg) fbBackupToIDB(cfg, val);
   if(fbDB){
-    fbDetachListeners(val === fbSyncId ? val : fbSyncId);
+    fbDetachListeners(oldSyncId);
     fbAttachListeners(val);
   }
   document.getElementById('modal-syncid').textContent = val;
