@@ -5363,8 +5363,12 @@ function openGoalSetupForm(type){
 function saveGoalSetup(type){
   const eventDate = document.getElementById('gsetup-date').value;
   const city = (document.getElementById('gsetup-city').value||'').trim();
+  const province = (document.getElementById('gsetup-province').value||'').trim();
+  const targetTime = (document.getElementById('gsetup-target').value||'').trim();
+  const registered = document.getElementById('gsetup-reg').checked;
   if(!eventDate){ alert('Informe a data do evento.'); return; }
-  saveGoalData(type, { eventDate, city });
+  if(!city){ alert('Informe a cidade do evento.'); return; }
+  saveGoalData(type, { eventDate, city, province, targetTime, registered });
   document.getElementById('goal-modal-overlay')?.remove();
   switchToGoal(type);
 }
