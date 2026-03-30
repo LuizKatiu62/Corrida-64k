@@ -5202,6 +5202,444 @@ function resetShopList(weekNum){
   renderShoppingList(weekNum);
 }
 
+// ============================================================
+// MULTI-GOAL PLAN SYSTEM
+// ============================================================
+const GOAL_STORAGE_KEY = 'd64_active_goal';
+let activeGoal = localStorage.getItem(GOAL_STORAGE_KEY) || '64k';
+let activeGeneratedPlan = null;
+const activeGoalCardOpen = {};
+
+const GOAL_META = {
+  '64k':     { label:'Desafio 64km — Luiz 🎂', badge:'64km',  icon:'🏆', desc:'Seu desafio principal — 64km em loops de 3,3km',    color:'#27ae60' },
+  'meia':    { label:'Meia Maratona',           badge:'21km',  icon:'🥈', desc:'21,1km · Meta: 2h00–2h05 · Pace: ~5:47/km',         color:'#2980b9' },
+  'maratona':{ label:'Maratona',                badge:'42km',  icon:'🥇', desc:'42,2km · Meta: 3h30 · Pace: ~4:58/km',              color:'#e74c3c' },
+  'ultra':   { label:'Ultra Maratona',          badge:'Ultra', icon:'💪', desc:'50km+ · Foco em tempo em pé e resistência máxima', color:'#8e44ad' }
+};
+
+function updateGoalBar(){
+  const meta = GOAL_META[activeGoal] || GOAL_META['64k'];
+  document.getElementById('goal-bar-badge').textContent = meta.badge;
+  document.getElementById('goal-bar-badge').style.background = meta.color;
+  document.getElementById('goal-bar-label').textContent = meta.label;
+}
+
+function openGoalSelector(){
+  if(document.getElementById('goal-modal-overlay')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'goal-modal-overlay';
+  overlay.id = 'goal-modal-overlay';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  const cards = Object.entries(GOAL_META).map(([type, meta])=>{
+    const gd = type !== '64k' ? loadGoalData(type) : null;
+    const isSelected = type === activeGoal;
+    let extra = '';
+    if(type !== '64k'){
+      if(gd && gd.eventDate){
+        const d = new Date(gd.eventDate+'T12:00:00');
+        const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        extra = `<div class="goal-card-event">📅 ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}${gd.city?' · 📍 '+gd.city:''}</div>`;
+      } else {
+        extra = `<div class="goal-card-setup">+ Definir data do evento</div>`;
+      }
+    }
+    return `<div class="goal-card${isSelected?' selected':''}" onclick="selectGoalType('${type}')">
+      <div class="goal-card-icon">${meta.icon}</div>
+      <div class="goal-card-body">
+        <div class="goal-card-name" style="color:${meta.color}">${meta.label}</div>
+        <div class="goal-card-desc">${meta.desc}</div>${extra}
+      </div>
+      ${isSelected?'<span style="color:var(--verde);font-size:1.3rem;flex-shrink:0">✓</span>':''}
+    </div>`;
+  }).join('');
+  overlay.innerHTML = `<div class="goal-modal">
+    <h3>🎯 Escolha seu Objetivo</h3>${cards}
+    <button style="width:100%;padding:.6rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.5rem" onclick="document.getElementById('goal-modal-overlay').remove()">Fechar</button>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function selectGoalType(type){
+  document.getElementById('goal-modal-overlay')?.remove();
+  if(type === '64k'){ switchToGoal('64k'); return; }
+  const gd = loadGoalData(type);
+  if(gd && gd.eventDate) switchToGoal(type);
+  else openGoalSetupForm(type);
+}
+
+function openGoalSetupForm(type){
+  document.getElementById('goal-modal-overlay')?.remove();
+  const meta = GOAL_META[type];
+  const overlay = document.createElement('div');
+  overlay.className = 'goal-modal-overlay';
+  overlay.id = 'goal-modal-overlay';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  const gd = loadGoalData(type) || {};
+  overlay.innerHTML = `<div class="goal-modal">
+    <h3>${meta.icon} ${meta.label}</h3>
+    <p style="font-size:.8rem;color:#888;margin-bottom:1.1rem;text-align:center">${meta.desc}</p>
+    <div class="goal-setup-field">
+      <label>Data do evento</label>
+      <input type="date" id="gsetup-date" value="${gd.eventDate||''}" min="${getToday()}">
+    </div>
+    <div class="goal-setup-field">
+      <label>Cidade do evento</label>
+      <input type="text" id="gsetup-city" value="${gd.city||''}" placeholder="Ex: Moncton NB, Ottawa ON…">
+    </div>
+    <button class="goal-setup-btn" onclick="saveGoalSetup('${type}')">Gerar Plano de Treino</button>
+    <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.4rem" onclick="openGoalSelector()">← Voltar</button>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function saveGoalSetup(type){
+  const eventDate = document.getElementById('gsetup-date').value;
+  const city = (document.getElementById('gsetup-city').value||'').trim();
+  if(!eventDate){ alert('Informe a data do evento.'); return; }
+  saveGoalData(type, { eventDate, city });
+  document.getElementById('goal-modal-overlay')?.remove();
+  switchToGoal(type);
+}
+
+function loadGoalData(type){ try{ return JSON.parse(localStorage.getItem('d64_goal_'+type))||null; }catch(e){ return null; } }
+function saveGoalData(type,data){ localStorage.setItem('d64_goal_'+type,JSON.stringify(data)); }
+function loadGoalProgress(type){ try{ return JSON.parse(localStorage.getItem('d64_gp_'+type))||{}; }catch(e){ return {}; } }
+function saveGoalProgress(type,p){ localStorage.setItem('d64_gp_'+type,JSON.stringify(p)); }
+
+function switchToGoal(type){
+  activeGoal = type;
+  localStorage.setItem(GOAL_STORAGE_KEY, type);
+  updateGoalBar();
+  const is64k = type === '64k';
+  document.querySelector('.progress-bar-wrap').style.display = is64k ? '' : 'none';
+  document.querySelector('.legend-bar').style.display = is64k ? '' : 'none';
+  document.getElementById('week-nav').style.display = is64k ? '' : 'none';
+  document.getElementById('week-nav-gen').style.display = is64k ? 'none' : '';
+  document.getElementById('section-genplan').style.display = is64k ? 'none' : '';
+  [1,2,3,4,5].forEach(i=>{ const s=document.getElementById('section-w'+i); if(s) s.style.display=is64k?'':'none'; });
+  const todayBanner = document.getElementById('today-banner');
+  if(todayBanner) todayBanner.style.display = is64k ? '' : 'none';
+  if(is64k){
+    showWeek('today');
+  } else {
+    const gd = loadGoalData(type);
+    activeGeneratedPlan = generateGoalPlan(type, gd.eventDate);
+    renderGoalNav(type, activeGeneratedPlan);
+    showGoalWeek('today');
+  }
+}
+
+function renderGoalNav(type, plan){
+  const phaseColors = {'Base':'#27ae60','Construção':'#2980b9','Pico':'#e67e22','Taper':'#8e44ad','Corrida':'#e74c3c'};
+  const phases = {};
+  plan.forEach(d=>{ if(!phases[d.phase]) phases[d.phase]=[]; if(!phases[d.phase].includes(d.week)) phases[d.phase].push(d.week); });
+  const totalWeeks = plan.length > 0 ? Math.max(...plan.map(d=>d.week)) : 1;
+  const btns = [`<button onclick="showGoalWeek('today')" id="gbtn-today" class="active">📍 Hoje</button>`];
+  if(totalWeeks <= 10){
+    const weeks = {};
+    plan.forEach(d=>{ if(!weeks[d.week]) weeks[d.week]=d.phase; });
+    Object.entries(weeks).forEach(([w,ph])=>{
+      const c = phaseColors[ph]||'#555';
+      btns.push(`<button onclick="showGoalWeek(${w})" id="gbtn-w${w}" style="border-color:${c};color:${c}">S${w}</button>`);
+    });
+  } else {
+    Object.entries(phases).forEach(([ph, wks])=>{
+      const c = phaseColors[ph]||'#555';
+      const firstW = Math.min(...wks);
+      btns.push(`<button onclick="showGoalWeek('phase-${ph.replace(/\s/g,'-')}')" id="gbtn-ph-${ph.replace(/\s/g,'-')}" style="border-color:${c};color:${c}">${ph}</button>`);
+    });
+  }
+  btns.push(`<button onclick="showGoalShared('events')" style="border-color:var(--roxo);color:var(--roxo)">🎯 Eventos</button>`);
+  btns.push(`<button onclick="showGoalShared('photos')" style="border-color:#e67e22;color:#e67e22">📸 Fotos</button>`);
+  btns.push(`<button onclick="showGoalShared('dashboard')" style="border-color:var(--azul);color:var(--azul)">📊 Dashboard</button>`);
+  document.getElementById('week-nav-gen').innerHTML = btns.join('');
+}
+
+function showGoalShared(section){
+  document.getElementById('section-genplan').style.display = 'none';
+  document.querySelectorAll('#week-nav-gen button').forEach(b=>b.classList.remove('active'));
+  ['section-events','section-photos','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
+  document.getElementById('section-'+section)?.classList.remove('hidden');
+  if(section==='events') renderEventsSection();
+  else if(section==='photos') renderPhotosSection();
+  else if(section==='dashboard') renderDashboardSection();
+  else if(section==='shopping') renderShoppingSection();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showGoalWeek(w){
+  // Hide shared sections
+  ['section-events','section-photos','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
+  document.querySelectorAll('#week-nav-gen button').forEach(b=>b.classList.remove('active'));
+  const genSection = document.getElementById('section-genplan');
+  genSection.style.display = '';
+  const today = getToday();
+  const progress = loadGoalProgress(activeGoal);
+  const plan = activeGeneratedPlan;
+  if(!plan || plan.length === 0){ genSection.innerHTML='<p style="color:#aaa;padding:1rem">Nenhum plano gerado.</p>'; return; }
+
+  if(w === 'today'){
+    document.getElementById('gbtn-today')?.classList.add('active');
+    const todayDay = plan.find(d=>d.date===today);
+    if(todayDay){
+      genSection.innerHTML = `<div class="week-header"><h3>Treino de Hoje</h3><span class="week-badge badge-${goalPhaseClass(todayDay.phase)}">${todayDay.phase} · Sem ${todayDay.week}</span></div><div class="day-grid">${buildGoalCard(todayDay,true,progress,activeGoal)}</div>`;
+    } else if(today < plan[0].date){
+      genSection.innerHTML = `<p style="color:#aaa;font-size:.9rem;padding:1rem">O plano começa em ${dateLabel(plan[0].date)}.</p>`;
+    } else {
+      genSection.innerHTML = '<p style="color:#aaa;font-size:.9rem;padding:1rem">Plano concluído! Parabéns! 🏆</p>';
+    }
+  } else if(typeof w === 'string' && w.startsWith('phase-')){
+    const phase = w.replace('phase-','').replace(/-/g,' ');
+    const phKey = 'gbtn-ph-'+w.replace('phase-','');
+    document.getElementById(phKey)?.classList.add('active');
+    const phaseDays = plan.filter(d=>d.phase===phase);
+    const phaseWeeks = [...new Set(phaseDays.map(d=>d.week))].sort((a,b)=>a-b);
+    genSection.innerHTML = phaseWeeks.map(wn=>{
+      const days = phaseDays.filter(d=>d.week===wn);
+      const totalKm = days.reduce((s,d)=>s+(d.run?.km||0),0);
+      return `<div class="week-section"><div class="week-header"><h3>Semana ${wn}</h3><span class="week-badge badge-${goalPhaseClass(phase)}">${phase}</span><span class="week-km">${totalKm}km</span></div><div class="day-grid">${days.map(d=>buildGoalCard(d,d.date===today,progress,activeGoal)).join('')}</div></div>`;
+    }).join('');
+  } else {
+    const weekNum = parseInt(w);
+    document.getElementById('gbtn-w'+weekNum)?.classList.add('active');
+    const days = plan.filter(d=>d.week===weekNum);
+    const phase = days[0]?.phase||'';
+    const totalKm = days.reduce((s,d)=>s+(d.run?.km||0),0);
+    genSection.innerHTML = `<div class="week-header"><h3>Semana ${weekNum}</h3><span class="week-badge badge-${goalPhaseClass(phase)}">${phase}</span><span class="week-km">${totalKm}km esta semana</span></div><div class="day-grid">${days.map(d=>buildGoalCard(d,d.date===today,progress,activeGoal)).join('')}</div>`;
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goalPhaseClass(phase){
+  return {'Base':'adapt','Construção':'build','Pico':'peak','Taper':'taper','Corrida':'race'}[phase]||'adapt';
+}
+
+function buildGoalCard(day, isToday, progress, goalType){
+  const prog = progress[day.date]||{};
+  const doneRun=!!prog.run, doneGym=!!prog.gym, doneNutri=!!prog.nutri;
+  const hasGym = day.gym && day.gym.ex && day.gym.ex.length>0;
+  const allDone = doneRun && (!hasGym||doneGym) && doneNutri;
+  const kmBadgeStr = day.type==='rest' ? '<span class="day-km-badge km-rest">Descanso</span>'
+    : day.type==='race' ? `<span class="day-km-badge km-race">${GOAL_META[goalType]?.badge||''} 🏁</span>`
+    : `<span class="day-km-badge km-${day.type==='long'?'long':day.type==='medium'?'medium':'easy'}">${day.run.km} km</span>`;
+  const runItems = (day.run.items||[]).map(i=>`<li>${i}</li>`).join('');
+  const gymItems = hasGym ? day.gym.ex.map(i=>`<li>${i}</li>`).join('') : '<li style="color:#aaa;list-style:none">Descanso — sem treino de força</li>';
+  const nutriItems = (day.nutri||[]).map(i=>`<li style="list-style:none;padding:.15rem 0">${i}</li>`).join('');
+  const isOpen = activeGoalCardOpen[day.date] !== false && (isToday || activeGoalCardOpen[day.date]===true);
+  return `<div class="day-card type-${day.type}${isToday?' is-today':''}${allDone?' is-done':''}" id="gcard-${day.date}">
+    <div class="day-header" onclick="toggleGoalCardBody('${day.date}')">
+      <div class="day-header-left">
+        ${isToday?'<span class="today-tag">HOJE</span><br>':''}
+        <span class="day-date">${dateLabel(day.date)}</span>
+        <span style="font-size:.7rem;color:#888;display:block;margin-top:.1rem">${day.phase}</span>
+      </div>
+      <div class="day-header-right">
+        ${kmBadgeStr}
+        ${allDone?'<span style="font-size:.7rem;color:var(--verde-esc);font-weight:700;display:block;text-align:right;margin-top:.25rem">✓ Completo</span>':''}
+      </div>
+    </div>
+    <div id="gbody-${day.date}" style="display:${isOpen?'block':'none'}">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchGoalTab(event,'${day.date}','run')">🏃 Corrida</button>
+        <button class="tab-btn" onclick="switchGoalTab(event,'${day.date}','gym')">💪 Academia</button>
+        <button class="tab-btn" onclick="switchGoalTab(event,'${day.date}','nutri')">🥗 Nutrição</button>
+      </div>
+      <div id="gtab-run-${day.date}" class="tab-content" style="display:block">
+        <div class="tab-title">${day.run.title}</div>
+        ${day.run.notes?`<div class="run-notes">${day.run.notes}</div>`:''}
+        <ul class="run-items">${runItems}</ul>
+        <div class="check-row"><button class="check-btn${doneRun?' done':''}" onclick="toggleGoalCheck('${day.date}','run','${goalType}')">${doneRun?'✅ Corrida feita':'☐ Corrida feita'}</button></div>
+      </div>
+      <div id="gtab-gym-${day.date}" class="tab-content" style="display:none">
+        <div class="tab-title">${day.gym?.title||'Academia'}</div>
+        <ul class="run-items">${gymItems}</ul>
+        <div class="check-row"><button class="check-btn${doneGym?' done':''}" onclick="toggleGoalCheck('${day.date}','gym','${goalType}')">${doneGym?'✅ Academia feita':'☐ Academia feita'}</button></div>
+      </div>
+      <div id="gtab-nutri-${day.date}" class="tab-content" style="display:none">
+        <ul>${nutriItems}</ul>
+        <div class="check-row"><button class="check-btn${doneNutri?' done':''}" onclick="toggleGoalCheck('${day.date}','nutri','${goalType}')">${doneNutri?'✅ Nutrição seguida':'☐ Nutrição seguida'}</button></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleGoalCardBody(date){
+  const body = document.getElementById('gbody-'+date);
+  if(!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  activeGoalCardOpen[date] = !isOpen;
+}
+
+function switchGoalTab(e, date, tab){
+  e.stopPropagation();
+  const card = document.getElementById('gcard-'+date);
+  if(!card) return;
+  ['run','gym','nutri'].forEach((t,i)=>{
+    const content = document.getElementById(`gtab-${t}-${date}`);
+    const btn = card.querySelectorAll('.tab-btn')[i];
+    if(content) content.style.display = t===tab ? 'block' : 'none';
+    if(btn) btn.classList.toggle('active', t===tab);
+  });
+}
+
+function toggleGoalCheck(date, field, goalType){
+  const p = loadGoalProgress(goalType);
+  if(!p[date]) p[date]={};
+  p[date][field] = !p[date][field];
+  saveGoalProgress(goalType, p);
+  const day = activeGeneratedPlan?.find(d=>d.date===date);
+  if(day){
+    const card = document.getElementById('gcard-'+date);
+    if(card){ activeGoalCardOpen[date]=true; card.outerHTML = buildGoalCard(day, date===getToday(), p, goalType); }
+  }
+}
+
+// ============================================================
+// GOAL PLAN GENERATOR
+// ============================================================
+function generateGoalPlan(type, eventDate){
+  const today = getToday();
+  const start = new Date(today+'T12:00:00');
+  const end   = new Date(eventDate+'T12:00:00');
+  const totalDays  = Math.round((end-start)/86400000);
+  if(totalDays < 7) return [];
+  const totalWeeks = Math.ceil(totalDays/7);
+  const dist = {meia:[.25,.35,.28,.12],maratona:[.25,.35,.28,.12],ultra:[.20,.35,.33,.12]}[type]||[.25,.35,.28,.12];
+  let phaseWeeks = dist.map(p=>Math.max(1,Math.round(totalWeeks*p)));
+  phaseWeeks[1] += totalWeeks - phaseWeeks.reduce((a,b)=>a+b,0);
+  const PHASES = ['Base','Construção','Pico','Taper'];
+  const phaseKm = {
+    meia:    [[35,52],[52,70],[65,76],[52,18]],
+    maratona:[[45,65],[65,88],[82,96],[65,20]],
+    ultra:   [[55,75],[75,105],[95,115],[70,22]]
+  }[type]||[[35,52],[52,70],[65,76],[52,18]];
+  const plan = [];
+  const cur = new Date(start);
+  let lastWeekNum = -1, phaseIdx = 0, weekInPhase = 0;
+  while(cur.toISOString().split('T')[0] <= eventDate){
+    const dateStr = cur.toISOString().split('T')[0];
+    const daysSinceStart = Math.round((cur-start)/86400000);
+    const weekNum = Math.floor(daysSinceStart/7)+1;
+    if(weekNum !== lastWeekNum){
+      lastWeekNum = weekNum;
+      let cum = 0; phaseIdx = PHASES.length-1; weekInPhase = 1;
+      for(let i=0;i<PHASES.length;i++){
+        if(weekNum <= cum+phaseWeeks[i]){ phaseIdx=i; weekInPhase=weekNum-cum; break; }
+        cum += phaseWeeks[i];
+      }
+    }
+    const phase = PHASES[phaseIdx];
+    const [phLow,phHigh] = phaseKm[phaseIdx]||[35,52];
+    const phTotal = phaseWeeks[phaseIdx]||1;
+    const wProg = phTotal>1?(weekInPhase-1)/(phTotal-1):0;
+    let weeklyKm = Math.round(phLow+(phHigh-phLow)*wProg);
+    if(weekInPhase%4===0 && phTotal>4) weeklyKm = Math.round(weeklyKm*0.72);
+    const dow = cur.getDay();
+    const isRaceDay = dateStr === eventDate;
+    plan.push(buildGeneratedDay(type,phase,dow,weeklyKm,weekNum,isRaceDay,dateStr));
+    if(isRaceDay) break;
+    cur.setDate(cur.getDate()+1);
+  }
+  return plan;
+}
+
+function buildGeneratedDay(type,phase,dow,weeklyKm,weekNum,isRaceDay,date){
+  if(isRaceDay) return buildGoalRaceDay(type,date,weekNum);
+  const paces = getGoalPaces(type);
+  const longKm  = Math.max(10,Math.round(weeklyKm*0.32));
+  const medKm   = Math.max(8, Math.round(weeklyKm*0.22));
+  const qualKm  = Math.max(8, Math.round(weeklyKm*0.20));
+  const easyKm  = Math.max(6, Math.round(weeklyKm*0.13));
+  const gymMain = getGymSession(phase);
+  const gymCore = {title:'Core + Mobilidade', ex:['3×30s Prancha frontal','3×20s Prancha lateral (cada lado)','3×15 Abdominais bicicleta','2×10 Superman (lombar)','5× mobilidade quadril 30s/lado','3min foam roller pernas']};
+  switch(dow){
+    case 0:// Sun — easy recovery
+      return {date,week:weekNum,phase,type:'easy',run:{title:'Recuperação Ativa',km:easyKm,pace:paces.easy,notes:'Ritmo muito confortável — regeneração após o longo de sábado',items:[`${easyKm}km a ritmo leve (${paces.easy})`,'Respiração confortável — recuperação ativa','Foco em postura e relaxamento muscular']},gym:{title:'Mobilidade',ex:['10min foam roller (panturrilha e quadril)','5× alongamento isquiotibiais 30s/lado','5× abertura de quadril 30s/lado','3× rotação torácica 10 reps']},nutri:goalNutri('easy')};
+    case 1:// Mon — rest or easy
+      if(longKm>=28) return buildGoalRestDay(date,weekNum,phase);
+      return {date,week:weekNum,phase,type:'easy',run:{title:'Corrida Fácil',km:easyKm,pace:paces.easy,notes:'Início tranquilo da semana',items:[`${easyKm}km a ritmo fácil (${paces.easy})`,'Aquecimento 5min caminhada','Cadência ~170 passos/min']},gym:{title:'Descanso',ex:[]},nutri:goalNutri('easy')};
+    case 2:// Tue — quality
+      return buildGoalQualityDay(date,weekNum,phase,qualKm,paces,type);
+    case 3:// Wed — easy + gym
+      return {date,week:weekNum,phase,type:'easy',run:{title:'Corrida Fácil + Academia',km:easyKm,pace:paces.easy,notes:'Sessão dupla — corrida leve + força',items:[`${easyKm}km a ritmo fácil (${paces.easy})`,'Descanso 30min antes da academia','Hidratação entre as sessões']},gym:gymMain,nutri:goalNutri('medium')};
+    case 4:// Thu — medium
+      return {date,week:weekNum,phase,type:'medium',run:{title:'Corrida Moderada',km:medKm,pace:paces.moderate,notes:'Esforço controlado — confortavelmente difícil',items:[`${medKm}km a ritmo moderado (${paces.moderate})`,'1km aquecimento fácil','Ritmo constante do início ao fim','1km desaquecimento']},gym:{title:'Descanso',ex:[]},nutri:goalNutri('medium')};
+    case 5:// Fri — rest + gym
+      return {date,week:weekNum,phase,type:'rest',run:{title:'Descanso Ativo',km:0,pace:'',notes:'Recarregar para o longo de amanhã',items:['Repouso ativo — sem corrida','Caminhada leve 15min opcional','Dormir bem — sono é treino','Preparar gel e nutrição para amanhã']},gym:gymCore,nutri:goalNutri('rest')};
+    case 6:// Sat — long run
+      return buildGoalLongDay(date,weekNum,phase,longKm,paces,type);
+    default:
+      return buildGoalRestDay(date,weekNum,phase);
+  }
+}
+
+function buildGoalRestDay(date,weekNum,phase){
+  return {date,week:weekNum,phase,type:'rest',run:{title:'Descanso',km:0,pace:'',notes:'Recuperação total — o descanso é parte do treino',items:['Repouso total — sem treino aeróbico','Hidratação normal 2L','Sono de qualidade (7–9h)','Alongamento leve se desejar']},gym:{title:'Descanso',ex:[]},nutri:goalNutri('rest')};
+}
+
+function buildGoalQualityDay(date,weekNum,phase,km,paces,type){
+  const isInterval = phase==='Pico'||(phase==='Construção'&&weekNum%2===0);
+  if(isInterval){
+    const reps = type==='meia'?6:type==='maratona'?5:4;
+    return {date,week:weekNum,phase,type:'medium',run:{title:'Intervalados',km,pace:paces.interval,notes:'Sessão de qualidade — desenvolve velocidade e limiar',items:['1.5km aquecimento fácil',`${reps}× 1000m a ritmo de intervalo (${paces.interval})`,'400m recuperação fácil entre repetições','1.5km desaquecimento',`Total: ~${km}km`]},gym:{title:'Descanso',ex:[]},nutri:goalNutri('medium')};
+  }
+  return {date,week:weekNum,phase,type:'medium',run:{title:'Tempo Run',km,pace:paces.tempo,notes:'Ritmo de limiar — difícil falar frases completas',items:['1.5km aquecimento fácil',`${km-3}km a ritmo tempo (${paces.tempo})`,'Ritmo constante sem variações','1.5km desaquecimento','Foco: tolerância ao desconforto']},gym:{title:'Descanso',ex:[]},nutri:goalNutri('medium')};
+}
+
+function buildGoalLongDay(date,weekNum,phase,km,paces,type){
+  const gels = Math.max(1,Math.floor(km*paces.longMinPerKm/45));
+  return {date,week:weekNum,phase,type:'long',run:{title:'Corrida Longa',km,pace:paces.long,notes:'O treino mais importante da semana — constrói a base aeróbica',items:[`${km}km a ritmo longo (${paces.long})`,'Café da manhã 2–3h antes do treino','Hidratação: 250ml a cada 20–25min',km>15?`Gel energético a cada 45min (~${gels} géis)`:'Hidratação suficiente para este volume','Não acelere — mantenha ritmo constante','Proteína + carboidrato em até 30min pós-treino']},gym:{title:'Descanso',ex:[]},nutri:goalNutri('long')};
+}
+
+function buildGoalRaceDay(type,date,weekNum){
+  const meta = GOAL_META[type];
+  return {date,week:weekNum,phase:'Corrida',type:'race',run:{title:`🏁 DIA DA ${meta.label.toUpperCase()}!`,km:0,pace:'',notes:'Chegou o grande dia! Confie no seu treinamento.',items:['Café da manhã 3h antes: Aveia + banana + mel + café','Aquecimento 10min: caminhada + mobilidade dinâmica','Primeiros km: mais lento que o planejado — salve energia','Gel/isotônico a cada 30–45min durante a prova','Km finais: vá com tudo — deixe tudo na pista!','Celebre — você merece! 🎉']},gym:{title:'Descanso',ex:[]},nutri:goalNutri('race')};
+}
+
+function getGoalPaces(type){
+  if(type==='meia') return {easy:'6:30–7:00/km',moderate:'6:00–6:20/km',tempo:'5:25–5:40/km',interval:'5:00–5:15/km',long:'7:00–7:30/km',longMinPerKm:7.25};
+  if(type==='maratona') return {easy:'6:30–7:00/km',moderate:'6:00–6:15/km',tempo:'5:10–5:25/km',interval:'4:50–5:05/km',long:'7:15–7:45/km',longMinPerKm:7.5};
+  return {easy:'7:00–7:30/km',moderate:'6:30–6:45/km',tempo:'5:45–6:00/km',interval:'5:20–5:35/km',long:'7:30–8:30/km',longMinPerKm:8.0};
+}
+
+function getGymSession(phase){
+  return ({
+    'Base':{title:'Força — Base Muscular',ex:['3×15 Agachamento livre','3×12 Levantamento terra (carga leve)','3×15 Afundo alternado','3×15 Elevação de panturrilha','3×12 Remada curvada com halteres','2×30s Prancha frontal','2×20 Abdominais']},
+    'Construção':{title:'Força — Resistência Muscular',ex:['4×12 Agachamento búlgaro','3×10 Leg press','3×12 Afundo com halteres','3×15 Elevação pélvica (glúteo)','3×12 Mountain climber','3×10 Remada com barra','2×20 Abdominais oblíquos']},
+    'Pico':{title:'Força — Potência e Explosão',ex:['4×8 Agachamento explosivo','3×12 Step-up com halteres','3×10 Agachamento unilateral','3×15 Hip thrust (glúteo)','3×12 Rotação russa com peso','3×10 Flexão de braço','3×15 Elevação de quadril unilateral']},
+    'Taper':{title:'Manutenção Leve',ex:['2×12 Agachamento (70% peso)','2×10 Afundo peso corporal','2×15 Prancha lateral (cada lado)','2×10 Mobilidade de quadril','5min alongamento cadeia posterior']}
+  })[phase]||{title:'Força',ex:['3×15 Agachamento','3×12 Afundo','3×12 Core: prancha','3×15 Panturrilha']};
+}
+
+function goalNutri(dayType){
+  return ({
+    easy:['🌅 Café: Aveia 80g + banana + mel + café','🍗 Almoço: Arroz integral + frango + legumes','🍎 Lanche: Iogurte + fruta + granola','🥩 Jantar: Proteína + salada + batata','💧 2.5L água','🌙 Pré-sono: 20g proteína (iogurte ou whey)'],
+    medium:['⚡ Pré-treino (1h antes): Banana + pasta de amendoim + café','🌅 Café: Aveia 100g + banana + mel','🍝 Almoço: Macarrão ou arroz + frango + azeite','🍎 Lanche: Barra de proteína + fruta','🥩 Jantar: Proteína + carboidrato + salada','💧 3L água + eletrólitos','💪 Pós-treino: 30g proteína + carboidrato'],
+    long:['🌅 Café (3h antes): Aveia 120g + banana + mel + café preto','⚡ 30min antes: Gel energético ou banana','🏃 Durante: Gel a cada 45min + isotônico a cada 20–30min','💪 Pós-treino imediato: 50g proteína + 80g carboidrato','🍝 Refeição completa: carboidratos + proteína','💧 4L água + eletrólitos (sódio e potássio)','🌙 Sono prolongado — recuperação é prioridade'],
+    rest:['🌅 Café: Normal — aveia ou pão integral + proteína','🥗 Almoço: Proteína + verduras frescas + carboidrato moderado','🍎 Lanche: Fruta + iogurte natural','🥩 Jantar: Refeição leve — peixe ou frango + legumes','💧 2L água','💊 Suplementos: Creatina + vitamina D se usar'],
+    race:['🌅 Café (3h antes): Aveia 100g + banana + mel + café','⚡ 30min antes: Gel + água','🏃 Durante: Gel a cada 45min + isotônico regular','🎉 Pós-prova: Proteína + carboidrato imediatamente','🍽️ Jantar comemorativo: O que quiser!','💧 Rehidratação por várias horas']
+  })[dayType]||[];
+}
+
+// ============================================================
+// INIT GOAL SYSTEM
+// ============================================================
+(function initGoalSystem(){
+  updateGoalBar();
+  if(activeGoal !== '64k'){
+    const gd = loadGoalData(activeGoal);
+    if(gd && gd.eventDate){
+      // Delay to let 64k init finish first
+      setTimeout(()=>switchToGoal(activeGoal), 50);
+    } else {
+      activeGoal = '64k';
+      localStorage.setItem(GOAL_STORAGE_KEY,'64k');
+      updateGoalBar();
+    }
+  }
+})();
+
 </script>
 
 <!-- SHOPPING LIST MODAL -->
