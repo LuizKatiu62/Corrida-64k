@@ -827,36 +827,6 @@
 </head>
 <body>
 
-<!-- ── AUTH WALL ──────────────────────────────────────── -->
-<div id="auth-wall">
-  <div class="auth-box">
-    <div class="auth-logo">
-      <span class="auth-icon">🏃</span>
-      <h2>Desafio 64km — Luiz</h2>
-      <p id="auth-subtitle">Entre com suas credenciais</p>
-    </div>
-    <div id="auth-form-login">
-      <button class="auth-bio-btn" id="auth-bio-btn" onclick="doLoginBiometric()" style="display:none">
-        <span style="font-size:1.4rem">🫆</span><span id="auth-bio-label">Touch ID / Face ID</span>
-      </button>
-      <div id="auth-bio-divider" style="display:none;text-align:center;font-size:.72rem;color:#ccc;margin:.6rem 0">ou entre com senha</div>
-      <div class="auth-field"><label>Usuário</label><input type="text" id="auth-user" autocomplete="username" placeholder="Seu usuário"></div>
-      <div class="auth-field"><label>Senha</label><input type="password" id="auth-pass" autocomplete="current-password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="auth-submit" onclick="doLogin()">Entrar</button>
-      <div class="auth-msg" id="auth-msg-login"></div>
-      <div class="auth-toggle"><a onclick="showAuthCreate()">Criar conta</a> &nbsp;·&nbsp; <a onclick="resetAuthData()" style="color:#e74c3c">Redefinir acesso</a></div>
-    </div>
-    <div id="auth-form-create" style="display:none">
-      <div class="auth-field"><label>Usuário</label><input type="text" id="auth-new-user" autocomplete="username" placeholder="Escolha um usuário"></div>
-      <div class="auth-field"><label>Senha</label><input type="password" id="auth-new-pass" autocomplete="new-password" placeholder="Escolha uma senha"></div>
-      <div class="auth-field"><label>Confirmar senha</label><input type="password" id="auth-new-pass2" autocomplete="new-password" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')doCreateAccount()"></div>
-      <button class="auth-submit" onclick="doCreateAccount()">Criar conta</button>
-      <div class="auth-msg" id="auth-msg-create"></div>
-      <div class="auth-toggle"><a onclick="showAuthLogin()">Já tenho conta</a></div>
-    </div>
-  </div>
-</div>
-
 <header>
   <!-- Fotos visíveis só no desktop -->
   <div class="profile-photo-wrap">
@@ -1120,7 +1090,7 @@
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v46</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v47</span></footer>
 
 <script>
 // ============================================================
@@ -2503,7 +2473,7 @@ const PLAN = [
   // ---- SEMANA 2 — CONSTRUÇÃO ----
   {date:'2026-04-06',week:2,phase:'Construção',type:'easy',
    run:{title:'10km Tranquilo',km:10,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v46elocidade 8,5–9,2 km/h']},
+    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v47elocidade 8,5–9,2 km/h']},
    gym:{title:'Treino A — Pernas + Core (↑ 5–10% carga)',
     ex:['Agachamento livre · 3×12 (↑ carga)','Levantamento terra romeno · 3×10 (↑ carga)','Avanço alternado · 3×10 cada','Elevação de panturrilha · 3×20','Prancha frontal · 3×50s (↑ tempo)','Dead bug · 3×10','Ponte de glúteos 1 perna · 3×10 cada']},
    nutri:['🥚 Café: Ovos + abacate + pão integral','🍗 Almoço: Arroz + frango + feijão + salada','🍌 Lanche: Banana + pasta amendoim','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água']},
@@ -2523,7 +2493,7 @@ const PLAN = [
 
   {date:'2026-04-09',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Tranquilo',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v46elocidade confortável']},
+    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v47elocidade confortável']},
    gym:{title:'Descanso',ex:['Sem academia hoje — pernas em foco']},
    nutri:['🥞 Café: Aveia + frutas + mel','🍗 Almoço: Refeição completa normal','🫙 Lanche: Iogurte + granola','🐟 Jantar: Arroz + peixe + salada','💧 2,5–3L água']},
 
@@ -2541,14 +2511,14 @@ const PLAN = [
 
   {date:'2026-04-12',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v46elocidade bem leve']},
+    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v47elocidade bem leve']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Foco em proteína para recuperação muscular','🥗 Alimentos coloridos e nutritivos','🫙 Iogurte grego + frutas vermelhas','💧 Hidratação reforçada — 3L']},
 
   // ---- SEMANA 3 — PICO ----
   {date:'2026-04-13',week:3,phase:'Pico',type:'easy',
    run:{title:'12km Tranquilo',km:12,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v46elocidade 8,5–9 km/h']},
+    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v47elocidade 8,5–9 km/h']},
    gym:{title:'Treino A — Pernas + Core (pico)',
     ex:['Agachamento livre · 3×12 (carga máxima do plano)','Leg press · 3×15 (novo!)','Levantamento terra romeno · 3×10','Avanço caminhado · 3×12 cada','Step-up com halteres · 3×10 cada','Elevação de panturrilha · 4×20','Prancha + toque ombro · 3×10 cada','Dead bug · 3×10']},
    nutri:['🥣 Café reforçado: Aveia 80g + whey + banana + frutas','🍗 Almoço: Arroz + feijão + frango + salada grande','🥜 Lanche: Sanduíche pão integral + atum + tomate','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água + suplementos (magnésio, ômega-3, vit D)']},
@@ -2574,7 +2544,7 @@ const PLAN = [
 
   {date:'2026-04-17',week:3,phase:'Pico',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v46elocidade 8–9 km/h']},
+    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v47elocidade 8–9 km/h']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Máximo foco em proteína · recuperação muscular','🥗 Alimentos anti-inflamatórios: salmão, frutas vermelhas, cúrcuma','🫙 Iogurte grego + granola + frutas','💧 3,5L água']},
 
