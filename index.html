@@ -5392,9 +5392,9 @@ function openGoalSelector(){
       <div class="goal-card-icon">${meta.icon}</div>
       <div class="goal-card-body">
         <div class="goal-card-name" style="color:${meta.color}">${meta.label}</div>
-        <div class="goal-card-desc">${meta.desc}</div>${extra}
+        <div class="goal-card-desc">${meta.desc}${meta.noPlan?' <span style="font-size:.65rem;background:#f0f0f0;color:#888;border-radius:4px;padding:.1rem .35rem;font-weight:600">sem plano de treino</span>':''}</div>${extra}
       </div>
-      ${isSelected?'<span style="color:var(--verde);font-size:1.3rem;flex-shrink:0">✓</span>':'<span style="color:#ddd;font-size:1.1rem;flex-shrink:0">›</span>'}
+      <span style="color:#ddd;font-size:1.1rem;flex-shrink:0">›</span>
     </div>`;
   }).join('');
   overlay.innerHTML = `<div class="goal-modal">
