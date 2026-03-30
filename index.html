@@ -2029,22 +2029,22 @@ function openAddEventModal(editId){
   const modal = document.createElement('div');
   modal.className = 'event-modal-overlay';
   modal.id = 'event-modal';
-  const typeOpts = ['5k','10k','meia','trail','treino','outro'];
+  const typeOpts = ['5k','10k','meia','maratona','trail','treino','outro'];
   const typeLabels2 = {
     '5k':'Corrida 5km','10k':'Corrida 10km','meia':'Meia Maratona (21km)',
-    'trail':'Trail / Trilha','treino':'Treino de corrida','outro':'Outro evento'
+    'maratona':'Maratona (42km)','trail':'Trail / Trilha','treino':'Treino de corrida','outro':'Outro evento'
   };
   const opts = typeOpts.map(v=>`<option value="${v}"${ev&&ev.type===v?' selected':''}>${typeLabels2[v]}</option>`).join('');
   modal.innerHTML = `<div class="event-modal">
     <h3>${ev ? '✏️ Editar Evento' : '🎯 Novo Evento'}</h3>
+    <label>Tipo de corrida</label>
+    <select id="ev-type">${opts}</select>
     <label>Data do evento</label>
     <input type="date" id="ev-date" value="${ev?ev.date:''}" min="2026-03-31" max="2026-05-02">
     <label>Nome do evento</label>
     <input type="text" id="ev-title" placeholder="Ex: Parkrun 5km, Saint Patrick 10k..." value="${ev?ev.title:''}">
-    <label>Tipo</label>
-    <select id="ev-type">${opts}</select>
-    <label>Local (opcional)</label>
-    <input type="text" id="ev-loc" placeholder="Ex: Rockwood Park, Downtown SJ..." value="${ev?ev.location:''}">
+    <label>Cidade do evento</label>
+    <input type="text" id="ev-loc" placeholder="Ex: Saint John NB, Moncton NB..." value="${ev?ev.location:''}">
     <label>Tempo alvo — usado para comparar com o GPX Garmin</label>
     <input type="text" id="ev-target" placeholder="Ex: 27:30 ou 1:05:00 (mm:ss ou h:mm:ss)" value="${ev?ev.targetTime:''}">
     <label>Observações (opcional)</label>
