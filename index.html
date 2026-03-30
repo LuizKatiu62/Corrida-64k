@@ -4260,6 +4260,19 @@ async function renderPhotosSection(){
   contentEl.innerHTML = html;
 }
 
+async function downloadAlbumPhotos(albumId){
+  const photos = await getPhotosByAlbum(albumId);
+  if(!photos.length){ alert('Nenhuma foto neste álbum.'); return; }
+  for(let i=0; i<photos.length; i++){
+    const p = photos[i];
+    const a = document.createElement('a');
+    a.href = p.data;
+    a.download = p.filename || `foto-${i+1}.jpg`;
+    a.click();
+    await new Promise(r => setTimeout(r, 400)); // small delay between downloads
+  }
+}
+
 async function selectAlbum(albumId){
   currentAlbumId = albumId;
   await renderPhotosSection();
