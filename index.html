@@ -4921,7 +4921,10 @@ const _countdownTimer = setInterval(()=>{
 
 // Register service worker for offline support
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{});
+  // updateViaCache:'none' forces browser to always fetch sw.js fresh (never from HTTP cache)
+  navigator.serviceWorker.register('./sw.js', {scope:'./', updateViaCache:'none'})
+    .then(function(reg){ reg.update(); }) // check for update immediately on load
+    .catch(()=>{});
   // Auto-reload when a new version activates
   navigator.serviceWorker.addEventListener('message', function(e){
     if(e.data && e.data.type === 'SW_UPDATED') location.reload();
