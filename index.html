@@ -5498,52 +5498,95 @@ function goalPhaseClass(phase){
 }
 
 function buildGoalCard(day, isToday, progress, goalType){
-  const prog = progress[day.date]||{};
-  const doneRun=!!prog.run, doneGym=!!prog.gym, doneNutri=!!prog.nutri;
-  const hasGym = day.gym && day.gym.ex && day.gym.ex.length>0;
-  const allDone = doneRun && (!hasGym||doneGym) && doneNutri;
-  const kmBadgeStr = day.type==='rest' ? '<span class="day-km-badge km-rest">Descanso</span>'
+  // Normalise so all shared helpers work (gym.ex must exist)
+  if(!day.gym) day.gym = {title:'Descanso', ex:[]};
+  if(!day.nutri) day.nutri = [];
+
+  const prog     = progress[day.date]||{};
+  const doneRun  = !!prog.run;
+  const doneGym  = !!prog.gym;
+  const doneNutri= !!prog.nutri;
+  const hasGym   = day.gym.ex.length > 0;
+  const allDone  = doneRun && (!hasGym||doneGym) && doneNutri;
+
+  const exDone    = prog.exDone || {};
+  const runItems  = (day.run.items||[]).map(i=>`<li>${i}</li>`).join('');
+  const gymItems  = hasGym
+    ? day.gym.ex.map((i,idx)=>gymItemHtml(i, day.date, idx, !!exDone[idx])).join('')
+    : '<li style="color:#aaa">Descanso — sem treino de força</li>';
+  const nutriList  = addCafeComLeite(day.nutri, day);
+  const nutriItems = nutriList.map(i=>nutriItemHtml(i)).join('');
+  const runCal  = calcRunCalories(day);
+  const gymCal  = calcGymCalories(day);
+
+  // Garmin GPX
+  const gData      = loadGarmin()[day.date];
+  const garminPanel= gData ? buildGarminComparePanel(day, gData) : '';
+
+  // Event badge
+  const dayEvent = loadEvents().find(e=>e.date===day.date);
+  const eventTag = dayEvent ? `<span class="event-day-badge">🎯 ${dayEvent.title.length>22?dayEvent.title.slice(0,20)+'…':dayEvent.title}</span>` : '';
+
+  const openTab = activeTabMap[day.date] || 'run';
+  const noGym   = day.gym.ex.every(e=>/^(sem |descanso)/i.test(e.trim()));
+
+  // km badge
+  const kmBadgeHtml = day.type==='rest' ? '<span class="day-km-badge km-rest">Descanso</span>'
     : day.type==='race' ? `<span class="day-km-badge km-race">${GOAL_META[goalType]?.badge||''} 🏁</span>`
-    : `<span class="day-km-badge km-${day.type==='long'?'long':day.type==='medium'?'medium':'easy'}">${day.run.km} km</span>`;
-  const runItems = (day.run.items||[]).map(i=>`<li>${i}</li>`).join('');
-  const gymItems = hasGym ? day.gym.ex.map(i=>`<li>${i}</li>`).join('') : '<li style="color:#aaa;list-style:none">Descanso — sem treino de força</li>';
-  const nutriItems = (day.nutri||[]).map(i=>`<li style="list-style:none;padding:.15rem 0">${i}</li>`).join('');
-  const isOpen = activeGoalCardOpen[day.date] !== false && (isToday || activeGoalCardOpen[day.date]===true);
-  return `<div class="day-card type-${day.type}${isToday?' is-today':''}${allDone?' is-done':''}" id="gcard-${day.date}">
-    <div class="day-header" onclick="toggleGoalCardBody('${day.date}')">
-      <div class="day-header-left">
-        ${isToday?'<span class="today-tag">HOJE</span><br>':''}
-        <span class="day-date">${dateLabel(day.date)}</span>
-        <span style="font-size:.7rem;color:#888;display:block;margin-top:.1rem">${day.phase}</span>
-      </div>
-      <div class="day-header-right">
-        ${kmBadgeStr}
-        ${allDone?'<span style="font-size:.7rem;color:var(--verde-esc);font-weight:700;display:block;text-align:right;margin-top:.25rem">✓ Completo</span>':''}
-      </div>
+    : kmBadge(day);
+
+  return `<div class="day-card type-${day.type}${isToday?' is-today':''}${allDone?' is-done':''}" id="card-${day.date}">
+  <div class="day-header" onclick="switchTab('${day.date}','run')">
+    <div class="day-header-left">
+      <div class="day-date-label">${dateLabel(day.date)} · ${day.phase}</div>
+      ${buildWeatherHtml(day.date)}
+      ${isToday?'<span class="today-tag">HOJE</span><br>':''}
+      <div class="day-title">${day.run.title}${eventTag}</div>
     </div>
-    <div id="gbody-${day.date}" style="display:${isOpen?'block':'none'}">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchGoalTab(event,'${day.date}','run')">🏃 Corrida</button>
-        <button class="tab-btn" onclick="switchGoalTab(event,'${day.date}','gym')">💪 Academia</button>
-        <button class="tab-btn" onclick="switchGoalTab(event,'${day.date}','nutri')">🥗 Nutrição</button>
-      </div>
-      <div id="gtab-run-${day.date}" class="tab-content" style="display:block">
-        <div class="tab-title">${day.run.title}</div>
-        ${day.run.notes?`<div class="run-notes">${day.run.notes}</div>`:''}
-        <ul class="run-items">${runItems}</ul>
-        <div class="check-row"><button class="check-btn${doneRun?' done':''}" onclick="toggleGoalCheck('${day.date}','run','${goalType}')">${doneRun?'✅ Corrida feita':'☐ Corrida feita'}</button></div>
-      </div>
-      <div id="gtab-gym-${day.date}" class="tab-content" style="display:none">
-        <div class="tab-title">${day.gym?.title||'Academia'}</div>
-        <ul class="run-items">${gymItems}</ul>
-        <div class="check-row"><button class="check-btn${doneGym?' done':''}" onclick="toggleGoalCheck('${day.date}','gym','${goalType}')">${doneGym?'✅ Academia feita':'☐ Academia feita'}</button></div>
-      </div>
-      <div id="gtab-nutri-${day.date}" class="tab-content" style="display:none">
-        <ul>${nutriItems}</ul>
-        <div class="check-row"><button class="check-btn${doneNutri?' done':''}" onclick="toggleGoalCheck('${day.date}','nutri','${goalType}')">${doneNutri?'✅ Nutrição seguida':'☐ Nutrição seguida'}</button></div>
-      </div>
+    ${kmBadgeHtml}
+  </div>
+  <div class="day-tabs">
+    <div class="day-tab${openTab==='run'?' active':''} has-activity" id="tab-${day.date}-run" onclick="switchTab('${day.date}','run')">
+      <span class="day-tab-icon">🏃</span>Corrida
     </div>
-  </div>`;
+    <div class="day-tab${openTab==='gym'?' active':''}${noGym?' no-activity':' has-activity'}" id="tab-${day.date}-gym" onclick="switchTab('${day.date}','gym')">
+      <span class="day-tab-icon">🏋️</span>Academia
+    </div>
+    <div class="day-tab${openTab==='nutri'?' active':''} has-activity" id="tab-${day.date}-nutri" onclick="switchTab('${day.date}','nutri')">
+      <span class="day-tab-icon">🍽️</span>Nutrição
+    </div>
+  </div>
+  <div class="day-body${openTab==='run'?' active':''}" id="body-${day.date}-run">
+    <div class="loc">${day.run.notes||''}</div>
+    <ul>${runItems}</ul>
+    ${calChipHtml(runCal, day.run.km+' km')}
+    ${buildShoeRec(day)}
+  </div>
+  <div class="day-body${openTab==='gym'?' active':''}" id="body-${day.date}-gym">
+    <div class="loc">${day.gym.title}</div>
+    <ul>${gymItems}</ul>
+    ${calChipHtml(gymCal, day.gym.title)}
+  </div>
+  <div class="day-body${openTab==='nutri'?' active':''}" id="body-${day.date}-nutri">
+    ${buildNutriTarget(day)}
+    <ul>${nutriItems}</ul>
+  </div>
+  <div class="day-checks">
+    <button class="check-btn${doneRun?' checked':''}" onclick="event.stopPropagation();toggleGoalCheck('${day.date}','run','${goalType}')">
+      <span class="check-icon">${doneRun?'✅':'🏃'}</span>${doneRun?'Corrida feita!':'Corrida'}
+    </button>
+    ${hasGym?`<button class="check-btn${doneGym?' checked-gym':''}" onclick="event.stopPropagation();toggleGoalCheck('${day.date}','gym','${goalType}')">
+      <span class="check-icon">${doneGym?'✅':'🏋️'}</span>${doneGym?'Academia feita!':'Academia'}
+    </button>`:''}
+    <button class="check-btn${doneNutri?' checked-nutri':''}" onclick="event.stopPropagation();toggleGoalCheck('${day.date}','nutri','${goalType}')">
+      <span class="check-icon">${doneNutri?'✅':'🍽️'}</span>${doneNutri?'Nutrição ok!':'Nutrição'}
+    </button>
+    <button class="check-btn${gData?' garmin-ok':''}" onclick="event.stopPropagation();importGPX('${day.date}')" title="Importar arquivo .gpx do Garmin">
+      <span class="check-icon">${gData?'📡':'📥'}</span>${gData?'GPX importado':'GPX Garmin'}
+    </button>
+  </div>
+  ${garminPanel}
+</div>`;
 }
 
 function toggleGoalCardBody(date){
