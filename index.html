@@ -6296,6 +6296,24 @@ async function doLoginBiometric(){
   else authMsg('login','Biometria não reconhecida.','err');
 }
 
+async function manageBiometric(){
+  const supported = await isBiometricSupported();
+  if(!supported){ alert('Este dispositivo não suporta biometria via WebAuthn.'); return; }
+  const has = !!localStorage.getItem(BIOMETRIC_KEY);
+  if(has){
+    if(confirm('Biometria está ativada.\nDeseja REMOVER o Touch ID / Face ID?')){
+      localStorage.removeItem(BIOMETRIC_KEY);
+      alert('Biometria removida.');
+    }
+  } else {
+    if(confirm('Deseja ativar Touch ID / Face ID para este dispositivo?')){
+      const ok = await registerBiometric();
+      if(ok) alert('✅ Biometria ativada com sucesso!');
+      else alert('Não foi possível ativar. Verifique as permissões do app.');
+    }
+  }
+}
+
 async function offerBiometricSetup(){
   const supported = await isBiometricSupported();
   if(!supported) return;
