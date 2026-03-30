@@ -4771,6 +4771,10 @@ const _countdownTimer = setInterval(()=>{
 // Register service worker for offline support
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{});
+  // Auto-reload when a new version activates
+  navigator.serviceWorker.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'SW_UPDATED') location.reload();
+  });
 }
 
 // ============================================================
