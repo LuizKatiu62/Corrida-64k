@@ -2165,8 +2165,8 @@ function renderEventsSection(){
     container.innerHTML='<p style="color:#aaa;font-size:.9rem;text-align:center;padding:2rem 0">Nenhum evento cadastrado ainda.<br>Clique em "+ Adicionar Evento" acima para começar.</p>';
     return;
   }
-  const typeLabels = {'5k':'Corrida 5km','10k':'Corrida 10km','meia':'Meia Maratona','maratona':'Maratona','trail':'Trail/Trilha','treino':'Treino','outro':'Evento'};
-  const distMap = {'5k':5,'10k':10,'meia':21.1,'maratona':42.2};
+  const typeLabels = {'5k':'Corrida 5km','10k':'Corrida 10km','meia':'Meia Maratona','maratona':'Maratona','64k':'Desafio 64km','trail':'Trail/Trilha','treino':'Treino','outro':'Evento'};
+  const distMap = {'5k':5,'10k':10,'meia':21.1,'maratona':42.2,'64k':64};
   const gpxStore = loadEventGPXStore();
 
   const parseTev = str => {
