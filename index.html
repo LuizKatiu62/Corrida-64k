@@ -6225,7 +6225,7 @@ async function doCreateAccount(){
   const hash = await hashPass(pass);
   saveAuthData({ username:user, passwordHash:hash });
   authMsg('create','Conta criada! Entrando...','ok');
-  setTimeout(()=>{ setSession(); unlockApp(); }, 600);
+  setTimeout(()=>{ setSession(); unlockApp(); setTimeout(offerBiometricSetup,500); }, 600);
 }
 
 function doLogout(){
