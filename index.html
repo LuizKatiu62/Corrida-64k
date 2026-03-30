@@ -4228,10 +4228,13 @@ async function renderPhotosSection(){
       <span class="photos-album-title">${album.icon} ${album.label}</span>
       <span class="photos-album-sub">${album.sub}</span>
     </div>
-    <label class="btn-add-photo" style="cursor:pointer">
-      + Adicionar Foto
-      <input type="file" accept="image/*,video/*" multiple style="display:none" onchange="handlePhotoUpload(event,'${currentAlbumId}')">
-    </label>
+    <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+      ${photos.length>0?`<button onclick="downloadAlbumPhotos('${currentAlbumId}')" style="background:#e8f4fd;color:var(--azul);border:1.5px solid var(--azul);border-radius:999px;padding:.35rem .8rem;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit">⬇️ Baixar ${photos.length > 1 ? 'todas ('+photos.length+')' : 'foto'}</button>`:''}
+      <label class="btn-add-photo" style="cursor:pointer">
+        + Foto
+        <input type="file" accept="image/*,video/*" multiple style="display:none" onchange="handlePhotoUpload(event,'${currentAlbumId}')">
+      </label>
+    </div>
   </div>`;
 
   if(photos.length === 0){
