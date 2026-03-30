@@ -5325,19 +5325,38 @@ function openGoalSetupForm(type){
   overlay.id = 'goal-modal-overlay';
   overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
   const gd = loadGoalData(type) || {};
+  const regChk = gd.registered ? 'checked' : '';
   overlay.innerHTML = `<div class="goal-modal">
     <h3>${meta.icon} ${meta.label}</h3>
-    <p style="font-size:.8rem;color:#888;margin-bottom:1.1rem;text-align:center">${meta.desc}</p>
+    <p style="font-size:.78rem;color:#888;margin-bottom:1.1rem;text-align:center">${meta.desc}</p>
     <div class="goal-setup-field">
-      <label>Data do evento</label>
+      <label>📅 Data do evento *</label>
       <input type="date" id="gsetup-date" value="${gd.eventDate||''}" min="${getToday()}">
     </div>
-    <div class="goal-setup-field">
-      <label>Cidade do evento</label>
-      <input type="text" id="gsetup-city" value="${gd.city||''}" placeholder="Ex: Moncton NB, Ottawa ON…">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+      <div class="goal-setup-field">
+        <label>📍 Cidade *</label>
+        <input type="text" id="gsetup-city" value="${gd.city||''}" placeholder="Ex: Moncton">
+      </div>
+      <div class="goal-setup-field">
+        <label>🗺️ Província</label>
+        <input type="text" id="gsetup-province" value="${gd.province||''}" placeholder="Ex: NB, ON, QC">
+      </div>
     </div>
-    <button class="goal-setup-btn" onclick="saveGoalSetup('${type}')">Gerar Plano de Treino</button>
-    <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.4rem" onclick="openGoalSelector()">← Voltar</button>
+    <div class="goal-setup-field">
+      <label>🎯 Tempo desejado para terminar</label>
+      <input type="text" id="gsetup-target" value="${gd.targetTime||''}" placeholder="Ex: 2:00:00 ou 3:30:00 (h:mm:ss)">
+    </div>
+    <div style="background:#f8f9fa;border-radius:10px;padding:.85rem 1rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.85rem;cursor:pointer" onclick="document.getElementById('gsetup-reg').click()">
+      <input type="checkbox" id="gsetup-reg" ${regChk} style="width:20px;height:20px;cursor:pointer;accent-color:var(--verde)">
+      <div>
+        <div style="font-size:.85rem;font-weight:700;color:var(--escuro)">Inscrição realizada</div>
+        <div style="font-size:.72rem;color:#888;margin-top:.1rem">Marque quando confirmar sua vaga no evento</div>
+      </div>
+      ${gd.registered?'<span style="color:var(--verde);font-size:1.2rem;margin-left:auto">✅</span>':'<span style="color:#ddd;font-size:1.2rem;margin-left:auto">○</span>'}
+    </div>
+    <button class="goal-setup-btn" onclick="saveGoalSetup('${type}')">✓ Salvar e Gerar Plano</button>
+    <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.4rem;font-family:inherit" onclick="openGoalSelector()">← Voltar</button>
   </div>`;
   document.body.appendChild(overlay);
 }
