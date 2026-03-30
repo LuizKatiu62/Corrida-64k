@@ -3900,7 +3900,7 @@ async function renderPhotosSection(){
   }
   // Build full album list = static training weeks + registered events
   const evts = loadEvents().sort((a,b)=>a.date.localeCompare(b.date));
-  const typeLabels = {'5k':'5km','10k':'10km','meia':'Meia Maratona','maratona':'Maratona','trail':'Trail','treino':'Treino','outro':'Evento'};
+  const typeLabels = {'5k':'5km','10k':'10km','meia':'Meia Maratona','maratona':'Maratona','64k':'Desafio 64km','trail':'Trail','treino':'Treino','outro':'Evento'};
   const eventAlbums = evts.map(ev => ({
     id:  `ev-${ev.id}`,
     label: ev.title,
