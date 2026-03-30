@@ -1220,7 +1220,16 @@ function fbDetachListeners(syncId){
 function fbPushPhoto(photo){
   if(!fbDB || fbPhotoIncoming.has(photo.id)) return;
   fbDB.ref('d64/'+fbSyncId+'/photos/'+photo.id).set(photo)
-    .catch(function(err){ console.warn('Photo push error:', err); });
+    .then(function(){
+      fbErrState = null;
+      updateFBBanner(true);
+    })
+    .catch(function(err){
+      console.warn('Photo push error:', err);
+      var msg = String(err||'');
+      fbErrState = msg.includes('PERMISSION_DENIED') ? 'permission' : 'network';
+      updateFBBanner(true);
+    });
 }
 
 function fbDeletePhoto(id){

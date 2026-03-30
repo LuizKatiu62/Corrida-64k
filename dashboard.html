@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Dashboard — Desafio 64km</title>
+<style>
+:root{
+  --verde:#2ecc71;--laranja:#e67e22;--vermelho:#e74c3c;--azul:#3498db;
+  --escuro:#2c3e50;--cinza:#95a5a6;--fundo:#f4f6f8;--branco:#fff;
+  --amarelo:#f1c40f;--roxo:#9b59b6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--fundo);color:var(--escuro);min-height:100vh}
+a{text-decoration:none}
+
+/* ---- HEADER ---- */
+.header{background:var(--escuro);color:#fff;padding:1rem 1.2rem;display:flex;align-items:center;gap:.8rem;position:sticky;top:0;z-index:10}
+.header-back{color:#fff;opacity:.7;font-size:.85rem;display:flex;align-items:center;gap:.3rem}
+.header-back:hover{opacity:1}
+.header-title{font-size:1.05rem;font-weight:700;flex:1}
+.header-date{font-size:.75rem;opacity:.6}
+
+/* ---- STATS ROW ---- */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;padding:1rem;max-width:800px;margin:0 auto}
+@media(min-width:480px){.stats-row{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--branco);border-radius:12px;padding:.9rem .8rem;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.stat-icon{font-size:1.5rem;margin-bottom:.3rem}
+.stat-val{font-size:1.4rem;font-weight:800;color:var(--escuro)}
+.stat-label{font-size:.65rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.04em;margin-top:.15rem}
+.stat-sub{font-size:.7rem;color:var(--cinza);margin-top:.1rem}
+
+/* ---- SECTION ---- */
+.section{background:var(--branco);border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin:0 1rem 1rem;padding:1rem;max-width:800px}
+@media(min-width:840px){.section{margin:0 auto 1rem}}
+.section-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza);margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+
+/* ---- CHART ---- */
+.chart-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.5rem}
+.chart-svg{display:block;min-width:100%}
+.chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.6rem;font-size:.7rem;color:var(--cinza)}
+.legend-dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:.3rem;vertical-align:middle}
+
+/* ---- MISSED LIST ---- */
+.missed-list{list-style:none}
+.missed-item{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid #f0f0f0;font-size:.82rem}
+.missed-item:last-child{border-bottom:none}
+.missed-badge{font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:99px;flex-shrink:0}
+.badge-miss{background:#fde8e6;color:var(--vermelho)}
+.badge-short{background:#fef3e2;color:var(--laranja)}
+.badge-pace{background:#e8f4fd;color:var(--azul)}
+.missed-date{color:var(--cinza);font-size:.72rem;min-width:5.5rem}
+.missed-text{flex:1}
+.no-miss{color:var(--verde);font-weight:600;font-size:.88rem;text-align:center;padding:.8rem}
+
+/* ---- WEEK TABLE ---- */
+.week-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.week-table th{color:var(--cinza);font-size:.65rem;text-transform:uppercase;letter-spacing:.04em;padding:.4rem .5rem;text-align:left;border-bottom:2px solid #eee}
+.week-table td{padding:.45rem .5rem;border-bottom:1px solid #f0f0f0}
+.week-table tr:last-child td{border-bottom:none}
+.week-table tr:hover td{background:#fafafa}
+.wk-pill{display:inline-block;padding:.15rem .5rem;border-radius:99px;font-size:.65rem;font-weight:700}
+.pct-bar-bg{height:5px;background:#eee;border-radius:99px;margin-top:.2rem;overflow:hidden}
+.pct-bar-fill{height:100%;border-radius:99px}
+
+/* ---- READINESS ---- */
+.readiness-wrap{display:flex;flex-direction:column;align-items:center;gap:1rem}
+@media(min-width:500px){.readiness-wrap{flex-direction:row;align-items:flex-start}}
+.gauge-wrap{flex-shrink:0;text-align:center}
+.gauge-svg{width:160px;height:160px}
+.gauge-score{font-size:2rem;font-weight:800;text-anchor:middle}
+.gauge-label{font-size:.65rem;text-anchor:middle;fill:var(--cinza)}
+.readiness-detail{flex:1;width:100%}
+.readiness-title{font-size:1.05rem;font-weight:800;margin-bottom:.5rem}
+.criteria-list{list-style:none}
+.criteria-item{display:flex;align-items:center;gap:.6rem;padding:.35rem 0;border-bottom:1px solid #f4f4f4;font-size:.82rem}
+.criteria-item:last-child{border-bottom:none}
+.criteria-bar-bg{height:5px;background:#eee;border-radius:99px;overflow:hidden;flex:1;min-width:50px}
+.criteria-bar-fill{height:100%;border-radius:99px}
+.criteria-label{min-width:7rem;font-size:.72rem;color:var(--cinza)}
+.criteria-pct{font-size:.72rem;font-weight:700;min-width:2.5rem;text-align:right}
+
+/* ---- VERDICT ---- */
+.verdict-box{border-radius:12px;padding:1rem 1.2rem;margin-top:.8rem;font-size:.9rem;line-height:1.5}
+
+/* ---- FOOTER ---- */
+.footer{text-align:center;padding:1.5rem;font-size:.7rem;color:var(--cinza)}
+.footer a{color:var(--azul)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="header-back" href="index.html">← App</a>
+  <span class="header-title">📊 Dashboard Treinos</span>
+  <span class="header-date" id="hdrDate"></span>
+</div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<div class="section">
+  <div class="section-title">📈 Volume por Dia</div>
+  <div class="chart-wrap" id="chartWrap"></div>
+  <div class="chart-legend">
+    <span><span class="legend-dot" style="background:#dce8f5"></span>Planejado</span>
+    <span><span class="legend-dot" style="background:var(--verde)"></span>Realizado ✓</span>
+    <span><span class="legend-dot" style="background:var(--laranja)"></span>Abaixo do objetivo</span>
+    <span><span class="legend-dot" style="background:var(--vermelho)"></span>Não realizado</span>
+    <span style="color:var(--azul)">┆ hoje</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">⚠️ Objetivos não alcançados</div>
+  <ul class="missed-list" id="missedList"></ul>
+</div>
+
+<div class="section">
+  <div class="section-title">📅 Resumo por Semana</div>
+  <table class="week-table" id="weekTable">
+    <thead>
+      <tr>
+        <th>Semana</th><th>Fase</th><th>Km Plan.</th><th>Km Real</th><th>Treinos</th><th>Progresso</th>
+      </tr>
+    </thead>
+    <tbody id="weekTbody"></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">🏆 Aptidão para o Desafio</div>
+  <div class="readiness-wrap">
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 160 160" id="gaugeSvg">
+        <circle cx="80" cy="80" r="64" fill="none" stroke="#eee" stroke-width="12"/>
+        <circle cx="80" cy="80" r="64" fill="none" stroke="#eee" stroke-width="12"
+          id="gaugeBg" stroke-dasharray="402" stroke-dashoffset="0"
+          stroke-linecap="round" transform="rotate(-90 80 80)"/>
+        <circle cx="80" cy="80" r="64" fill="none" stroke="var(--verde)" stroke-width="12"
+          id="gaugeArc" stroke-dasharray="0 402"
+          stroke-linecap="round" transform="rotate(-90 80 80)"/>
+        <text x="80" y="74" class="gauge-score" id="gaugeText" fill="var(--escuro)">—</text>
+        <text x="80" y="92" class="gauge-label" id="gaugeSubText">calculando...</text>
+      </svg>
+      <div id="gaugeVerdict" style="font-size:.75rem;font-weight:700;text-align:center;margin-top:.2rem"></div>
+    </div>
+    <div class="readiness-detail">
+      <div class="readiness-title" id="readinessTitle">Analisando dados...</div>
+      <ul class="criteria-list" id="criteriaList"></ul>
+      <div class="verdict-box" id="verdictBox"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Dados sincronizados com o app principal via localStorage &nbsp;·&nbsp;
+  <a href="index.html">← voltar ao plano</a>
+</div>
+
+<script>
+// ============================================================
+// PLAN — minimal data (date, week, phase, type, km, title)
+// ============================================================
+const PLAN = [
+  {date:'2026-03-31',week:1,phase:'Adaptação',   type:'easy',  km:8,  title:'8km Tranquilo'},
+  {date:'2026-04-01',week:1,phase:'Adaptação',   type:'medium',km:10, title:'10km Intervalos'},
+  {date:'2026-04-02',week:1,phase:'Adaptação',   type:'rest',  km:0,  title:'Descanso Corrida'},
+  {date:'2026-04-03',week:1,phase:'Adaptação',   type:'rest',  km:0,  title:'Descanso Total'},
+  {date:'2026-04-04',week:1,phase:'Adaptação',   type:'rest',  km:0,  title:'Descanso Total'},
+  {date:'2026-04-05',week:1,phase:'Adaptação',   type:'long',  km:22, title:'22km Longo'},
+  {date:'2026-04-06',week:2,phase:'Construção',  type:'easy',  km:10, title:'10km Tranquilo'},
+  {date:'2026-04-07',week:2,phase:'Construção',  type:'rest',  km:0,  title:'Descanso Corrida'},
+  {date:'2026-04-08',week:2,phase:'Construção',  type:'medium',km:11, title:'Intervalos 11km'},
+  {date:'2026-04-09',week:2,phase:'Construção',  type:'easy',  km:8,  title:'8km Tranquilo'},
+  {date:'2026-04-10',week:2,phase:'Construção',  type:'rest',  km:0,  title:'Descanso Total'},
+  {date:'2026-04-11',week:2,phase:'Construção',  type:'long',  km:27, title:'27km Longo'},
+  {date:'2026-04-12',week:2,phase:'Construção',  type:'easy',  km:8,  title:'8km Recuperação'},
+  {date:'2026-04-13',week:3,phase:'Pico',        type:'easy',  km:12, title:'12km Tranquilo'},
+  {date:'2026-04-14',week:3,phase:'Pico',        type:'rest',  km:0,  title:'Descanso Corrida'},
+  {date:'2026-04-15',week:3,phase:'Pico',        type:'medium',km:12, title:'Fartlek 12km'},
+  {date:'2026-04-16',week:3,phase:'Pico',        type:'medium',km:8,  title:'8km Moderado'},
+  {date:'2026-04-17',week:3,phase:'Pico',        type:'easy',  km:8,  title:'8km Recuperação'},
+  {date:'2026-04-18',week:3,phase:'Pico',        type:'rest',  km:0,  title:'Descanso Total'},
+  {date:'2026-04-19',week:3,phase:'Pico',        type:'long',  km:33, title:'33km Treino Pico'},
+  {date:'2026-04-20',week:4,phase:'Taper',       type:'easy',  km:8,  title:'8km (Taper)'},
+  {date:'2026-04-21',week:4,phase:'Taper',       type:'rest',  km:0,  title:'Descanso Corrida'},
+  {date:'2026-04-22',week:4,phase:'Taper',       type:'medium',km:6,  title:'6km + Velocidade'},
+  {date:'2026-04-23',week:4,phase:'Taper',       type:'easy',  km:6,  title:'6km Tranquilo'},
+  {date:'2026-04-24',week:4,phase:'Taper',       type:'rest',  km:0,  title:'Descanso Total'},
+  {date:'2026-04-25',week:4,phase:'Taper',       type:'long',  km:16, title:'16km Longo Reduzido'},
+  {date:'2026-04-26',week:4,phase:'Taper',       type:'easy',  km:5,  title:'5km Leve'},
+  {date:'2026-04-27',week:5,phase:'Sem. Corrida',type:'easy',  km:6,  title:'6km + Strides'},
+  {date:'2026-04-28',week:5,phase:'Sem. Corrida',type:'easy',  km:5,  title:'5km Tranquilo'},
+  {date:'2026-04-29',week:5,phase:'Sem. Corrida',type:'easy',  km:4,  title:'4km + 200m'},
+  {date:'2026-04-30',week:5,phase:'Sem. Corrida',type:'rest',  km:0,  title:'🎂 Aniversário — Descanso'},
+  {date:'2026-05-01',week:5,phase:'Sem. Corrida',type:'easy',  km:2,  title:'Véspera — 2km Opcional'},
+  {date:'2026-05-02',week:5,phase:'Sem. Corrida',type:'race',  km:64, title:'🏁 DESAFIO 64KM'},
+];
+
+// ============================================================
+// DATA ACCESS
+// ============================================================
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem('desafio64_progress'))||{}; }
+  catch(e){ return {}; }
+}
+function loadGarmin(){
+  try{ return JSON.parse(localStorage.getItem('desafio64_garmin'))||{}; }
+  catch(e){ return {}; }
+}
+
+function todayStr(){
+  const d=new Date();
+  return d.toISOString().slice(0,10);
+}
+
+function fmtDate(str){
+  const [,m,d]=str.split('-');
+  const months=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return `${+d} ${months[+m]}`;
+}
+
+function pct(a,b){ return b>0 ? Math.min(100,Math.round(a/b*100)) : 100; }
+
+function barColor(p){
+  if(p>=95) return 'var(--verde)';
+  if(p>=70) return 'var(--laranja)';
+  return 'var(--vermelho)';
+}
+
+// ============================================================
+// MAIN RENDER
+// ============================================================
+function render(){
+  const progress = loadProgress();
+  const garmin   = loadGarmin();
+  const today    = todayStr();
+
+  // --- enrich plan days ---
+  const days = PLAN.map(d=>{
+    const prog = progress[d.date] || {};
+    const gpx  = garmin[d.date];
+    const isPast = d.date < today;
+    const isToday = d.date === today;
+    return {...d, prog, gpx, isPast, isToday};
+  });
+
+  renderHeader(today);
+  renderStats(days, today);
+  renderChart(days, today);
+  renderMissed(days, today);
+  renderWeeks(days);
+  renderReadiness(days, today);
+}
+
+// ---- header ----
+function renderHeader(today){
+  document.getElementById('hdrDate').textContent = fmtDate(today);
+}
+
+// ---- stats cards ----
+function renderStats(days, today){
+  const runDays   = days.filter(d=>d.km>0 && d.type!=='race');
+  const pastRun   = runDays.filter(d=>d.isPast);
+  const doneCount = pastRun.filter(d=>d.prog.run||d.gpx).length;
+  const totalPlanned = runDays.reduce((s,d)=>s+d.km,0);
+
+  let totalDoneKm = 0;
+  let longestDone = 0;
+  let paceSum = 0, paceCount = 0;
+
+  days.forEach(d=>{
+    if(d.gpx){
+      totalDoneKm += d.gpx.dist||0;
+      if((d.gpx.dist||0) > longestDone) longestDone = d.gpx.dist;
+      if(d.gpx.pace){ paceSum += paceToSecs(d.gpx.pace); paceCount++; }
+    } else if(d.prog.run && d.km>0 && d.type!=='race'){
+      totalDoneKm += d.km;
+      if(d.km>longestDone) longestDone=d.km;
+    }
+  });
+
+  const avgPaceStr = paceCount>0 ? secsToMM(paceSum/paceCount) : '—';
+  const consistPct = pastRun.length>0 ? Math.round(doneCount/pastRun.length*100) : 0;
+
+  const cards = [
+    {icon:'🏃',val:`${Math.round(totalDoneKm)}`,sub:`/ ${totalPlanned} km`,label:'Km Concluídos'},
+    {icon:'✅',val:`${consistPct}%`,sub:`${doneCount} de ${pastRun.length} treinos`,label:'Consistência'},
+    {icon:'🌟',val:`${longestDone>0?longestDone:0} km`,sub:'corrida mais longa',label:'Maior Distância'},
+    {icon:'⚡',val:avgPaceStr,sub:'min/km médio',label:'Pace Médio'},
+  ];
+
+  document.getElementById('statsRow').innerHTML = cards.map(c=>`
+    <div class="stat-card">
+      <div class="stat-icon">${c.icon}</div>
+      <div class="stat-val">${c.val}</div>
+      <div class="stat-sub">${c.sub}</div>
+      <div class="stat-label">${c.label}</div>
+    </div>`).join('');
+}
+
+// ---- bar chart ----
+function renderChart(days, today){
+  const runDays = days.filter(d=>d.km>0);
+  const maxKm   = Math.max(...runDays.map(d=>d.km), 10);
+
+  const BAR_W  = 22;
+  const GAP    = 6;
+  const H      = 180;
+  const PAD_T  = 18;  // space for week labels on top
+  const PAD_L  = 24;  // y-axis labels
+  const PAD_B  = 38;
+  const INNER  = H - PAD_T - PAD_B;
+  const W      = PAD_L + runDays.length * (BAR_W + GAP) + GAP + 8;
+
+  let svg = '';
+  let prevWeek = 0;
+  let weekStartX = PAD_L + GAP;
+
+  // --- helper: bar x center ---
+  const barX = i => PAD_L + GAP + i * (BAR_W + GAP);
+  const baseY = PAD_T + INNER; // bottom of chart area
+
+  // --- y-axis guides ---
+  [0, 0.25, 0.5, 0.75, 1].forEach(f=>{
+    const yy = PAD_T + INNER - Math.round(f * INNER);
+    const km = Math.round(f * maxKm);
+    svg += `<line x1="${PAD_L}" y1="${yy}" x2="${W-4}" y2="${yy}" stroke="#f0f0f0" stroke-width="1"/>`;
+    svg += `<text x="${PAD_L-3}" y="${yy+3}" text-anchor="end" font-size="8" fill="#bbb">${km}</text>`;
+  });
+
+  // --- bars ---
+  runDays.forEach((d, i)=>{
+    const x      = barX(i);
+    const planH  = Math.max(2, Math.round((d.km / maxKm) * INNER));
+    const planY  = baseY - planH;
+
+    // actual km
+    let actualKm = 0;
+    if(d.gpx)        actualKm = d.gpx.dist || 0;
+    else if(d.prog.run) actualKm = d.km;
+
+    const hasActual = actualKm > 0;
+    const p         = d.isPast ? pct(actualKm, d.km) : null;
+    const actualH   = hasActual ? Math.max(2, Math.round((actualKm / maxKm) * INNER)) : 0;
+    const actualY   = baseY - actualH;
+
+    // colors
+    const planFill   = d.type==='race' ? '#e8dcf5'
+                     : d.isPast        ? '#e8eef4'
+                     :                   '#dce8f5';  // future = light blue tint
+
+    const actualFill = d.type==='race' ? 'var(--roxo)'
+                     : p===null        ? 'var(--verde)'
+                     : p>=95           ? 'var(--verde)'
+                     : p>=70           ? 'var(--laranja)'
+                     :                   'var(--vermelho)';
+
+    // week separator + label
+    if(d.week !== prevWeek){
+      if(i > 0){
+        const sx = x - GAP/2 - 2;
+        svg += `<line x1="${sx}" y1="${PAD_T-2}" x2="${sx}" y2="${baseY}" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,2"/>`;
+        // week label for previous group
+        const midX = (weekStartX + sx) / 2;
+        svg += `<text x="${midX}" y="${PAD_T-4}" text-anchor="middle" font-size="7.5" fill="#bbb" font-weight="600">S${prevWeek}</text>`;
+      }
+      weekStartX = x;
+      prevWeek = d.week;
+    }
+
+    // planned bar (always shown as background)
+    svg += `<rect x="${x}" y="${planY}" width="${BAR_W}" height="${planH}" rx="3" fill="${planFill}"/>`;
+
+    // past + not done + no GPX = red bottom border to flag missed
+    if(d.isPast && !hasActual){
+      svg += `<rect x="${x}" y="${baseY-3}" width="${BAR_W}" height="3" rx="1" fill="var(--vermelho)" opacity="0.7"/>`;
+    }
+
+    // actual bar on top
+    if(hasActual){
+      svg += `<rect x="${x}" y="${actualY}" width="${BAR_W}" height="${actualH}" rx="3" fill="${actualFill}" opacity="0.85"/>`;
+    }
+
+    // today highlight ring
+    if(d.isToday){
+      svg += `<rect x="${x-1}" y="${PAD_T-2}" width="${BAR_W+2}" height="${INNER+2}" rx="4" fill="none" stroke="var(--azul)" stroke-width="1.5"/>`;
+    }
+
+    // km label above bar
+    const topVal  = hasActual ? actualKm : d.km;
+    const topY    = hasActual ? actualY - 3 : planY - 3;
+    const topFill = hasActual ? actualFill : (d.isPast ? 'var(--vermelho)' : '#aac');
+    svg += `<text x="${x+BAR_W/2}" y="${topY}" text-anchor="middle" font-size="8" fill="${topFill}" font-weight="${hasActual?'700':'400'}">${topVal}</text>`;
+
+    // x-axis date label
+    const [,mm,dd] = d.date.split('-');
+    svg += `<text x="${x+BAR_W/2}" y="${baseY+13}" text-anchor="middle" font-size="7.5" fill="#aaa">${+dd}/${+mm}</text>`;
+
+    // icon below label for long / race
+    const icon = d.type==='long' ? '⭐' : d.type==='race' ? '🏁' : '';
+    if(icon) svg += `<text x="${x+BAR_W/2}" y="${baseY+26}" text-anchor="middle" font-size="9">${icon}</text>`;
+  });
+
+  // last week label
+  const lastX = barX(runDays.length-1) + BAR_W + GAP/2;
+  const midX  = (weekStartX + lastX) / 2;
+  svg += `<text x="${midX}" y="${PAD_T-4}" text-anchor="middle" font-size="7.5" fill="#bbb" font-weight="600">S${prevWeek}</text>`;
+
+  // "today" vertical line — interpolated even if today isn't a training day
+  const todayLine = (()=>{
+    const idx = runDays.findIndex(d=>d.date >= today);
+    if(idx < 0) return ''; // past all days
+    const tx = idx===0 ? barX(0) - GAP : barX(idx) - GAP/2 - 2;
+    return `<line x1="${tx}" y1="${PAD_T}" x2="${tx}" y2="${baseY}" stroke="var(--azul)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+            <text x="${tx+2}" y="${PAD_T+8}" font-size="7.5" fill="var(--azul)" opacity="0.8">hoje</text>`;
+  })();
+
+  const full = `<svg class="chart-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}${todayLine}</svg>`;
+  document.getElementById('chartWrap').innerHTML = full;
+}
+
+// ---- missed objectives ----
+function renderMissed(days, today){
+  const items = [];
+
+  days.forEach(d=>{
+    if(!d.isPast) return;
+    if(d.km === 0) return;
+    if(d.type === 'race') return;
+
+    const actualKm = d.gpx ? (d.gpx.dist||0) : (d.prog.run ? d.km : 0);
+    const p = pct(actualKm, d.km);
+
+    if(!d.prog.run && !d.gpx){
+      items.push({date:d.date, badge:'badge-miss', badgeTxt:'Não feito',
+        text:`${d.title} — ${d.km} km planejados não realizados`});
+    } else if(p < 95 && d.gpx){
+      const diff = Math.round((actualKm - d.km)*10)/10;
+      items.push({date:d.date, badge:'badge-short', badgeTxt:'Abaixo',
+        text:`${d.title} — ${actualKm} km de ${d.km} km (${diff>0?'+':''}${diff} km · ${p}%)`});
+    }
+
+    // pace check
+    if(d.gpx && d.gpx.pace){
+      // we just note if pace was very slow (> 8:30 min/km for non-recovery)
+      const secs = paceToSecs(d.gpx.pace);
+      if(secs > 510 && d.type!=='long' && d.type!=='easy'){
+        items.push({date:d.date, badge:'badge-pace', badgeTxt:'Pace lento',
+          text:`${d.title} — pace ${d.gpx.pace} min/km acima do esperado para este tipo de treino`});
+      }
+    }
+  });
+
+  const ul = document.getElementById('missedList');
+  if(items.length===0){
+    ul.innerHTML = `<div class="no-miss">✅ Nenhum objetivo não alcançado ainda!</div>`;
+    return;
+  }
+
+  ul.innerHTML = items.map(it=>`
+    <li class="missed-item">
+      <span class="missed-date">${fmtDate(it.date)}</span>
+      <span class="missed-badge ${it.badge}">${it.badgeTxt}</span>
+      <span class="missed-text">${it.text}</span>
+    </li>`).join('');
+}
+
+// ---- week summary ----
+function renderWeeks(days){
+  const weeks = {};
+  days.forEach(d=>{
+    if(!weeks[d.week]) weeks[d.week]={week:d.week,phase:d.phase,planKm:0,doneKm:0,planCount:0,doneCount:0};
+    const w = weeks[d.week];
+    if(d.km>0 && d.type!=='race'){ w.planKm+=d.km; w.planCount++; }
+    const actualKm = d.gpx?(d.gpx.dist||0):d.prog.run?d.km:0;
+    if(actualKm>0 && d.km>0){ w.doneKm+=actualKm; w.doneCount++; }
+  });
+
+  const phaseColors = {'Adaptação':'#3498db','Construção':'#e67e22','Pico':'#e74c3c','Taper':'#9b59b6','Sem. Corrida':'#2ecc71'};
+
+  const tbody = Object.values(weeks).map(w=>{
+    const p = pct(w.doneKm, w.planKm);
+    const color = barColor(p);
+    const pc = phaseColors[w.phase]||'#999';
+    return `<tr>
+      <td><strong>Sem. ${w.week}</strong></td>
+      <td><span class="wk-pill" style="background:${pc}22;color:${pc}">${w.phase}</span></td>
+      <td>${w.planKm} km</td>
+      <td>${Math.round(w.doneKm)} km</td>
+      <td>${w.doneCount} / ${w.planCount}</td>
+      <td style="min-width:70px">
+        <div style="font-size:.7rem;color:${color};font-weight:700">${w.planKm>0?p+'%':''}</div>
+        <div class="pct-bar-bg"><div class="pct-bar-fill" style="width:${p}%;background:${color}"></div></div>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('weekTbody').innerHTML = tbody;
+}
+
+// ---- readiness gauge ----
+function renderReadiness(days, today){
+  const pastRunDays = days.filter(d=>d.km>0 && d.isPast && d.type!=='race');
+  const total = pastRunDays.length;
+
+  if(total === 0){
+    document.getElementById('gaugeText').textContent='—';
+    document.getElementById('gaugeSubText').textContent='Aguardando treinos';
+    document.getElementById('readinessTitle').textContent='O plano começa em 31/03 — volte após seus primeiros treinos!';
+    document.getElementById('criteriaList').innerHTML='';
+    document.getElementById('verdictBox').innerHTML='<span style="color:var(--cinza)">Dados insuficientes ainda. O plano inicia em 31 de março de 2026.</span>';
+    return;
+  }
+
+  // CRITERIA 1 — Consistência (35%)
+  const doneCount = pastRunDays.filter(d=>d.prog.run||d.gpx).length;
+  const consistScore = total > 0 ? Math.round(doneCount/total*100) : 0;
+
+  // CRITERIA 2 — Volume max (25%) — longest run vs 33km peak
+  let longestDone = 0;
+  pastRunDays.forEach(d=>{
+    const ak = d.gpx?(d.gpx.dist||0):d.prog.run?d.km:0;
+    if(ak>longestDone) longestDone=ak;
+  });
+  const volumeScore = Math.min(100, Math.round(longestDone/33*100));
+
+  // CRITERIA 3 — Pace quality (20%) — % of GPX runs where dist met target
+  const gpxDays = pastRunDays.filter(d=>d.gpx);
+  const gpxOk   = gpxDays.filter(d=>pct(d.gpx.dist||0, d.km)>=90).length;
+  const paceScore = gpxDays.length>0 ? Math.round(gpxOk/gpxDays.length*100) : consistScore;
+
+  // CRITERIA 4 — No large gaps (20%) — max consecutive missed days
+  let maxGap=0, gap=0;
+  pastRunDays.forEach(d=>{
+    if(!d.prog.run && !d.gpx){ gap++; if(gap>maxGap) maxGap=gap; }
+    else gap=0;
+  });
+  const gapScore = maxGap===0 ? 100 : maxGap===1 ? 80 : maxGap===2 ? 55 : Math.max(0, 40-maxGap*5);
+
+  const overall = Math.round(consistScore*0.35 + volumeScore*0.25 + paceScore*0.20 + gapScore*0.20);
+
+  // Gauge arc (circumference = 2π×64 ≈ 402)
+  const circ  = 402;
+  const fill  = Math.round(overall/100 * circ);
+  const arc   = document.getElementById('gaugeArc');
+  const gColor= overall>=80?'var(--verde)':overall>=65?'var(--amarelo)':overall>=50?'var(--laranja)':'var(--vermelho)';
+  arc.setAttribute('stroke-dasharray', `${fill} ${circ-fill}`);
+  arc.setAttribute('stroke', gColor);
+  document.getElementById('gaugeText').textContent  = overall+'%';
+  document.getElementById('gaugeSubText').textContent = 'aptidão';
+  document.getElementById('gaugeText').setAttribute('fill', gColor);
+
+  // verdict label
+  const vLabel = overall>=80 ? '✅ Pronto!' : overall>=65 ? '🟡 Bom caminho' : overall>=50 ? '🟠 Atenção' : '🔴 Risco';
+  document.getElementById('gaugeVerdict').textContent = vLabel;
+  document.getElementById('gaugeVerdict').style.color = gColor;
+
+  // criteria bars
+  const criteria = [
+    {label:'Consistência',  score:consistScore, note:`${doneCount}/${total} treinos feitos`},
+    {label:'Volume máximo', score:volumeScore,  note:`${longestDone} km de 33 km objetivo`},
+    {label:'Qualidade exec.',score:paceScore,   note:gpxDays.length>0?`${gpxOk}/${gpxDays.length} GPX no alvo`:'baseado em check-ins'},
+    {label:'Continuidade',  score:gapScore,     note:maxGap===0?'Sem falhas seguidas':`Máx. ${maxGap} falhas seguidas`},
+  ];
+
+  document.getElementById('criteriaList').innerHTML = criteria.map(c=>`
+    <li class="criteria-item">
+      <span class="criteria-label">${c.label}</span>
+      <div class="criteria-bar-bg">
+        <div class="criteria-bar-fill" style="width:${c.score}%;background:${barColor(c.score)}"></div>
+      </div>
+      <span class="criteria-pct" style="color:${barColor(c.score)}">${c.score}%</span>
+      <span style="font-size:.68rem;color:var(--cinza);margin-left:.4rem">${c.note}</span>
+    </li>`).join('');
+
+  // title + verdict box
+  const titles = {
+    high: 'Você está bem preparado para o Desafio 64km!',
+    mid:  'Você está no caminho certo — mantenha o ritmo.',
+    warn: 'Atenção: aumente a consistência nos próximos treinos.',
+    low:  'Risco alto — é importante retomar o plano imediatamente.',
+  };
+  const msgs = {
+    high: `Com ${overall}% de aptidão, os dados mostram consistência e volume adequados. Continue o plano de taper e chegue descansado no dia ${fmtDate('2026-05-02')}.`,
+    mid:  `Aptidão em ${overall}%. Foque em não pular os treinos longos restantes — são os mais importantes para completar os 64km.`,
+    warn: `Aptidão em ${overall}%. Há treinos perdidos ou distâncias abaixo do plano. Priorize os treinos chave das próximas semanas.`,
+    low:  `Aptidão em ${overall}%. O volume acumulado está abaixo do necessário. Consulte o plano e adapte conforme possível — a segurança vem em primeiro lugar.`,
+  };
+  const key = overall>=80?'high':overall>=65?'mid':overall>=50?'warn':'low';
+  const bgc = overall>=80?'#eafaf1':overall>=65?'#fefde7':overall>=50?'#fef3e2':'#fde8e6';
+  document.getElementById('readinessTitle').textContent = titles[key];
+  document.getElementById('verdictBox').style.background = bgc;
+  document.getElementById('verdictBox').style.color = gColor;
+  document.getElementById('verdictBox').textContent = msgs[key];
+}
+
+// ---- helpers ----
+function paceToSecs(p){
+  if(!p) return 0;
+  const m = p.match(/(\d+):(\d+)/);
+  return m ? +m[1]*60 + +m[2] : 0;
+}
+function secsToMM(s){
+  if(!s||s===0) return '—';
+  const m = Math.floor(s/60);
+  const r = Math.round(s%60);
+  return `${m}:${r<10?'0'+r:r}`;
+}
+
+// ---- boot ----
+render();
+// refresh every 30s in case user switches tabs and marks workouts
+setInterval(render, 30000);
+</script>
+</body>
+</html>
