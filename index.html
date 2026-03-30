@@ -1666,8 +1666,7 @@ function importGPX(date){
       const result=parseGPX(ev.target.result,file.name);
       if(!result){alert('Arquivo GPX inválido ou sem dados de percurso (trackpoints).'); return;}
       const g=loadGarmin(); g[date]=result; saveGarmin(g);
-      const day=PLAN.find(d=>d.date===date);
-      if(day){const card=document.getElementById(`card-${date}`);if(card) card.outerHTML=buildCard(day,date===getToday(),loadProgress());}
+      rebuildDayCard(date);
     };
     reader.readAsText(file);
   };
@@ -1677,8 +1676,20 @@ function importGPX(date){
 function removeGarminData(date){
   if(!confirm('Remover dados do Garmin para este dia?')) return;
   const g=loadGarmin(); delete g[date]; saveGarmin(g);
-  const day=PLAN.find(d=>d.date===date);
-  if(day){const card=document.getElementById(`card-${date}`);if(card) card.outerHTML=buildCard(day,date===getToday(),loadProgress());}
+  rebuildDayCard(date);
+}
+
+function rebuildDayCard(date){
+  const card = document.getElementById('card-'+date);
+  if(!card) return;
+  const today = getToday();
+  if(activeGoal === '64k'){
+    const day = PLAN.find(d=>d.date===date);
+    if(day) card.outerHTML = buildCard(day, date===today, loadProgress());
+  } else {
+    const day = activeGeneratedPlan?.find(d=>d.date===date);
+    if(day) card.outerHTML = buildGoalCard(day, date===today, loadGoalProgress(activeGoal), activeGoal);
+  }
 }
 
 // ============================================================
