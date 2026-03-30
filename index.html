@@ -4160,9 +4160,20 @@ async function renderPhotosSection(){
       </div>`;
     return;
   }
-  // Build full album list = static training weeks + registered events
+  // Build goal albums from GOAL_META
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const goalAlbums = Object.entries(GOAL_META).map(([type, meta]) => {
+    const gd = type === '64k'
+      ? { eventDate:'2026-05-02', city:'Saint John' }
+      : loadGoalData(type);
+    const sub = gd && gd.eventDate
+      ? (d => `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`)(new Date(gd.eventDate+'T12:00:00'))
+      : 'Sem data';
+    return { id:`goal-${type}`, label:meta.label, icon:meta.icon, sub, cls:'event', color:meta.color };
+  });
+
+  // Build manual event albums
   const evts = loadEvents().sort((a,b)=>a.date.localeCompare(b.date));
-  const typeLabels = {'5k':'5km','10k':'10km','meia':'Meia Maratona','maratona':'Maratona','64k':'Desafio 64km','trail':'Trail','treino':'Treino','outro':'Evento'};
   const eventAlbums = evts.map(ev => ({
     id:  `ev-${ev.id}`,
     label: ev.title,
@@ -4170,7 +4181,7 @@ async function renderPhotosSection(){
     sub:  ev.date ? ev.date.split('-').reverse().join('/') : '',
     cls: 'event'
   }));
-  const allAlbums = [...PHOTO_ALBUMS, ...eventAlbums];
+  const allAlbums = [...PHOTO_ALBUMS, ...goalAlbums, ...eventAlbums];
 
   // If currentAlbumId no longer exists, reset to first
   if(!allAlbums.find(a => a.id === currentAlbumId)) currentAlbumId = allAlbums[0].id;
