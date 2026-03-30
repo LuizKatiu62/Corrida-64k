@@ -1130,10 +1130,109 @@ function fbApplyRemote(data){
   try{ renderEventsSection(); } catch(e){ console.warn('fbApplyRemote renderEvents error:', e); }
 }
 
+// Track photo IDs being written from remote to avoid echo
+const fbPhotoIncoming = new Set();
+
+function fbAttachListeners(syncId){
+  var base = 'd64/'+syncId;
+
+  // ---- progress / events / garmin (small JSON) ----
+  ['progress','events','garmin'].forEach(function(key){
+    fbDB.ref(base+'/'+key).on('value', function(snap){
+      if(!snap.exists() || fbRemoteWrite) return;
+      var obj = {}; obj[key] = snap.val();
+      fbApplyRemote(obj);
+      fbErrState = null;
+      fbLastSync = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      updateFBBanner(true);
+    }, function(err){
+      var msg = String(err||'');
+      fbErrState = msg.indexOf('PERMISSION_DENIED') >= 0 ? 'permission' : 'network';
+      updateFBBanner(true);
+    });
+  });
+
+  // ---- photos: child_added ----
+  fbDB.ref(base+'/photos').on('child_added', function(snap){
+    var photo = snap.val();
+    if(!photo || !photo.id) return;
+    if(fbPhotoIncoming.has(photo.id)) return;
+    // Save to IDB only if not already there
+    openPhotoDB().then(function(db){
+      var tx  = db.transaction('photos','readonly');
+      var req = tx.objectStore('photos').get(photo.id);
+      req.onsuccess = function(){
+        if(req.result) return; // already exists locally
+        fbPhotoIncoming.add(photo.id);
+        var tx2  = db.transaction('photos','readwrite');
+        tx2.objectStore('photos').put(photo).onsuccess = function(){
+          fbPhotoIncoming.delete(photo.id);
+          // Refresh UI if photos section is visible
+          if(document.getElementById('section-photos') &&
+             !document.getElementById('section-photos').classList.contains('hidden')){
+            renderPhotosSection();
+          }
+        };
+      };
+    }).catch(function(){});
+  });
+
+  // ---- photos: child_removed ----
+  fbDB.ref(base+'/photos').on('child_removed', function(snap){
+    var id = snap.key;
+    if(!id) return;
+    openPhotoDB().then(function(db){
+      var tx = db.transaction('photos','readwrite');
+      tx.objectStore('photos').delete(id).onsuccess = function(){
+        if(document.getElementById('section-photos') &&
+           !document.getElementById('section-photos').classList.contains('hidden')){
+          renderPhotosSection();
+        }
+      };
+    }).catch(function(){});
+  });
+
+  // ---- photos: child_changed (caption update) ----
+  fbDB.ref(base+'/photos').on('child_changed', function(snap){
+    var photo = snap.val();
+    if(!photo || !photo.id) return;
+    openPhotoDB().then(function(db){
+      var tx    = db.transaction('photos','readwrite');
+      var store = tx.objectStore('photos');
+      var req   = store.get(photo.id);
+      req.onsuccess = function(){
+        if(!req.result) return;
+        store.put(photo);
+      };
+    }).catch(function(){});
+  });
+}
+
+function fbDetachListeners(syncId){
+  if(!fbDB) return;
+  var base = 'd64/'+syncId;
+  ['progress','events','garmin'].forEach(function(key){
+    fbDB.ref(base+'/'+key).off();
+  });
+  fbDB.ref(base+'/photos').off();
+}
+
+function fbPushPhoto(photo){
+  if(!fbDB || fbPhotoIncoming.has(photo.id)) return;
+  fbDB.ref('d64/'+fbSyncId+'/photos/'+photo.id).set(photo)
+    .catch(function(err){ console.warn('Photo push error:', err); });
+}
+
+function fbDeletePhoto(id){
+  if(!fbDB) return;
+  fbDB.ref('d64/'+fbSyncId+'/photos/'+id).remove()
+    .catch(function(err){ console.warn('Photo delete error:', err); });
+}
+
 function initFirebaseSync(config){
   try{
     if(!firebase.apps.length) firebase.initializeApp(config);
-    else firebase.app(); // reuse existing
+    else firebase.app();
     fbDB     = firebase.database();
     fbSyncId = getFBSyncId();
 
@@ -1143,22 +1242,9 @@ function initFirebaseSync(config){
       updateFBBanner(true);
     });
 
-    // Live listener — apply incoming remote changes
-    fbDB.ref('d64/'+fbSyncId).on('value', function(snap){
-      if(!snap.exists()) return;
-      if(fbRemoteWrite) return;
-      fbApplyRemote(snap.val());
-      fbErrState = null;
-      fbLastSync = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-      updateFBBanner(true);
-    }, function(err){
-      var msg = String(err||'');
-      fbErrState = msg.indexOf('PERMISSION_DENIED') >= 0 ? 'permission' : 'network';
-      updateFBBanner(true);
-    });
+    fbAttachListeners(fbSyncId);
 
     localStorage.setItem(FB_CFG_KEY, JSON.stringify(config));
-    // Backup config + syncId to IndexedDB so iOS ITP can't wipe it
     fbBackupToIDB(JSON.stringify(config), fbSyncId);
     updateFBBanner(true);
     return true;
@@ -1323,11 +1409,8 @@ function applyFBSyncId(){
   const cfg = localStorage.getItem(FB_CFG_KEY);
   if(cfg) fbBackupToIDB(cfg, val);
   if(fbDB){
-    fbDB.ref('d64/'+fbSyncId).off(); // remove old listener
-    fbDB.ref('d64/'+fbSyncId).on('value', snap=>{
-      if(!snap.exists() || fbRemoteWrite) return;
-      fbApplyRemote(snap.val());
-    });
+    fbDetachListeners(val === fbSyncId ? val : fbSyncId);
+    fbAttachListeners(val);
   }
   document.getElementById('modal-syncid').textContent = val;
   fbMsgEl('Código atualizado! Este dispositivo agora sincroniza com o código '+val+'.','ok');
@@ -3735,7 +3818,7 @@ async function savePhoto(albumId, file){
     };
     const tx  = db.transaction('photos','readwrite');
     const req = tx.objectStore('photos').put(photo);
-    req.onsuccess = () => resolve(photo);
+    req.onsuccess = () => { fbPushPhoto(photo); resolve(photo); };
     req.onerror   = () => {
       alert('Erro ao salvar foto. Armazenamento cheio ou indisponível no dispositivo.');
       reject(req.error);
@@ -3748,7 +3831,7 @@ async function deletePhoto(id){
   return new Promise((resolve, reject) => {
     const tx  = db.transaction('photos','readwrite');
     const req = tx.objectStore('photos').delete(id);
-    req.onsuccess = () => resolve();
+    req.onsuccess = () => { fbDeletePhoto(id); resolve(); };
     req.onerror   = () => reject(req.error);
   });
 }
@@ -3763,7 +3846,7 @@ async function updatePhotoCaption(id, caption){
       const photo = req.result;
       if(!photo){ resolve(); return; }
       photo.caption = caption;
-      store.put(photo).onsuccess = () => resolve();
+      store.put(photo).onsuccess = () => { fbPushPhoto(photo); resolve(); };
     };
     req.onerror = () => reject(req.error);
   });
