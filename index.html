@@ -5870,7 +5870,24 @@ function handleStravaCallback(){
   }
 
   const cfg = loadStravaCfg();
-  if(!cfg){ alert('Configuração Strava não encontrada. Tente novamente.'); return; }
+  if(!cfg){
+    // Config lost (e.g. cache cleared) — ask user to re-enter credentials and retry
+    sessionStorage.setItem('strava_pending_code', code);
+    setTimeout(()=>{
+      const overlay = document.createElement('div');
+      overlay.className = 'strava-modal-overlay';
+      overlay.innerHTML = `<div class="strava-modal">
+        <h3><span style="color:#fc4c02">🟠</span> Reconfigurar Strava</h3>
+        <p style="font-size:.78rem;color:#888;margin-bottom:1rem;line-height:1.5">A configuração do Strava foi perdida (cache limpo?). Reinsira suas credenciais para concluir a conexão.</p>
+        <div class="strava-field"><label>Client ID</label><input type="text" id="strava-client-id" placeholder="Ex: 12345"></div>
+        <div class="strava-field"><label>Client Secret</label><input type="password" id="strava-client-secret" placeholder="Cole o client secret aqui"></div>
+        <button class="strava-btn-primary" onclick="retrySavedCode()">🟠 Concluir conexão</button>
+        <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.5rem;font-family:inherit" onclick="this.closest('.strava-modal-overlay').remove()">Fechar</button>
+      </div>`;
+      document.body.appendChild(overlay);
+    }, 400);
+    return;
+  }
 
   // Exchange code for token
   fetch('https://www.strava.com/oauth/token', {
