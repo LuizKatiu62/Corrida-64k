@@ -5065,15 +5065,37 @@ const _countdownTimer = setInterval(()=>{
 
 // Register service worker for offline support
 if('serviceWorker' in navigator){
-  // updateViaCache:'none' forces browser to always fetch sw.js fresh (never from HTTP cache)
   navigator.serviceWorker.register('./sw.js', {scope:'./', updateViaCache:'none'})
-    .then(function(reg){ reg.update(); }) // check for update immediately on load
+    .then(function(reg){ reg.update(); })
     .catch(()=>{});
-  // Auto-reload when a new version activates
   navigator.serviceWorker.addEventListener('message', function(e){
     if(e.data && e.data.type === 'SW_UPDATED') location.reload();
   });
 }
+
+// Version check — fetch version.json (no cache) on every load and force-refresh if changed
+(function checkVersion(){
+  const APP_VER_KEY = 'd64_app_ver';
+  fetch('./version.json?t='+Date.now(), {cache:'no-store'})
+    .then(r=>r.json())
+    .then(function(data){
+      const stored = localStorage.getItem(APP_VER_KEY);
+      const latest = String(data.v);
+      if(stored && stored !== latest){
+        localStorage.setItem(APP_VER_KEY, latest);
+        // Clear all caches then reload
+        if('caches' in window){
+          caches.keys().then(function(keys){
+            return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+          }).then(function(){ location.reload(true); });
+        } else {
+          location.reload(true);
+        }
+      } else {
+        localStorage.setItem(APP_VER_KEY, latest);
+      }
+    }).catch(()=>{});
+})();
 
 // ============================================================
 // SHOPPING LIST
