@@ -790,6 +790,27 @@
 <body>
 
 <header>
+  <!-- Fotos visíveis só no desktop -->
+  <div class="profile-photo-wrap">
+    <div class="profile-photo-btn" id="profileBtn" onclick="document.getElementById('profileInput').click()" title="Toque para mudar sua foto">
+      <span class="profile-placeholder" id="profilePlaceholder">🏃</span>
+      <img id="profileImg" alt="Foto">
+    </div>
+    <input type="file" id="profileInput" accept="image/*">
+    <div class="profile-photo-hint">sua foto</div>
+    <div class="profile-motto">
+      <strong>Running with gratitude,<em>finishing for His Glory.</em></strong>
+    </div>
+  </div>
+  <div class="route-photo-wrap">
+    <div class="route-photo-btn" id="routeBtn" onclick="document.getElementById('routeInput').click()" title="Toque para adicionar foto do percurso">
+      <span class="route-placeholder" id="routePlaceholder">🌿</span>
+      <img id="routeImg" alt="Little the Rez">
+    </div>
+    <input type="file" id="routeInput" accept="image/*">
+    <div class="route-photo-hint">Little the Rez</div>
+  </div>
+  <!-- Frase visível só no mobile -->
   <div class="header-motto">Running with gratitude, <em>finishing for His Glory.</em></div>
   <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:var(--verde);color:#fff;display:inline-block;padding:.25rem .9rem;border-radius:999px;margin-bottom:.6rem;position:relative">Saint John · NB · Canada</div>
   <h1>Desafio <span>64 km</span></h1>
