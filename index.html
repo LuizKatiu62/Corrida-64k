@@ -4192,18 +4192,24 @@ async function renderPhotosSection(){
 
   // Separator label helper
   let lastGroup = null;
+  const sepStyle = `flex-shrink:0;display:flex;align-items:center;padding:0 .4rem;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#bbb;writing-mode:vertical-lr;transform:rotate(180deg)`;
   albumsEl.innerHTML = allAlbums.map(a => {
+    const isGoalGroup = a.id.startsWith('goal-');
     const isEventGroup = a.id.startsWith('ev-');
     let sep = '';
-    if(isEventGroup && lastGroup !== 'events'){
+    if(isGoalGroup && lastGroup !== 'goals'){
+      lastGroup = 'goals';
+      sep = `<div style="${sepStyle}">Objetivos</div>`;
+    } else if(isEventGroup && lastGroup !== 'events'){
       lastGroup = 'events';
-      sep = `<div style="flex-shrink:0;display:flex;align-items:center;padding:0 .4rem;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#bbb;writing-mode:vertical-lr;transform:rotate(180deg)">Eventos</div>`;
-    } else if(!isEventGroup && lastGroup !== 'training'){
+      sep = `<div style="${sepStyle}">Eventos</div>`;
+    } else if(!isGoalGroup && !isEventGroup && lastGroup !== 'training'){
       lastGroup = 'training';
-      sep = `<div style="flex-shrink:0;display:flex;align-items:center;padding:0 .4rem;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#bbb;writing-mode:vertical-lr;transform:rotate(180deg)">Treinos</div>`;
+      sep = `<div style="${sepStyle}">Treinos</div>`;
     }
     const cnt = counts[a.id] || 0;
-    return sep + `<div class="album-card${a.cls?' '+a.cls:''}${a.id===currentAlbumId?' active':''}" onclick="selectAlbum('${a.id}')">
+    const borderColor = a.color ? `border-color:${a.color}` : '';
+    return sep + `<div class="album-card${a.cls?' '+a.cls:''}${a.id===currentAlbumId?' active':''}" onclick="selectAlbum('${a.id}')" style="${a.id===currentAlbumId&&a.color?borderColor:''}">
       <div class="album-icon">${a.icon}</div>
       <div class="album-label">${a.label}</div>
       <div class="album-sub">${a.sub}</div>
