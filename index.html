@@ -5848,8 +5848,10 @@ function startStravaOAuth(pendingDate){
   const clientSecret = (document.getElementById('strava-client-secret').value||'').trim();
   if(!clientId || !clientSecret){ alert('Preencha o Client ID e o Client Secret.'); return; }
   saveStravaCfg({ clientId, clientSecret });
-  if(pendingDate) sessionStorage.setItem('strava_pending_date', pendingDate);
-  const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(STRAVA_REDIRECT)}&response_type=code&approval_prompt=auto&scope=${STRAVA_SCOPE}`;
+  // Encode credentials + pendingDate in state so they survive the redirect
+  // (needed because PWA and Safari have separate localStorage on iOS)
+  const state = btoa(JSON.stringify({ clientId, clientSecret, pendingDate: pendingDate||'' }));
+  const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(STRAVA_REDIRECT)}&response_type=code&approval_prompt=auto&scope=${STRAVA_SCOPE}&state=${encodeURIComponent(state)}`;
   window.location.href = url;
 }
 
