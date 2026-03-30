@@ -69,6 +69,12 @@ self.addEventListener('fetch', e => {
     return;
   }
 
+  // version.json — always network, never cache (used for auto-update detection)
+  if(url.includes('version.json')){
+    e.respondWith(fetch(e.request, {cache:'no-store'}).catch(() => new Response('{"v":0}', {status:200})));
+    return;
+  }
+
   // For Firebase realtime database calls — network only (don't cache dynamic data)
   if(url.includes('firebaseio.com') || url.includes('firebase.googleapis.com')){
     e.respondWith(fetch(e.request).catch(() => new Response('', {status:503})));
