@@ -749,8 +749,8 @@
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -1017,6 +1017,13 @@ const FB_SYNCID_KEY = 'desafio64_syncid';
 let fbDB          = null;
 let fbSyncId      = null;
 let fbRemoteWrite = false; // prevent echo loop
+let fbRemoteWriteAt = 0;  // timestamp when set true — watchdog resets if stuck >3s
+setInterval(function(){
+  if(fbRemoteWrite && Date.now() - fbRemoteWriteAt > 3000){
+    fbRemoteWrite = false;
+    console.warn('fbRemoteWrite watchdog: reset after timeout');
+  }
+}, 1000);
 let fbConnected   = false;
 let fbLastSync    = null;
 let fbErrState    = null;  // null | 'permission' | 'network'
@@ -1108,13 +1115,19 @@ function fbPush(key, value){
 }
 
 function fbApplyRemote(data){
-  fbRemoteWrite = true;
-  if(data.progress != null) localStorage.setItem(STORAGE_KEY, data.progress);
-  if(data.events   != null) localStorage.setItem(EVENTS_KEY,  data.events);
-  if(data.garmin   != null) localStorage.setItem(GARMIN_KEY,  data.garmin);
-  fbRemoteWrite = false;
-  renderAll();
-  renderEventsSection();
+  fbRemoteWrite = true; fbRemoteWriteAt = Date.now();
+  try{
+    if(data.progress != null) localStorage.setItem(STORAGE_KEY, data.progress);
+    if(data.events   != null) localStorage.setItem(EVENTS_KEY,  data.events);
+    if(data.garmin   != null) localStorage.setItem(GARMIN_KEY,  data.garmin);
+  } catch(e){
+    console.warn('fbApplyRemote write error:', e);
+  } finally {
+    fbRemoteWrite = false;
+  }
+  // Render after flag is reset so any fbPush triggered during render is allowed
+  try{ renderAll(); } catch(e){ console.warn('fbApplyRemote renderAll error:', e); }
+  try{ renderEventsSection(); } catch(e){ console.warn('fbApplyRemote renderEvents error:', e); }
 }
 
 function initFirebaseSync(config){
@@ -1145,6 +1158,8 @@ function initFirebaseSync(config){
     });
 
     localStorage.setItem(FB_CFG_KEY, JSON.stringify(config));
+    // Backup config + syncId to IndexedDB so iOS ITP can't wipe it
+    fbBackupToIDB(JSON.stringify(config), fbSyncId);
     updateFBBanner(true);
     return true;
   }catch(e){
@@ -1246,6 +1261,9 @@ function openFBModal(){
       + '</div>'
       + '<div id="fb-msg"></div>'
       + '<div class="fb-actions" style="margin-top:.75rem">'
+      + '<button class="fb-btn-primary" style="flex:1;background:#2980b9" onclick="fbForcePush()">📤 Enviar dados agora</button>'
+      + '</div>'
+      + '<div class="fb-actions" style="margin-top:.4rem">'
       + '<button class="fb-btn-cancel" style="flex:1" onclick="document.getElementById(\'fb-modal-overlay\').remove()">Fechar</button>'
       + '<button class="fb-btn-cancel" style="background:#fadbd8;color:var(--vermelho)" onclick="deactivateFBSync()">Desativar Sync</button>'
       + '</div>';
@@ -1301,6 +1319,9 @@ function applyFBSyncId(){
   // Save new syncId and reconnect listener
   localStorage.setItem(FB_SYNCID_KEY, val);
   fbSyncId = val;
+  // Backup to IDB so iOS ITP can't wipe it
+  const cfg = localStorage.getItem(FB_CFG_KEY);
+  if(cfg) fbBackupToIDB(cfg, val);
   if(fbDB){
     fbDB.ref('d64/'+fbSyncId).off(); // remove old listener
     fbDB.ref('d64/'+fbSyncId).on('value', snap=>{
@@ -1321,6 +1342,14 @@ function copyFBSyncId(){
   });
 }
 
+function fbForcePush(){
+  if(!fbDB){ fbMsgEl('Firebase não conectado.','err'); return; }
+  fbPush('progress', localStorage.getItem(STORAGE_KEY)||'{}');
+  fbPush('events',   localStorage.getItem(EVENTS_KEY)||'[]');
+  fbPush('garmin',   localStorage.getItem(GARMIN_KEY)||'{}');
+  fbMsgEl('✅ Dados enviados ao Firebase.','ok');
+}
+
 function deactivateFBSync(){
   if(!confirm('Desativar sync? Os dados locais não serão apagados.')) return;
   localStorage.removeItem(FB_CFG_KEY);
@@ -1330,11 +1359,64 @@ function deactivateFBSync(){
   document.getElementById('fb-modal-overlay')?.remove();
 }
 
-// Auto-init if config was saved previously
+// ---- Backup Firebase config + syncId to IndexedDB (survives iOS localStorage wipe) ----
+function fbBackupToIDB(cfg, syncId){
+  try{
+    const req = indexedDB.open('desafio64-meta', 1);
+    req.onupgradeneeded = function(e){
+      e.target.result.createObjectStore('kv', {keyPath:'k'});
+    };
+    req.onsuccess = function(e){
+      const tx = e.target.result.transaction('kv','readwrite');
+      const st = tx.objectStore('kv');
+      st.put({k:'fbcfg',   v: cfg});
+      st.put({k:'syncid',  v: syncId});
+    };
+  }catch(e){}
+}
+
+function fbRestoreFromIDB(cb){
+  try{
+    const req = indexedDB.open('desafio64-meta', 1);
+    req.onupgradeneeded = function(e){
+      e.target.result.createObjectStore('kv', {keyPath:'k'});
+    };
+    req.onsuccess = function(e){
+      const tx  = e.target.result.transaction('kv','readonly');
+      const st  = tx.objectStore('kv');
+      var cfg = null, sid = null, done = 0;
+      function check(){ if(++done===2) cb(cfg, sid); }
+      st.get('fbcfg').onsuccess  = function(ev){ cfg = ev.target.result?.v || null; check(); };
+      st.get('syncid').onsuccess = function(ev){ sid = ev.target.result?.v || null; check(); };
+    };
+    req.onerror = function(){ cb(null, null); };
+  }catch(e){ cb(null, null); }
+}
+
+// Auto-init: try localStorage first, fall back to IndexedDB backup
 (function tryAutoInit(){
-  const cfg = localStorage.getItem(FB_CFG_KEY);
-  if(!cfg) return;
-  try{ initFirebaseSync(JSON.parse(cfg)); }catch(e){}
+  var lsCfg    = localStorage.getItem(FB_CFG_KEY);
+  var lsSyncId = localStorage.getItem(FB_SYNCID_KEY);
+
+  if(lsCfg){
+    // Restore syncId from IDB if localStorage syncId is missing (iOS wipe partial)
+    if(!lsSyncId){
+      fbRestoreFromIDB(function(cfg, sid){
+        if(sid){ localStorage.setItem(FB_SYNCID_KEY, sid); }
+      });
+    }
+    try{ initFirebaseSync(JSON.parse(lsCfg)); }catch(e){}
+    return;
+  }
+
+  // localStorage wiped — try restoring from IndexedDB
+  fbRestoreFromIDB(function(cfg, sid){
+    if(!cfg) return;
+    // Restore to localStorage
+    localStorage.setItem(FB_CFG_KEY, cfg);
+    if(sid) localStorage.setItem(FB_SYNCID_KEY, sid);
+    try{ initFirebaseSync(JSON.parse(cfg)); }catch(e){}
+  });
 })();
 
 // ============================================================
@@ -3573,7 +3655,11 @@ function openPhotoDB(){
       }
     };
     req.onsuccess = e => { photoDB = e.target.result; resolve(photoDB); };
-    req.onerror   = e => reject(e);
+    req.onerror   = e => {
+      console.error('IndexedDB open error:', e);
+      reject(new Error('Não foi possível abrir o banco de fotos. No Safari, verifique Ajustes → Safari → Avançado → Dados do site.'));
+    };
+    req.onblocked = () => reject(new Error('Banco de fotos bloqueado por outra aba.'));
   });
 }
 
@@ -3603,26 +3689,57 @@ async function getAllPhotoCounts(){
   });
 }
 
-async function savePhoto(albumId, file){
-  const db = await openPhotoDB();
-  return new Promise((resolve, reject) => {
+function compressImage(file, maxPx, quality){
+  return new Promise(function(resolve){
+    // Videos: no compression, return as-is
+    if(file.type.startsWith('video/')){
+      const reader = new FileReader();
+      reader.onload = function(e){ resolve(e.target.result); };
+      reader.readAsDataURL(file);
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = e => {
-      const photo = {
-        id:      Date.now() + '-' + Math.random().toString(36).slice(2,7),
-        albumId,
-        filename: file.name,
-        type:    file.type.startsWith('video/') ? 'video' : 'image',
-        caption: '',
-        data:    e.target.result,
-        addedAt: new Date().toISOString()
+    reader.onload = function(e){
+      const img = new Image();
+      img.onload = function(){
+        var w = img.width, h = img.height;
+        // Only downscale if larger than maxPx
+        if(w > maxPx || h > maxPx){
+          if(w >= h){ h = Math.round(h * maxPx / w); w = maxPx; }
+          else      { w = Math.round(w * maxPx / h); h = maxPx; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
       };
-      const tx  = db.transaction('photos','readwrite');
-      const req = tx.objectStore('photos').put(photo);
-      req.onsuccess = () => resolve(photo);
-      req.onerror   = () => reject(req.error);
+      img.onerror = function(){ resolve(e.target.result); }; // fallback: original
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  });
+}
+
+async function savePhoto(albumId, file){
+  const db   = await openPhotoDB();
+  const data = await compressImage(file, 1200, 0.80);
+  return new Promise((resolve, reject) => {
+    const photo = {
+      id:      Date.now() + '-' + Math.random().toString(36).slice(2,7),
+      albumId,
+      filename: file.name,
+      type:    file.type.startsWith('video/') ? 'video' : 'image',
+      caption: '',
+      data,
+      addedAt: new Date().toISOString()
+    };
+    const tx  = db.transaction('photos','readwrite');
+    const req = tx.objectStore('photos').put(photo);
+    req.onsuccess = () => resolve(photo);
+    req.onerror   = () => {
+      alert('Erro ao salvar foto. Armazenamento cheio ou indisponível no dispositivo.');
+      reject(req.error);
+    };
   });
 }
 
@@ -3653,6 +3770,15 @@ async function updatePhotoCaption(id, caption){
 }
 
 async function renderPhotosSection(){
+  try { await openPhotoDB(); } catch(err) {
+    document.getElementById('photos-content').innerHTML =
+      `<div style="background:#fde8e6;border-radius:12px;padding:1.2rem;color:#922b21;font-size:.85rem;line-height:1.7">
+        <strong>⚠️ Fotos indisponíveis</strong><br>${err.message}<br><br>
+        <strong>No iPhone/Safari:</strong> Ajustes → Safari → Avançado → Dados do site → verifique se o site tem espaço disponível.<br>
+        <strong>Dica:</strong> Instale o app na Tela de Início (Compartilhar → Adicionar à Tela de Início) para armazenamento persistente.
+      </div>`;
+    return;
+  }
   // Build full album list = static training weeks + registered events
   const evts = loadEvents().sort((a,b)=>a.date.localeCompare(b.date));
   const typeLabels = {'5k':'5km','10k':'10km','meia':'Meia Maratona','trail':'Trail','treino':'Treino','outro':'Evento'};
@@ -4525,7 +4651,7 @@ const _countdownTimer = setInterval(()=>{
 
 // Register service worker for offline support
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{});
 }
 
 // ============================================================
