@@ -5240,9 +5240,29 @@ const GOAL_META = {
 
 function updateGoalBar(){
   const meta = GOAL_META[activeGoal] || GOAL_META['64k'];
+  document.getElementById('goal-bar-icon').textContent = meta.icon;
   document.getElementById('goal-bar-badge').textContent = meta.badge;
   document.getElementById('goal-bar-badge').style.background = meta.color;
   document.getElementById('goal-bar-label').textContent = meta.label;
+  const subEl = document.getElementById('goal-bar-sub');
+  if(activeGoal !== '64k'){
+    const gd = loadGoalData(activeGoal);
+    if(gd && gd.eventDate){
+      const d = new Date(gd.eventDate+'T12:00:00');
+      const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      const parts = [];
+      parts.push(`📅 ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
+      if(gd.city) parts.push(`📍 ${gd.city}${gd.province?', '+gd.province:''}`);
+      if(gd.targetTime) parts.push(`🎯 Meta: ${gd.targetTime}`);
+      if(gd.registered) parts.push('✅ Inscrito');
+      else parts.push('⚠️ Inscrição pendente');
+      subEl.textContent = parts.join(' · ');
+    } else {
+      subEl.textContent = 'Toque para configurar o evento';
+    }
+  } else {
+    subEl.textContent = '02 Mai 2026 · Little the Rez · Saint John NB';
+  }
 }
 
 function openGoalSelector(){
