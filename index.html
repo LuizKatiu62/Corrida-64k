@@ -3822,7 +3822,7 @@ function compressImage(file, maxPx, quality){
 
 async function savePhoto(albumId, file){
   const db   = await openPhotoDB();
-  const data = await compressImage(file, 1200, 0.80);
+  const data = await compressImage(file, 800, 0.75);
   return new Promise((resolve, reject) => {
     const photo = {
       id:      Date.now() + '-' + Math.random().toString(36).slice(2,7),
