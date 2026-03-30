@@ -1861,7 +1861,7 @@ function buildEventGPXStatsHTML(ev, evGpx){
     const faster = diff < -30;
     const slower = diff > 30;
 
-    const distMap = {'5k':5,'10k':10,'meia':21.1,'maratona':42.2};
+    const distMap = {'5k':5,'10k':10,'meia':21.1,'maratona':42.2,'64k':64};
     const dist = distMap[ev.type] || s.dist;
     const fmtPace = secs => `${Math.floor(secs/60)}:${String(Math.floor(secs%60)).padStart(2,'0')}/km`;
     const plannedPaceSecs = dist ? targetSecs / dist : null;
