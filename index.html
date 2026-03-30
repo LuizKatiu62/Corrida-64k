@@ -828,6 +828,32 @@
 </head>
 <body>
 
+<!-- ── AUTH WALL ──────────────────────────────────────── -->
+<div id="auth-wall">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="auth-icon">🏃</span>
+      <h2>Desafio 64km — Luiz</h2>
+      <p id="auth-subtitle">Entre com suas credenciais</p>
+    </div>
+    <div id="auth-form-login">
+      <div class="auth-field"><label>Usuário</label><input type="text" id="auth-user" autocomplete="username" placeholder="Seu usuário"></div>
+      <div class="auth-field"><label>Senha</label><input type="password" id="auth-pass" autocomplete="current-password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="auth-submit" onclick="doLogin()">Entrar</button>
+      <div class="auth-msg" id="auth-msg-login"></div>
+      <div class="auth-toggle"><a onclick="showAuthCreate()">Criar conta</a></div>
+    </div>
+    <div id="auth-form-create" style="display:none">
+      <div class="auth-field"><label>Usuário</label><input type="text" id="auth-new-user" autocomplete="username" placeholder="Escolha um usuário"></div>
+      <div class="auth-field"><label>Senha</label><input type="password" id="auth-new-pass" autocomplete="new-password" placeholder="Escolha uma senha"></div>
+      <div class="auth-field"><label>Confirmar senha</label><input type="password" id="auth-new-pass2" autocomplete="new-password" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')doCreateAccount()"></div>
+      <button class="auth-submit" onclick="doCreateAccount()">Criar conta</button>
+      <div class="auth-msg" id="auth-msg-create"></div>
+      <div class="auth-toggle"><a onclick="showAuthLogin()">Já tenho conta</a></div>
+    </div>
+  </div>
+</div>
+
 <header>
   <!-- Fotos visíveis só no desktop -->
   <div class="profile-photo-wrap">
