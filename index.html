@@ -5469,7 +5469,13 @@ function saveGoalSetup(type){
   if(!city){ alert('Informe a cidade do evento.'); return; }
   saveGoalData(type, { eventDate, city, province, targetTime, registered });
   document.getElementById('goal-modal-overlay')?.remove();
-  switchToGoal(type);
+  if(GOAL_META[type]?.noPlan){
+    // Just save event details — no plan generated, active goal unchanged
+    updateGoalBar();
+    setTimeout(openGoalSelector, 150);
+  } else {
+    switchToGoal(type);
+  }
 }
 
 function loadGoalData(type){ try{ return JSON.parse(localStorage.getItem('d64_goal_'+type))||null; }catch(e){ return null; } }
