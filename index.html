@@ -5356,6 +5356,7 @@ function openGoalSetupForm(type){
     </div>
     <button class="goal-setup-btn" onclick="saveGoalSetup('${type}')">✓ Salvar e Gerar Plano</button>
     <button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.4rem;font-family:inherit" onclick="openGoalSelector()">← Voltar</button>
+    ${loadGoalData(type) ? `<button style="width:100%;padding:.5rem;background:none;border:1.5px solid #fadbd8;border-radius:8px;color:#e74c3c;cursor:pointer;font-size:.8rem;margin-top:.5rem;font-family:inherit;font-weight:600" onclick="deleteGoalData('${type}')">🗑️ Apagar este objetivo</button>` : ''}
   </div>`;
   document.body.appendChild(overlay);
 }
