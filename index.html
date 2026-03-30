@@ -3631,6 +3631,9 @@ function buildCard(day, isToday, p){
     <button class="check-btn${gData?' garmin-ok':''}" onclick="event.stopPropagation();importGPX('${day.date}')" title="Importar arquivo .gpx exportado do Garmin Connect">
       <span class="check-icon">${gData?'📡':'📥'}</span>${gData?'GPX importado':'GPX Garmin'}
     </button>
+    <button class="check-btn strava-btn${gData&&gData.stravaId?' strava-ok':''}" onclick="event.stopPropagation();openStravaForDate('${day.date}')" title="Buscar atividade do Strava">
+      <span class="check-icon">🟠</span>${gData&&gData.stravaId?'Strava ✓':'Strava'}
+    </button>
   </div>
   ${garminPanel}
 </div>`;
