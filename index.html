@@ -2322,6 +2322,95 @@ function saveResultModal(id){
   renderEventsSection();
 }
 
+function openAllEventsModal(){
+  if(document.getElementById('all-events-overlay')) return;
+  const today = getToday();
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const typeLabels = {'5k':'Corrida 5km','10k':'Corrida 10km','meia':'Meia Maratona','maratona':'Maratona','64k':'Desafio 64km — Luiz 🎂','ultra':'Ultra Maratona','trail':'Trail / Trilha','treino':'Treino','outro':'Evento'};
+
+  // Collect events from goals
+  const goalEvents = [];
+  Object.entries(GOAL_META).forEach(([type, meta]) => {
+    const gd = type === '64k'
+      ? { eventDate:'2026-05-02', city:'Saint John', province:'NB', targetTime:'', registered:true }
+      : loadGoalData(type);
+    if(!gd || !gd.eventDate) return;
+    goalEvents.push({
+      date: gd.eventDate,
+      title: meta.label,
+      icon: meta.icon,
+      color: meta.color,
+      city: gd.city||'',
+      province: gd.province||'',
+      targetTime: gd.targetTime||'',
+      registered: gd.registered||false,
+      source: 'goal'
+    });
+  });
+
+  // Collect manual events
+  const manualEvents = loadEvents().map(ev => ({
+    date: ev.date,
+    title: ev.title || typeLabels[ev.type] || 'Evento',
+    icon: ev.type==='64k'?'🏆':ev.type==='maratona'?'🥇':ev.type==='meia'?'🥈':ev.type==='10k'?'🏅':ev.type==='5k'?'⭐':'🎯',
+    color: '#f39c12',
+    city: ev.location||'',
+    province: '',
+    targetTime: ev.targetTime||'',
+    registered: false,
+    source: 'manual'
+  }));
+
+  // Merge, deduplicate by date+title, sort
+  const all = [...goalEvents, ...manualEvents]
+    .sort((a,b) => a.date.localeCompare(b.date));
+
+  const diffDays = date => {
+    const d = new Date(date+'T12:00:00');
+    const t = new Date(today+'T12:00:00');
+    return Math.round((d - t) / 86400000);
+  };
+
+  const cards = all.length === 0
+    ? '<p style="text-align:center;color:#aaa;padding:2rem 0">Nenhum evento configurado.<br>Configure seus objetivos para ver os eventos aqui.</p>'
+    : all.map(ev => {
+        const diff = diffDays(ev.date);
+        const d = new Date(ev.date+'T12:00:00');
+        const dateStr = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        const isPast = diff < 0;
+        let countdown, countdownClass;
+        if(isPast){ countdown = `Há ${Math.abs(diff)}d`; countdownClass = 'past'; }
+        else if(diff === 0){ countdown = 'Hoje!'; countdownClass = 'soon'; }
+        else if(diff <= 30){ countdown = `${diff}d`; countdownClass = 'soon'; }
+        else{ countdown = `${diff}d`; countdownClass = 'upcoming'; }
+        const meta = [];
+        meta.push(`📅 ${dateStr}`);
+        if(ev.city) meta.push(`📍 ${ev.city}${ev.province?', '+ev.province:''}`);
+        if(ev.targetTime) meta.push(`🎯 Meta: ${ev.targetTime}`);
+        if(ev.registered) meta.push('<span style="color:#27ae60;font-weight:700">✅ Inscrito</span>');
+        return `<div class="aev-card${isPast?' past':''}" style="border-left-color:${ev.color}">
+          <div class="aev-icon">${ev.icon}</div>
+          <div class="aev-body">
+            <div class="aev-label" style="color:${ev.color}">${ev.source==='goal'?'Objetivo':'Evento'}</div>
+            <div class="aev-title">${ev.title}</div>
+            <div class="aev-meta">${meta.join(' &nbsp;·&nbsp; ')}</div>
+          </div>
+          <div class="aev-countdown ${countdownClass}">${countdown}</div>
+        </div>`;
+      }).join('');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'all-events-overlay';
+  overlay.id = 'all-events-overlay';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `<div class="all-events-modal">
+    <h3>📅 Todos os Eventos do Ano</h3>
+    <div class="all-events-list">${cards}</div>
+    <button style="margin-top:1rem;width:100%;padding:.65rem;background:#f4f6f8;border:none;border-radius:10px;font-size:.88rem;font-weight:700;color:#555;cursor:pointer;font-family:inherit" onclick="document.getElementById('all-events-overlay').remove()">Fechar</button>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
 function renderEventsSection(){
   const container = document.getElementById('events-list');
   if(!container) return;
