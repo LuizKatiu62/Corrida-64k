@@ -1454,6 +1454,21 @@ function fbForcePush(){
   }).catch(function(){ fbMsgEl('✅ Dados enviados (sem acesso ao banco de fotos).','ok'); });
 }
 
+function forceAppUpdate(){
+  if(!confirm('Limpar cache e atualizar o app? A página vai recarregar.')) return;
+  if('serviceWorker' in navigator){
+    caches.keys().then(function(keys){
+      return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+    }).then(function(){
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        return Promise.all(regs.map(function(r){ return r.unregister(); }));
+      }).then(function(){ location.reload(true); });
+    });
+  } else {
+    location.reload(true);
+  }
+}
+
 function deactivateFBSync(){
   if(!confirm('Desativar sync? Os dados locais não serão apagados.')) return;
   localStorage.removeItem(FB_CFG_KEY);
