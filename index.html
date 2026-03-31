@@ -1239,7 +1239,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v85</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v86</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -1257,6 +1257,153 @@ function authInit(){
   }
 }
 authInit();
+
+// ============================================================
+// PROVAS 2026
+// ============================================================
+const RACES_2026 = {
+  us: [
+    { name:'Boston Marathon',         city:'Boston, MA',      date:'2026-04-20', dists:['Maratona 42k'],                flag:'🇺🇸', url:'https://www.baa.org' },
+    { name:'United Airlines NYC Half',city:'Nova York, NY',   date:'2026-03-15', dists:['Meia 21k'],                    flag:'🇺🇸', url:'https://www.nyrr.org', past:true },
+    { name:'NYC Marathon',            city:'Nova York, NY',   date:'2026-11-01', dists:['Maratona 42k'],                flag:'🇺🇸', url:'https://www.nyrr.org' },
+  ],
+  ca: [
+    // ── New Brunswick ──────────────────────────────────────────
+    { name:'Fredericton Marathon',          city:'Fredericton, NB',   date:'2026-05-03', dists:['5k','10k','Meia','Maratona'], prov:'NB' },
+    { name:'Moncton Marathon',              city:'Moncton, NB',        date:'2026-05-17', dists:['5k','10k','Meia','Maratona'], prov:'NB' },
+    { name:'Emera Marathon by the Sea',     city:'Saint John, NB',    date:'2026-08-09', dists:['10k','Meia','Maratona'],      prov:'NB' },
+    { name:'King\'s County Road Race',      city:'Sussex, NB',         date:'2026-06-07', dists:['5k','10k'],                  prov:'NB' },
+    // ── Nova Scotia ────────────────────────────────────────────
+    { name:'Bluenose International Marathon',city:'Halifax, NS',       date:'2026-05-17', dists:['5k','10k','Meia','Maratona'], prov:'NS' },
+    { name:'Valley Harvest Marathon',       city:'Wolfville, NS',      date:'2026-10-04', dists:['5k','10k','Meia','Maratona'], prov:'NS' },
+    { name:'South Shore Race Weekend',      city:'Bridgewater, NS',    date:'2026-06-14', dists:['5k','10k','Meia'],            prov:'NS' },
+    { name:'Fall Classic Half Marathon',    city:'Halifax, NS',        date:'2026-11-01', dists:['Meia','10k'],                 prov:'NS' },
+    { name:'Antigonish Highland Half',      city:'Antigonish, NS',     date:'2026-09-13', dists:['Meia','10k','5k'],            prov:'NS' },
+    // ── Prince Edward Island ───────────────────────────────────
+    { name:'PEI Marathon',                  city:'Charlottetown, PE',  date:'2026-10-11', dists:['5k','10k','Meia','Maratona'], prov:'PE' },
+    { name:'Island Race Series — Spring',   city:'Charlottetown, PE',  date:'2026-05-24', dists:['5k','10k'],                  prov:'PE' },
+    // ── Newfoundland & Labrador ────────────────────────────────
+    { name:'Tely 10',                       city:'St. John\'s, NL',    date:'2026-07-26', dists:['10k'],                       prov:'NL' },
+    { name:'NL Marathon',                   city:'St. John\'s, NL',    date:'2026-05-31', dists:['5k','10k','Meia','Maratona'], prov:'NL' },
+    { name:'Corner Brook Marathon',         city:'Corner Brook, NL',   date:'2026-09-06', dists:['Meia','Maratona'],            prov:'NL' },
+    // ── Québec ─────────────────────────────────────────────────
+    { name:'Demi-marathon de Montréal',     city:'Montréal, QC',       date:'2026-04-26', dists:['5k','10k','Meia'],            prov:'QC' },
+    { name:'Montréal Marathon (Oasis Rock)',city:'Montréal, QC',       date:'2026-09-27', dists:['10k','Meia','Maratona'],      prov:'QC' },
+    { name:'Québec City Marathon',          city:'Québec, QC',         date:'2026-08-23', dists:['10k','Meia','Maratona'],      prov:'QC' },
+    { name:'Ultra-Trail Mont-Tremblant',    city:'Mont-Tremblant, QC', date:'2026-08-14', dists:['Ultra 55k','Ultra 100k','Ultra 160k'], prov:'QC' },
+    { name:'Marathon du Fjord',             city:'Saguenay, QC',       date:'2026-06-21', dists:['Meia','Maratona'],            prov:'QC' },
+    { name:'Défi Sportif Trois-Rivières',   city:'Trois-Rivières, QC', date:'2026-09-06', dists:['10k','Meia'],                 prov:'QC' },
+    { name:'Marathon International du Bic', city:'Rimouski, QC',       date:'2026-06-07', dists:['Meia','Maratona'],            prov:'QC' },
+    { name:'Gatineau Ultra',                city:'Gatineau, QC',       date:'2026-05-10', dists:['Ultra 50k','Ultra 100k'],     prov:'QC' },
+    // ── Ontario ────────────────────────────────────────────────
+    { name:'Around the Bay 30k',            city:'Hamilton, ON',       date:'2026-03-29', dists:['30k'],                       prov:'ON', past:true },
+    { name:'Sporting Life 10k',             city:'Toronto, ON',        date:'2026-05-10', dists:['10k'],                       prov:'ON' },
+    { name:'Mississauga Marathon',          city:'Mississauga, ON',    date:'2026-05-03', dists:['5k','10k','Meia','Maratona'], prov:'ON' },
+    { name:'Tamarack Ottawa Race Weekend',  city:'Ottawa, ON',         date:'2026-05-23', dists:['5k','10k','Meia','Maratona'], prov:'ON' },
+    { name:'Kingston Half Marathon',        city:'Kingston, ON',       date:'2026-06-14', dists:['5k','10k','Meia'],            prov:'ON' },
+    { name:'Toronto Waterfront Marathon',   city:'Toronto, ON',        date:'2026-10-18', dists:['5k','10k','Meia','Maratona'], prov:'ON' },
+    { name:'Niagara Falls Marathon',        city:'Niagara Falls, ON',  date:'2026-10-25', dists:['5k','10k','Meia','Maratona'], prov:'ON' },
+    { name:'Road2Hope Marathon',            city:'Hamilton, ON',       date:'2026-11-08', dists:['5k','10k','Meia','Maratona'], prov:'ON' },
+    { name:'Burlington Waterfront Half',    city:'Burlington, ON',     date:'2026-09-13', dists:['5k','10k','Meia'],            prov:'ON' },
+    { name:'Oakville Half Marathon',        city:'Oakville, ON',       date:'2026-09-20', dists:['5k','10k','Meia'],            prov:'ON' },
+    { name:'Barrie Half Marathon',          city:'Barrie, ON',         date:'2026-08-16', dists:['5k','10k','Meia'],            prov:'ON' },
+    { name:'Sudbury International Marathon',city:'Sudbury, ON',        date:'2026-05-31', dists:['10k','Meia','Maratona'],      prov:'ON' },
+  ]
+};
+
+function openRaces2026Modal(){
+  document.getElementById('races2026-modal')?.remove();
+  const today = getToday();
+
+  function distBadge(d){
+    var c = d.includes('Ultra')?'#8e44ad':d.includes('Maratona')?'#e74c3c':d.includes('Meia')?'#2980b9':d.includes('30k')?'#e67e22':'#27ae60';
+    return `<span style="background:${c};color:#fff;font-size:.6rem;font-weight:800;padding:.1rem .45rem;border-radius:999px;white-space:nowrap">${d}</span>`;
+  }
+
+  function raceCard(r){
+    const isPast = r.past || r.date < today;
+    const dt = new Date(r.date+'T12:00:00');
+    const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const dateStr = dt.getDate()+' '+months[dt.getMonth()]+' '+dt.getFullYear();
+    const diffDays = Math.ceil((dt - new Date()) / 86400000);
+    const countdown = isPast
+      ? '<span style="color:#aaa;font-size:.68rem">Realizada</span>'
+      : diffDays <= 30
+        ? `<span style="color:#e74c3c;font-weight:800;font-size:.7rem">⚡ ${diffDays} dias</span>`
+        : `<span style="color:#2980b9;font-size:.7rem">📅 ${diffDays} dias</span>`;
+    return `<div style="display:flex;align-items:flex-start;gap:.7rem;padding:.75rem 0;border-bottom:1px solid #f0f0f0;opacity:${isPast?'.45':'1'}">
+      <div style="min-width:42px;text-align:center;background:#f4f6f8;border-radius:8px;padding:.3rem .2rem">
+        <div style="font-size:.6rem;font-weight:800;text-transform:uppercase;color:#888">${months[dt.getMonth()]}</div>
+        <div style="font-size:1.1rem;font-weight:900;color:#2c3e50;line-height:1">${dt.getDate()}</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:800;font-size:.88rem;color:#2c3e50">${r.name}</div>
+        <div style="font-size:.72rem;color:#888;margin:.15rem 0">${r.flag||'🍁'} ${r.city}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.3rem">${r.dists.map(distBadge).join('')}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">${countdown}</div>
+    </div>`;
+  }
+
+  function section(title, color, races){
+    const sorted = [...races].sort((a,b)=>a.date.localeCompare(b.date));
+    return `<div style="margin-bottom:1.25rem">
+      <div style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:${color};border-left:4px solid ${color};padding-left:.6rem;margin-bottom:.5rem">${title}</div>
+      ${sorted.map(raceCard).join('')}
+    </div>`;
+  }
+
+  const provNames = {NB:'New Brunswick',NS:'Nova Scotia',PE:'Prince Edward Island',NL:'Newfoundland & Labrador',QC:'Québec',ON:'Ontario'};
+  const provColors = {NB:'#27ae60',NS:'#2980b9',PE:'#e67e22',NL:'#c0392b',QC:'#8e44ad',ON:'#1a5276'};
+  let caHtml = '';
+  ['NB','NS','PE','NL','QC','ON'].forEach(prov=>{
+    const races = RACES_2026.ca.filter(r=>r.prov===prov);
+    if(races.length) caHtml += section('🍁 '+provNames[prov], provColors[prov], races);
+  });
+
+  const overlay = document.createElement('div');
+  overlay.id = 'races2026-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `<div style="background:#fff;border-radius:18px;width:100%;max-width:560px;margin:auto;padding:1.25rem 1.25rem 2rem;box-shadow:0 8px 40px rgba(0,0,0,.25)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+      <div style="font-size:1.05rem;font-weight:900;color:#1a5276">🏅 Provas 2026</div>
+      <button onclick="document.getElementById('races2026-modal').remove()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;line-height:1">✕</button>
+    </div>
+
+    <!-- USA — destaque -->
+    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;padding:1rem 1.1rem;margin-bottom:1.25rem">
+      <div style="font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#f39c12;margin-bottom:.6rem">🇺🇸 Estados Unidos — Boston & Nova York</div>
+      ${[...RACES_2026.us].sort((a,b)=>a.date.localeCompare(b.date)).map(r=>{
+        const isPast = r.past || r.date < today;
+        const dt = new Date(r.date+'T12:00:00');
+        const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const diffDays = Math.ceil((dt - new Date()) / 86400000);
+        const countdown = isPast
+          ? '<span style="color:#888;font-size:.68rem">Realizada</span>'
+          : diffDays <= 30
+            ? `<span style="color:#f39c12;font-weight:800;font-size:.7rem">⚡ ${diffDays} dias</span>`
+            : `<span style="color:#74b9ff;font-size:.7rem">📅 ${diffDays} dias</span>`;
+        return `<div style="display:flex;align-items:flex-start;gap:.7rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.08);opacity:${isPast?'.4':'1'}">
+          <div style="min-width:42px;text-align:center;background:rgba(255,255,255,.1);border-radius:8px;padding:.3rem .2rem">
+            <div style="font-size:.6rem;font-weight:800;text-transform:uppercase;color:#f39c12">${months[dt.getMonth()]}</div>
+            <div style="font-size:1.1rem;font-weight:900;color:#fff;line-height:1">${dt.getDate()}</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:.88rem;color:#fff">${r.name}</div>
+            <div style="font-size:.72rem;color:#aaa;margin:.15rem 0">${r.flag} ${r.city}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.3rem">${r.dists.map(distBadge).join('')}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">${countdown}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Canadá -->
+    ${caHtml}
+  </div>`;
+  document.body.appendChild(overlay);
+}
 
 // ============================================================
 // FIREBASE REALTIME SYNC
@@ -2634,7 +2781,7 @@ const PLAN = [
   // ---- SEMANA 2 — CONSTRUÇÃO ----
   {date:'2026-04-06',week:2,phase:'Construção',type:'easy',
    run:{title:'10km Tranquilo',km:10,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v85elocidade 8,5–9,2 km/h']},
+    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v86elocidade 8,5–9,2 km/h']},
    gym:{title:'Treino A — Pernas + Core (↑ 5–10% carga)',
     ex:['Agachamento livre · 3×12 (↑ carga)','Levantamento terra romeno · 3×10 (↑ carga)','Avanço alternado · 3×10 cada','Elevação de panturrilha · 3×20','Prancha frontal · 3×50s (↑ tempo)','Dead bug · 3×10','Ponte de glúteos 1 perna · 3×10 cada']},
    nutri:['🥚 Café: Ovos + abacate + pão integral','🍗 Almoço: Arroz + frango + feijão + salada','🍌 Lanche: Banana + pasta amendoim','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água']},
@@ -2654,7 +2801,7 @@ const PLAN = [
 
   {date:'2026-04-09',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Tranquilo',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v85elocidade confortável']},
+    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v86elocidade confortável']},
    gym:{title:'Descanso',ex:['Sem academia hoje — pernas em foco']},
    nutri:['🥞 Café: Aveia + frutas + mel','🍗 Almoço: Refeição completa normal','🫙 Lanche: Iogurte + granola','🐟 Jantar: Arroz + peixe + salada','💧 2,5–3L água']},
 
@@ -2672,14 +2819,14 @@ const PLAN = [
 
   {date:'2026-04-12',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v85elocidade bem leve']},
+    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v86elocidade bem leve']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Foco em proteína para recuperação muscular','🥗 Alimentos coloridos e nutritivos','🫙 Iogurte grego + frutas vermelhas','💧 Hidratação reforçada — 3L']},
 
   // ---- SEMANA 3 — PICO ----
   {date:'2026-04-13',week:3,phase:'Pico',type:'easy',
    run:{title:'12km Tranquilo',km:12,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v85elocidade 8,5–9 km/h']},
+    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v86elocidade 8,5–9 km/h']},
    gym:{title:'Treino A — Pernas + Core (pico)',
     ex:['Agachamento livre · 3×12 (carga máxima do plano)','Leg press · 3×15 (novo!)','Levantamento terra romeno · 3×10','Avanço caminhado · 3×12 cada','Step-up com halteres · 3×10 cada','Elevação de panturrilha · 4×20','Prancha + toque ombro · 3×10 cada','Dead bug · 3×10']},
    nutri:['🥣 Café reforçado: Aveia 80g + whey + banana + frutas','🍗 Almoço: Arroz + feijão + frango + salada grande','🥜 Lanche: Sanduíche pão integral + atum + tomate','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água + suplementos (magnésio, ômega-3, vit D)']},
@@ -2705,7 +2852,7 @@ const PLAN = [
 
   {date:'2026-04-17',week:3,phase:'Pico',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v85elocidade 8–9 km/h']},
+    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v86elocidade 8–9 km/h']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Máximo foco em proteína · recuperação muscular','🥗 Alimentos anti-inflamatórios: salmão, frutas vermelhas, cúrcuma','🫙 Iogurte grego + granola + frutas','💧 3,5L água']},
 
