@@ -128,6 +128,30 @@
     /* DAY GRID */
     .day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem}
 
+    /* TODAY LAYOUT com gráfico */
+    .today-layout{display:grid;grid-template-columns:1fr 280px;gap:1rem;align-items:start}
+    @media(max-width:699px){.today-layout{grid-template-columns:1fr}}
+    .today-chart-box{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:1.25rem 1.1rem;position:sticky;top:60px}
+    .today-chart-title{font-size:.78rem;font-weight:900;color:#2c3e50;margin-bottom:1.1rem;text-align:center;letter-spacing:.03em;text-transform:uppercase}
+    .tchart-row{margin-bottom:1rem}
+    .tchart-label{font-size:.68rem;font-weight:700;color:#555;margin-bottom:.35rem;display:flex;justify-content:space-between}
+    .tchart-label span{font-weight:900;color:#2c3e50}
+    .tchart-track{background:#f0f2f5;border-radius:999px;height:22px;overflow:hidden;position:relative}
+    .tchart-bar{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:.5rem;font-size:.6rem;font-weight:900;color:#fff;white-space:nowrap;min-width:0}
+    .tchart-bar-plan{background:linear-gradient(90deg,#aed6f1,#2980b9)}
+    .tchart-bar-real{background:linear-gradient(90deg,#a9dfbf,#1e8449)}
+    .tchart-bar-over{background:linear-gradient(90deg,#f9e79f,#f39c12)}
+    .tchart-legend{display:flex;gap:.6rem;justify-content:center;margin-top:.6rem;flex-wrap:wrap}
+    .tchart-legend-item{display:flex;align-items:center;gap:.3rem;font-size:.62rem;color:#777;font-weight:600}
+    .tchart-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+    .tchart-divider{border:none;border-top:1px solid #f0f2f5;margin:1rem 0}
+    .tchart-gym-row{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;border-radius:10px;background:#f8f9fa}
+    .tchart-gym-icon{font-size:1.4rem;line-height:1}
+    .tchart-gym-info{flex:1}
+    .tchart-gym-name{font-size:.72rem;font-weight:800;color:#2c3e50}
+    .tchart-gym-status{font-size:.65rem;margin-top:.15rem;font-weight:700}
+    .tchart-pct-circle{width:52px;height:52px;flex-shrink:0}
+
     /* DAY CARD */
     .day-card{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:4px solid var(--cinza);overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:pointer}
     .day-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
@@ -1268,7 +1292,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v117</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v118</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2827,7 +2851,7 @@ const PLAN = [
   // ---- SEMANA 2 — CONSTRUÇÃO ----
   {date:'2026-04-06',week:2,phase:'Construção',type:'easy',
    run:{title:'10km Tranquilo',km:10,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v117elocidade 8,5–9,2 km/h']},
+    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v118elocidade 8,5–9,2 km/h']},
    gym:{title:'Treino A — Pernas + Core (↑ 5–10% carga)',
     ex:['Agachamento livre · 3×12 (↑ carga)','Levantamento terra romeno · 3×10 (↑ carga)','Avanço alternado · 3×10 cada','Elevação de panturrilha · 3×20','Prancha frontal · 3×50s (↑ tempo)','Dead bug · 3×10','Ponte de glúteos 1 perna · 3×10 cada']},
    nutri:['🥚 Café: Ovos + abacate + pão integral','🍗 Almoço: Arroz + frango + feijão + salada','🍌 Lanche: Banana + pasta amendoim','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água']},
@@ -2847,7 +2871,7 @@ const PLAN = [
 
   {date:'2026-04-09',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Tranquilo',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v117elocidade confortável']},
+    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v118elocidade confortável']},
    gym:{title:'Descanso',ex:['Sem academia hoje — pernas em foco']},
    nutri:['🥞 Café: Aveia + frutas + mel','🍗 Almoço: Refeição completa normal','🫙 Lanche: Iogurte + granola','🐟 Jantar: Arroz + peixe + salada','💧 2,5–3L água']},
 
@@ -2865,14 +2889,14 @@ const PLAN = [
 
   {date:'2026-04-12',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v117elocidade bem leve']},
+    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v118elocidade bem leve']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Foco em proteína para recuperação muscular','🥗 Alimentos coloridos e nutritivos','🫙 Iogurte grego + frutas vermelhas','💧 Hidratação reforçada — 3L']},
 
   // ---- SEMANA 3 — PICO ----
   {date:'2026-04-13',week:3,phase:'Pico',type:'easy',
    run:{title:'12km Tranquilo',km:12,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v117elocidade 8,5–9 km/h']},
+    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v118elocidade 8,5–9 km/h']},
    gym:{title:'Treino A — Pernas + Core (pico)',
     ex:['Agachamento livre · 3×12 (carga máxima do plano)','Leg press · 3×15 (novo!)','Levantamento terra romeno · 3×10','Avanço caminhado · 3×12 cada','Step-up com halteres · 3×10 cada','Elevação de panturrilha · 4×20','Prancha + toque ombro · 3×10 cada','Dead bug · 3×10']},
    nutri:['🥣 Café reforçado: Aveia 80g + whey + banana + frutas','🍗 Almoço: Arroz + feijão + frango + salada grande','🥜 Lanche: Sanduíche pão integral + atum + tomate','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água + suplementos (magnésio, ômega-3, vit D)']},
@@ -2898,7 +2922,7 @@ const PLAN = [
 
   {date:'2026-04-17',week:3,phase:'Pico',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v117elocidade 8–9 km/h']},
+    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v118elocidade 8–9 km/h']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Máximo foco em proteína · recuperação muscular','🥗 Alimentos anti-inflamatórios: salmão, frutas vermelhas, cúrcuma','🫙 Iogurte grego + granola + frutas','💧 3,5L água']},
 
