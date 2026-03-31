@@ -1239,7 +1239,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v92</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v93</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -1396,35 +1396,16 @@ function r26FetchUpdate(){
 
 function openRaces2026Modal(){
   document.getElementById('races2026-modal')?.remove();
-  var updateForm = '<div id="races2026-update-form" style="display:none;background:#f0f7ff;border:1.5px solid #aed6f1;border-radius:12px;padding:1rem;margin-bottom:1rem">'
-    +'<div style="font-size:.78rem;font-weight:800;color:#1a5276;margin-bottom:.75rem">&#10133; Adicionar nova prova</div>'
-    +'<div style="display:grid;gap:.5rem">'
-      +'<input id="ru-name" type="text" placeholder="Nome da prova *" style="border:1.5px solid #ddd;border-radius:8px;padding:.55rem .7rem;font-size:.85rem;font-family:inherit;width:100%">'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">'
-        +'<input id="ru-city" type="text" placeholder="Cidade *" style="border:1.5px solid #ddd;border-radius:8px;padding:.55rem .7rem;font-size:.85rem;font-family:inherit">'
-        +'<select id="ru-prov" style="border:1.5px solid #ddd;border-radius:8px;padding:.55rem .7rem;font-size:.85rem;font-family:inherit;background:#fff">'
-          +'<option value="">Prov/País *</option>'
-          +'<option value="NB">NB</option><option value="NS">NS</option><option value="PE">PE</option>'
-          +'<option value="NL">NL</option><option value="QC">QC</option><option value="ON">ON</option>'
-          +'<option value="US">EUA</option>'
-        +'</select>'
-      +'</div>'
-      +'<input id="ru-date" type="date" style="border:1.5px solid #ddd;border-radius:8px;padding:.55rem .7rem;font-size:.85rem;font-family:inherit;width:100%">'
-      +'<input id="ru-dists" type="text" placeholder="Modalidades: 5k, 10k, Meia, Maratona" style="border:1.5px solid #ddd;border-radius:8px;padding:.55rem .7rem;font-size:.85rem;font-family:inherit;width:100%">'
-      +'<button onclick="submitRaceUpdate()" style="background:#1a5276;color:#fff;border:none;border-radius:8px;padding:.65rem;font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit">Salvar Prova</button>'
-    +'</div></div>';
-
   var overlay = document.createElement('div');
   overlay.id = 'races2026-modal';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto;-webkit-overflow-scrolling:touch';
   overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
   overlay.innerHTML = '<div style="background:#fff;border-radius:18px;width:100%;max-width:560px;margin:auto;padding:1.25rem 1.25rem 2rem;box-shadow:0 8px 40px rgba(0,0,0,.25)">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">'
-      +'<button onclick="showUpdateForm()" style="background:#1a5276;color:#fff;border:none;border-radius:8px;padding:.4rem .9rem;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit">+ UPDATE</button>'
+      +'<button id="races2026-update-btn" onclick="r26FetchUpdate()" style="background:#1a5276;color:#fff;border:none;border-radius:8px;padding:.4rem .9rem;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit">🔄 UPDATE</button>'
       +'<div style="font-size:1.05rem;font-weight:900;color:#1a5276">Provas 2026</div>'
       +'<button onclick="document.getElementById(\'races2026-modal\').remove()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;line-height:1">X</button>'
     +'</div>'
-    +updateForm
     +'<div id="races2026-body"></div>'
   +'</div>';
   document.body.appendChild(overlay);
@@ -2807,7 +2788,7 @@ const PLAN = [
   // ---- SEMANA 2 — CONSTRUÇÃO ----
   {date:'2026-04-06',week:2,phase:'Construção',type:'easy',
    run:{title:'10km Tranquilo',km:10,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v92elocidade 8,5–9,2 km/h']},
+    items:['10km ritmo TR · 6:30–7:00 min/km','Volume maior que semana 1','Ritmo conversação — fácil e consistente','Esteira: inclinação 1% · v93elocidade 8,5–9,2 km/h']},
    gym:{title:'Treino A — Pernas + Core (↑ 5–10% carga)',
     ex:['Agachamento livre · 3×12 (↑ carga)','Levantamento terra romeno · 3×10 (↑ carga)','Avanço alternado · 3×10 cada','Elevação de panturrilha · 3×20','Prancha frontal · 3×50s (↑ tempo)','Dead bug · 3×10','Ponte de glúteos 1 perna · 3×10 cada']},
    nutri:['🥚 Café: Ovos + abacate + pão integral','🍗 Almoço: Arroz + frango + feijão + salada','🍌 Lanche: Banana + pasta amendoim','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água']},
@@ -2827,7 +2808,7 @@ const PLAN = [
 
   {date:'2026-04-09',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Tranquilo',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v92elocidade confortável']},
+    items:['8km ritmo TR · Dia entre intervalos e longo','Não forçar — recuperação ativa','Foco em cadência suave','Esteira: inclinação 1% · v93elocidade confortável']},
    gym:{title:'Descanso',ex:['Sem academia hoje — pernas em foco']},
    nutri:['🥞 Café: Aveia + frutas + mel','🍗 Almoço: Refeição completa normal','🫙 Lanche: Iogurte + granola','🐟 Jantar: Arroz + peixe + salada','💧 2,5–3L água']},
 
@@ -2845,14 +2826,14 @@ const PLAN = [
 
   {date:'2026-04-12',week:2,phase:'Construção',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v92elocidade bem leve']},
+    items:['8km TR · Muito tranquilo','Pernas podem estar pesadas — respeite','Ande quando precisar, sem culpa','Esteira: boa opção se frio ou cansaço · v93elocidade bem leve']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Foco em proteína para recuperação muscular','🥗 Alimentos coloridos e nutritivos','🫙 Iogurte grego + frutas vermelhas','💧 Hidratação reforçada — 3L']},
 
   // ---- SEMANA 3 — PICO ----
   {date:'2026-04-13',week:3,phase:'Pico',type:'easy',
    run:{title:'12km Tranquilo',km:12,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v92elocidade 8,5–9 km/h']},
+    items:['12km ritmo TR · Volume máximo semanal começa','Pace 6:30–7:00 min/km · Conversa fácil','Aquecimento e cooldown incluídos','Esteira: inclinação 1% · v93elocidade 8,5–9 km/h']},
    gym:{title:'Treino A — Pernas + Core (pico)',
     ex:['Agachamento livre · 3×12 (carga máxima do plano)','Leg press · 3×15 (novo!)','Levantamento terra romeno · 3×10','Avanço caminhado · 3×12 cada','Step-up com halteres · 3×10 cada','Elevação de panturrilha · 4×20','Prancha + toque ombro · 3×10 cada','Dead bug · 3×10']},
    nutri:['🥣 Café reforçado: Aveia 80g + whey + banana + frutas','🍗 Almoço: Arroz + feijão + frango + salada grande','🥜 Lanche: Sanduíche pão integral + atum + tomate','🐟 Jantar: Batata-doce + salmão + legumes','💧 3L água + suplementos (magnésio, ômega-3, vit D)']},
@@ -2878,7 +2859,7 @@ const PLAN = [
 
   {date:'2026-04-17',week:3,phase:'Pico',type:'easy',
    run:{title:'8km Recuperação',km:8,loc:'🏙️ Rua ou 🏃 Esteira',
-    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v92elocidade 8–9 km/h']},
+    items:['8km TR ou descanso total se pernas pesadas','Escute o corpo — sem forçar após o treino pico','Esteira: boa opção para controlar esforço · v93elocidade 8–9 km/h']},
    gym:{title:'Descanso',ex:['Descanso total']},
    nutri:['🍗 Máximo foco em proteína · recuperação muscular','🥗 Alimentos anti-inflamatórios: salmão, frutas vermelhas, cúrcuma','🫙 Iogurte grego + granola + frutas','💧 3,5L água']},
 
