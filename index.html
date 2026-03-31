@@ -4348,7 +4348,11 @@ function renderAll(){
   const secToday = document.getElementById('section-today');
   if(activeView==='today'){
     if(todayDay){
-      secToday.innerHTML = `<div class="week-header"><h3>Treino de Hoje</h3><span class="week-badge badge-${badgeClass(todayDay.week)}">${todayDay.phase}</span></div><div class="day-grid">${buildCard(todayDay,true,p)}</div>`;
+      secToday.innerHTML = '<div class="week-header"><h3>Treino de Hoje</h3><span class="week-badge badge-' + badgeClass(todayDay.week) + '">' + todayDay.phase + '</span></div>'
+        + '<div class="today-layout">'
+        + '<div class="day-grid">' + buildCard(todayDay, true, p) + '</div>'
+        + buildTodayChart(todayDay, p)
+        + '</div>';
     } else {
       secToday.innerHTML = '<p style="color:#aaa;font-size:.9rem;margin-bottom:2rem">Nenhum treino para hoje — verifique a semana correspondente.</p>';
     }
