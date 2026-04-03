@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v221</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v222</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2300,6 +2300,39 @@ function zonesPillsHtml(gData, opts){
   if(!z2) return pill1;
   var pill2 = '<span style="background:'+z2.color+';color:#fff;border-radius:999px;padding:'+pad+';font-weight:800;font-size:'+fs+';white-space:nowrap">'+z2.name+p2pct+'</span>';
   return '<span style="display:inline-flex;align-items:center;gap:.3rem">'+pill1+pill2+'</span>';
+}
+
+// Migra entradas Strava existentes que têm hr mas não têm dominantZone calculada
+function migrateStravaZones(){
+  try{
+    const HR_MAX=157;
+    const HR_ZONES=[
+      {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#74b9ff'},
+      {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#55efc4'},
+      {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#fdcb6e'},
+      {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e17055'},
+      {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#d63031'},
+    ];
+    const g=loadGarmin();
+    let changed=false;
+    Object.keys(g).forEach(function(date){
+      const entry=g[date];
+      // Strava entries have stravaId but no raw GPX
+      if(entry && entry.stravaId && !entry.raw && entry.hr && !entry.dominantZone){
+        const hrVal=Math.round(+entry.hr);
+        for(let i=HR_ZONES.length-1;i>=0;i--){
+          if(hrVal>=HR_ZONES[i].min){
+            entry.dominantZone=HR_ZONES[i];
+            entry.dominantZonePct=null; // null = based on avg HR, not stream
+            entry.zoneFromAvg=true;
+            changed=true;
+            break;
+          }
+        }
+      }
+    });
+    if(changed) saveGarmin(g);
+  }catch(e){}
 }
 
 // Migra entradas antigas que não têm dominantZone/avgCadence mas têm raw (texto GPX)
