@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v177</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v178</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -7512,21 +7512,31 @@ function mfDeactivate(){
   try{ renderAll(); }catch(e){}
 }
 
-// Build the "Meus Alimentos" block shown inside the nutri tab
-function buildMyFoodsNutriBlock(){
+// Merge user's preferred foods directly into the matching nutri list lines
+function mfMergeIntoNutri(list){
   const foods = loadMyFoods();
-  if(!foods._active) return '';
-  const blocks = MF_CATS.map(cat=>{
-    const items = foods[cat.id]||[];
-    if(!items.length) return '';
-    const chips = items.map(f=>`<span class="mf-in-nutri-chip">${f}</span>`).join('');
-    return `<div style="margin-bottom:.35rem"><span style="font-size:.7rem;font-weight:700;color:#c0392b">${cat.label}:</span> ${chips}</div>`;
-  }).filter(Boolean).join('');
-  if(!blocks) return '';
-  return `<div class="mf-in-nutri">
-    <div class="mf-in-nutri-title">🥗 Meus Alimentos Preferidos</div>
-    ${blocks}
-  </div>`;
+  if(!foods._active) return list;
+
+  // Map each category id to keywords that identify matching nutri lines
+  const matchers = {
+    cafe:   /caf[eé]/i,
+    pre:    /pré[-\s]/i,
+    almoco: /almo[çc]/i,
+    lanche: /lanche/i,
+    pos:    /pós[-\s]/i,
+    jantar: /jantar/i,
+    hidra:  /hidrat|água|water/i,
+  };
+
+  return list.map(line=>{
+    for(const [catId, rx] of Object.entries(matchers)){
+      const extra = foods[catId]||[];
+      if(extra.length && rx.test(line)){
+        return line + ' + ' + extra.join(' + ');
+      }
+    }
+    return line;
+  });
 }
 
 // ============================================================
