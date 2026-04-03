@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v215</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v216</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2282,6 +2282,24 @@ function parseGPX(text, filename){
   const actDate=times[0]?times[0].toISOString().split('T')[0]:null;
 
   return {dist,duration,pace,hr,dominantZone,dominantZonePct,secondZone,secondZonePct,avgCadence,elevGain:Math.round(elevGain),actDate,filename,importedAt:new Date().toISOString(),raw:text};
+}
+
+// Renderiza as top-2 zonas de FC de uma entrada garmin
+// Retorna HTML com pills: "Z2 · Z3" ou só "Z2" se não há segunda
+function zonesPillsHtml(gData, opts){
+  opts = opts || {};
+  var small = opts.small;
+  var z1 = gData && gData.dominantZone && typeof gData.dominantZone==='object' ? gData.dominantZone : null;
+  var z2 = gData && gData.secondZone   && typeof gData.secondZone==='object'   ? gData.secondZone   : null;
+  if(!z1) return '—';
+  var p1pct = gData.dominantZonePct ? ' <span style="opacity:.75;font-size:.55rem">'+gData.dominantZonePct+'%</span>' : '';
+  var p2pct = (z2 && gData.secondZonePct) ? ' <span style="opacity:.75;font-size:.55rem">'+gData.secondZonePct+'%</span>' : '';
+  var fs = small ? '.62rem' : '.75rem';
+  var pad = small ? '.1rem .42rem' : '.15rem .55rem';
+  var pill1 = '<span style="background:'+z1.color+';color:#fff;border-radius:999px;padding:'+pad+';font-weight:800;font-size:'+fs+';white-space:nowrap">'+z1.name+p1pct+'</span>';
+  if(!z2) return pill1;
+  var pill2 = '<span style="background:'+z2.color+';color:#fff;border-radius:999px;padding:'+pad+';font-weight:800;font-size:'+fs+';white-space:nowrap">'+z2.name+p2pct+'</span>';
+  return '<span style="display:inline-flex;align-items:center;gap:.3rem">'+pill1+pill2+'</span>';
 }
 
 // Migra entradas antigas que não têm dominantZone/avgCadence mas têm raw (texto GPX)
