@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v240</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v241</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5066,7 +5066,7 @@ async function savePhoto(albumId, file){
   const db = await openPhotoDB();
   const isVideo = file.type.startsWith('video/');
 
-  // Videos: store raw Blob — never base64 (would exceed quota/Firebase limits)
+  // Videos: store raw Blob in IndexedDB — never base64 (would crash on large files)
   // Images: compress to JPEG base64
   let data, blob;
   if(isVideo){
@@ -5236,9 +5236,9 @@ async function renderPhotosSection(){
       const isVideo = p.type === 'video';
       html += `<div class="photo-thumb" id="pthumb-${p.id}" onclick="openLightbox(${idx})">
         ${isVideo
-          ? `<video src="${p.data}" preload="metadata" muted playsinline></video>
+          ? `<video src="${photoSrc(p)}" preload="metadata" muted playsinline></video>
              <div class="video-play-badge"><span>▶</span></div>`
-          : `<img src="${p.data}" alt="${p.filename}">`}
+          : `<img src="${photoSrc(p)}" alt="${p.filename}">`}
         ${p.caption ? `<div class="photo-caption">${p.caption}</div>` : ''}
         <button class="photo-del" title="Apagar" onclick="event.stopPropagation();confirmDeletePhoto('${p.id}')">✕</button>
       </div>`;
@@ -5255,7 +5255,7 @@ async function downloadAlbumPhotos(albumId){
     const p = photos[i];
     const isVid = p.type === 'video';
     const a = document.createElement('a');
-    a.href = p.data;
+    a.href = photoSrc(p);
     a.download = p.filename || (isVid ? `video-${i+1}.mp4` : `foto-${i+1}.jpg`);
     a.click();
     await new Promise(r => setTimeout(r, 500));
@@ -5305,12 +5305,12 @@ function showLightboxAt(idx){
     ${idx > 0 ? `<button class="lightbox-nav prev" onclick="lightboxNav(-1)">‹</button>` : ''}
     ${idx < lightboxPhotos.length-1 ? `<button class="lightbox-nav next" onclick="lightboxNav(1)">›</button>` : ''}
     ${isVideo
-      ? `<video src="${p.data}" controls autoplay style="max-width:95vw;max-height:80vh;border-radius:10px"></video>`
-      : `<img src="${p.data}" alt="${p.filename}">`}
+      ? `<video src="${photoSrc(p)}" controls autoplay style="max-width:95vw;max-height:80vh;border-radius:10px"></video>`
+      : `<img src="${photoSrc(p)}" alt="${p.filename}">`}
     <div class="lightbox-caption">
       <span>${isVideo ? '🎥 ' : '📷 '}${p.caption || p.filename}</span>
       <span style="color:#888;font-size:.72rem;margin-left:.5rem">${new Date(p.addedAt).toLocaleDateString('pt-BR')}</span>
-      <a href="${p.data}" download="${dlName}" style="margin-left:.7rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.25rem">⬇️ Baixar ${isVideo?'vídeo':'foto'}</a>
+      <a href="${photoSrc(p)}" download="${dlName}" style="margin-left:.7rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.25rem">⬇️ Baixar ${isVideo?'vídeo':'foto'}</a>
     </div>`;
   lb.style.display = 'flex';
   document.body.style.overflow = 'hidden';
