@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v210</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v211</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -4394,22 +4394,80 @@ function buildTodayChart(day, p){
   const doneGym = !!prog.gym;
   const hasGym  = day.gym.ex.length > 0 && !day.gym.ex.every(function(e){ return /^(sem |descanso)/i.test(e.trim()); });
 
-  const maxKm   = Math.max(planKm, realKm, 1);
-  const planPct = Math.round((planKm / maxKm) * 100);
-  const realPct = Math.round((realKm / maxKm) * 100);
   const isOver  = realKm > planKm;
 
+  // ── Gauge semicircular (arco SVG 180°) ─────────────────────
+  const runPct  = planKm > 0 ? Math.min(Math.round((realKm / planKm) * 100), 150) : 0;
+  const arcR    = 40, arcLen = +(Math.PI * arcR).toFixed(2); // semicircle length ≈ 125.66
+  const arcFill = +((Math.min(runPct, 100) / 100) * arcLen).toFixed(2);
+  const gaugeColor = runPct >= 100 ? '#1e8449' : runPct >= 80 ? '#27ae60' : runPct >= 50 ? '#f39c12' : runPct > 0 ? '#e67e22' : '#dde1e7';
+  const gaugeSvg = '<svg class="tchart-gauge-svg" viewBox="0 0 100 56" width="140" height="78">'
+    + '<path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#edf0f4" stroke-width="10" stroke-linecap="round"/>'
+    + '<path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="' + gaugeColor + '" stroke-width="10" stroke-linecap="round"'
+    +   ' stroke-dasharray="' + arcFill + ' ' + arcLen + '"/>'
+    + '</svg>';
+
+  // ── Overlay bar: real barra, linha de meta = planKm ────────
+  const barMax   = Math.max(planKm, realKm, 1) * 1.08;
+  const realBarW = Math.min(Math.round((realKm / barMax) * 100), 100);
+  const goalLineW= Math.min(Math.round((planKm / barMax) * 100), 98);
+  const barGrad  = isOver
+    ? 'linear-gradient(90deg,#f9e79f,#e67e22)'
+    : realKm > 0
+      ? 'linear-gradient(90deg,#a9dfbf,#1e8449)'
+      : 'linear-gradient(90deg,#dde1e7,#c0c8d0)';
+
+  const overlayBar = '<div class="tchart-overlay-wrap">'
+    + '<div class="tchart-overlay-track">'
+    +   '<div class="tchart-overlay-bar" style="width:' + realBarW + '%;background:' + barGrad + '">'
+    +     (realKm > 0 ? realKm + ' km' : '') + '</div>'
+    +   '<div class="tchart-goal-line" style="left:' + goalLineW + '%">'
+    +     '<div class="tchart-goal-tip">' + planKm + ' km</div>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="tchart-km-labels"><span>0</span><span>' + planKm + ' km planejado</span><span>' + Math.ceil(barMax) + ' km</span></div>'
+    + '</div>';
+
+  // ── Diff pill ───────────────────────────────────────────────
+  var diffPill = '';
+  if(realKm > 0 && planKm > 0){
+    var diff = Math.round((realKm - planKm) * 10) / 10;
+    var pillBg, pillTxt, pillIcon;
+    if(diff > 0){       pillBg='#fdebd0'; pillTxt='#b7510a'; pillIcon='🔥'; pillTxt='#c0540f'; }
+    else if(diff === 0){ pillBg='#d5f5e3'; pillTxt='#1e6e3f'; pillIcon='🎯'; }
+    else {               pillBg='#fde8e8'; pillTxt='#a01010'; pillIcon='📉'; }
+    var diffStr = diff > 0 ? '+' + diff : String(diff);
+    diffPill = '<div class="tchart-diff-wrap"><span class="tchart-diff-pill" style="background:' + pillBg + ';color:' + pillTxt + '">'
+      + pillIcon + ' ' + diffStr + ' km vs planejado</span></div>';
+  }
+
+  // ── Stats grid (pace · duração · FC) ───────────────────────
+  var pace     = gData ? (gData.pace     || '—') : '—';
+  var duration = gData ? (gData.duration || '—') : '—';
+  var hr       = gData && gData.hr ? gData.hr + ' bpm' : '—';
+  var zoneHtml = '—';
+  if(gData && gData.dominantZone && typeof gData.dominantZone === 'object'){
+    var zc = gData.dominantZone.color || '#888';
+    var zn = (gData.dominantZone.name || '').replace(/\s·\s/g,' ');
+    zoneHtml = '<span style="background:' + zc + ';color:#fff;border-radius:5px;padding:1px 5px;font-size:.6rem">' + zn + '</span>';
+  }
+  var statsGrid = '<div class="tchart-stats-grid">'
+    + '<div class="tchart-stat-card"><span class="tchart-stat-val">' + pace + '</span><span class="tchart-stat-lbl">Pace</span></div>'
+    + '<div class="tchart-stat-card"><span class="tchart-stat-val">' + duration + '</span><span class="tchart-stat-lbl">Duração</span></div>'
+    + '<div class="tchart-stat-card"><span class="tchart-stat-val">' + hr + '</span><span class="tchart-stat-lbl">FC média</span></div>'
+    + '</div>';
+
+  // ── Gym ring ────────────────────────────────────────────────
   const exDone  = prog.exDone || {};
   const totalEx = hasGym ? day.gym.ex.length : 0;
   const doneEx  = hasGym ? Object.values(exDone).filter(Boolean).length : 0;
   const gymPct  = totalEx > 0 ? Math.round((doneEx / totalEx) * 100) : (doneGym ? 100 : 0);
-
-  const r = 20, circ = +(2 * Math.PI * r).toFixed(2);
-  const dashVal = +(circ - (circ * gymPct / 100)).toFixed(2);
+  const rg = 20, circ = +(2 * Math.PI * rg).toFixed(2);
+  const dashVal   = +(circ - (circ * gymPct / 100)).toFixed(2);
   const circColor = gymPct >= 100 ? '#1e8449' : gymPct > 0 ? '#f39c12' : '#ddd';
   const svgCircle = '<svg viewBox="0 0 52 52" class="tchart-pct-circle">'
-    + '<circle cx="26" cy="26" r="' + r + '" fill="none" stroke="#f0f2f5" stroke-width="5"/>'
-    + '<circle cx="26" cy="26" r="' + r + '" fill="none" stroke="' + circColor + '" stroke-width="5"'
+    + '<circle cx="26" cy="26" r="' + rg + '" fill="none" stroke="#f0f2f5" stroke-width="5"/>'
+    + '<circle cx="26" cy="26" r="' + rg + '" fill="none" stroke="' + circColor + '" stroke-width="5"'
     +   ' stroke-dasharray="' + circ + '" stroke-dashoffset="' + dashVal + '"'
     +   ' stroke-linecap="round" transform="rotate(-90 26 26)"/>'
     + '<text x="26" y="30" text-anchor="middle" font-size="10" font-weight="900" fill="' + circColor + '">' + gymPct + '%</text>'
@@ -4417,34 +4475,26 @@ function buildTodayChart(day, p){
 
   const gymStatusColor = doneGym ? '#1e8449' : gymPct > 0 ? '#e67e22' : '#aaa';
   const gymStatusText  = !hasGym ? 'Descanso \u2014 sem academia' : doneGym ? '\u2705 Conclu\u00eddo!' : gymPct > 0 ? 'Em andamento \u00b7 ' + doneEx + '/' + totalEx + ' exerc\u00edcios' : '\u23f3 N\u00e3o iniciado';
-  const realLabel = gData ? realKm + ' km (Garmin)' : doneRun ? realKm + ' km (confirmado)' : '\u2014 n\u00e3o realizado';
-  const realColor = isOver ? '#e67e22' : '#1e8449';
-  const diffHtml = planKm > 0 && realKm > 0
-    ? '<div style="text-align:center;font-size:.7rem;margin-top:.3rem;font-weight:800;color:' + (isOver?'#e67e22':realKm===planKm?'#1e8449':'#e74c3c') + '">'
-      + (isOver ? '\ud83d\udd25 +' + (Math.round((realKm-planKm)*10)/10) + ' km acima do plano'
-        : realKm===planKm ? '\ud83c\udfaf Exatamente no plano!'
-        : '\ud83d\udcc9 ' + (Math.round((planKm-realKm)*10)/10) + ' km abaixo do plano')
-      + '</div>'
-    : '';
 
   return '<div class="today-chart-box">'
-    + '<div class="today-chart-title">\ud83d\udcca Planejado \u00d7 Realizado</div>'
-    + '<div class="tchart-row">'
-    +   '<div class="tchart-label">\ud83d\udd35 Planejado <span>' + planKm + ' km</span></div>'
-    +   '<div class="tchart-track"><div class="tchart-bar tchart-bar-plan" style="width:' + planPct + '%">' + (planKm>0?planKm+'km':'') + '</div></div>'
+    + '<div class="today-chart-title">Corrida — Planejado \u00d7 Realizado</div>'
+    // Gauge
+    + '<div class="tchart-gauge-wrap">'
+    +   gaugeSvg
+    +   '<div class="tchart-gauge-center">'
+    +     '<span class="tchart-gauge-pct" style="color:' + gaugeColor + '">' + (runPct > 0 ? runPct + '%' : planKm > 0 ? '—' : '') + '</span>'
+    +     '<span class="tchart-gauge-sub">' + (realKm > 0 ? 'concluído' : planKm > 0 ? 'não realizado' : 'sem corrida') + '</span>'
+    +   '</div>'
     + '</div>'
-    + '<div class="tchart-row">'
-    +   '<div class="tchart-label" style="color:' + realColor + '">\ud83d\udfe2 Realizado <span style="color:' + realColor + '">' + realLabel + '</span></div>'
-    +   '<div class="tchart-track"><div class="tchart-bar ' + (isOver?'tchart-bar-over':'tchart-bar-real') + '" style="width:' + realPct + '%">' + (realKm>0?realKm+'km':'') + '</div></div>'
-    + '</div>'
-    + diffHtml
-    + '<div class="tchart-legend">'
-    +   '<div class="tchart-legend-item"><div class="tchart-legend-dot" style="background:#2980b9"></div>Planejado</div>'
-    +   '<div class="tchart-legend-item"><div class="tchart-legend-dot" style="background:#1e8449"></div>Realizado</div>'
-    +   (isOver?'<div class="tchart-legend-item"><div class="tchart-legend-dot" style="background:#f39c12"></div>Acima do plano</div>':'')
-    + '</div>'
+    // Overlay bar
+    + overlayBar
+    // Diff pill
+    + diffPill
+    // Stats grid (only if has garmin data)
+    + (gData ? statsGrid : '')
+    // Gym
     + '<hr class="tchart-divider">'
-    + '<div class="today-chart-title">\ud83c\udfcb\ufe0f Academia</div>'
+    + '<div class="today-chart-title">Academia</div>'
     + '<div class="tchart-gym-row">'
     +   '<div class="tchart-gym-icon">' + (doneGym?'\u2705':hasGym?'\ud83c\udfcb\ufe0f':'\ud83d\ude34') + '</div>'
     +   '<div class="tchart-gym-info">'
