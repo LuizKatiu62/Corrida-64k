@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v231</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v232</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2314,7 +2314,8 @@ function zonesPillsHtml(gData, opts){
   var pill1 = makePill(z1, gData.dominantZonePct, fromAvg);
   if(!z2) return pill1;
   var pill2 = makePill(z2, gData.secondZonePct, false);
-  return '<span style="display:inline-flex;align-items:center;gap:'+gap+';flex-wrap:wrap;justify-content:center">'+pill1+pill2+'</span>';
+  // Stack vertically so second zone never overflows the card
+  return '<span style="display:flex;flex-direction:column;gap:'+gap+';align-items:flex-start">'+pill1+pill2+'</span>';
 }
 
 // Migra entradas Strava existentes que têm hr mas não têm dominantZone calculada
