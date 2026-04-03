@@ -438,6 +438,55 @@ function copyLink(){
   }
 }
 
+// ── MODAL PARTICIPAR ──
+var PART_KEY = 'desafio64_participantes';
+
+function loadNames(){
+  try{ return JSON.parse(localStorage.getItem(PART_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveNames(arr){
+  localStorage.setItem(PART_KEY, JSON.stringify(arr));
+}
+function renderNames(){
+  var arr = loadNames();
+  var ul = document.getElementById('name-list');
+  if(!ul) return;
+  ul.innerHTML = '';
+  if(arr.length === 0){
+    ul.innerHTML = '<li style="opacity:.45;font-size:.78rem">Seja o primeiro a confirmar!</li>';
+  } else {
+    arr.forEach(function(n){
+      var li = document.createElement('li');
+      li.textContent = n;
+      ul.appendChild(li);
+    });
+  }
+}
+function openModal(){
+  document.getElementById('modal-participar').classList.add('open');
+  document.getElementById('modal-name').value = '';
+  document.getElementById('modal-confirm').style.display = 'none';
+  renderNames();
+  setTimeout(function(){ document.getElementById('modal-name').focus(); }, 100);
+}
+function closeModal(){
+  document.getElementById('modal-participar').classList.remove('open');
+}
+function closeModalOutside(e){
+  if(e.target === document.getElementById('modal-participar')) closeModal();
+}
+function submitName(){
+  var name = (document.getElementById('modal-name').value || '').trim();
+  if(!name) { document.getElementById('modal-name').focus(); return; }
+  var arr = loadNames();
+  if(arr.indexOf(name) === -1){ arr.push(name); saveNames(arr); }
+  document.getElementById('modal-name').value = '';
+  document.getElementById('modal-confirm').style.display = 'block';
+  renderNames();
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+document.getElementById('modal-name').addEventListener('keydown', function(e){ if(e.key==='Enter') submitName(); });
+
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
   a.addEventListener('click',function(e){
