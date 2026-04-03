@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v211</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v212</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2243,16 +2243,25 @@ function parseGPX(text, filename){
     {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e17055'},
     {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#d63031'},
   ];
-  let dominantZone=null,dominantZonePct=0;
+  let dominantZone=null,dominantZonePct=0,secondZone=null,secondZonePct=0;
   if(hrVals.length>0){
     const counts=[0,0,0,0,0];
     hrVals.forEach(function(v){
       for(let i=HR_ZONES.length-1;i>=0;i--){if(v>=HR_ZONES[i].min){counts[i]++;break;}}
     });
+    // 1ª zona
     const maxC=Math.max(...counts);
     const idx=counts.indexOf(maxC);
     dominantZone=HR_ZONES[idx];
     dominantZonePct=Math.round((maxC/hrVals.length)*100);
+    // 2ª zona mais usada
+    const counts2=counts.slice(); counts2[idx]=-1;
+    const max2C=Math.max(...counts2);
+    if(max2C>0){
+      const idx2=counts2.indexOf(max2C);
+      secondZone=HR_ZONES[idx2];
+      secondZonePct=Math.round((max2C/hrVals.length)*100);
+    }
   }
 
   // Cadência (strides/min × 2 = passos/min)
