@@ -131,21 +131,31 @@
     /* TODAY LAYOUT com gráfico */
     .today-layout{display:grid;grid-template-columns:1fr 280px;gap:1rem;align-items:start}
     @media(max-width:699px){.today-layout{grid-template-columns:1fr}}
-    .today-chart-box{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:1.25rem 1.1rem;position:sticky;top:60px}
-    .today-chart-title{font-size:.78rem;font-weight:900;color:#2c3e50;margin-bottom:1.1rem;text-align:center;letter-spacing:.03em;text-transform:uppercase}
-    .tchart-row{margin-bottom:1rem}
-    .tchart-label{font-size:.68rem;font-weight:700;color:#555;margin-bottom:.35rem;display:flex;justify-content:space-between}
-    .tchart-label span{font-weight:900;color:#2c3e50}
-    .tchart-track{background:#f0f2f5;border-radius:999px;height:22px;overflow:hidden;position:relative}
-    .tchart-bar{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:.5rem;font-size:.6rem;font-weight:900;color:#fff;white-space:nowrap;min-width:0}
-    .tchart-bar-plan{background:linear-gradient(90deg,#aed6f1,#2980b9)}
-    .tchart-bar-real{background:linear-gradient(90deg,#a9dfbf,#1e8449)}
-    .tchart-bar-over{background:linear-gradient(90deg,#f9e79f,#f39c12)}
-    .tchart-legend{display:flex;gap:.6rem;justify-content:center;margin-top:.6rem;flex-wrap:wrap}
-    .tchart-legend-item{display:flex;align-items:center;gap:.3rem;font-size:.62rem;color:#777;font-weight:600}
-    .tchart-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-    .tchart-divider{border:none;border-top:1px solid #f0f2f5;margin:1rem 0}
-    .tchart-gym-row{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;border-radius:10px;background:#f8f9fa}
+    .today-chart-box{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,.10);padding:1.4rem 1.2rem 1.2rem;position:sticky;top:60px}
+    .today-chart-title{font-size:.65rem;font-weight:900;color:#b0b8c4;margin-bottom:.9rem;text-align:center;letter-spacing:.1em;text-transform:uppercase}
+    /* ── Gauge semicircular ── */
+    .tchart-gauge-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:1rem;position:relative}
+    .tchart-gauge-svg{display:block}
+    .tchart-gauge-center{position:absolute;bottom:2px;width:100%;text-align:center}
+    .tchart-gauge-pct{font-size:1.6rem;font-weight:900;line-height:1;display:block}
+    .tchart-gauge-sub{font-size:.55rem;font-weight:800;color:#aaa;letter-spacing:.07em;text-transform:uppercase}
+    /* ── Overlay bar com goal-line ── */
+    .tchart-overlay-wrap{margin-bottom:.2rem}
+    .tchart-overlay-track{background:#f0f2f5;border-radius:999px;height:26px;position:relative;overflow:visible}
+    .tchart-overlay-bar{height:100%;border-radius:999px;position:absolute;top:0;left:0;transition:width .7s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding-right:.55rem;justify-content:flex-end;font-size:.6rem;font-weight:900;color:rgba(255,255,255,.95);white-space:nowrap}
+    .tchart-goal-line{position:absolute;top:-5px;bottom:-5px;width:2.5px;border-radius:2px;background:#2980b9;z-index:3;pointer-events:none}
+    .tchart-goal-tip{position:absolute;top:-20px;transform:translateX(-50%);font-size:.55rem;font-weight:900;color:#2980b9;white-space:nowrap;background:#fff;padding:1px 5px;border-radius:5px;border:1.5px solid #2980b9;box-shadow:0 1px 4px rgba(0,0,0,.1);z-index:4}
+    .tchart-km-labels{display:flex;justify-content:space-between;margin-top:.45rem;font-size:.58rem;color:#c0c8d0;font-weight:700;padding:0 2px}
+    /* ── Stats grid ── */
+    .tchart-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin:1rem 0 .5rem}
+    .tchart-stat-card{background:#f8f9fa;border-radius:11px;padding:.55rem .3rem .4rem;text-align:center;border:1.5px solid #edf0f4}
+    .tchart-stat-val{font-size:.88rem;font-weight:900;color:#2c3e50;display:block;line-height:1.1}
+    .tchart-stat-lbl{font-size:.52rem;font-weight:800;color:#aab;text-transform:uppercase;letter-spacing:.05em;margin-top:.15rem;display:block}
+    .tchart-diff-wrap{text-align:center;margin:.1rem 0 .6rem}
+    .tchart-diff-pill{display:inline-block;border-radius:999px;padding:.25rem .85rem;font-size:.68rem;font-weight:900}
+    /* ── Divider & gym ── */
+    .tchart-divider{border:none;border-top:1px solid #f0f2f5;margin:1rem 0 .9rem}
+    .tchart-gym-row{display:flex;align-items:center;gap:.7rem;padding:.65rem .85rem;border-radius:12px;background:#f8f9fa;border:1.5px solid #edf0f4}
     .tchart-gym-icon{font-size:1.4rem;line-height:1}
     .tchart-gym-info{flex:1}
     .tchart-gym-name{font-size:.72rem;font-weight:800;color:#2c3e50}
@@ -1404,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v209</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v210</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
