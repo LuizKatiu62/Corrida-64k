@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v236</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v237</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5189,9 +5189,9 @@ async function renderPhotosSection(){
       <span class="photos-album-sub">${album.sub}</span>
     </div>
     <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;justify-content:flex-end">
-      ${photos.length>0?`<button onclick="downloadAlbumPhotos('${currentAlbumId}')" style="background:#e8f4fd;color:var(--azul);border:1.5px solid var(--azul);border-radius:999px;padding:.35rem .8rem;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit">⬇️ Baixar ${photos.length > 1 ? 'todas ('+photos.length+')' : 'foto'}</button>`:''}
+      ${photos.length>0?`<button onclick="downloadAlbumPhotos('${currentAlbumId}')" style="background:#e8f4fd;color:var(--azul);border:1.5px solid var(--azul);border-radius:999px;padding:.35rem .8rem;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit">⬇️ Baixar tudo (${photos.length})</button>`:''}
       <label class="btn-add-photo" style="cursor:pointer">
-        + Foto
+        + Foto/Vídeo
         <input type="file" accept="image/*,video/*" multiple style="display:none" onchange="handlePhotoUpload(event,'${currentAlbumId}')">
       </label>
     </div>
