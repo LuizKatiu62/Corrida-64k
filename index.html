@@ -1361,7 +1361,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v194</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v195</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -3399,10 +3399,47 @@ function gymItemHtml(item, date, idx, done){
   return `<li class="${done?'ex-done':''}"><div class="ex-row">${toggleBtn}<span style="flex:1">${item}</span>${howBtn}</div></li>`;
 }
 
+// Opens a single YouTube video — queries Invidious API for the top result, falls back to search
+function openExYoutube(query){
+  const btnId = 'ex-yt-btn';
+  const btn = document.getElementById(btnId);
+  if(btn){ btn.textContent='⏳ Buscando vídeo...'; btn.disabled=true; }
+
+  const q = query.replace(/\+/g,' ');
+  const fallback = ()=>{
+    window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'&sp=EgIQAQ%3D%3D','_blank');
+    if(btn){ btn.textContent='▶ Ver vídeo no YouTube'; btn.disabled=false; }
+  };
+
+  // Try Invidious instances in order until one responds
+  const instances = [
+    'https://invidious.kavin.rocks',
+    'https://yewtu.be',
+    'https://inv.tux.pizza',
+  ];
+  const tryNext = idx=>{
+    if(idx>=instances.length){ fallback(); return; }
+    const url = instances[idx]+'/api/v1/search?q='+encodeURIComponent(q)+'&type=video&sort_by=relevance&fields=videoId&page=1';
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 4000);
+    fetch(url,{signal:ctrl.signal})
+      .then(r=>r.ok?r.json():Promise.reject())
+      .then(data=>{
+        clearTimeout(t);
+        const id = data&&data[0]&&data[0].videoId;
+        if(id){
+          window.open('https://www.youtube.com/watch?v='+id,'_blank');
+          if(btn){ btn.textContent='▶ Ver vídeo no YouTube'; btn.disabled=false; }
+        } else { tryNext(idx+1); }
+      })
+      .catch(()=>{ clearTimeout(t); tryNext(idx+1); });
+  };
+  tryNext(0);
+}
+
 function openExerciseModal(key){
   const ex = GYM_INSTRUCTIONS[key];
   if(!ex) return;
-  const ytUrl = `https://www.youtube.com/results?search_query=${ex.yt}&sp=EgIQAQ%3D%3D`;
   const steps = ex.steps.map((s,i)=>`<li><span class="ex-step-num">${i+1}</span><span>${s}</span></li>`).join('');
 
   let machineHtml = '';
