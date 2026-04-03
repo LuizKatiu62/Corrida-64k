@@ -1395,7 +1395,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v201</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v202</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -4667,6 +4667,7 @@ function showWeek(w){
   document.getElementById('section-dashboard').classList.add('hidden');
   document.getElementById('section-shopping').classList.add('hidden');
   document.getElementById('section-myfoods').classList.add('hidden');
+  document.getElementById('section-report').classList.add('hidden');
   // update active button
   document.querySelectorAll('.week-nav button').forEach(b=>b.classList.remove('active'));
   if(w==='today'){
