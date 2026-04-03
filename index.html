@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v186</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v187</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -3414,12 +3414,13 @@ function openExerciseModal(key){
     </div>`;
   }
 
-  // Exercise photo — loaded via Wikipedia REST API (guaranteed real photo)
+  // Exercise photo — loaded via Wikipedia REST API
   const thumbUid = 'ext-' + Date.now();
-  const thumbHtml = ex.wikiPage ? `
-    <div id="wiki-photo-wrap-${thumbUid}" style="border-radius:12px;overflow:hidden;background:#f0f4f0;margin-bottom:1rem;min-height:140px;display:flex;align-items:center;justify-content:center">
-      <span style="font-size:2rem;opacity:.3">⏳</span>
-    </div>` : '';
+  const thumbHtml = ex.wikiPage
+    ? `<div id="wiki-photo-wrap-${thumbUid}" style="border-radius:12px;overflow:hidden;background:#f0f4f0;margin-bottom:1rem;min-height:140px;display:flex;align-items:center;justify-content:center"><span style="font-size:2rem;opacity:.3">⏳</span></div>`
+    : ex.thumbEmoji
+      ? `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;gap:.4rem;margin-bottom:1rem;background:#f0f4f0;border-radius:12px"><span style="font-size:3.5rem">${ex.thumbEmoji}</span></div>`
+      : '';
 
   const overlay = document.createElement('div');
   overlay.className = 'ex-modal-overlay';
