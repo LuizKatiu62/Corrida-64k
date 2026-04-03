@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v279</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v280</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2085,6 +2085,19 @@ function copyFBSyncId(){
     document.querySelector('.fb-copy-btn').textContent = 'Copiado!';
     setTimeout(()=>{ const b=document.querySelector('.fb-copy-btn'); if(b) b.textContent='Copiar'; },1500);
   });
+}
+
+function fbForceReceive(){
+  if(!fbDB){ fbMsgEl('Firebase não conectado.','err'); return; }
+  fbMsgEl('⏳ Buscando dados do Firebase...','ok');
+  var syncId = localStorage.getItem(window._FB_SYNCID_KEY || 'desafio64_fbsyncid');
+  if(!syncId){ fbMsgEl('Código de sync não encontrado.','err'); return; }
+  fbDB.ref('users/' + syncId).once('value').then(function(snap){
+    var obj = snap.val();
+    if(!obj){ fbMsgEl('Nenhum dado encontrado no Firebase.','err'); return; }
+    fbApplyRemote(obj);
+    fbMsgEl('✅ Dados recebidos e aplicados com sucesso!','ok');
+  }).catch(function(e){ fbMsgEl('Erro: ' + e.message,'err'); });
 }
 
 function fbForcePush(){
