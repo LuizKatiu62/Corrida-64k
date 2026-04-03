@@ -1151,7 +1151,16 @@ document.addEventListener('visibilitychange',function(){
       document.getElementById('login-form-login').style.display='block';
       document.getElementById('login-form-create').style.display='none';
       ov.style.display='flex';
+      return;
     }
+    // App voltou ao foco — push dados locais e re-renderiza a tela ativa
+    setTimeout(function(){
+      try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){}
+    }, 400);
+    setTimeout(function(){
+      try{ if(typeof renderAll==='function') renderAll(); }catch(e){}
+      try{ rerenderActiveSection(); }catch(e){}
+    }, 900);
   }
 });
 </script>
@@ -1395,7 +1404,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v206</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v207</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
