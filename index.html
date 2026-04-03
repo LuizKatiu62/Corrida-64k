@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v187</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v188</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -7518,12 +7518,30 @@ function mfDeactivate(){
   try{ renderAll(); }catch(e){}
 }
 
-// Merge user's preferred foods directly into the matching nutri list lines
-function mfMergeIntoNutri(list){
+// Merge user's preferred foods into nutri lines — only on days where each category makes sense
+function mfMergeIntoNutri(list, day){
   const foods = loadMyFoods();
   if(!foods._active) return list;
 
-  // Map each category id to keywords that identify matching nutri lines
+  const km        = (day && day.run && day.run.km) || 0;
+  const gymTitle  = (day && day.gym && day.gym.title) || '';
+  const hasRun    = km > 0;
+  const hasGym    = hasRun ? false : !/descanso|foam|alongamento|mobilidade/i.test(gymTitle) && gymTitle !== '';
+  const isLong    = km >= 15;            // corrida longa — máxima demanda
+  const isMedium  = km >= 8 && km < 15; // corrida média
+  const isPureRest= !hasRun && !hasGym;  // descanso total (sem corrida, sem academia)
+
+  // Decide quais categorias fazer merge neste dia
+  const active = {
+    cafe:   !isPureRest,           // café nos dias de treino (corrida ou academia)
+    pre:    hasRun,                // pré-treino só quando tem corrida
+    almoco: !isPureRest,           // almoço nos dias de treino
+    lanche: isLong || isMedium,   // lanche extra nos dias de maior gasto
+    pos:    hasRun || hasGym,      // pós-treino quando há qualquer treino
+    jantar: !isPureRest,           // jantar nos dias de treino
+    hidra:  hasRun,                // hidratação extra só nos dias de corrida
+  };
+
   const matchers = {
     cafe:   /caf[eé]/i,
     pre:    /pré[-\s]/i,
@@ -7537,7 +7555,7 @@ function mfMergeIntoNutri(list){
   return list.map(line=>{
     for(const [catId, rx] of Object.entries(matchers)){
       const extra = foods[catId]||[];
-      if(extra.length && rx.test(line)){
+      if(extra.length && active[catId] && rx.test(line)){
         return line + ' + ' + extra.join(' + ');
       }
     }
