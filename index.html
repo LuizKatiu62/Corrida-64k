@@ -1101,7 +1101,7 @@ window.doRegister = function(){
   if(pass.length<8){err.textContent='A senha deve ter pelo menos 8 caracteres.';return;}
   if(pass!==pass2){err.textContent='As senhas não coincidem.';return;}
   localStorage.setItem(window._AUTH_KEY,JSON.stringify({user:window._authHash(email),pass:window._authHash(pass),name:name}));
-  localStorage.setItem(window._SESSION_KEY,'1');
+  localStorage.setItem(window._SESSION_KEY, Date.now().toString());
   document.getElementById('login-overlay').style.display='none';
 };
 
@@ -1361,7 +1361,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v192</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v193</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
