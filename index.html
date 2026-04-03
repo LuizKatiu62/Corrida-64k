@@ -1395,7 +1395,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v203</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v204</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5541,6 +5541,144 @@ function openWhatsAppListModal(sendMode){
     +'</div>';
 
   document.body.appendChild(overlay);
+}
+
+// ============================================================
+// RELATÓRIO DE CORRIDAS
+// ============================================================
+function renderRunReport(){
+  const today    = getToday();
+  const progress = loadProgress();
+  const garmin   = loadGarmin();
+
+  const TYPE_LABEL = {
+    easy:   { label:'Fácil',   bg:'#e8f5e9', color:'#1b5e20' },
+    medium: { label:'Médio',   bg:'#e3f2fd', color:'#0d47a1' },
+    long:   { label:'Longo',   bg:'#fce4ec', color:'#880e4f' },
+    rest:   { label:'Descanso',bg:'#f5f5f5', color:'#777' },
+    race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
+  };
+
+  // Only running days (planned km > 0), all weeks
+  const runDays = PLAN.filter(d => d.run && d.run.km > 0);
+
+  let totalPlan = 0, totalReal = 0, doneCount = 0;
+
+  const rows = runDays.map(d => {
+    const gData  = garmin[d.date];
+    const prog   = progress[d.date] || {};
+    const isFut  = d.date > today;
+    const isToday= d.date === today;
+    const planKm = d.run.km;
+    totalPlan += planKm;
+
+    // ── real data ──────────────────────────────────────────
+    const realKm   = gData ? Math.round((gData.dist||0) * 10) / 10 : null;
+    const pace     = gData ? (gData.pace || '—') : '—';
+    const duration = gData ? (gData.duration || '—') : '—';
+    const hr       = gData && gData.hr ? gData.hr + ' bpm' : '—';
+    const zone     = gData && gData.dominantZone
+                     ? `<span class="rpt-zone-pill" style="background:${gData.dominantZone.color}">${gData.dominantZone.name}</span>`
+                     : '—';
+
+    // ── % concluído ────────────────────────────────────────
+    let pctHtml, pctVal = null;
+    if(isFut){
+      pctHtml = `<span class="rpt-pct-pill rpt-pct-future">—</span>`;
+    } else if(realKm !== null){
+      pctVal = Math.round((realKm / planKm) * 100);
+      totalReal += realKm;
+      doneCount++;
+      const cls = pctVal >= 95 ? 'rpt-pct-ok' : pctVal >= 70 ? 'rpt-pct-warn' : 'rpt-pct-bad';
+      pctHtml = `<span class="rpt-pct-pill ${cls}">${pctVal}%</span>`;
+    } else if(prog.run){
+      totalReal += planKm; // marcado manualmente = 100%
+      doneCount++;
+      pctHtml = `<span class="rpt-pct-pill rpt-pct-manual">✓</span>`;
+    } else {
+      pctHtml = `<span class="rpt-pct-pill rpt-pct-bad">0%</span>`;
+    }
+
+    // ── date label ─────────────────────────────────────────
+    const dt = new Date(d.date + 'T12:00:00');
+    const dayName = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][dt.getDay()];
+    const dtFmt   = `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+    const tConf = TYPE_LABEL[d.type] || TYPE_LABEL.easy;
+    const typeBadge = `<span class="rpt-type-badge" style="background:${tConf.bg};color:${tConf.color}">${tConf.label}</span>`;
+    const rowCls = isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
+
+    const realKmCell = realKm !== null
+      ? `<span class="rpt-km" style="color:${realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)'}">${realKm} km</span>`
+      : (prog.run ? `<span style="color:#888;font-size:.75rem">✓ manual</span>` : `<span style="color:#ccc">—</span>`);
+
+    return `<tr class="${rowCls}">
+      <td class="rpt-date">${dtFmt}<small>${dayName} · Sem ${d.week}</small></td>
+      <td>${typeBadge}</td>
+      <td><span class="rpt-km" style="color:var(--azul)">${planKm} km</span><br><span style="font-size:.68rem;color:#999">${d.run.title.replace(/🌟\s*/,'')}</span></td>
+      <td>${realKmCell}</td>
+      <td style="color:var(--azul);font-weight:700">${pace}</td>
+      <td>${duration}</td>
+      <td style="font-weight:700">${hr}</td>
+      <td>${zone}</td>
+      <td>${pctHtml}</td>
+    </tr>`;
+  });
+
+  const overallPct = totalPlan > 0 ? Math.round((totalReal / totalPlan) * 100) : 0;
+  const pctColor   = overallPct >= 90 ? 'var(--verde-esc)' : overallPct >= 70 ? 'var(--laranja)' : 'var(--vermelho)';
+
+  const html = `<div class="rpt-wrap">
+    <div class="rpt-title">📋 Relatório de Corridas</div>
+    <div class="rpt-sub">Todas as corridas do plano — dados reais via GPX Garmin</div>
+
+    <div class="rpt-summary">
+      <div class="rpt-sum-card">
+        <span class="rpt-sum-val">${totalPlan} km</span>
+        <span class="rpt-sum-lbl">Planejado total</span>
+      </div>
+      <div class="rpt-sum-card">
+        <span class="rpt-sum-val" style="color:var(--verde-esc)">${Math.round(totalReal * 10)/10} km</span>
+        <span class="rpt-sum-lbl">Realizado total</span>
+      </div>
+      <div class="rpt-sum-card">
+        <span class="rpt-sum-val" style="color:${pctColor}">${overallPct}%</span>
+        <span class="rpt-sum-lbl">Conclusão geral</span>
+      </div>
+      <div class="rpt-sum-card">
+        <span class="rpt-sum-val" style="color:var(--roxo)">${doneCount}/${runDays.length}</span>
+        <span class="rpt-sum-lbl">Treinos feitos</span>
+      </div>
+    </div>
+
+    <table class="rpt-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Planejado</th>
+          <th>Realizado</th>
+          <th>Pace</th>
+          <th>Duração</th>
+          <th>FC média</th>
+          <th>Zona FC</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody>${rows.join('')}</tbody>
+      <tfoot>
+        <tr class="rpt-total">
+          <td colspan="2">TOTAL</td>
+          <td>${totalPlan} km</td>
+          <td>${Math.round(totalReal * 10)/10} km</td>
+          <td colspan="4"></td>
+          <td><span class="rpt-pct-pill ${overallPct>=95?'rpt-pct-ok':overallPct>=70?'rpt-pct-warn':'rpt-pct-bad'}">${overallPct}%</span></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p style="font-size:.68rem;color:#bbb;margin-top:.75rem;text-align:right">* Linhas cinzas = treinos futuros · ✓ manual = marcado sem GPX</p>
+  </div>`;
+
+  document.getElementById('report-content').innerHTML = html;
 }
 
 let activeDashGoal = '64k';
