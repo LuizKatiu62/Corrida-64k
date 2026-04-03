@@ -1361,7 +1361,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v196</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v197</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -3401,40 +3401,50 @@ function gymItemHtml(item, date, idx, done){
 
 // Opens a single YouTube video — queries Invidious API for the top result, falls back to search
 function openExYoutube(query){
-  const btnId = 'ex-yt-btn';
-  const btn = document.getElementById(btnId);
-  if(btn){ btn.textContent='⏳ Buscando vídeo...'; btn.disabled=true; }
+  const btn = document.getElementById('ex-yt-btn');
+  const q   = query.replace(/\+/g,' ');
+  const reset   = ()=>{ if(btn){ btn.textContent='▶ Ver vídeo no YouTube'; btn.disabled=false; } };
+  const goWatch = id=>{ window.open('https://www.youtube.com/watch?v='+id,'_blank'); reset(); };
+  const goSearch= ()=>{ window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'&sp=EgIQAQ%3D%3D','_blank'); reset(); };
 
-  const q = query.replace(/\+/g,' ');
-  const fallback = ()=>{
-    window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'&sp=EgIQAQ%3D%3D','_blank');
-    if(btn){ btn.textContent='▶ Ver vídeo no YouTube'; btn.disabled=false; }
-  };
+  if(btn){ btn.textContent='⏳ Buscando...'; btn.disabled=true; }
 
-  // Try Invidious instances in order until one responds
-  const instances = [
-    'https://invidious.kavin.rocks',
-    'https://yewtu.be',
-    'https://inv.tux.pizza',
-  ];
-  const tryNext = idx=>{
-    if(idx>=instances.length){ fallback(); return; }
-    const url = instances[idx]+'/api/v1/search?q='+encodeURIComponent(q)+'&type=video&sort_by=relevance&fields=videoId&page=1';
+  // fetchFirst: calls url, returns first videoId string or null
+  const fetchFirst = (url, extract) => {
     const ctrl = new AbortController();
-    const t = setTimeout(()=>ctrl.abort(), 4000);
-    fetch(url,{signal:ctrl.signal})
-      .then(r=>r.ok?r.json():Promise.reject())
-      .then(data=>{
-        clearTimeout(t);
-        const id = data&&data[0]&&data[0].videoId;
-        if(id){
-          window.open('https://www.youtube.com/watch?v='+id,'_blank');
-          if(btn){ btn.textContent='▶ Ver vídeo no YouTube'; btn.disabled=false; }
-        } else { tryNext(idx+1); }
-      })
-      .catch(()=>{ clearTimeout(t); tryNext(idx+1); });
+    const t = setTimeout(()=>ctrl.abort(), 5000);
+    return fetch(url, {signal:ctrl.signal})
+      .then(r => r.ok ? r.json() : Promise.reject('!ok'))
+      .then(d => { clearTimeout(t); return extract(d)||null; })
+      .catch(()  => { clearTimeout(t); return null; });
   };
-  tryNext(0);
+
+  // APIs to try in order (all support CORS)
+  const apis = [
+    // Piped — most reliable, maintained by kavin.rocks
+    ()=> fetchFirst(
+      'https://pipedapi.kavin.rocks/search?q='+encodeURIComponent(q)+'&filter=videos',
+      d => { const u=(d.items&&d.items[0]&&d.items[0].url)||''; const m=u.match(/[?&]v=([^&]+)/); return m&&m[1]; }
+    ),
+    // Invidious kavin.rocks
+    ()=> fetchFirst(
+      'https://invidious.kavin.rocks/api/v1/search?q='+encodeURIComponent(q)+'&type=video&sort_by=relevance&fields=videoId&page=1',
+      d => d&&d[0]&&d[0].videoId
+    ),
+    // Invidious yewtu.be
+    ()=> fetchFirst(
+      'https://yewtu.be/api/v1/search?q='+encodeURIComponent(q)+'&type=video&sort_by=relevance&fields=videoId&page=1',
+      d => d&&d[0]&&d[0].videoId
+    ),
+  ];
+
+  (async ()=>{
+    for(const api of apis){
+      const id = await api();
+      if(id){ goWatch(id); return; }
+    }
+    goSearch(); // all APIs failed → fall back to YouTube search page
+  })();
 }
 
 function openExerciseModal(key){
