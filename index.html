@@ -654,6 +654,33 @@
     .cmp-slow{color:var(--laranja)}
     .cmp-bar-wrap{height:7px;background:#e8f0e8;border-radius:999px;overflow:hidden;margin:.1rem 0 .45rem}
     .cmp-bar-fill{height:100%;border-radius:999px;transition:width .6s}
+    /* ── RELATÓRIO DE CORRIDAS ── */
+    .rpt-wrap{padding:1rem 1rem 2rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .rpt-title{font-size:1.05rem;font-weight:900;color:var(--escuro);margin-bottom:.3rem}
+    .rpt-sub{font-size:.78rem;color:#888;margin-bottom:1rem}
+    .rpt-summary{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem}
+    .rpt-sum-card{background:#fff;border:1.5px solid #e0e9f5;border-radius:12px;padding:.6rem 1rem;min-width:100px;text-align:center}
+    .rpt-sum-val{font-size:1.3rem;font-weight:900;color:var(--azul);display:block}
+    .rpt-sum-lbl{font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+    .rpt-table{width:100%;border-collapse:collapse;min-width:640px;font-size:.8rem}
+    .rpt-table th{background:var(--escuro);color:#fff;padding:.5rem .65rem;text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+    .rpt-table th:last-child,.rpt-table td:last-child{text-align:right}
+    .rpt-table td{padding:.5rem .65rem;border-bottom:1px solid #eef0f2;vertical-align:middle;white-space:nowrap}
+    .rpt-table tr:hover td{background:#f7fbff}
+    .rpt-table tr.rpt-future td{color:#bbb}
+    .rpt-table tr.rpt-today td{background:#fffbf0}
+    .rpt-date{font-weight:700;color:var(--escuro)}
+    .rpt-date small{display:block;font-weight:400;font-size:.68rem;color:#999}
+    .rpt-type-badge{display:inline-block;border-radius:999px;padding:.12rem .5rem;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+    .rpt-km{font-weight:800}
+    .rpt-pct-pill{display:inline-block;border-radius:999px;padding:.15rem .55rem;font-size:.72rem;font-weight:800;min-width:44px;text-align:center}
+    .rpt-pct-ok{background:#d5f5e3;color:#1b7a45}
+    .rpt-pct-warn{background:#fde8cc;color:#b84e00}
+    .rpt-pct-bad{background:#fde8e8;color:#a01010}
+    .rpt-pct-manual{background:#e8eaf6;color:#3949ab}
+    .rpt-pct-future{background:#f0f0f0;color:#aaa}
+    .rpt-zone-pill{display:inline-block;border-radius:999px;padding:.12rem .5rem;font-size:.68rem;font-weight:800;color:#fff}
+    .rpt-total td{background:#f0f4f8;font-weight:800;font-size:.82rem;border-top:2px solid #cdd8e3}
     footer{text-align:center;padding:2rem;font-size:.78rem;color:#aaa}
     /* iOS safe area (notch/Dynamic Island) */
     header{padding-top:calc(2rem + env(safe-area-inset-top))}
@@ -1361,7 +1388,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v198</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v199</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
