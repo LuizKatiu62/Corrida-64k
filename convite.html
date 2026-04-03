@@ -363,6 +363,22 @@
   <div id="copy-msg" style="margin-top:.75rem;font-size:.78rem;color:var(--verde-light);display:none">✅ Link copiado!</div>
 </div>
 
+<!-- MODAL PARTICIPAR -->
+<div class="modal-overlay" id="modal-participar" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">🏃 Confirmar Presença</div>
+    <div class="modal-sub">Deixe seu nome e faça parte desta história! Não importa se vai correr, caminhar ou apoiar.</div>
+    <input class="modal-input" id="modal-name" type="text" placeholder="Seu nome" maxlength="60" autocomplete="off">
+    <button class="modal-btn" onclick="submitName()">✅ Confirmar minha presença</button>
+    <div class="modal-confirm" id="modal-confirm">🎉 Boa! Te vejo lá!</div>
+    <div class="modal-list" id="modal-list">
+      <div class="modal-list-title">Quem já confirmou</div>
+      <ul id="name-list"></ul>
+    </div>
+  </div>
+</div>
+
 <footer>
   © 2026 Luiz Silva · Desafio 64km · Saint John, NB, Canada<br>
   <span style="font-style:italic;opacity:.7">"Running with gratitude, finishing for His Glory"</span>
