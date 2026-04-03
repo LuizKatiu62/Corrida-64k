@@ -1404,7 +1404,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v208</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v209</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -1864,8 +1864,11 @@ function initFirebaseSync(config){
     fbDB.ref('.info/connected').on('value', function(snap){
       fbConnected = snap.val() === true;
       if(fbConnected && !fbWasConnected){
-        // Primeira vez que conecta: envia todos os dados locais
-        setTimeout(function(){ try{ fbForcePush(); }catch(e){} }, 800);
+        // Reconectou: envia dados locais e re-renderiza tela ativa
+        setTimeout(function(){
+          try{ fbForcePush(); }catch(e){}
+          setTimeout(function(){ try{ rerenderActiveSection(); }catch(e){} }, 600);
+        }, 800);
       }
       fbWasConnected = fbConnected;
       updateFBBanner(true);
