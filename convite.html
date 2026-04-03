@@ -440,17 +440,37 @@ function copyLink(){
   }
 }
 
-// ── MODAL PARTICIPAR ──
-var PART_KEY = 'desafio64_participantes';
+// ── FIREBASE PARTICIPANTES ──
+var fbDb = null;
+var fbRef = null;
 
-function loadNames(){
+(function initFb(){
+  // Tenta usar a mesma config do app (se aberto no mesmo dispositivo)
+  var cfg = null;
+  try{ cfg = JSON.parse(localStorage.getItem('desafio64_fbconfig')||'null'); }catch(e){}
+  if(!cfg || !cfg.databaseURL) return; // sem config, usa apenas localStorage
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    else firebase.app();
+    fbDb = firebase.database();
+    fbRef = fbDb.ref('desafio64/participantes');
+    // Ouve mudanças em tempo real
+    fbRef.on('value', function(snap){
+      var data = snap.val() || {};
+      var names = Object.values(data).map(function(e){ return e.nome; }).filter(Boolean);
+      names.sort(function(a,b){ return a.localeCompare(b); });
+      renderNamesArr(names);
+    });
+  }catch(e){ fbDb = null; }
+})();
+
+// ── MODAL PARTICIPAR ──
+var PART_KEY = 'desafio64_participantes_local';
+
+function loadNamesLocal(){
   try{ return JSON.parse(localStorage.getItem(PART_KEY)||'[]'); }catch(e){ return []; }
 }
-function saveNames(arr){
-  localStorage.setItem(PART_KEY, JSON.stringify(arr));
-}
-function renderNames(){
-  var arr = loadNames();
+function renderNamesArr(arr){
   var ul = document.getElementById('name-list');
   if(!ul) return;
   ul.innerHTML = '';
@@ -463,6 +483,10 @@ function renderNames(){
       ul.appendChild(li);
     });
   }
+}
+function renderNames(){
+  if(fbRef) return; // Firebase já atualiza via listener
+  renderNamesArr(loadNamesLocal());
 }
 function openModal(){
   document.getElementById('modal-participar').classList.add('open');
@@ -480,11 +504,19 @@ function closeModalOutside(e){
 function submitName(){
   var name = (document.getElementById('modal-name').value || '').trim();
   if(!name) { document.getElementById('modal-name').focus(); return; }
-  var arr = loadNames();
-  if(arr.indexOf(name) === -1){ arr.push(name); saveNames(arr); }
+
+  if(fbRef){
+    // Salva no Firebase
+    fbRef.push({ nome: name, ts: Date.now() });
+  } else {
+    // Fallback: localStorage
+    var arr = loadNamesLocal();
+    if(arr.indexOf(name) === -1){ arr.push(name); localStorage.setItem(PART_KEY, JSON.stringify(arr)); }
+    renderNamesArr(arr);
+  }
   document.getElementById('modal-name').value = '';
   document.getElementById('modal-confirm').style.display = 'block';
-  renderNames();
+  setTimeout(function(){ document.getElementById('modal-confirm').style.display='none'; }, 4000);
 }
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
 document.getElementById('modal-name').addEventListener('keydown', function(e){ if(e.key==='Enter') submitName(); });
