@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v234</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v235</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5222,14 +5222,15 @@ async function renderPhotosSection(){
 
 async function downloadAlbumPhotos(albumId){
   const photos = await getPhotosByAlbum(albumId);
-  if(!photos.length){ alert('Nenhuma foto neste álbum.'); return; }
+  if(!photos.length){ alert('Nenhum arquivo neste álbum.'); return; }
   for(let i=0; i<photos.length; i++){
     const p = photos[i];
+    const isVid = p.type === 'video';
     const a = document.createElement('a');
     a.href = p.data;
-    a.download = p.filename || `foto-${i+1}.jpg`;
+    a.download = p.filename || (isVid ? `video-${i+1}.mp4` : `foto-${i+1}.jpg`);
     a.click();
-    await new Promise(r => setTimeout(r, 400)); // small delay between downloads
+    await new Promise(r => setTimeout(r, 500));
   }
 }
 
