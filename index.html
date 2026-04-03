@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v179</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v180</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -3440,36 +3440,49 @@ function openExerciseModal(key){
   overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 
-  // Fetch real photo from Wikipedia media-list API (skips SVG illustrations, picks first real photo)
+  // Fetch exercise photo: tries media-list (real photos) → summary thumbnail → emoji fallback
   if(ex.wikiPage){
     const wrap = document.getElementById('wiki-photo-wrap-' + thumbUid);
-    fetch('https://en.wikipedia.org/api/rest_v1/page/media-list/' + encodeURIComponent(ex.wikiPage))
-      .then(r => r.json())
-      .then(data => {
-        if(!wrap) return;
-        // Filter: only images, skip SVG illustrations, prefer larger srcset entries
-        const items = (data.items || []).filter(it =>
-          it.type === 'image' &&
-          it.srcset && it.srcset.length > 0 &&
-          !/\.svg/i.test(it.srcset[0].src) &&
-          !/\.svg/i.test((it.original || {}).source || '')
-        );
-        if(items.length){
-          // Use largest available srcset (last entry) but cap at ~400px via URL manipulation
-          const entry = items[0];
-          let src = 'https:' + (entry.srcset[entry.srcset.length - 1].src || entry.srcset[0].src);
-          // Try to request a 400px version if URL has a px-prefix pattern
-          src = src.replace(/\/(\d+)px-/, m => {
-            const cur = parseInt(m.slice(1)); return '/' + Math.min(cur, 440) + 'px-';
-          });
-          wrap.innerHTML = '<img src="' + src + '" alt="' + ex.title + '" style="width:100%;max-height:260px;object-fit:cover;display:block;border-radius:12px" onerror="this.style.display=\'none\'">';
-        } else {
-          wrap.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:.4rem"><span style="font-size:3.5rem">' + (ex.thumbEmoji||'🏋️') + '</span><span style="font-size:.72rem;color:#aaa">' + ex.title + '</span></div>';
-        }
-      })
-      .catch(() => {
-        if(wrap) wrap.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem"><span style="font-size:3.5rem">' + (ex.thumbEmoji||'🏋️') + '</span></div>';
-      });
+    const emojiHtml = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:.4rem"><span style="font-size:3.5rem">'+(ex.thumbEmoji||'🏋️')+'</span><span style="font-size:.72rem;color:#aaa">'+ex.title+'</span></div>';
+    const showImg = src => {
+      if(!wrap) return;
+      const img = document.createElement('img');
+      img.alt = ex.title;
+      img.style.cssText = 'width:100%;max-height:260px;object-fit:cover;display:block;border-radius:12px';
+      img.onerror = () => { if(wrap) wrap.innerHTML = emojiHtml; };
+      img.src = src;
+      wrap.innerHTML = '';
+      wrap.appendChild(img);
+    };
+    const tryPhotoFromPage = wikiTitle =>
+      fetch('https://en.wikipedia.org/api/rest_v1/page/media-list/' + encodeURIComponent(wikiTitle))
+        .then(r => r.ok ? r.json() : {items:[]})
+        .then(data => {
+          const item = (data.items||[]).find(it =>
+            it.type==='image' && it.srcset && it.srcset.length &&
+            !/\.svg/i.test(it.srcset[0].src) &&
+            !/\.svg/i.test(((it.original||{}).source)||'')
+          );
+          if(item){
+            let src = item.srcset[item.srcset.length-1].src || item.srcset[0].src;
+            if(src.startsWith('//')) src = 'https:' + src;
+            src = src.replace(/\/(\d+)px-/, (_,n) => '/'+Math.min(parseInt(n),440)+'px-');
+            showImg(src);
+            return true;
+          }
+          return false;
+        });
+    tryPhotoFromPage(ex.wikiPage).then(found => {
+      if(found) return;
+      // Fallback: try the summary thumbnail (may be illustration but visible)
+      return fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(ex.wikiPage))
+        .then(r => r.ok ? r.json() : {})
+        .then(data => {
+          const src = data.thumbnail && data.thumbnail.source
+            ? data.thumbnail.source.replace(/\/\d+px-/, '/400px-') : null;
+          if(src) showImg(src); else if(wrap) wrap.innerHTML = emojiHtml;
+        });
+    }).catch(() => { if(wrap) wrap.innerHTML = emojiHtml; });
   }
 }
 
