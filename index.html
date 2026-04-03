@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v282</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v283</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2090,11 +2090,20 @@ function copyFBSyncId(){
 function fbForceReceive(){
   if(!fbDB){ fbMsgEl('Firebase não conectado.','err'); return; }
   var syncId = fbSyncId || localStorage.getItem(FB_SYNCID_KEY);
-  if(!syncId){ fbMsgEl('Código de sync não encontrado.','err'); return; }
+  if(!syncId){
+    var code = prompt('Cole aqui o código de sync do Mac (🔄 Sync → seu código de 8 letras):');
+    if(!code){ return; }
+    code = code.trim().toUpperCase();
+    if(code.length < 4){ fbMsgEl('Código inválido.','err'); return; }
+    syncId = code;
+  }
   fbMsgEl('⏳ Buscando dados do Firebase...','ok');
   fbDB.ref('d64/' + syncId).once('value').then(function(snap){
     var obj = snap.val();
-    if(!obj){ fbMsgEl('Nenhum dado encontrado no Firebase.','err'); return; }
+    if(!obj){ fbMsgEl('Nenhum dado encontrado no Firebase para este código.','err'); return; }
+    // Save this syncId locally so future syncs use the same one
+    localStorage.setItem(FB_SYNCID_KEY, syncId);
+    fbSyncId = syncId;
     fbApplyRemote(obj);
     fbMsgEl('✅ Dados recebidos e aplicados com sucesso!','ok');
   }).catch(function(e){ fbMsgEl('Erro: ' + e.message,'err'); });
