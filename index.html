@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v220</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v221</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -7460,7 +7460,6 @@ async function importStravaActivity(date, actId, name, distM, movingSecs, elevGa
   const pace = paceS>0 ? `${Math.floor(paceS/60)}:${String(Math.floor(paceS%60)).padStart(2,'0')}/km` : null;
   const hrVal = hr && +hr > 0 ? Math.round(+hr) : null;
 
-  // Compute zone from average HR (Strava only provides avg, not full distribution)
   const HR_MAX=157;
   const HR_ZONES=[
     {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#74b9ff'},
@@ -7469,14 +7468,33 @@ async function importStravaActivity(date, actId, name, distM, movingSecs, elevGa
     {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e17055'},
     {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#d63031'},
   ];
-  let dominantZone=null, dominantZonePct=null;
+
+  // Helper: calculates top-2 zones from an array of HR values
+  function calcZonesFromStream(vals){
+    if(!vals || !vals.length) return {z1:null,z1pct:0,z2:null,z2pct:0};
+    const counts=[0,0,0,0,0];
+    vals.forEach(function(v){
+      for(let i=HR_ZONES.length-1;i>=0;i--){ if(v>=HR_ZONES[i].min){counts[i]++;break;} }
+    });
+    const maxC=Math.max(...counts);
+    const idx=counts.indexOf(maxC);
+    const z1=HR_ZONES[idx], z1pct=Math.round((maxC/vals.length)*100);
+    const counts2=counts.slice(); counts2[idx]=-1;
+    const max2=Math.max(...counts2);
+    const z2=max2>0 ? HR_ZONES[counts2.indexOf(max2)] : null;
+    const z2pct=max2>0 ? Math.round((max2/vals.length)*100) : 0;
+    return {z1,z1pct,z2,z2pct};
+  }
+
+  // Start with single-point estimate from avg HR (will be overridden by stream below)
+  let dominantZone=null, dominantZonePct=null, secondZone=null, secondZonePct=null;
   if(hrVal){
     for(let i=HR_ZONES.length-1;i>=0;i--){
-      if(hrVal>=HR_ZONES[i].min){ dominantZone=HR_ZONES[i]; break; }
+      if(hrVal>=HR_ZONES[i].min){ dominantZone=HR_ZONES[i]; dominantZonePct=100; break; }
     }
   }
 
-  // Fetch cadence stream + HR from detailed activity
+  // Fetch heartrate stream + cadence from Strava (full distribution → accurate zones)
   let cadVal = cadence && +cadence > 0 ? +cadence : null;
   try{
     const token = await ensureStravaToken();
@@ -7491,23 +7509,34 @@ async function importStravaActivity(date, actId, name, distM, movingSecs, elevGa
       ]);
       if(streamRes.ok){
         const streams = await streamRes.json();
+        // Cadence stream
         if(streams.cadence && streams.cadence.data){
           const cadData = streams.cadence.data.filter(v=>v>0);
           if(cadData.length>0) cadVal = cadData.reduce((a,b)=>a+b,0)/cadData.length;
+        }
+        // HR stream — full distribution → top-2 zones with real percentages
+        if(streams.heartrate && streams.heartrate.data){
+          const hrStream = streams.heartrate.data.filter(v=>v>30&&v<250);
+          if(hrStream.length>0){
+            const z = calcZonesFromStream(hrStream);
+            dominantZone=z.z1; dominantZonePct=z.z1pct;
+            secondZone=z.z2;   secondZonePct=z.z2pct;
+          }
         }
       }
       if(detailRes.ok){
         const detail = await detailRes.json();
         if(!cadVal && detail.average_cadence && +detail.average_cadence>0) cadVal=+detail.average_cadence;
-        if(detail.average_heartrate && +detail.average_heartrate>30){
+        // Only use detail HR for zone if stream didn't give us distribution data
+        if(!dominantZone && detail.average_heartrate && +detail.average_heartrate>30){
           const detailHr=Math.round(+detail.average_heartrate);
           for(let i=HR_ZONES.length-1;i>=0;i--){
-            if(detailHr>=HR_ZONES[i].min){ dominantZone=HR_ZONES[i]; break; }
+            if(detailHr>=HR_ZONES[i].min){ dominantZone=HR_ZONES[i]; dominantZonePct=100; break; }
           }
         }
       }
     }
-  } catch(e){}
+  } catch(e){ console.warn('Strava stream error:', e); }
 
   // Cadence: Strava streams return strides/min for running → multiply by 2
   let avgCadence=null;
@@ -7515,7 +7544,7 @@ async function importStravaActivity(date, actId, name, distM, movingSecs, elevGa
 
   const result = {
     dist, duration, pace, hr: hrVal,
-    dominantZone, dominantZonePct,
+    dominantZone, dominantZonePct, secondZone, secondZonePct,
     avgCadence,
     elevGain: Math.round(elevGain),
     actDate, filename: name,
