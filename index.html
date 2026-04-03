@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v226</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v227</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2286,25 +2286,35 @@ function parseGPX(text, filename){
 
 // Renderiza as top-2 zonas de FC de uma entrada garmin
 // Retorna HTML com pills: "Z2 · Z3" ou só "Z2" se não há segunda
+// size: 'normal' (painel GPX), 'small' (gráfico/relatório), 'inline' (tabela compacta)
 function zonesPillsHtml(gData, opts){
   opts = opts || {};
-  var small = opts.small;
+  var size = opts.size || (opts.small ? 'small' : 'normal');
   var z1 = gData && gData.dominantZone && typeof gData.dominantZone==='object' ? gData.dominantZone : null;
   var z2 = gData && gData.secondZone   && typeof gData.secondZone==='object'   ? gData.secondZone   : null;
-  if(!z1) return '<span style="color:#aaa;font-size:.75rem">—</span>';
+  if(!z1) return '<span style="color:#aaa">—</span>';
   var fromAvg = !!gData.zoneFromAvg;
-  var fs   = small ? '.65rem' : '.78rem';
-  var pad  = small ? '.18rem .5rem' : '.22rem .65rem';
+
+  var fs, pad, gap, borderLeft;
+  if(size==='inline'){
+    fs='.6rem'; pad='.1rem .38rem'; gap='.2rem'; borderLeft='3px';
+  } else if(size==='small'){
+    fs='.65rem'; pad='.14rem .45rem'; gap='.25rem'; borderLeft='3px';
+  } else {
+    fs='.75rem'; pad='.18rem .55rem'; gap='.3rem'; borderLeft='4px';
+  }
 
   function makePill(zone, pct, isAvg){
-    var pctStr = (pct != null) ? '<span style="font-weight:500;margin-left:.25rem;opacity:.8">'+pct+'%</span>' : (isAvg ? '<span style="font-weight:400;margin-left:.25rem;opacity:.6;font-size:.6em">~avg</span>' : '');
-    return '<span style="display:inline-flex;align-items:center;background:#f5f5f5;border:2px solid '+zone.color+';border-left:4px solid '+zone.color+';border-radius:6px;padding:'+pad+';font-size:'+fs+';font-weight:800;color:#222;white-space:nowrap">'+zone.name+pctStr+'</span>';
+    var pctStr = (pct != null)
+      ? '<span style="font-weight:500;margin-left:.2rem;opacity:.75">'+pct+'%</span>'
+      : (isAvg ? '<span style="margin-left:.2rem;opacity:.5;font-size:.85em">~avg</span>' : '');
+    return '<span style="display:inline-flex;align-items:center;background:#f4f6f8;border:1.5px solid '+zone.color+';border-left:'+borderLeft+' solid '+zone.color+';border-radius:5px;padding:'+pad+';font-size:'+fs+';font-weight:800;color:#1a1a2e;white-space:nowrap;line-height:1.3">'+zone.name+pctStr+'</span>';
   }
 
   var pill1 = makePill(z1, gData.dominantZonePct, fromAvg);
   if(!z2) return pill1;
   var pill2 = makePill(z2, gData.secondZonePct, false);
-  return '<span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:wrap">'+pill1+pill2+'</span>';
+  return '<span style="display:inline-flex;align-items:center;gap:'+gap+';flex-wrap:wrap">'+pill1+pill2+'</span>';
 }
 
 // Migra entradas Strava existentes que têm hr mas não têm dominantZone calculada
