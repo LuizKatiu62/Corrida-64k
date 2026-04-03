@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v173</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v174</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -7496,9 +7496,13 @@ function mfUpload(){
   foods._active = true;
   saveMyFoods(foods);
   renderMyFoodsPage();
-  // Show confirmation
+  try{ renderAll(); }catch(e){}
   const btn = document.querySelector('.mf-upload-btn');
-  if(btn){ btn.textContent='✅ Ativado!'; btn.style.background='#27ae60'; setTimeout(()=>renderMyFoodsPage(),1500); }
+  if(btn){
+    btn.textContent='✅ Ativado! Aparece na aba Nutrição de cada dia';
+    btn.style.background='#27ae60';
+    setTimeout(()=>renderMyFoodsPage(), 2000);
+  }
 }
 
 function mfDeactivate(){
@@ -7506,6 +7510,7 @@ function mfDeactivate(){
   delete foods._active;
   saveMyFoods(foods);
   renderMyFoodsPage();
+  try{ renderAll(); }catch(e){}
 }
 
 // Build the "Meus Alimentos" block shown inside the nutri tab
