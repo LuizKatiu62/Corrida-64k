@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v212</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v213</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2279,7 +2279,7 @@ function parseGPX(text, filename){
 
   const actDate=times[0]?times[0].toISOString().split('T')[0]:null;
 
-  return {dist,duration,pace,hr,dominantZone,dominantZonePct,avgCadence,elevGain:Math.round(elevGain),actDate,filename,importedAt:new Date().toISOString(),raw:text};
+  return {dist,duration,pace,hr,dominantZone,dominantZonePct,secondZone,secondZonePct,avgCadence,elevGain:Math.round(elevGain),actDate,filename,importedAt:new Date().toISOString(),raw:text};
 }
 
 // Migra entradas antigas que não têm dominantZone/avgCadence mas têm raw (texto GPX)
