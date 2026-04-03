@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v275</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v276</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -4826,6 +4826,8 @@ function badgeClass(week){
 
 function showWeek(w){
   activeView = w;
+  // restore today banner visibility (hidden when participantes was active)
+  var _tb = document.getElementById('today-banner'); if(_tb) _tb.style.display='';
   // hide all
   document.getElementById('section-today').innerHTML='';
   [1,2,3,4,5].forEach(i=>document.getElementById(`section-w${i}`).classList.add('hidden'));
