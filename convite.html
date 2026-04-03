@@ -369,7 +369,9 @@ function updateCountdown(){
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-var PAGE_URL = window.location.href;
+var PAGE_URL = (window.location.protocol === 'file:')
+  ? 'https://luizkatiu62.github.io/Corrida-64k/convite.html'
+  : window.location.href;
 var MSG = '🏃 Desafio 64km — 2 de Maio 2026, Saint John NB!\n"Running with gratitude, finishing for His Glory"\nVenha correr, caminhar ou apoiar! ' + PAGE_URL;
 
 function shareFacebook(){
@@ -379,20 +381,27 @@ function shareWhatsApp(){
   window.open('https://wa.me/?text='+encodeURIComponent(MSG),'_blank');
 }
 function copyLink(){
-  navigator.clipboard.writeText(PAGE_URL).then(function(){
+  function showMsg(){
     var msg = document.getElementById('copy-msg');
     msg.style.display='block';
     setTimeout(function(){ msg.style.display='none'; }, 3000);
-  }).catch(function(){
-    var inp = document.createElement('input');
+  }
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(PAGE_URL).then(showMsg).catch(fallback);
+  } else {
+    fallback();
+  }
+  function fallback(){
+    var inp = document.createElement('textarea');
     inp.value = PAGE_URL;
+    inp.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
     document.body.appendChild(inp);
+    inp.focus();
     inp.select();
-    document.execCommand('copy');
+    try{ document.execCommand('copy'); }catch(e){}
     inp.remove();
-    document.getElementById('copy-msg').style.display='block';
-    setTimeout(function(){ document.getElementById('copy-msg').style.display='none'; }, 3000);
-  });
+    showMsg();
+  }
 }
 
 // Smooth scroll
