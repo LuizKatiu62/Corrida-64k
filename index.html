@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v242</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v243</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5261,6 +5261,10 @@ async function selectAlbum(albumId){
 async function handlePhotoUpload(e, albumId){
   const files = Array.from(e.target.files);
   if(!files.length) return;
+  // Show loading feedback
+  const contentEl = document.getElementById('photos-content');
+  if(contentEl) contentEl.insertAdjacentHTML('afterbegin',
+    '<div id="photo-uploading" style="background:#e8f4fd;border-radius:10px;padding:.7rem 1rem;margin-bottom:.75rem;font-size:.82rem;font-weight:700;color:var(--azul)">⏳ Salvando '+files.length+' arquivo(s)…</div>');
   for(const file of files){
     await savePhoto(albumId, file);
   }
