@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v188</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v189</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -4379,7 +4379,7 @@ function buildCard(day, isToday, p){
   const gymItems = hasGym ? day.gym.ex.map((i,idx)=>gymItemHtml(i, day.date, idx, !!exDone[idx])).join('') : '<li style="color:#aaa">Descanso — sem treino de força</li>';
   const runCal = calcRunCalories(day);
   const gymCal = calcGymCalories(day);
-  const nutriList  = mfMergeIntoNutri(addCafeComLeite(day.nutri, day));
+  const nutriList  = mfMergeIntoNutri(addCafeComLeite(day.nutri, day), day);
   const nutriItems = nutriList.map(i=>nutriItemHtml(i)).join('');
 
   const dayEvent = loadEvents().find(e=>e.date===day.date);
@@ -6670,7 +6670,7 @@ function buildGoalCard(day, isToday, progress, goalType){
   const gymItems  = hasGym
     ? day.gym.ex.map((i,idx)=>gymItemHtml(i, day.date, idx, !!exDone[idx])).join('')
     : '<li style="color:#aaa">Descanso — sem treino de força</li>';
-  const nutriList  = mfMergeIntoNutri(addCafeComLeite(day.nutri, day));
+  const nutriList  = mfMergeIntoNutri(addCafeComLeite(day.nutri, day), day);
   const nutriItems = nutriList.map(i=>nutriItemHtml(i)).join('');
   const runCal  = calcRunCalories(day);
   const gymCal  = calcGymCalories(day);
@@ -7457,7 +7457,7 @@ function renderMyFoodsPage(){
 
   const statusHtml = isActive
     ? `<div style="background:#e8f8e8;border:1.5px solid #a5d6a7;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:#1b5e20;font-weight:700;margin-bottom:.75rem">
-        ✅ Alimentos ativos — aparecem na aba de Nutrição de cada treino
+        ✅ Ativos — inseridos automaticamente nos dias onde fazem sentido nutricional
        </div>`
     : `<div style="background:#fff8e1;border:1.5px solid #ffe082;border-radius:10px;padding:.6rem .9rem;font-size:.8rem;color:#e65100;margin-bottom:.75rem">
         ⚠️ Adicione seus alimentos e clique em UPLOAD para ativá-los no plano
@@ -7466,7 +7466,7 @@ function renderMyFoodsPage(){
   document.getElementById('myfoods-content').innerHTML = `<div class="mf-page">
     <div class="mf-header">
       <h2>🥗 Alimentos Desejáveis</h2>
-      <p>Adicione os alimentos que você prefere em cada refeição. Após o UPLOAD, eles aparecem como sugestões personalizadas na aba de Nutrição de cada dia de treino.</p>
+      <p>Adicione os alimentos que prefere em cada refeição. O sistema analisa o cardápio de cada dia e insere seus alimentos <strong>apenas nos dias relevantes</strong>: pré/pós-treino só em dias de corrida, hidratação extra só quando há km, descanso total sem inserções.</p>
     </div>
     ${statusHtml}
     ${catsHtml}
