@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v241</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v242</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5066,15 +5066,15 @@ async function savePhoto(albumId, file){
   const db = await openPhotoDB();
   const isVideo = file.type.startsWith('video/');
 
-  // Videos: store raw Blob in IndexedDB — never base64 (would crash on large files)
-  // Images: compress to JPEG base64
-  let data, blob;
-  if(isVideo){
-    blob = file; // keep as Blob for IndexedDB
-    data = null; // not used for videos
-  } else {
-    data = await compressImage(file, 800, 0.75);
+  // Limit video size: iOS IndexedDB quota is tight (~50–100MB per origin)
+  const MAX_VIDEO_MB = 80;
+  if(isVideo && file.size > MAX_VIDEO_MB * 1024 * 1024){
+    alert(`Vídeo muito grande (${Math.round(file.size/1024/1024)} MB). Limite: ${MAX_VIDEO_MB} MB.\n\nDica: no iPhone, corte o vídeo em partes menores antes de enviar.`);
+    return null;
   }
+
+  // Store everything as base64 — works reliably on iOS Safari
+  const data = await compressImage(file, 800, 0.75);
 
   return new Promise((resolve, reject) => {
     const photo = {
@@ -5083,32 +5083,23 @@ async function savePhoto(albumId, file){
       filename: file.name,
       type:    isVideo ? 'video' : 'image',
       caption: '',
-      data:    isVideo ? null : data,   // null for videos
-      blob:    isVideo ? blob : null,   // Blob only for videos (IndexedDB only)
+      data,
       addedAt: new Date().toISOString()
     };
     const tx  = db.transaction('photos','readwrite');
     const req = tx.objectStore('photos').put(photo);
     req.onsuccess = () => {
-      // Only push images to Firebase (videos too large)
-      if(!isVideo) fbPushPhoto(photo);
+      if(!isVideo) fbPushPhoto(photo); // videos too large for Firebase
       resolve(photo);
     };
     req.onerror = () => {
-      alert('Erro ao salvar. Armazenamento cheio ou indisponível no dispositivo.');
+      alert('Erro ao salvar. Armazenamento cheio ou indisponível.\n\nNo iPhone: Ajustes → Safari → Avançado → Dados do site.');
       reject(req.error);
     };
   });
 }
 
-// Returns a src URL for displaying a photo/video entry
-// For videos: creates an ObjectURL from blob; caller should revoke when done
 function photoSrc(p){
-  if(p.type === 'video'){
-    if(p.blob) return URL.createObjectURL(p.blob);
-    if(p.data) return p.data; // legacy base64 fallback
-    return '';
-  }
   return p.data || '';
 }
 
