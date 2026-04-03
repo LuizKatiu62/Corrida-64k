@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v224</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v225</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -1509,7 +1509,7 @@ function r26RaceCard(r, dark){
     ? '<span style="color:'+(dark?'#888':'#aaa')+';font-size:.68rem">Realizada</span>'
     : diffDays <= 30
       ? '<span style="color:'+(dark?'#f39c12':'#e74c3c')+';font-weight:800;font-size:.7rem">&#9889; '+diffDays+' dias</span>'
-      : '<span style="color:'+(dark?'#74b9ff':'#2980b9')+';font-size:.7rem">&#128197; '+diffDays+' dias</span>';
+      : '<span style="color:'+(dark?'#2980b9':'#2980b9')+';font-size:.7rem">&#128197; '+diffDays+' dias</span>';
   var dateBg = dark?'rgba(255,255,255,.1)':'#f4f6f8', dayCol=dark?'#fff':'#2c3e50';
   var monCol = dark?'#f39c12':'#888', nameCol=dark?'#fff':'#2c3e50';
   var metaCol= dark?'#aaa':'#888', border=dark?'1px solid rgba(255,255,255,.08)':'1px solid #f0f0f0';
@@ -2236,14 +2236,14 @@ function parseGPX(text, filename){
   const hrVals=[...doc.querySelectorAll('hr')].map(e=>+e.textContent).filter(v=>v>30&&v<250);
   const hr=hrVals.length?Math.round(hrVals.reduce((a,b)=>a+b,0)/hrVals.length):null;
 
-  // HR zones (Luiz: FC máx ~157 bpm)
+  // HR zones — cores sólidas visíveis (Luiz: FC máx ~157 bpm)
   const HR_MAX=157;
   const HR_ZONES=[
-    {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#74b9ff'},
-    {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#55efc4'},
-    {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#fdcb6e'},
-    {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e17055'},
-    {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#d63031'},
+    {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#2980b9'},
+    {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#27ae60'},
+    {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#e67e22'},
+    {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e74c3c'},
+    {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#8e44ad'},
   ];
   let dominantZone=null,dominantZonePct=0,secondZone=null,secondZonePct=0;
   if(hrVals.length>0){
@@ -2308,11 +2308,11 @@ function migrateStravaZones(){
   try{
     const HR_MAX=157;
     const HR_ZONES=[
-      {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#74b9ff'},
-      {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#55efc4'},
-      {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#fdcb6e'},
-      {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e17055'},
-      {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#d63031'},
+      {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#2980b9'},
+      {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#27ae60'},
+      {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#e67e22'},
+      {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e74c3c'},
+      {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#8e44ad'},
     ];
     const g=loadGarmin();
     let changed=false;
@@ -7497,11 +7497,11 @@ async function importStravaActivity(date, actId, name, distM, movingSecs, elevGa
 
   const HR_MAX=157;
   const HR_ZONES=[
-    {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#74b9ff'},
-    {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#55efc4'},
-    {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#fdcb6e'},
-    {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e17055'},
-    {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#d63031'},
+    {z:1,name:'Z1 · Recuperação',   min:0,                       max:Math.round(HR_MAX*.60),color:'#2980b9'},
+    {z:2,name:'Z2 · Base aeróbica', min:Math.round(HR_MAX*.60),  max:Math.round(HR_MAX*.70),color:'#27ae60'},
+    {z:3,name:'Z3 · Aeróbico',      min:Math.round(HR_MAX*.70),  max:Math.round(HR_MAX*.80),color:'#e67e22'},
+    {z:4,name:'Z4 · Limiar',        min:Math.round(HR_MAX*.80),  max:Math.round(HR_MAX*.90),color:'#e74c3c'},
+    {z:5,name:'Z5 · VO₂max',        min:Math.round(HR_MAX*.90),  max:300,                   color:'#8e44ad'},
   ];
 
   // Helper: calculates top-2 zones from an array of HR values
