@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v214</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v215</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -1721,6 +1721,8 @@ function fbApplyRemote(data){
             if(loc.raw)                          fbGarmin[date].raw=loc.raw;
             if(loc.dominantZone!==undefined)     fbGarmin[date].dominantZone=loc.dominantZone;
             if(loc.dominantZonePct!==undefined)  fbGarmin[date].dominantZonePct=loc.dominantZonePct;
+            if(loc.secondZone!==undefined)       fbGarmin[date].secondZone=loc.secondZone;
+            if(loc.secondZonePct!==undefined)    fbGarmin[date].secondZonePct=loc.secondZonePct;
             if(loc.avgCadence!==undefined)       fbGarmin[date].avgCadence=loc.avgCadence;
           }
         });
