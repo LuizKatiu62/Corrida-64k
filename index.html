@@ -954,16 +954,16 @@
         </div>
         <div class="login-field">
           <label>✉️ E-mail</label>
-          <input type="email" id="reg-email" placeholder="seu@email.com" autocomplete="email" autocapitalize="none">
+          <input type="text" inputmode="email" id="reg-email" placeholder="seu@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
         <div class="login-field">
           <label>🔒 Senha</label>
-          <input type="password" id="reg-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+          <input type="password" id="reg-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false">
           <span class="login-hint">🔑 A senha deve ter pelo menos 8 caracteres</span>
         </div>
         <div class="login-field">
           <label>🔒 Confirmar Senha</label>
-          <input type="password" id="reg-pass2" placeholder="Repita a senha" autocomplete="new-password">
+          <input type="password" id="reg-pass2" placeholder="Repita a senha" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false">
         </div>
         <button class="login-btn login-btn-primary" onclick="doRegister()">🚀 Criar Conta</button>
         <div class="login-error" id="reg-error"></div>
@@ -975,11 +975,11 @@
       <div id="login-form-login" style="display:none">
         <div class="login-field">
           <label>✉️ E-mail</label>
-          <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" autocapitalize="none">
+          <input type="text" inputmode="email" id="login-email" placeholder="seu@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
         <div class="login-field">
           <label>🔒 Senha</label>
-          <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+          <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password" autocorrect="off" autocapitalize="none" spellcheck="false" onkeydown="if(event.key==='Enter')doLogin()">
         </div>
         <button class="login-btn login-btn-primary" onclick="doLogin()">🔑 Entrar</button>
         <div class="login-error" id="login-error"></div>
@@ -1355,7 +1355,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v190</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v191</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
