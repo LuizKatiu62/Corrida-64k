@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v228</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v229</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -4524,13 +4524,15 @@ function buildTodayChart(day, p){
   var pace     = gData ? (gData.pace     || '—') : '—';
   var duration = gData ? (gData.duration || '—') : '—';
   var hr       = gData && gData.hr ? gData.hr + ' bpm' : '—';
-  var zoneHtml = gData ? zonesPillsHtml(gData, {small:true}) : '—';
+  var zoneHtml = gData ? zonesPillsHtml(gData, {size:'small'}) : '';
+  var hrCardContent = gData && gData.dominantZone
+    ? '<span class="tchart-stat-val">' + hr + '</span><span class="tchart-stat-lbl">FC média</span><div style="margin-top:.3rem">' + zoneHtml + '</div>'
+    : '<span class="tchart-stat-val">' + hr + '</span><span class="tchart-stat-lbl">FC média</span>';
   var statsGrid = '<div class="tchart-stats-grid">'
     + '<div class="tchart-stat-card"><span class="tchart-stat-val">' + pace + '</span><span class="tchart-stat-lbl">Pace</span></div>'
     + '<div class="tchart-stat-card"><span class="tchart-stat-val">' + duration + '</span><span class="tchart-stat-lbl">Duração</span></div>'
-    + '<div class="tchart-stat-card"><span class="tchart-stat-val">' + hr + '</span><span class="tchart-stat-lbl">FC média</span></div>'
-    + '</div>'
-    + (gData && gData.dominantZone ? '<div style="text-align:center;margin:.1rem 0 .5rem">' + zoneHtml + '</div>' : '');
+    + '<div class="tchart-stat-card" style="grid-column:span 1">' + hrCardContent + '</div>'
+    + '</div>';
 
   // ── Gym ring ────────────────────────────────────────────────
   const exDone  = prog.exDone || {};
