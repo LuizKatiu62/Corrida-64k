@@ -1361,14 +1361,16 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v193</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v194</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
 function authInit(){
   var cred    = localStorage.getItem(window._AUTH_KEY);
   var overlay = document.getElementById('login-overlay');
-  if(localStorage.getItem(window._SESSION_KEY)==='1' && cred){
+  // Sessão válida = qualquer valor não-vazio (timestamp ou legado '1')
+  var sess = localStorage.getItem(window._SESSION_KEY);
+  if(sess && cred){
     overlay.style.display='none'; return;
   }
   if(!cred){
