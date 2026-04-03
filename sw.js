@@ -6,6 +6,7 @@ const CORE_ASSETS = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './login-bg.jpg',
 ];
 
 // External scripts — cached on first fetch, served from cache when offline
