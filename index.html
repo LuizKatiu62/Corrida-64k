@@ -1395,7 +1395,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v204</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v205</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5547,138 +5547,142 @@ function openWhatsAppListModal(sendMode){
 // RELATÓRIO DE CORRIDAS
 // ============================================================
 function renderRunReport(){
-  const today    = getToday();
-  const progress = loadProgress();
-  const garmin   = loadGarmin();
+  try {
+    const el = document.getElementById('report-content');
+    if(!el) return;
 
-  const TYPE_LABEL = {
-    easy:   { label:'Fácil',   bg:'#e8f5e9', color:'#1b5e20' },
-    medium: { label:'Médio',   bg:'#e3f2fd', color:'#0d47a1' },
-    long:   { label:'Longo',   bg:'#fce4ec', color:'#880e4f' },
-    rest:   { label:'Descanso',bg:'#f5f5f5', color:'#777' },
-    race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
-  };
+    const today    = getToday();
+    const progress = loadProgress();
+    const garmin   = loadGarmin();
 
-  // Only running days (planned km > 0), all weeks
-  const runDays = PLAN.filter(d => d.run && d.run.km > 0);
+    const TYPE_LABEL = {
+      easy:   { label:'Fácil',   bg:'#e8f5e9', color:'#1b5e20' },
+      medium: { label:'Médio',   bg:'#e3f2fd', color:'#0d47a1' },
+      long:   { label:'Longo',   bg:'#fce4ec', color:'#880e4f' },
+      rest:   { label:'Descanso',bg:'#f5f5f5', color:'#777' },
+      race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
+    };
 
-  let totalPlan = 0, totalReal = 0, doneCount = 0;
+    // All running days from project start (km > 0)
+    const runDays = PLAN.filter(function(d){ return d.run && d.run.km > 0; });
 
-  const rows = runDays.map(d => {
-    const gData  = garmin[d.date];
-    const prog   = progress[d.date] || {};
-    const isFut  = d.date > today;
-    const isToday= d.date === today;
-    const planKm = d.run.km;
-    totalPlan += planKm;
+    let totalPlan = 0, totalReal = 0, doneCount = 0, cumReal = 0;
+    const rowsHtml = [];
 
-    // ── real data ──────────────────────────────────────────
-    const realKm   = gData ? Math.round((gData.dist||0) * 10) / 10 : null;
-    const pace     = gData ? (gData.pace || '—') : '—';
-    const duration = gData ? (gData.duration || '—') : '—';
-    const hr       = gData && gData.hr ? gData.hr + ' bpm' : '—';
-    const zone     = gData && gData.dominantZone
-                     ? `<span class="rpt-zone-pill" style="background:${gData.dominantZone.color}">${gData.dominantZone.name}</span>`
-                     : '—';
+    for(var i = 0; i < runDays.length; i++){
+      var d = runDays[i];
+      var gData  = garmin[d.date];
+      var prog   = progress[d.date] || {};
+      var isFut  = d.date > today;
+      var isToday= d.date === today;
+      var planKm = d.run.km;
+      totalPlan += planKm;
 
-    // ── % concluído ────────────────────────────────────────
-    let pctHtml, pctVal = null;
-    if(isFut){
-      pctHtml = `<span class="rpt-pct-pill rpt-pct-future">—</span>`;
-    } else if(realKm !== null){
-      pctVal = Math.round((realKm / planKm) * 100);
-      totalReal += realKm;
-      doneCount++;
-      const cls = pctVal >= 95 ? 'rpt-pct-ok' : pctVal >= 70 ? 'rpt-pct-warn' : 'rpt-pct-bad';
-      pctHtml = `<span class="rpt-pct-pill ${cls}">${pctVal}%</span>`;
-    } else if(prog.run){
-      totalReal += planKm; // marcado manualmente = 100%
-      doneCount++;
-      pctHtml = `<span class="rpt-pct-pill rpt-pct-manual">✓</span>`;
-    } else {
-      pctHtml = `<span class="rpt-pct-pill rpt-pct-bad">0%</span>`;
+      // ── real data ──────────────────────────────────────────
+      var realKm   = gData ? Math.round((gData.dist||0) * 10) / 10 : null;
+      var pace     = gData ? (gData.pace || '—') : '—';
+      var duration = gData ? (gData.duration || '—') : '—';
+      var hr       = gData && gData.hr ? gData.hr + ' bpm' : '—';
+      var zoneName = '—', zoneColor = '';
+      if(gData && gData.dominantZone && typeof gData.dominantZone === 'object'){
+        zoneName  = gData.dominantZone.name || '—';
+        zoneColor = gData.dominantZone.color || '#888';
+      }
+      var zone = zoneColor
+        ? '<span class="rpt-zone-pill" style="background:' + zoneColor + '">' + zoneName + '</span>'
+        : '—';
+
+      // ── % concluído ────────────────────────────────────────
+      var pctHtml;
+      if(isFut){
+        pctHtml = '<span class="rpt-pct-pill rpt-pct-future">—</span>';
+      } else if(realKm !== null && realKm > 0){
+        var pctVal = Math.round((realKm / planKm) * 100);
+        totalReal += realKm;
+        cumReal   += realKm;
+        doneCount++;
+        var cls = pctVal >= 95 ? 'rpt-pct-ok' : pctVal >= 70 ? 'rpt-pct-warn' : 'rpt-pct-bad';
+        pctHtml = '<span class="rpt-pct-pill ' + cls + '">' + pctVal + '%</span>';
+      } else if(prog.run){
+        totalReal += planKm;
+        cumReal   += planKm;
+        doneCount++;
+        pctHtml = '<span class="rpt-pct-pill rpt-pct-manual">✓</span>';
+      } else {
+        pctHtml = '<span class="rpt-pct-pill rpt-pct-bad">0%</span>';
+      }
+
+      // ── cumulative column ──────────────────────────────────
+      var cumCell = isFut
+        ? '<span style="color:#ccc">—</span>'
+        : '<span style="font-weight:800;color:var(--azul-esc)">' + Math.round(cumReal*10)/10 + ' km</span>';
+
+      // ── date label ─────────────────────────────────────────
+      var dt = new Date(d.date + 'T12:00:00');
+      var dayName = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][dt.getDay()];
+      var dtFmt   = String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0');
+      var tConf = TYPE_LABEL[d.type] || TYPE_LABEL.easy;
+      var typeBadge = '<span class="rpt-type-badge" style="background:' + tConf.bg + ';color:' + tConf.color + '">' + tConf.label + '</span>';
+      var rowCls = isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
+
+      var realKmCell = (realKm !== null && realKm > 0)
+        ? '<span class="rpt-km" style="color:' + (realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)') + '">' + realKm + ' km</span>'
+        : (prog.run ? '<span style="color:#888;font-size:.75rem">✓ manual</span>' : '<span style="color:#ccc">—</span>');
+
+      var runTitle = (d.run.title || '').replace(/🌟\s*/g,'');
+
+      rowsHtml.push('<tr class="' + rowCls + '">' +
+        '<td class="rpt-date">' + dtFmt + '<small>' + dayName + ' · Sem ' + d.week + '</small></td>' +
+        '<td>' + typeBadge + '</td>' +
+        '<td><span class="rpt-km" style="color:var(--azul)">' + planKm + ' km</span><br><span style="font-size:.68rem;color:#999">' + runTitle + '</span></td>' +
+        '<td>' + realKmCell + '</td>' +
+        '<td style="color:var(--azul);font-weight:700">' + pace + '</td>' +
+        '<td>' + duration + '</td>' +
+        '<td style="font-weight:700">' + hr + '</td>' +
+        '<td>' + zone + '</td>' +
+        '<td>' + pctHtml + '</td>' +
+        '<td>' + cumCell + '</td>' +
+      '</tr>');
     }
 
-    // ── date label ─────────────────────────────────────────
-    const dt = new Date(d.date + 'T12:00:00');
-    const dayName = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][dt.getDay()];
-    const dtFmt   = `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
-    const tConf = TYPE_LABEL[d.type] || TYPE_LABEL.easy;
-    const typeBadge = `<span class="rpt-type-badge" style="background:${tConf.bg};color:${tConf.color}">${tConf.label}</span>`;
-    const rowCls = isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
+    var overallPct = totalPlan > 0 ? Math.round((totalReal / totalPlan) * 100) : 0;
+    var pctColor   = overallPct >= 90 ? 'var(--verde-esc)' : overallPct >= 70 ? 'var(--laranja)' : 'var(--vermelho)';
+    var totalRealRnd = Math.round(totalReal * 10) / 10;
 
-    const realKmCell = realKm !== null
-      ? `<span class="rpt-km" style="color:${realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)'}">${realKm} km</span>`
-      : (prog.run ? `<span style="color:#888;font-size:.75rem">✓ manual</span>` : `<span style="color:#ccc">—</span>`);
+    var html = '<div class="rpt-wrap">' +
+      '<div class="rpt-title">📋 Relatório de Corridas</div>' +
+      '<div class="rpt-sub">Todas as corridas do plano — desde o início do projeto · dados reais via GPX Garmin</div>' +
+      '<div class="rpt-summary">' +
+        '<div class="rpt-sum-card"><span class="rpt-sum-val">' + totalPlan + ' km</span><span class="rpt-sum-lbl">Planejado total</span></div>' +
+        '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--verde-esc)">' + totalRealRnd + ' km</span><span class="rpt-sum-lbl">Realizado total</span></div>' +
+        '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:' + pctColor + '">' + overallPct + '%</span><span class="rpt-sum-lbl">Conclusão geral</span></div>' +
+        '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--roxo)">' + doneCount + '/' + runDays.length + '</span><span class="rpt-sum-lbl">Treinos feitos</span></div>' +
+      '</div>' +
+      '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">' +
+      '<table class="rpt-table">' +
+        '<thead><tr>' +
+          '<th>Data</th><th>Tipo</th><th>Planejado</th><th>Realizado</th>' +
+          '<th>Pace</th><th>Duração</th><th>FC média</th><th>Zona FC</th><th>%</th><th>Acum.</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHtml.join('') + '</tbody>' +
+        '<tfoot><tr class="rpt-total">' +
+          '<td colspan="2">TOTAL</td>' +
+          '<td>' + totalPlan + ' km</td>' +
+          '<td>' + totalRealRnd + ' km</td>' +
+          '<td colspan="4"></td>' +
+          '<td><span class="rpt-pct-pill ' + (overallPct>=95?'rpt-pct-ok':overallPct>=70?'rpt-pct-warn':'rpt-pct-bad') + '">' + overallPct + '%</span></td>' +
+          '<td>' + totalRealRnd + ' km</td>' +
+        '</tr></tfoot>' +
+      '</table></div>' +
+      '<p style="font-size:.68rem;color:#bbb;margin-top:.75rem;text-align:right">* Cinza = treinos futuros · ✓ manual = marcado sem GPX · Acum. = km acumulados realizados</p>' +
+    '</div>';
 
-    return `<tr class="${rowCls}">
-      <td class="rpt-date">${dtFmt}<small>${dayName} · Sem ${d.week}</small></td>
-      <td>${typeBadge}</td>
-      <td><span class="rpt-km" style="color:var(--azul)">${planKm} km</span><br><span style="font-size:.68rem;color:#999">${d.run.title.replace(/🌟\s*/,'')}</span></td>
-      <td>${realKmCell}</td>
-      <td style="color:var(--azul);font-weight:700">${pace}</td>
-      <td>${duration}</td>
-      <td style="font-weight:700">${hr}</td>
-      <td>${zone}</td>
-      <td>${pctHtml}</td>
-    </tr>`;
-  });
-
-  const overallPct = totalPlan > 0 ? Math.round((totalReal / totalPlan) * 100) : 0;
-  const pctColor   = overallPct >= 90 ? 'var(--verde-esc)' : overallPct >= 70 ? 'var(--laranja)' : 'var(--vermelho)';
-
-  const html = `<div class="rpt-wrap">
-    <div class="rpt-title">📋 Relatório de Corridas</div>
-    <div class="rpt-sub">Todas as corridas do plano — dados reais via GPX Garmin</div>
-
-    <div class="rpt-summary">
-      <div class="rpt-sum-card">
-        <span class="rpt-sum-val">${totalPlan} km</span>
-        <span class="rpt-sum-lbl">Planejado total</span>
-      </div>
-      <div class="rpt-sum-card">
-        <span class="rpt-sum-val" style="color:var(--verde-esc)">${Math.round(totalReal * 10)/10} km</span>
-        <span class="rpt-sum-lbl">Realizado total</span>
-      </div>
-      <div class="rpt-sum-card">
-        <span class="rpt-sum-val" style="color:${pctColor}">${overallPct}%</span>
-        <span class="rpt-sum-lbl">Conclusão geral</span>
-      </div>
-      <div class="rpt-sum-card">
-        <span class="rpt-sum-val" style="color:var(--roxo)">${doneCount}/${runDays.length}</span>
-        <span class="rpt-sum-lbl">Treinos feitos</span>
-      </div>
-    </div>
-
-    <table class="rpt-table">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Tipo</th>
-          <th>Planejado</th>
-          <th>Realizado</th>
-          <th>Pace</th>
-          <th>Duração</th>
-          <th>FC média</th>
-          <th>Zona FC</th>
-          <th>%</th>
-        </tr>
-      </thead>
-      <tbody>${rows.join('')}</tbody>
-      <tfoot>
-        <tr class="rpt-total">
-          <td colspan="2">TOTAL</td>
-          <td>${totalPlan} km</td>
-          <td>${Math.round(totalReal * 10)/10} km</td>
-          <td colspan="4"></td>
-          <td><span class="rpt-pct-pill ${overallPct>=95?'rpt-pct-ok':overallPct>=70?'rpt-pct-warn':'rpt-pct-bad'}">${overallPct}%</span></td>
-        </tr>
-      </tfoot>
-    </table>
-    <p style="font-size:.68rem;color:#bbb;margin-top:.75rem;text-align:right">* Linhas cinzas = treinos futuros · ✓ manual = marcado sem GPX</p>
-  </div>`;
-
-  document.getElementById('report-content').innerHTML = html;
+    el.innerHTML = html;
+  } catch(err) {
+    var el2 = document.getElementById('report-content');
+    if(el2) el2.innerHTML = '<p style="color:red;padding:1rem;font-size:.85rem;background:#fff3f3;border-radius:8px;margin:1rem">Erro ao gerar relatório: ' + err.message + '</p>';
+    console.error('renderRunReport error:', err);
+  }
 }
 
 let activeDashGoal = '64k';
