@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v216</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v217</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2469,7 +2469,7 @@ function buildGarminComparePanel(day, gData){
       <span class="cmp-metric">💓 Zona FC</span>
       <span class="cmp-plan-val">—</span>
       <span class="cmp-arrow">→</span>
-      <span class="cmp-real-val"><span style="background:${gData.dominantZone.color};color:#fff;border-radius:999px;padding:.15rem .6rem;font-weight:700;font-size:.82rem">${gData.dominantZone.name}</span>${gData.dominantZonePct!=null?` <span style="color:#666;font-size:.8rem">${gData.dominantZonePct}% do tempo</span>`:` <span style="color:#aaa;font-size:.75rem">(baseado na FC média)</span>`}</span>
+      <span class="cmp-real-val">${zonesPillsHtml(gData)}</span>
     </div>` : (gData.hr ? `
     <div class="cmp-row">
       <span class="cmp-metric">💓 Zona FC</span>
