@@ -1345,7 +1345,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v175</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v176</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -6665,7 +6665,7 @@ function buildGoalCard(day, isToday, progress, goalType){
   const gymItems  = hasGym
     ? day.gym.ex.map((i,idx)=>gymItemHtml(i, day.date, idx, !!exDone[idx])).join('')
     : '<li style="color:#aaa">Descanso — sem treino de força</li>';
-  const nutriList  = addCafeComLeite(day.nutri, day);
+  const nutriList  = mfMergeIntoNutri(addCafeComLeite(day.nutri, day));
   const nutriItems = nutriList.map(i=>nutriItemHtml(i)).join('');
   const runCal  = calcRunCalories(day);
   const gymCal  = calcGymCalories(day);
