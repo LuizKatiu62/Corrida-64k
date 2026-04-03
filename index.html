@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v219</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v220</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -2309,7 +2309,7 @@ function migrateGarminZones(){
     let changed=false;
     Object.keys(g).forEach(function(date){
       const entry=g[date];
-      if(entry && entry.raw && (entry.dominantZone===undefined || entry.avgCadence===undefined)){
+      if(entry && entry.raw && (entry.dominantZone===undefined || entry.secondZone===undefined || entry.avgCadence===undefined)){
         const reparsed=parseGPX(entry.raw, entry.filename||'');
         if(reparsed){
           if(reparsed.dominantZone!==undefined) entry.dominantZone=reparsed.dominantZone;
