@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:title" content="Desafio 64km — 2 de Maio 2026 · Saint John NB">
-<meta property="og:description" content="Running with gratitude, finishing for His Glory. Venha correr, caminhar ou apoiar! Saint John, NB — 2 de Maio 2026.">
+<meta property="og:title" content="Desafio 64km — May 2, 2026 · Saint John NB">
+<meta property="og:description" content="Running with gratitude, finishing for His Glory. Come run, walk or cheer! Saint John, NB — May 2, 2026.">
 <meta property="og:image" content="./login-bg.jpg">
-<title>Desafio 64km — 2 de Maio 2026</title>
+<title>Desafio 64km — May 2, 2026</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Lora:ital,wght@1,400;1,600&display=swap');
 
@@ -15,6 +15,8 @@
     --verde:#1e8449;
     --verde-light:#27ae60;
     --ouro:#d4a017;
+    --azul:#1a73e8;
+    --roxo:#6c3fa0;
     --escuro:#0d1f0f;
     --branco:#fff;
   }
@@ -66,13 +68,15 @@
   .cta-btn{
     padding:.8rem 1.8rem;border-radius:999px;font-size:.88rem;font-weight:800;
     cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.45rem;
-    letter-spacing:.02em;transition:transform .15s,box-shadow .15s;
+    letter-spacing:.02em;transition:transform .15s,box-shadow .15s;border:none;
   }
   .cta-btn:active{transform:scale(.97)}
   .cta-primary{background:var(--verde-light);color:#fff;box-shadow:0 6px 24px rgba(39,174,96,.45)}
   .cta-primary:hover{background:#219a52;box-shadow:0 8px 32px rgba(39,174,96,.6)}
-  .cta-secondary{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
+  .cta-secondary{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35)!important;backdrop-filter:blur(8px)}
   .cta-secondary:hover{background:rgba(255,255,255,.2)}
+  .cta-gold{background:var(--ouro);color:#000;box-shadow:0 6px 24px rgba(212,160,23,.45)}
+  .cta-gold:hover{background:#b8860b}
 
   .hero-location{font-size:.78rem;color:rgba(255,255,255,.5);letter-spacing:.06em}
   .hero-location strong{color:rgba(255,255,255,.8)}
@@ -108,6 +112,50 @@
   .what-icon{font-size:2.2rem;margin-bottom:.6rem}
   .what-title{font-size:.88rem;font-weight:800;margin-bottom:.3rem}
   .what-desc{font-size:.75rem;color:rgba(255,255,255,.55);line-height:1.6}
+
+  /* ── STORY ── */
+  .story-block{
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;padding:2.2rem 2rem;margin-top:2rem;position:relative;overflow:hidden;
+  }
+  .story-block::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--verde-light),var(--ouro));
+  }
+  .story-quote{
+    font-family:'Lora',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.2rem);
+    color:rgba(255,255,255,.85);line-height:1.8;margin-bottom:1.2rem;
+  }
+  .story-stats{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.08)}
+  .story-stat{text-align:center}
+  .story-stat-val{font-size:1.6rem;font-weight:900;color:var(--ouro);line-height:1}
+  .story-stat-lbl{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:.2rem}
+
+  /* ── FUNDRAISER ── */
+  .fundraiser-section{
+    background:linear-gradient(135deg,rgba(26,115,232,.12),rgba(108,63,160,.12));
+    border:1px solid rgba(26,115,232,.3);border-radius:24px;
+    padding:2.5rem 2rem;margin-top:2rem;text-align:center;
+  }
+  .fundraiser-ribbon{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:rgba(26,115,232,.2);border:1px solid rgba(26,115,232,.4);
+    border-radius:999px;padding:.35rem 1rem;font-size:.7rem;font-weight:900;
+    letter-spacing:.1em;text-transform:uppercase;color:#6ab0ff;margin-bottom:1.2rem;
+  }
+  .fundraiser-title{font-size:clamp(1.4rem,4vw,2rem);font-weight:900;line-height:1.15;margin-bottom:.8rem}
+  .fundraiser-title span{color:#6ab0ff}
+  .fundraiser-body{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.5rem}
+  .fundraiser-org{
+    display:inline-flex;align-items:center;gap:.6rem;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;padding:.8rem 1.2rem;margin-bottom:1.5rem;
+    font-size:.85rem;font-weight:700;
+  }
+  .fundraiser-note{
+    font-size:.78rem;color:rgba(255,255,255,.45);margin-top:1rem;
+    font-style:italic;line-height:1.6;
+  }
 
   /* ── HOW TO PARTICIPATE ── */
   .how-list{list-style:none;margin-top:1.5rem;display:flex;flex-direction:column;gap:.9rem}
@@ -201,21 +249,22 @@
   <div class="hero-overlay"></div>
   <div class="hero-km">64km</div>
   <div class="hero-content">
-    <div class="badge">🏅 Convite Especial</div>
-    <div class="hero-date">📅 2 de Maio de 2026 · Saint John, NB · Canada</div>
-    <h1 class="hero-title">Desafio<br><span>64 km</span></h1>
+    <div class="badge">🏅 Special Invitation</div>
+    <div class="hero-date">📅 May 2, 2026 · Saint John, NB · Canada</div>
+    <h1 class="hero-title">Challenge<br><span>64 km</span></h1>
     <p class="hero-theme">
       <strong>"Running with gratitude,<br>finishing for His Glory."</strong>
     </p>
     <div class="countdown" id="countdown">
-      <div class="cd-box"><div class="cd-num" id="cd-d">--</div><div class="cd-lbl">dias</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-h">--</div><div class="cd-lbl">horas</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-d">--</div><div class="cd-lbl">days</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-h">--</div><div class="cd-lbl">hours</div></div>
       <div class="cd-box"><div class="cd-num" id="cd-m">--</div><div class="cd-lbl">min</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-s">--</div><div class="cd-lbl">seg</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-s">--</div><div class="cd-lbl">sec</div></div>
     </div>
     <div class="hero-cta-wrap">
-      <button onclick="openModal()" class="cta-btn cta-primary">🏃 Quero Participar</button>
-      <a href="#detalhes" class="cta-btn cta-secondary">📍 Ver Detalhes</a>
+      <button onclick="openModal()" class="cta-btn cta-primary">🏃 I Want to Join</button>
+      <a href="#detalhes" class="cta-btn cta-secondary">📍 Event Details</a>
+      <a href="#fundraiser" class="cta-btn cta-gold">💙 Support the Cause</a>
     </div>
     <div class="hero-location">📍 <strong>Little River Reservoir Trail</strong> · Saint John, NB</div>
   </div>
@@ -223,159 +272,226 @@
 
 <!-- STRIP -->
 <div class="strip">
-  <div class="strip-item"><div class="strip-val">64</div><div class="strip-lbl">quilômetros</div></div>
-  <div class="strip-item"><div class="strip-val">~19</div><div class="strip-lbl">loops de 3,3km</div></div>
-  <div class="strip-item"><div class="strip-val">1 dia</div><div class="strip-lbl">de desafio</div></div>
-  <div class="strip-item"><div class="strip-val">∞</div><div class="strip-lbl">gratidão</div></div>
+  <div class="strip-item"><div class="strip-val">64</div><div class="strip-lbl">kilometers</div></div>
+  <div class="strip-item"><div class="strip-val">~19</div><div class="strip-lbl">3.3km loops</div></div>
+  <div class="strip-item"><div class="strip-val">1 day</div><div class="strip-lbl">of challenge</div></div>
+  <div class="strip-item"><div class="strip-val">∞</div><div class="strip-lbl">gratitude</div></div>
 </div>
 
-<!-- O QUE É -->
+<!-- WHAT IS -->
 <section>
-  <div class="section-label">O Desafio</div>
-  <h2 class="section-title">O que é o<br>Desafio 64km?</h2>
+  <div class="section-label">The Challenge</div>
+  <h2 class="section-title">What is the<br>64km Challenge?</h2>
   <div class="section-body">
-    No dia <strong style="color:#fff">2 de Maio de 2026</strong>, Luiz Silva completa <strong style="color:#fff">64 anos</strong> e celebra esta data da melhor forma que conhece — correndo. O objetivo é completar <strong style="color:#fff">64 quilômetros</strong> em loops de 3,3km no <strong style="color:#fff">Little River Reservoir Trail</strong>, em Saint John, NB.<br><br>
-    Mas este desafio não é apenas sobre distância. É sobre gratidão pela vida, pela saúde, pela família e pela fé. É sobre provar que a melhor fase da vida começa agora.
+    On <strong style="color:#fff">May 2, 2026</strong>, Luiz Silva turns <strong style="color:#fff">64 years old</strong> and celebrates in the best way he knows — running. The goal is to complete <strong style="color:#fff">64 kilometers</strong> in 3.3km loops at the <strong style="color:#fff">Little River Reservoir Trail</strong> in Saint John, NB.<br><br>
+    But this challenge is not just about distance. It is about gratitude for life, health, family and faith. It is about proving that the best chapter of life starts now.
   </div>
   <div class="what-grid">
     <div class="what-card">
       <div class="what-icon">🏃‍♂️</div>
-      <div class="what-title">Corra comigo</div>
-      <div class="what-desc">Junte-se por 1 loop, alguns km ou o dia todo. Todo passo conta.</div>
+      <div class="what-title">Run with me</div>
+      <div class="what-desc">Join for 1 loop, a few km or the whole day. Every step counts.</div>
     </div>
     <div class="what-card">
       <div class="what-icon">🚶‍♀️</div>
-      <div class="what-title">Caminhe</div>
-      <div class="what-desc">Prefere caminhar? Perfeito. A trilha é linda e a energia é incrível.</div>
+      <div class="what-title">Walk</div>
+      <div class="what-desc">Prefer walking? Perfect. The trail is beautiful and the energy is amazing.</div>
     </div>
     <div class="what-card">
       <div class="what-icon">📣</div>
-      <div class="what-title">Apoie</div>
-      <div class="what-desc">Venha mesmo que você não ame correr. A sua presença será suficiente.</div>
+      <div class="what-title">Cheer</div>
+      <div class="what-desc">Come even if you don't love running. Your presence is more than enough.</div>
     </div>
     <div class="what-card">
       <div class="what-icon">🙏</div>
-      <div class="what-title">Ore</div>
-      <div class="what-desc">Ore pelo evento, pela segurança e por cada pessoa na trilha.</div>
+      <div class="what-title">Pray</div>
+      <div class="what-desc">Pray for the event, for safety and for every person on the trail.</div>
     </div>
   </div>
 </section>
 
-<!-- VERSÍCULO -->
+<!-- VERSE -->
 <section style="padding:0 1.5rem">
   <div class="verse-block">
-    <div class="verse-text">"Não me esqueci que posso todas as coisas naquele que me fortalece."</div>
-    <div class="verse-ref">Filipenses 4:13</div>
+    <div class="verse-text">"I can do all things through Christ who strengthens me."</div>
+    <div class="verse-ref">Philippians 4:13</div>
   </div>
 </section>
 
-<!-- COMO PARTICIPAR -->
+<!-- MY STORY -->
+<section>
+  <div class="section-label">My Story</div>
+  <h2 class="section-title">From diagnosis<br>to the finish line</h2>
+  <div class="section-body">
+    First and above all, I give all the glory to God — He was and continues to be ahead of every single step of this journey. His grace has been present in every moment, and I am deeply aware that none of this would be possible without Him.
+  </div>
+  <div class="story-block">
+    <div class="story-quote">
+      "In early 2025, I was diagnosed with prostate cancer. The news was hard to receive, but my faith was greater than my fear. I went through surgery, and the results were remarkable — the procedure was a complete success.<br><br>
+      What happened next surprised even my doctors. Thanks to a lifestyle built around physical activity — running, training and dedication — my recovery was extraordinary. In just <strong style="color:#fff">7 weeks</strong> I was back on the trail, running again.<br><br>
+      From surgery day to early 2026, I had already run more than <strong style="color:#fff">800 kilometers</strong>. This 64km challenge on my 64th birthday is my way of saying thank you — to God, to life, to health, and to everyone who walked beside me through it all."
+    </div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.5);font-style:italic">— Luiz Silva</div>
+    <div class="story-stats">
+      <div class="story-stat">
+        <div class="story-stat-val">7 wks</div>
+        <div class="story-stat-lbl">to recovery</div>
+      </div>
+      <div class="story-stat">
+        <div class="story-stat-val">800+</div>
+        <div class="story-stat-lbl">km post-surgery</div>
+      </div>
+      <div class="story-stat">
+        <div class="story-stat-val">64</div>
+        <div class="story-stat-lbl">km on his birthday</div>
+      </div>
+      <div class="story-stat">
+        <div class="story-stat-val">∞</div>
+        <div class="story-stat-lbl">faith & gratitude</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNDRAISER -->
+<section id="fundraiser">
+  <div class="section-label">Support the Cause</div>
+  <h2 class="section-title">Running for<br><span style="color:#6ab0ff">Prostate Cancer</span></h2>
+  <div class="section-body">
+    This challenge is also an opportunity to give back. Together with this event, we are raising funds to support those fighting prostate cancer and their families.
+  </div>
+  <div class="fundraiser-section">
+    <div class="fundraiser-ribbon">
+      💙 Fundraiser · GoFundMe
+    </div>
+    <div class="fundraiser-title">
+      Every dollar goes to<br><span>Prostate Cancer Support NB</span>
+    </div>
+    <div class="fundraiser-body">
+      All funds raised through this campaign will be donated in full to <strong style="color:#fff">Prostate Cancer Support New Brunswick</strong> — an organization dedicated to supporting patients, survivors and families across our province.<br><br>
+      I know firsthand what a difference support makes during that journey. This is my way of paying it forward. Give what is in your heart — no amount is too small, and every contribution makes a difference.
+    </div>
+    <div class="fundraiser-org">
+      💙 Prostate Cancer Support New Brunswick
+    </div>
+    <a href="https://www.gofundme.com" target="_blank" class="cta-btn cta-gold" style="font-size:.95rem;padding:.9rem 2rem;display:inline-flex;margin-bottom:.5rem">
+      💙 Donate on GoFundMe
+    </a>
+    <div class="fundraiser-note">
+      A GoFundMe link will be shared here shortly.<br>
+      Give what is in your heart — 100% goes to Prostate Cancer Support NB.
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO PARTICIPATE -->
 <section id="participar">
-  <div class="section-label">Participe</div>
-  <h2 class="section-title">Como participar?</h2>
+  <div class="section-label">Join Us</div>
+  <h2 class="section-title">How to participate?</h2>
   <ul class="how-list">
     <li>
       <div class="how-num">1</div>
-      <div class="how-text"><strong>Escolha como quer participar</strong> — correndo, caminhando ou apoiando. Não há exigência de distância mínima.</div>
+      <div class="how-text"><strong>Choose how you want to join</strong> — running, walking or cheering. There is no minimum distance required.</div>
     </li>
     <li>
       <div class="how-num">2</div>
-      <div class="how-text"><strong>Avise sua presença</strong> — comente aqui, envie mensagem ou marque que vai. Assim posso planejar a logística de apoio.</div>
+      <div class="how-text"><strong>Let me know you're coming</strong> — click "I Want to Join", comment here or send a message. It helps me plan logistics.</div>
     </li>
     <li>
       <div class="how-num">3</div>
-      <div class="how-text"><strong>Apareça no dia</strong> — venha quando puder, fique o tempo que quiser. O evento começa cedo e vai até completar os 64km.</div>
+      <div class="how-text"><strong>Show up on the day</strong> — come when you can, stay as long as you want. The event starts early and goes until the 64km are done.</div>
     </li>
     <li>
       <div class="how-num">4</div>
-      <div class="how-text"><strong>Traga energia boa</strong> — família, amigos, sorriso. Quanto mais gente, mais bonita fica a história.</div>
+      <div class="how-text"><strong>Bring good energy</strong> — family, friends, smiles. The more people, the more beautiful this story becomes.</div>
     </li>
   </ul>
 </section>
 
-<!-- DETALHES -->
+<!-- DETAILS -->
 <section id="detalhes">
-  <div class="section-label">Informações</div>
-  <h2 class="section-title">Detalhes do Evento</h2>
+  <div class="section-label">Information</div>
+  <h2 class="section-title">Event Details</h2>
   <div class="details-grid">
     <div class="detail-card">
       <div class="detail-icon">📅</div>
-      <div class="detail-label">Data</div>
-      <div class="detail-val">2 de Maio, 2026</div>
-      <div class="detail-sub">Sábado · Feriado de primavera</div>
+      <div class="detail-label">Date</div>
+      <div class="detail-val">May 2, 2026</div>
+      <div class="detail-sub">Saturday · Spring Holiday</div>
     </div>
     <div class="detail-card">
       <div class="detail-icon">📍</div>
-      <div class="detail-label">Local</div>
+      <div class="detail-label">Location</div>
       <div class="detail-val">Little River Reservoir</div>
       <div class="detail-sub">Saint John, NB, Canada</div>
     </div>
     <div class="detail-card">
       <div class="detail-icon">⏰</div>
-      <div class="detail-label">Horário</div>
-      <div class="detail-val">Início às 7:30am</div>
-      <div class="detail-sub">Duração estimada: 10–12h</div>
+      <div class="detail-label">Start Time</div>
+      <div class="detail-val">7:30 AM</div>
+      <div class="detail-sub">Estimated duration: 10–12h</div>
     </div>
     <div class="detail-card">
       <div class="detail-icon">🔄</div>
-      <div class="detail-label">Percurso</div>
-      <div class="detail-val">Loops de 3,3 km</div>
-      <div class="detail-sub">~19 voltas até completar 64km</div>
+      <div class="detail-label">Route</div>
+      <div class="detail-val">3.3 km loops</div>
+      <div class="detail-sub">~19 laps to complete 64km</div>
     </div>
     <div class="detail-card">
       <div class="detail-icon">💧</div>
-      <div class="detail-label">Suporte</div>
-      <div class="detail-val">Água e nutrição</div>
-      <div class="detail-sub">Traga a sua água e sua nutrição.</div>
+      <div class="detail-label">Support</div>
+      <div class="detail-val">Water & Nutrition</div>
+      <div class="detail-sub">Bring your own water and nutrition.</div>
     </div>
     <div class="detail-card">
       <div class="detail-icon">🎟️</div>
-      <div class="detail-label">Inscrição</div>
-      <div class="detail-val">Gratuita</div>
-      <div class="detail-sub">Aberto para todos</div>
+      <div class="detail-label">Registration</div>
+      <div class="detail-val">Free</div>
+      <div class="detail-sub">Open to everyone</div>
     </div>
   </div>
 </section>
 
-<!-- COMPARTILHAR -->
+<!-- SHARE -->
 <div class="share-section">
-  <div class="section-label" style="margin-bottom:.5rem">Espalhe a palavra</div>
-  <div class="share-title">Convide seus amigos!</div>
-  <div class="share-sub">Compartilhe este convite e ajude a tornar este dia inesquecível</div>
+  <div class="section-label" style="margin-bottom:.5rem">Spread the word</div>
+  <div class="share-title">Invite your friends!</div>
+  <div class="share-sub">Share this invitation and help make this day unforgettable</div>
   <div class="share-hashtags">
     <span class="hashtag">#Desafio64km</span>
     <span class="hashtag">#RunningWithGratitude</span>
     <span class="hashtag">#FinishingForHisGlory</span>
     <span class="hashtag">#SaintJohnRuns</span>
     <span class="hashtag">#Luiz64</span>
+    <span class="hashtag">#ProstateCancerSupport</span>
   </div>
   <div class="share-btns">
     <a class="share-fb" id="btn-fb" href="#" onclick="shareFacebook();return false">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-      Compartilhar no Facebook
+      Share on Facebook
     </a>
     <a class="share-wa" id="btn-wa" href="#" onclick="shareWhatsApp();return false">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.99.576 3.842 1.568 5.398L2.046 22l4.718-1.509A9.963 9.963 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="none" stroke="white" stroke-width="1.5"/></svg>
       WhatsApp
     </a>
     <button class="share-copy" onclick="copyLink()">
-      🔗 Copiar Link
+      🔗 Copy Link
     </button>
   </div>
-  <div id="copy-msg" style="margin-top:.75rem;font-size:.78rem;color:var(--verde-light);display:none">✅ Link copiado!</div>
+  <div id="copy-msg" style="margin-top:.75rem;font-size:.78rem;color:var(--verde-light);display:none">✅ Link copied!</div>
 </div>
 
 <!-- MODAL PARTICIPAR -->
 <div class="modal-overlay" id="modal-participar" onclick="closeModalOutside(event)">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">🏃 Confirmar Presença</div>
-    <div class="modal-sub">Deixe seu nome e faça parte desta história! Não importa se vai correr, caminhar ou apoiar.</div>
-    <input class="modal-input" id="modal-name" type="text" placeholder="Seu nome" maxlength="60" autocomplete="off">
-    <button class="modal-btn" onclick="submitName()">✅ Confirmar minha presença</button>
-    <div class="modal-confirm" id="modal-confirm">🎉 Boa! Te vejo lá!</div>
+    <div class="modal-title">🏃 Confirm Your Attendance</div>
+    <div class="modal-sub">Leave your name and be part of this story! It doesn't matter if you'll run, walk or cheer.</div>
+    <input class="modal-input" id="modal-name" type="text" placeholder="Your name" maxlength="60" autocomplete="off">
+    <button class="modal-btn" onclick="submitName()">✅ Confirm my attendance</button>
+    <div class="modal-confirm" id="modal-confirm">🎉 Great! See you there!</div>
     <div class="modal-list" id="modal-list">
-      <div class="modal-list-title">Quem já confirmou</div>
+      <div class="modal-list-title">Who has already confirmed</div>
       <ul id="name-list"></ul>
     </div>
   </div>
@@ -392,7 +508,7 @@ function updateCountdown(){
   var target = new Date('2026-05-02T07:30:00-03:00');
   var now = new Date();
   var diff = target - now;
-  if(diff <= 0){ document.getElementById('countdown').innerHTML='<div style="font-size:1.2rem;font-weight:900;color:var(--ouro)">🎉 O dia chegou!</div>'; return; }
+  if(diff <= 0){ document.getElementById('countdown').innerHTML='<div style="font-size:1.2rem;font-weight:900;color:var(--ouro)">🎉 The day is here!</div>'; return; }
   var d = Math.floor(diff/86400000);
   var h = Math.floor((diff%86400000)/3600000);
   var m = Math.floor((diff%3600000)/60000);
@@ -408,7 +524,7 @@ setInterval(updateCountdown, 1000);
 var PAGE_URL = (window.location.protocol === 'file:')
   ? 'https://luizkatiu62.github.io/Corrida-64k/convite.html'
   : window.location.href;
-var MSG = '🏃 Desafio 64km — 2 de Maio 2026, Saint John NB!\n"Running with gratitude, finishing for His Glory"\nVenha correr, caminhar ou apoiar! ' + PAGE_URL;
+var MSG = '🏃 Desafio 64km — May 2, 2026, Saint John NB!\n"Running with gratitude, finishing for His Glory"\nCome run, walk or cheer! ' + PAGE_URL;
 
 function shareFacebook(){
   window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(PAGE_URL),'_blank');
@@ -445,16 +561,14 @@ var fbDb = null;
 var fbRef = null;
 
 (function initFb(){
-  // Tenta usar a mesma config do app (se aberto no mesmo dispositivo)
   var cfg = null;
   try{ cfg = JSON.parse(localStorage.getItem('desafio64_fbconfig')||'null'); }catch(e){}
-  if(!cfg || !cfg.databaseURL) return; // sem config, usa apenas localStorage
+  if(!cfg || !cfg.databaseURL) return;
   try{
     if(!firebase.apps.length) firebase.initializeApp(cfg);
     else firebase.app();
     fbDb = firebase.database();
     fbRef = fbDb.ref('desafio64/participantes');
-    // Ouve mudanças em tempo real
     fbRef.on('value', function(snap){
       var data = snap.val() || {};
       var names = Object.values(data).map(function(e){ return e.nome; }).filter(Boolean);
@@ -464,7 +578,7 @@ var fbRef = null;
   }catch(e){ fbDb = null; }
 })();
 
-// ── MODAL PARTICIPAR ──
+// ── MODAL ──
 var PART_KEY = 'desafio64_participantes_local';
 
 function loadNamesLocal(){
@@ -475,7 +589,7 @@ function renderNamesArr(arr){
   if(!ul) return;
   ul.innerHTML = '';
   if(arr.length === 0){
-    ul.innerHTML = '<li style="opacity:.45;font-size:.78rem">Seja o primeiro a confirmar!</li>';
+    ul.innerHTML = '<li style="opacity:.45;font-size:.78rem">Be the first to confirm!</li>';
   } else {
     arr.forEach(function(n){
       var li = document.createElement('li');
@@ -485,7 +599,7 @@ function renderNamesArr(arr){
   }
 }
 function renderNames(){
-  if(fbRef) return; // Firebase já atualiza via listener
+  if(fbRef) return;
   renderNamesArr(loadNamesLocal());
 }
 function openModal(){
@@ -504,12 +618,9 @@ function closeModalOutside(e){
 function submitName(){
   var name = (document.getElementById('modal-name').value || '').trim();
   if(!name) { document.getElementById('modal-name').focus(); return; }
-
   if(fbRef){
-    // Salva no Firebase
     fbRef.push({ nome: name, ts: Date.now() });
   } else {
-    // Fallback: localStorage
     var arr = loadNamesLocal();
     if(arr.indexOf(name) === -1){ arr.push(name); localStorage.setItem(PART_KEY, JSON.stringify(arr)); }
     renderNamesArr(arr);
