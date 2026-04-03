@@ -1414,7 +1414,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v235</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v236</span></footer>
 
 <script>
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
@@ -5173,7 +5173,7 @@ async function renderPhotosSection(){
       <div class="album-icon">${a.icon}</div>
       <div class="album-label">${a.label}</div>
       <div class="album-sub">${a.sub}</div>
-      <span class="album-count${cnt>0?' has-photos':''}">${cnt} foto${cnt!==1?'s':''}</span>
+      <span class="album-count${cnt>0?' has-photos':''}">${cnt} ${cnt!==1?'itens':'item'}</span>
     </div>`;
   }).join('');
 
