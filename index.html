@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v286</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v287</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2119,12 +2119,7 @@ function fbForceReceive(){
       grid.innerHTML = days.map(function(d){ return buildCard(d, d.date===today, p2); }).join('');
     });
     try{ updateProgressStats(p2); }catch(e){}
-    try{
-      var prog2 = JSON.parse(obj.progress||'{}');
-      var d02 = prog2['2026-04-02'] ? JSON.stringify(prog2['2026-04-02']).substring(0,150) : 'vazio';
-      alert('Firebase 02/04: ' + d02);
-    }catch(ex){ alert('Erro ao ler: '+ex.message); }
-    fbMsgEl('✅ Dados recebidos e aplicados!','ok');
+    fbMsgEl('✅ Dados recebidos e aplicados com sucesso!','ok');
   }).catch(function(e){ fbMsgEl('Erro: ' + e.message,'err'); });
 }
 
