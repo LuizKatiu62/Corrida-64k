@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v308</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v309</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7839,12 +7839,15 @@ function saveHevyData(d){ localStorage.setItem(HEVY_DATA_STORE, JSON.stringify(d
 function openHevyForDate(date){
   const inp = document.createElement('input');
   inp.type = 'file'; inp.accept = '.csv';
+  inp.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none';
   inp.onchange = e => {
+    document.body.removeChild(inp);
     const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
     reader.onload = ev => parseHevyCSV(ev.target.result, date);
     reader.readAsText(file);
   };
+  document.body.appendChild(inp);
   inp.click();
 }
 
