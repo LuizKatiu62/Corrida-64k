@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v335</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v336</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4953,7 +4953,14 @@ function renderAll(){
       gymTitle = fromGymDay2 ? ' + 🏋️ ' + fromGymDay2.gym.title : gymTitle;
     }
 
-    bannerTitle.textContent = 'Hoje: ' + runTitle + gymTitle;
+    // If run is still "Descanso Total" but there's a gym activity, drop the rest label
+    if(runTitle === 'Descanso Total' && gymTitle){
+      bannerTitle.textContent = 'Hoje: ' + gymTitle.replace(/^\s*\+\s*/,'');
+    } else if(runTitle === 'Descanso Total' && !gymTitle && !rSched && !gRSched){
+      bannerTitle.textContent = 'Hoje: Descanso Total';
+    } else {
+      bannerTitle.textContent = 'Hoje: ' + runTitle + gymTitle;
+    }
     bannerSub.textContent = `${todayDay.phase} · ${dateLabel(today)}`;
   } else if(today > RACE_DATE.toISOString().split('T')[0]){
     bannerTitle.textContent = '🏆 Desafio concluído!';
