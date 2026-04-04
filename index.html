@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v320</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v321</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6448,17 +6448,16 @@ if('serviceWorker' in navigator){
       const latest = String(data.v);
       if(stored !== latest){
         localStorage.setItem(APP_VER_KEY, latest);
-        // Auto-sync para Firebase antes de limpar cache
-        try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){}
-        setTimeout(function(){
-          if('caches' in window){
-            caches.keys().then(function(keys){
-              return Promise.all(keys.map(function(k){ return caches.delete(k); }));
-            }).then(function(){ location.reload(true); });
-          } else {
-            location.reload(true);
-          }
-        }, 1200); // aguarda 1.2s para Firebase enviar antes de recarregar
+        // Clear SW cache and reload — do NOT push local data to Firebase here,
+        // as this device may have stale data and would overwrite a more up-to-date device.
+        // Firebase listeners will pull fresh data automatically after reload.
+        if('caches' in window){
+          caches.keys().then(function(keys){
+            return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+          }).then(function(){ location.reload(true); });
+        } else {
+          location.reload(true);
+        }
       }
     }).catch(()=>{});
 })();
