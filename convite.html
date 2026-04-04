@@ -628,7 +628,11 @@ function submitName(){
   }
   document.getElementById('modal-name').value = '';
   document.getElementById('modal-confirm').style.display = 'block';
-  setTimeout(function(){ document.getElementById('modal-confirm').style.display='none'; }, 4000);
+  setTimeout(function(){
+    document.getElementById('modal-confirm').style.display='none';
+    closeModal();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }, 3000);
 }
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
 document.getElementById('modal-name').addEventListener('keydown', function(e){ if(e.key==='Enter') submitName(); });
