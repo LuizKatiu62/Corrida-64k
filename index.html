@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v333</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v334</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2119,9 +2119,24 @@ function fbForceReceive(){
     if(obj.events   != null) localStorage.setItem(EVENTS_KEY,      toStr(obj.events));
     if(obj.garmin   != null) localStorage.setItem(GARMIN_KEY,      toStr(obj.garmin));
     if(obj.hevy     != null) localStorage.setItem(HEVY_DATA_STORE, toStr(obj.hevy));
+
+    // Auto-mark run/gym done based on received data
+    var p2 = loadProgress(); // reads the freshly saved progress
+    var hevyReceived = loadHevyData();
+    var garminReceived = loadGarmin();
+    var changed = false;
+    Object.keys(hevyReceived).forEach(function(date){
+      if(!p2[date]) p2[date] = {};
+      if(!p2[date].gym){ p2[date].gym = true; changed = true; }
+    });
+    Object.keys(garminReceived).forEach(function(date){
+      if(!p2[date]) p2[date] = {};
+      if(!p2[date].run){ p2[date].run = true; changed = true; }
+    });
+    if(changed){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p2)); }
+
     // Re-render ALL week grids with fresh data
     var today = getToday();
-    var p2 = loadProgress();
     [1,2,3,4,5].forEach(function(w){
       var grid = document.getElementById('grid-w'+w);
       if(!grid) return;
