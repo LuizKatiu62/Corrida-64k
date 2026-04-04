@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camiseta — Desafio 64km</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Oswald:wght@700&family=Lora:ital,wght@1,400&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#1a1a2e;font-family:'Montserrat',sans-serif;color:#fff;padding:2rem 1rem}
+  h1{text-align:center;font-size:1.4rem;font-weight:900;margin-bottom:.3rem;color:#d4a017}
+  .subtitle{text-align:center;font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:2.5rem}
+
+  .options{display:flex;flex-wrap:wrap;gap:2rem;justify-content:center}
+
+  .option{display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:340px}
+  .option-label{font-size:.7rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+  .option-title{font-size:1rem;font-weight:800;text-align:center;margin-top:-.5rem;margin-bottom:.2rem}
+  .shirts{display:flex;gap:1rem}
+
+  /* ── SHIRT SHAPE ── */
+  .shirt{
+    width:160px;height:190px;position:relative;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;text-align:center;padding:1.2rem .8rem;
+  }
+  .shirt svg.shape{position:absolute;inset:0;width:100%;height:100%}
+  .shirt-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;width:100%;height:100%;padding:.5rem}
+  .side-label{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.4rem}
+
+  /* ── OPTION 1 — Dark green / gold ── */
+  .opt1-front .shirt-content .big{font-family:'Oswald',sans-serif;font-size:3.8rem;font-weight:700;line-height:1;color:#d4a017}
+  .opt1-front .shirt-content .sub{font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+  .opt1-back .shirt-content .quote{font-family:'Lora',serif;font-style:italic;font-size:.55rem;color:rgba(255,255,255,.85);line-height:1.5;margin-bottom:.4rem}
+  .opt1-back .shirt-content .detail{font-size:.48rem;font-weight:700;letter-spacing:.08em;color:#d4a017;text-transform:uppercase}
+
+  /* ── OPTION 2 — Black / blue ── */
+  .opt2-front .shirt-content .name{font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:.15em;color:#fff;margin-bottom:.1rem}
+  .opt2-front .shirt-content .number{font-family:'Oswald',sans-serif;font-size:3.5rem;font-weight:700;line-height:1;color:#1a73e8}
+  .opt2-front .shirt-content .ribbon{font-size:.48rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+  .opt2-back .shirt-content .line1{font-size:.65rem;font-weight:800;color:#1a73e8;letter-spacing:.05em;margin-bottom:.3rem}
+  .opt2-back .shirt-content .line2{font-size:.82rem;font-weight:900;color:#fff;letter-spacing:.04em;margin-bottom:.3rem}
+  .opt2-back .shirt-content .verse{font-family:'Lora',serif;font-style:italic;font-size:.58rem;color:rgba(255,255,255,.65)}
+
+  /* ── OPTION 3 — White / green / gold ── */
+  .opt3-front .shirt-content .giant{font-family:'Oswald',sans-serif;font-size:4.2rem;font-weight:700;line-height:.9;color:#1e8449;position:relative}
+  .opt3-front .shirt-content .giant span{color:#d4a017;font-size:1.8rem;vertical-align:super;line-height:0}
+  .opt3-front .shirt-content .cross{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2rem;opacity:.18;color:#fff}
+  .opt3-front .shirt-content .tagline{font-size:.46rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(30,132,73,.8);margin-top:.3rem}
+  .opt3-back .shirt-content .arc{font-size:.52rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1e8449;margin-bottom:.2rem}
+  .opt3-back .shirt-content .date{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:700;color:#1e8449;margin-bottom:.15rem}
+  .opt3-back .shirt-content .hash{font-size:.44rem;font-weight:700;color:rgba(30,132,73,.7);letter-spacing:.05em}
+
+  .badge-rec{
+    display:inline-block;background:#d4a017;color:#000;
+    font-size:.6rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+    padding:.2rem .7rem;border-radius:999px;margin-top:.3rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Camiseta — Desafio 64km</h1>
+<div class="subtitle">3 opções de design · Frente e Costas</div>
+
+<div class="options">
+
+  <!-- ══ OPTION 1 ══ -->
+  <div class="option">
+    <div class="option-label">Opção 1</div>
+    <div class="option-title">Minimalista & Poderosa</div>
+    <div class="shirts">
+      <!-- FRONT -->
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt opt1-front">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#1e4a20" stroke="#2d6b30" stroke-width="1.5"/>
+          </svg>
+          <div class="shirt-content">
+            <div class="big">64</div>
+            <div class="sub">km · May 2, 2026</div>
+          </div>
+        </div>
+      </div>
+      <!-- BACK -->
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt opt1-back">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#1e4a20" stroke="#2d6b30" stroke-width="1.5"/>
+          </svg>
+          <div class="shirt-content">
+            <div class="quote">"Running with gratitude,<br>finishing for His Glory."</div>
+            <div class="detail">May 2 · Saint John, NB</div>
+            <div class="detail" style="color:rgba(255,255,255,.4);margin-top:.2rem">Little River Reservoir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.45);text-align:center;line-height:1.6">Verde escuro · Letras douradas<br>Elegante e atemporal</div>
+  </div>
+
+  <!-- ══ OPTION 2 ══ -->
+  <div class="option">
+    <div class="option-label">Opção 2 ⭐ Recomendada</div>
+    <div class="option-title">A História Por Trás</div>
+    <div class="shirts">
+      <!-- FRONT -->
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt opt2-front">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="1.5"/>
+          </svg>
+          <div class="shirt-content">
+            <div class="name">LUIZ</div>
+            <div class="number">64</div>
+            <div class="ribbon">Saint John · NB · Canada</div>
+          </div>
+        </div>
+      </div>
+      <!-- BACK -->
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt opt2-back">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="1.5"/>
+          </svg>
+          <div class="shirt-content">
+            <div class="line1">Diagnosed. Recovered. Running.</div>
+            <div class="line2">64km · 64 years · 1 God</div>
+            <div class="verse">Phil 4:13</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.45);text-align:center;line-height:1.6">Preto · Azul (cor do câncer de próstata)<br>Conta sua história sem precisar falar</div>
+    <div class="badge-rec">⭐ Recomendada</div>
+  </div>
+
+  <!-- ══ OPTION 3 ══ -->
+  <div class="option">
+    <div class="option-label">Opção 3</div>
+    <div class="option-title">Impacto Total</div>
+    <div class="shirts">
+      <!-- FRONT -->
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt opt3-front">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#f0f0f0" stroke="#ccc" stroke-width="1.5"/>
+          </svg>
+          <div class="shirt-content">
+            <div class="giant" style="position:relative">
+              64<span>km</span>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:4rem;opacity:.07;color:#1e8449">✝</div>
+            </div>
+            <div class="tagline">Finishing for His Glory</div>
+          </div>
+        </div>
+      </div>
+      <!-- BACK -->
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt opt3-back">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#f0f0f0" stroke="#ccc" stroke-width="1.5"/>
+          </svg>
+          <div class="shirt-content">
+            <div class="arc">Little River Reservoir · Saint John NB</div>
+            <div class="date">May 2, 2026</div>
+            <div class="hash">#FinishingForHisGlory</div>
+            <div class="hash">#RunningWithGratitude</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.45);text-align:center;line-height:1.6">Branca · Verde e dourado<br>Visual limpo e chamativo</div>
+  </div>
+
+</div>
+
+<div style="text-align:center;margin-top:3rem;padding:1.5rem;border-top:1px solid rgba(255,255,255,.08)">
+  <div style="font-size:.75rem;color:rgba(255,255,255,.35)">Estes são mockups ilustrativos para escolha de design.<br>Para impressão, recomendo: <strong style="color:rgba(255,255,255,.6)">CustomInk, Printful ou uma gráfica local em Saint John.</strong></div>
+</div>
+
+</body>
+</html>
