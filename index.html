@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v321</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v322</span></footer>
 
 <script>
 function showLoginForm(){
@@ -1740,7 +1740,13 @@ function fbApplyRemote(data){
         localStorage.setItem(GARMIN_KEY, JSON.stringify(fbGarmin));
       } catch(e){ localStorage.setItem(GARMIN_KEY, data.garmin); }
     }
-    if(data.hevy != null) localStorage.setItem(HEVY_DATA_STORE, data.hevy);
+    if(data.hevy != null){
+      try{
+        // Firebase may return an object if it parsed the JSON string — re-stringify if needed
+        const hevyStr = (typeof data.hevy === 'string') ? data.hevy : JSON.stringify(data.hevy);
+        localStorage.setItem(HEVY_DATA_STORE, hevyStr);
+      } catch(e){ console.warn('fbApplyRemote hevy error:', e); }
+    }
   } catch(e){
     console.warn('fbApplyRemote write error:', e);
   } finally {
