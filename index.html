@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v327</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v328</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2142,7 +2142,12 @@ function fbForcePush(){
   fbPush('progress', localStorage.getItem(STORAGE_KEY)||'{}');
   fbPush('events',   localStorage.getItem(EVENTS_KEY)||'[]');
   fbPush('garmin',   localStorage.getItem(GARMIN_KEY)||'{}');
-  fbPush('hevy',     localStorage.getItem(HEVY_DATA_STORE)||'{}');
+  // Hevy must be sent as object, not string, so Firebase stores it correctly
+  try{
+    var hevyObj = JSON.parse(localStorage.getItem(HEVY_DATA_STORE)||'{}');
+    fbDB.ref('d64/'+fbSyncId+'/hevy').set(hevyObj)
+      .catch(function(e){ console.warn('hevy push error:',e); });
+  } catch(e){ console.warn('hevy parse error:',e); }
   openPhotoDB().then(function(db){
     var tx = db.transaction('photos','readonly');
     tx.objectStore('photos').getAll().onsuccess = function(e){
