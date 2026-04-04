@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v291</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v292</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5832,8 +5832,12 @@ function renderParticipantes(){
     var db = firebase.database();
     db.ref('desafio64/participantes').once('value').then(function(snap){
       var data = snap.val() || {};
-      var entries = Object.values(data).filter(function(e){ return e && e.nome; });
-      entries.sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
+      var entries = [];
+      Object.keys(data).forEach(function(key){
+        var e = data[key];
+        if(e && e.nome) entries.push({key:key, nome:e.nome, ts:e.ts||0});
+      });
+      entries.sort(function(a,b){ return a.ts - b.ts; });
 
       if(entries.length === 0){
         el.innerHTML = '<div style="padding:2rem;text-align:center;color:#aaa">Nenhum participante confirmado ainda.<br><small style="opacity:.6">Compartilhe o convite para receber confirmações.</small></div>';
@@ -5846,6 +5850,9 @@ function renderParticipantes(){
           + '<td style="padding:.6rem .8rem;color:rgba(255,255,255,.4);font-size:.8rem">'+(i+1)+'</td>'
           + '<td style="padding:.6rem .8rem;font-weight:600">'+e.nome+'</td>'
           + '<td style="padding:.6rem .8rem;font-size:.78rem;color:rgba(255,255,255,.45)">'+dt+'</td>'
+          + '<td style="padding:.6rem .8rem;text-align:right">'
+          + '<button onclick="deleteParticipante(\''+e.key+'\')" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:6px;padding:.25rem .55rem;font-size:.72rem;cursor:pointer;font-weight:700">🗑 Apagar</button>'
+          + '</td>'
           + '</tr>';
       }).join('');
 
@@ -5859,6 +5866,7 @@ function renderParticipantes(){
         + '<th style="padding:.6rem .8rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)">#</th>'
         + '<th style="padding:.6rem .8rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)">Nome</th>'
         + '<th style="padding:.6rem .8rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)">Data</th>'
+        + '<th></th>'
         + '</tr></thead>'
         + '<tbody>'+rows+'</tbody>'
         + '</table>'
@@ -5870,6 +5878,16 @@ function renderParticipantes(){
   }catch(e){
     el.innerHTML = '<div style="padding:1.5rem;color:#e74c3c;text-align:center">Erro: '+e.message+'</div>';
   }
+}
+
+function deleteParticipante(key){
+  if(!confirm('Apagar este participante?')) return;
+  try{
+    var db = firebase.database();
+    db.ref('desafio64/participantes/'+key).remove().then(function(){
+      renderParticipantes();
+    }).catch(function(e){ alert('Erro ao apagar: '+e.message); });
+  }catch(e){ alert('Erro: '+e.message); }
 }
 
 // ============================================================
