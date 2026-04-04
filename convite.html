@@ -562,9 +562,15 @@ var fbDb = null;
 var fbRef = null;
 
 (function initFb(){
-  var cfg = null;
-  try{ cfg = JSON.parse(localStorage.getItem('desafio64_fbconfig')||'null'); }catch(e){}
-  if(!cfg || !cfg.databaseURL) return;
+  var cfg = {
+    apiKey: "AIzaSyAWD-KEgeIpaMU8z3sKmxKqs-BypQGbLjs",
+    authDomain: "corrida-64k.firebaseapp.com",
+    databaseURL: "https://corrida-64k-default-rtdb.firebaseio.com",
+    projectId: "corrida-64k",
+    storageBucket: "corrida-64k.firebasestorage.app",
+    messagingSenderId: "931451150684",
+    appId: "1:931451150684:web:0112ba7eddb4c936776199"
+  };
   try{
     if(!firebase.apps.length) firebase.initializeApp(cfg);
     else firebase.app();
