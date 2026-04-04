@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camiseta — Design de Texto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Oswald:wght@300;400;700&family=Lora:ital,wght@0,400;0,700;1,400;1,600&family=Anton&family=Bebas+Neue&family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0f0f1a;font-family:'Montserrat',sans-serif;color:#fff;padding:2rem 1rem}
+  h1{text-align:center;font-size:1.4rem;font-weight:900;margin-bottom:.3rem;color:#d4a017}
+  .subtitle{text-align:center;font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:2.5rem}
+  .options{display:flex;flex-wrap:wrap;gap:2.5rem;justify-content:center}
+  .option{display:flex;flex-direction:column;align-items:center;gap:.8rem;max-width:360px}
+  .option-label{font-size:.65rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+  .option-title{font-size:1rem;font-weight:800;text-align:center}
+  .option-desc{font-size:.7rem;color:rgba(255,255,255,.4);text-align:center;line-height:1.6}
+  .shirts{display:flex;gap:1rem}
+  .shirt{width:160px;height:190px;position:relative;display:flex;align-items:center;justify-content:center;text-align:center}
+  .shirt svg.shape{position:absolute;inset:0;width:100%;height:100%}
+  .shirt-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;width:100%;height:100%;padding:.5rem .6rem}
+  .side-label{font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.35rem}
+</style>
+</head>
+<body>
+
+<h1>Camiseta — Variações de Design de Texto</h1>
+<div class="subtitle">Mesmo conceito · Cores azul & preto · 6 estilos tipográficos diferentes</div>
+
+<div class="options">
+
+  <!-- ══ 1 — VERTICAL STACKED ══ -->
+  <div class="option">
+    <div class="option-label">Design 1</div>
+    <div class="option-title">Vertical Stacked</div>
+    <div class="shirts">
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.18em;color:#1a73e8;line-height:1">RUNNING</div>
+            <div style="font-family:'Lora',serif;font-style:italic;font-size:.5rem;color:rgba(255,255,255,.5);letter-spacing:.05em">with gratitude,</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.18em;color:#1a73e8;line-height:1;margin-top:.1rem">FINISHING</div>
+            <div style="font-family:'Lora',serif;font-style:italic;font-size:.5rem;color:rgba(255,255,255,.5);letter-spacing:.05em">for His Glory</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#1a73e8;line-height:.85;letter-spacing:.05em">64K</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:rgba(255,255,255,.5);letter-spacing:.2em">FOR 64</div>
+            <div style="width:36px;height:1.5px;background:#1a73e8;margin:.3rem auto"></div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:.72rem;color:#fff;letter-spacing:.12em;line-height:1.6">DIAGNOSED<br>RECOVERED<br>RUNNING</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">Bebas Neue — palavras-chave em caixa alta<br>Alternando com itálico fino</div>
+  </div>
+
+  <!-- ══ 2 — HANDWRITTEN FEEL ══ -->
+  <div class="option">
+    <div class="option-label">Design 2</div>
+    <div class="option-title">Elegância Clássica</div>
+    <div class="shirts">
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:.65rem;color:#fff;line-height:1.9;font-weight:400">
+              Running with<br>gratitude,<br>finishing<br>for His Glory
+            </div>
+            <div style="width:50px;height:1px;background:rgba(26,115,232,.6);margin:.3rem auto 0"></div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:2rem;color:#1a73e8;line-height:.9;font-weight:700">64K</div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:.6rem;color:rgba(255,255,255,.45);margin-bottom:.35rem">for 64</div>
+            <div style="width:36px;height:1px;background:#1a73e8;margin:.2rem auto"></div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:.52rem;color:#fff;line-height:1.8">Diagnosed.<br>Recovered.<br>Running.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">Playfair Display — serifado elegante<br>Sofisticado e atemporal</div>
+  </div>
+
+  <!-- ══ 3 — ULTRA BOLD CONDENSED ══ -->
+  <div class="option">
+    <div class="option-label">Design 3</div>
+    <div class="option-title">Ultra Bold</div>
+    <div class="shirts">
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.4);text-transform:uppercase">Running with</div>
+            <div style="font-family:'Oswald',sans-serif;font-size:1.35rem;font-weight:700;color:#fff;letter-spacing:.04em;line-height:1;text-transform:uppercase">GRATITUDE</div>
+            <div style="width:40px;height:2px;background:#1a73e8;margin:.25rem auto"></div>
+            <div style="font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.4);text-transform:uppercase">Finishing for</div>
+            <div style="font-family:'Oswald',sans-serif;font-size:1.35rem;font-weight:700;color:#1a73e8;letter-spacing:.04em;line-height:1;text-transform:uppercase">HIS GLORY</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Oswald',sans-serif;font-size:2.6rem;font-weight:700;color:#1a73e8;line-height:.85">64K</div>
+            <div style="font-family:'Oswald',sans-serif;font-size:.8rem;font-weight:300;color:rgba(255,255,255,.5);letter-spacing:.2em">FOR 64</div>
+            <div style="width:36px;height:2px;background:#1a73e8;margin:.3rem auto"></div>
+            <div style="font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;color:#fff;letter-spacing:.1em;line-height:1.7;text-transform:uppercase">DIAGNOSED<br>RECOVERED<br>RUNNING</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">Oswald — palavras-destaque grandes<br>Palavras de apoio finas e pequenas</div>
+  </div>
+
+  <!-- ══ 4 — MINIMALISTA OUTLINE ══ -->
+  <div class="option">
+    <div class="option-label">Design 4</div>
+    <div class="option-title">Outline Minimalista</div>
+    <div class="shirts">
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Montserrat',sans-serif;font-size:.5rem;font-weight:300;letter-spacing:.2em;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:.2rem">— running with —</div>
+            <div style="font-family:'Anton',sans-serif;font-size:1.3rem;color:transparent;-webkit-text-stroke:1px #1a73e8;letter-spacing:.05em;line-height:1">GRATITUDE</div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:.5rem;font-weight:300;letter-spacing:.2em;color:rgba(255,255,255,.4);text-transform:uppercase;margin:.2rem 0">— finishing for —</div>
+            <div style="font-family:'Anton',sans-serif;font-size:1.3rem;color:transparent;-webkit-text-stroke:1px #fff;letter-spacing:.05em;line-height:1">HIS GLORY</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Anton',sans-serif;font-size:2.8rem;color:transparent;-webkit-text-stroke:1.5px #1a73e8;line-height:.85;letter-spacing:.05em">64K</div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:.5rem;font-weight:300;letter-spacing:.22em;color:rgba(255,255,255,.4);text-transform:uppercase;margin:.2rem 0">— for 64 —</div>
+            <div style="width:36px;height:1px;background:rgba(26,115,232,.4);margin:.2rem auto"></div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:.5rem;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;line-height:1.8;text-transform:uppercase">Diagnosed<br>Recovered<br>Running</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">Texto outline (contorno)<br>Design moderno e incomum</div>
+  </div>
+
+  <!-- ══ 5 — MIXED WEIGHT ══ -->
+  <div class="option">
+    <div class="option-label">Design 5</div>
+    <div class="option-title">Contraste de Peso</div>
+    <div class="shirts">
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Montserrat',sans-serif;font-size:.42rem;font-weight:300;letter-spacing:.15em;color:rgba(255,255,255,.45);text-transform:uppercase">running with</div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:1.05rem;font-weight:900;color:#fff;letter-spacing:-.01em;line-height:1">GRATITUDE</div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:.42rem;font-weight:300;letter-spacing:.15em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-top:.3rem">finishing for</div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:1.05rem;font-weight:900;color:#1a73e8;letter-spacing:-.01em;line-height:1">HIS GLORY</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Montserrat',sans-serif;font-size:2.4rem;font-weight:900;color:#1a73e8;line-height:.85;letter-spacing:-.02em">64K</div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:.5rem;font-weight:300;letter-spacing:.25em;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:.35rem">for 64</div>
+            <div style="width:36px;height:1.5px;background:#1a73e8;margin:.2rem auto"></div>
+            <div style="font-family:'Montserrat',sans-serif;font-size:.5rem;font-weight:900;color:#fff;letter-spacing:.05em;line-height:1.8;text-transform:uppercase;margin-top:.2rem">Diagnosed<br>Recovered<br>Running</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">Montserrat light + black<br>Contraste dramático de espessura</div>
+  </div>
+
+  <!-- ══ 6 — LINHA ÚNICA HORIZONTAL ══ -->
+  <div class="option">
+    <div class="option-label">Design 6</div>
+    <div class="option-title">Horizontal & Clean</div>
+    <div class="shirts">
+      <div style="text-align:center">
+        <div class="side-label">Frente</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="writing-mode:vertical-rl;text-orientation:mixed;position:absolute;left:18px;top:50%;transform:translateY(-50%) rotate(180deg);font-family:'Oswald',sans-serif;font-size:.42rem;font-weight:300;letter-spacing:.18em;color:rgba(26,115,232,.5);text-transform:uppercase">DESAFIO 64KM</div>
+            <div style="font-family:'Lora',serif;font-style:italic;font-size:.62rem;color:#fff;line-height:1.9;font-weight:400;padding-left:.4rem">
+              "Running<br>with gratitude,<br>finishing<br>for His Glory"
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="side-label">Costas</div>
+        <div class="shirt">
+          <svg class="shape" viewBox="0 0 160 190" fill="none">
+            <path d="M55 10 L20 35 L35 50 L35 175 L125 175 L125 50 L140 35 L105 10 L95 25 Q80 32 65 25 Z" fill="#111" stroke="#1a73e8" stroke-width="2"/>
+          </svg>
+          <div class="shirt-content">
+            <div style="font-family:'Oswald',sans-serif;font-size:2.6rem;font-weight:700;color:#1a73e8;line-height:.85">64K</div>
+            <div style="font-family:'Oswald',sans-serif;font-size:.75rem;font-weight:300;color:rgba(255,255,255,.4);letter-spacing:.22em;text-transform:uppercase;margin-bottom:.3rem">for 64</div>
+            <div style="width:60px;height:1px;background:rgba(26,115,232,.5);margin:.2rem auto .3rem"></div>
+            <div style="font-family:'Lora',serif;font-style:italic;font-size:.52rem;color:rgba(255,255,255,.8);line-height:1.75">Diagnosed.<br>Recovered.<br>Running.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">Texto lateral + itálico serifado<br>Sofisticado com detalhe vertical</div>
+  </div>
+
+</div>
+
+<div style="text-align:center;margin-top:3rem;padding:1.5rem;border-top:1px solid rgba(255,255,255,.08)">
+  <div style="font-size:.75rem;color:rgba(255,255,255,.35)">Mockups ilustrativos · Para impressão: <strong style="color:rgba(255,255,255,.6)">CustomInk, Printful ou gráfica local em Saint John.</strong></div>
+</div>
+
+</body>
+</html>
