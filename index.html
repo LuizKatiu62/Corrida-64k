@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v316</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v317</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2424,6 +2424,13 @@ function migrateGarminZones(){
   }catch(e){}
 }
 
+function markRunDone(date){
+  const p = loadProgress();
+  if(!p[date]) p[date] = {};
+  p[date].run = true;
+  saveProgress(p);
+}
+
 function importGPX(date){
   const inp=document.createElement('input');
   inp.type='file'; inp.accept='.gpx,.xml';
@@ -2434,6 +2441,7 @@ function importGPX(date){
       const result=parseGPX(ev.target.result,file.name);
       if(!result){alert('Arquivo GPX inválido ou sem dados de percurso (trackpoints).'); return;}
       const g=loadGarmin(); g[date]=result; saveGarmin(g);
+      markRunDone(date);
       rebuildDayCard(date);
     };
     reader.readAsText(file);
