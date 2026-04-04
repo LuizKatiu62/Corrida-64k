@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v338</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v339</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4691,8 +4691,7 @@ function buildTodayChart(day, p){
       +   '<div class="tchart-gym-status" style="color:#1e8449">✅ Realizado · ' + (hevyData.exercises||[]).length + ' exercícios · ' + totalSets + ' séries' + dur + '</div>'
       + '</div>'
       + svgCircle
-      + '</div>'
-      + (exRows ? '<div style="margin-top:.6rem">'+exRows+'</div>' : '');
+      + '</div>';
   } else {
     const gymStatusColor = doneGym ? '#1e8449' : gymPct > 0 ? '#e67e22' : '#aaa';
     const gymStatusText  = !hasGym ? 'Descanso \u2014 sem academia' : doneGym ? '\u2705 Conclu\u00eddo!' : gymPct > 0 ? 'Em andamento \u00b7 ' + doneEx + '/' + totalEx + ' exerc\u00edcios' : '\u23f3 N\u00e3o iniciado';
