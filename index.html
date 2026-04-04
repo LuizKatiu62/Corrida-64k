@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v311</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v312</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7837,33 +7837,21 @@ function saveHevyData(d){ localStorage.setItem(HEVY_DATA_STORE, JSON.stringify(d
 
 // Entry point: open file picker
 function openHevyForDate(date){
-  // Remove any leftover picker from a previous cancelled attempt
-  const old = document.getElementById('_hevy_file_inp');
-  if(old) old.parentNode.removeChild(old);
+  const inp = document.getElementById('hevy-file-picker');
+  if(!inp) return;
 
-  const inp = document.createElement('input');
-  inp.id = '_hevy_file_inp';
-  inp.type = 'file'; inp.accept = '.csv';
-  inp.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none';
-
-  function cleanup(){ if(inp.parentNode) inp.parentNode.removeChild(inp); }
+  // Reset value so onchange fires even if same file is selected again
+  inp.value = '';
 
   inp.onchange = e => {
-    cleanup();
-    const file = e.target.files[0]; if(!file) return;
+    const file = e.target.files[0];
+    inp.value = '';
+    if(!file) return;
     const reader = new FileReader();
     reader.onload = ev => parseHevyCSV(ev.target.result, date);
     reader.readAsText(file);
   };
 
-  // Handle cancel (modern browsers fire 'cancel'; for older ones use focus trick)
-  inp.addEventListener('cancel', cleanup);
-  window.addEventListener('focus', function onFocus(){
-    window.removeEventListener('focus', onFocus);
-    setTimeout(()=>{ if(inp.parentNode && (!inp.files || !inp.files.length)) cleanup(); }, 500);
-  });
-
-  document.body.appendChild(inp);
   inp.click();
 }
 
