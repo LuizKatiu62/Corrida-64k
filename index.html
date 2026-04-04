@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v331</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v332</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2174,9 +2174,10 @@ function fbSendHevyOnly(){
     var raw = localStorage.getItem(HEVY_DATA_STORE)||'{}';
     var hevyObj = JSON.parse(raw);
     var dias = Object.keys(hevyObj).length;
-    alert('Hevy local: '+dias+' dia(s)\nConteúdo: '+JSON.stringify(hevyObj).slice(0,120));
-    fbDB.ref('d64/'+fbSyncId+'/hevy').set(hevyObj)
-      .then(function(){ alert('✅ Hevy enviado! '+dias+' dia(s)'); })
+    var syncCode = fbSyncId || localStorage.getItem(FB_SYNCID_KEY) || '???';
+    alert('Código sync: '+syncCode+'\nHevy local: '+dias+' dia(s)\nConteúdo: '+JSON.stringify(hevyObj).slice(0,120));
+    fbDB.ref('d64/'+syncCode+'/hevy').set(hevyObj)
+      .then(function(){ alert('✅ Hevy enviado!\nCódigo: '+syncCode+'\nDias: '+dias); })
       .catch(function(e){ alert('Erro ao enviar: '+e.message); });
   } catch(e){ alert('Erro local: '+e.message); }
 }
