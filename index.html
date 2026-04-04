@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v324</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v325</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2126,7 +2126,14 @@ function fbForceReceive(){
       grid.innerHTML = days.map(function(d){ return buildCard(d, d.date===today, p2); }).join('');
     });
     try{ updateProgressStats(p2); }catch(e){}
-    fbMsgEl('✅ Dados recebidos e aplicados com sucesso!','ok');
+    // Show what arrived
+    var hevyKeys = 0;
+    try{ hevyKeys = Object.keys(JSON.parse(toStr(obj.hevy))||{}).length; }catch(e){}
+    var msg = '✅ Dados recebidos!'
+      + (obj.progress ? ' · progresso ✓' : ' · progresso ✗')
+      + (obj.garmin   ? ' · garmin ✓'    : ' · garmin ✗')
+      + (obj.hevy     ? ' · hevy ✓ ('+hevyKeys+' dias)' : ' · hevy ✗ — não encontrado no Firebase. No iPhone: 🔄 Sync → 📤 Enviar dados agora');
+    fbMsgEl(msg, obj.hevy ? 'ok' : 'err');
   }).catch(function(e){ fbMsgEl('Erro: ' + e.message,'err'); });
 }
 
