@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v323</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v324</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2111,10 +2111,11 @@ function fbForceReceive(){
     localStorage.setItem(FB_SYNCID_KEY, syncId);
     fbSyncId = syncId;
     // Write directly to localStorage (bypass fbRemoteWrite flag)
-    if(obj.progress != null) localStorage.setItem(STORAGE_KEY, obj.progress);
-    if(obj.events   != null) localStorage.setItem(EVENTS_KEY,  obj.events);
-    if(obj.garmin   != null) localStorage.setItem(GARMIN_KEY,  obj.garmin);
-    if(obj.hevy     != null) localStorage.setItem(HEVY_DATA_STORE, obj.hevy);
+    function toStr(v){ return (v==null)?null:(typeof v==='string'?v:JSON.stringify(v)); }
+    if(obj.progress != null) localStorage.setItem(STORAGE_KEY,     toStr(obj.progress));
+    if(obj.events   != null) localStorage.setItem(EVENTS_KEY,      toStr(obj.events));
+    if(obj.garmin   != null) localStorage.setItem(GARMIN_KEY,      toStr(obj.garmin));
+    if(obj.hevy     != null) localStorage.setItem(HEVY_DATA_STORE, toStr(obj.hevy));
     // Re-render ALL week grids with fresh data
     var today = getToday();
     var p2 = loadProgress();
