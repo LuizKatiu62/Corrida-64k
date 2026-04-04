@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v284</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v285</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2104,8 +2104,12 @@ function fbForceReceive(){
     // Save this syncId locally so future syncs use the same one
     localStorage.setItem(FB_SYNCID_KEY, syncId);
     fbSyncId = syncId;
-    fbApplyRemote(obj);
-    // Force re-render of all week sections regardless of visibility
+    // Write directly to localStorage (bypass fbRemoteWrite flag)
+    if(obj.progress != null) localStorage.setItem(STORAGE_KEY, obj.progress);
+    if(obj.events   != null) localStorage.setItem(EVENTS_KEY,  obj.events);
+    if(obj.garmin   != null) localStorage.setItem(GARMIN_KEY,  obj.garmin);
+    if(obj.hevy     != null) localStorage.setItem(HEVY_DATA_STORE, obj.hevy);
+    // Re-render ALL week grids with fresh data
     var today = getToday();
     var p2 = loadProgress();
     [1,2,3,4,5].forEach(function(w){
@@ -2114,7 +2118,14 @@ function fbForceReceive(){
       var days = PLAN.filter(function(d){ return d.week===w; });
       grid.innerHTML = days.map(function(d){ return buildCard(d, d.date===today, p2); }).join('');
     });
-    fbMsgEl('✅ Dados recebidos e aplicados com sucesso!','ok');
+    try{ updateProgressStats(p2); }catch(e){}
+    // Check reschedule in received data for debug
+    try{
+      var prog = JSON.parse(obj.progress||'{}');
+      var has0402 = prog['2026-04-02'] && prog['2026-04-02'].gymReschedule ? JSON.stringify(prog['2026-04-02'].gymReschedule) : 'none';
+      var has0404 = prog['2026-04-04'] && prog['2026-04-04'].gymReschedule ? JSON.stringify(prog['2026-04-04'].gymReschedule) : 'none';
+      fbMsgEl('✅ Dados aplicados! 02/04: '+has0402+' | 04/04: '+has0404,'ok');
+    }catch(e){ fbMsgEl('✅ Dados recebidos e aplicados com sucesso!','ok'); }
   }).catch(function(e){ fbMsgEl('Erro: ' + e.message,'err'); });
 }
 
