@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v339</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v340</span></footer>
 
 <script>
 function showLoginForm(){
@@ -8112,14 +8112,28 @@ function importHevyWorkout(date, el){
 }
 
 function buildHevyPanel(date, hData){
+  const exHtml = (hData.exercises||[]).map(e=>{
+    const setsHtml = (e.sets||[]).map((s,i)=>{
+      const parts = [];
+      if(s.reps)   parts.push(s.reps+' reps');
+      if(s.weight!=null && s.weight>0) parts.push(s.weight+'kg');
+      if(s.rpe)    parts.push('RPE '+s.rpe);
+      const type = s.type==='warmup'?'🔥':s.type==='failure'?'💀':'';
+      return `<span class="hevy-set-badge">${type}S${i+1} ${parts.join(' · ')}</span>`;
+    }).join('');
+    return `<div class="hevy-exercise">
+      <div class="hevy-ex-name">${e.name}</div>
+      <div class="hevy-set-row">${setsHtml||'<span style="color:#aaa;font-size:.72rem">sem dados</span>'}</div>
+    </div>`;
+  }).join('');
   const dur = hData.duration ? ` · ⏱ ${hData.duration}min` : '';
-  const exCount = (hData.exercises||[]).length;
   return `<div class="hevy-panel">
     <div class="hevy-panel-title">
       <span>💪 Hevy — ${hData.title}</span>
       <button style="font-size:.65rem;font-weight:700;color:#bbb;background:none;border:1px solid #e0e0e0;border-radius:4px;cursor:pointer;padding:.1rem .4rem" onclick="event.stopPropagation();removeHevyData('${date}')">✕ remover</button>
     </div>
-    <div style="font-size:.72rem;color:#9e86c8">📅 ${dateLabel(hData.date)}${dur} · ${exCount} exercício${exCount!==1?'s':''}</div>
+    <div style="font-size:.72rem;color:#9e86c8;margin-bottom:.6rem">📅 ${dateLabel(hData.date)}${dur} · ${(hData.exercises||[]).length} exercícios</div>
+    ${exHtml||'<div style="color:#aaa;font-size:.78rem">Sem exercícios registrados</div>'}
   </div>`;
 }
 
