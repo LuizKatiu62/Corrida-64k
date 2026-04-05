@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v381</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v382</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4947,16 +4947,16 @@ function buildCard(day, isToday, p){
   const noRun   = !extraRun && (runMoved || (day.run.km === 0 && !runReceive));
   const noGym   = gymMoved || (!gymReceive && day.gym.ex.every(e => /^(sem |descanso)/i.test(e.trim())));
   const noNutri = day.nutri.length === 0;
-  const isFullRest = runMoved;
-  return `<div class="day-card type-${isFullRest?'rest':day.type}${isToday&&!isFullRest?' is-today':''}${allDone?' is-done':''}" id="card-${day.date}">
+  const isFullRest = runMoved && !extraRun;
+  return `<div class="day-card type-${isFullRest?'rest':extraRun?'easy':day.type}${isToday&&!isFullRest?' is-today':''}${allDone?' is-done':''}" id="card-${day.date}">
   <div class="day-header" onclick="switchTab('${tabId}','run')">
     <div class="day-header-left">
       <div class="day-date-label">${dateLabel(day.date)} · ${day.phase}</div>
       ${buildWeatherHtml(day.date)}
       ${isFullRest ? '' : todayTag}
-      <div class="day-title">${isFullRest ? '🛌 Descanso Total — treino reagendado' : day.run.title}${eventTag}</div>
+      <div class="day-title">${isFullRest ? '🛌 Descanso Total — treino reagendado' : extraRun ? '🏃 '+( extraRun.title||'Treino extra') : day.run.title}${eventTag}</div>
     </div>
-    ${isFullRest ? '<span class="day-km-badge km-rest">Descanso</span>' : kmBadgeHtml}
+    ${kmBadgeHtml}
   </div>
   <div class="day-tabs">
     <div class="day-tab${openTab==='run'?' active':''}${noRun?' no-activity':' has-activity'}" id="tab-${tabId}-run" onclick="switchTab('${tabId}','run')">
