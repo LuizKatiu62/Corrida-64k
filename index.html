@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v345</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v346</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2004,11 +2004,11 @@ function openFBModal(){
       + '<button class="fb-copy-btn" onclick="copyFBSyncId()">Copiar</button>'
       + '</div>'
       + lastSyncHtml
-      + '<p class="fb-sub" style="margin:0 0 .75rem">Para conectar outro dispositivo, copie o código acima e cole no campo abaixo no outro dispositivo (ou vice-versa).</p>'
       + '<hr class="fb-divider" style="margin:.5rem 0">'
-      + '<label style="font-size:.75rem;font-weight:700;color:#555;display:block;margin-bottom:.3rem">Conectar com outro dispositivo</label>'
-      + '<div style="display:flex;gap:.5rem;align-items:center">'
-      + '<input type="text" id="fb-syncid-input" maxlength="8" style="flex:1;border:1.5px solid #ddd;border-radius:8px;padding:.45rem .7rem;font-size:.85rem;font-family:monospace;text-transform:uppercase;letter-spacing:2px;outline:none" placeholder="Cole o código do outro dispositivo">'
+      + '<label style="font-size:.75rem;font-weight:700;color:#555;display:block;margin-bottom:.5rem">Mudar código de sync</label>'
+      + '<button class="fb-btn-primary" style="width:100%;margin-bottom:.5rem;background:#9b59b6;font-size:1rem;letter-spacing:2px" onclick="setFBSyncIdDirect(\'LUIZ64\')">✅ Usar LUIZ64</button>'
+      + '<div style="display:flex;gap:.5rem;align-items:center;margin-top:.3rem">'
+      + '<input type="text" id="fb-syncid-input" maxlength="20" style="flex:1;border:1.5px solid #ddd;border-radius:8px;padding:.45rem .7rem;font-size:.85rem;font-family:monospace;text-transform:uppercase;letter-spacing:2px;outline:none" placeholder="Ou digite outro código...">'
       + '<button class="fb-btn-primary" style="flex:0;white-space:nowrap;padding:.45rem 1rem" onclick="applyFBSyncId()">Usar</button>'
       + '</div>'
       + '<div id="fb-msg"></div>'
