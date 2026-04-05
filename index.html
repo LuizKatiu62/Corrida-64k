@@ -1422,7 +1422,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v367</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v368</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3055,16 +3055,17 @@ function saveEventModal(editId){
   const title = document.getElementById('ev-title').value.trim();
   if(!date||!title){ alert('Preencha a data e o nome do evento.'); return; }
   const evts = loadEvents();
+  const km = parseFloat(document.getElementById('ev-km').value)||null;
   if(editId){
     const idx = evts.findIndex(e=>e.id===editId);
-    if(idx>=0) evts[idx] = {...evts[idx], date, title,
+    if(idx>=0) evts[idx] = {...evts[idx], date, title, km,
       type:document.getElementById('ev-type').value,
       location:document.getElementById('ev-loc').value.trim(),
       targetTime:document.getElementById('ev-target').value.trim(),
       notes:document.getElementById('ev-notes').value.trim()
     };
   } else {
-    evts.push({id:'ev-'+Date.now(), date, title,
+    evts.push({id:'ev-'+Date.now(), date, title, km,
       type:document.getElementById('ev-type').value,
       location:document.getElementById('ev-loc').value.trim(),
       targetTime:document.getElementById('ev-target').value.trim(),
