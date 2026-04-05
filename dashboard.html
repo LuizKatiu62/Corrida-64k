@@ -152,11 +152,13 @@ a{text-decoration:none}
   </div>
 </div>
 
-<div class="footer">
-  Dados sincronizados com o app principal via localStorage &nbsp;·&nbsp;
+<div class="footer" id="footer-text">
+  Dados locais (localStorage) &nbsp;·&nbsp;
   <a href="index.html">← voltar ao plano</a>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 // ============================================================
 // PLAN — minimal data (date, week, phase, type, km, title)
