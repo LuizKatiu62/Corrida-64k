@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v383</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v384</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2572,7 +2572,7 @@ function saveExtraRun(date){
   p[date].extraRun = { km, title, notes };
   saveProgress(p);
   document.getElementById('extra-run-modal').remove();
-  rebuildDayCard(date);
+  renderAll();
 }
 
 function removeExtraRun(date){
@@ -2580,7 +2580,7 @@ function removeExtraRun(date){
   const p = loadProgress();
   if(p[date]) delete p[date].extraRun;
   saveProgress(p);
-  rebuildDayCard(date);
+  renderAll();
 }
 
 function removeGarminData(date){
