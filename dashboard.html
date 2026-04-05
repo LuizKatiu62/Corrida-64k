@@ -609,8 +609,38 @@ function secsToMM(s){
   return `${m}:${r<10?'0'+r:r}`;
 }
 
+// ============================================================
+// FIREBASE SYNC — pull data using same config/syncId as main app
+// ============================================================
+function tryFirebaseSync(){
+  const cfgRaw  = localStorage.getItem('desafio64_fbconfig');
+  const syncId  = localStorage.getItem('desafio64_syncid');
+  if(!cfgRaw || !syncId) return false;
+
+  try{
+    const config = JSON.parse(cfgRaw);
+    if(!firebase.apps.length) firebase.initializeApp(config);
+    const db = firebase.database();
+
+    db.ref('d64/' + syncId).on('value', function(snap){
+      if(!snap.exists()) return;
+      const data = snap.val();
+      if(data.progress) localStorage.setItem('desafio64_progress', typeof data.progress==='string' ? data.progress : JSON.stringify(data.progress));
+      if(data.garmin)   localStorage.setItem('desafio64_garmin',   typeof data.garmin==='string'   ? data.garmin   : JSON.stringify(data.garmin));
+      render();
+      const footer = document.getElementById('footer-text');
+      if(footer) footer.innerHTML = '🔄 Sincronizado com Firebase &nbsp;·&nbsp; <a href="index.html">← voltar ao plano</a>';
+    });
+    return true;
+  } catch(e){
+    console.warn('Dashboard Firebase error:', e);
+    return false;
+  }
+}
+
 // ---- boot ----
 render();
+tryFirebaseSync();
 // refresh every 30s in case user switches tabs and marks workouts
 setInterval(render, 30000);
 </script>
