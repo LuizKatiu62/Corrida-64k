@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v358</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v359</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4784,15 +4784,12 @@ function buildCard(day, isToday, p){
   const rSched = prog.reschedule || null;
   const runMoved = rSched && (rSched.type === 'skip' || rSched.type === 'move');
   const runReceive = rSched && rSched.type === 'receive';
-  // Verifica se outro dia moveu seu treino para ESTE dia (ou seja, este dia cedeu o seu original)
-  const thisOriginalMoved = (function(){
-    var p2 = loadProgress();
-    return PLAN.some(function(pd){
-      var pp = p2[pd.date] || {};
-      var rs = pp.reschedule || null;
-      return rs && rs.type === 'move' && rs.to === day.date;
-    });
-  })();
+  // Verifica se outro dia moveu seu treino para ESTE dia (usando o p já passado para buildCard)
+  const thisOriginalMoved = PLAN.some(function(pd){
+    var pp = p[pd.date] || {};
+    var rs = pp.reschedule || null;
+    return rs && rs.type === 'move' && rs.to === day.date;
+  });
   const reschedBadge = rSched
     ? rSched.type === 'skip'
       ? '<div class="resched-badge skipped">⏭️ Treino pulado neste dia</div>'
