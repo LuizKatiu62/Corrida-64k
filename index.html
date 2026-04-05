@@ -1422,7 +1422,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v368</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v369</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3257,7 +3257,8 @@ function renderEventsSection(){
         <div class="event-title">${ev.title}</div>
         <div class="event-meta">
           📅 ${dateLabel(ev.date)}
-          ${ev.location?` &nbsp;·&nbsp; 📍 Cidade: <strong>${ev.location}</strong>`:''}
+          ${ev.km?` &nbsp;·&nbsp; 📏 <strong>${ev.km} km</strong>`:''}
+          ${ev.location?` &nbsp;·&nbsp; 📍 ${ev.location}`:''}
           ${ev.targetTime?` &nbsp;·&nbsp; 🎯 Meta: ${ev.targetTime}`:''}
           ${pace?` &nbsp;·&nbsp; 🏃 Pace: <strong>${pace}</strong>`:''}
           ${inPlan?' &nbsp;·&nbsp; <span style="color:var(--azul);font-weight:700">dia de treino</span>':''}
