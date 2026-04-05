@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v359</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v360</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4292,17 +4292,7 @@ function applyReschedule(fromDate, toDate){
   }
 
   saveProgress(p);
-
-  // Re-render affected cards
-  [fromDate, toDate].forEach(function(d){
-    if(!d || d === 'skip') return;
-    var day = PLAN.find(x => x.date === d);
-    if(day){
-      var card = document.getElementById('card-' + d);
-      if(card) card.outerHTML = buildCard(day, d === getToday(), p);
-    }
-  });
-  updateProgressStats(p);
+  renderAll();
 }
 
 function openGymRescheduleModal(date){
