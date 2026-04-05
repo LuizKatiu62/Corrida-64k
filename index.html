@@ -1365,10 +1365,10 @@ document.addEventListener('visibilitychange',function(){
 
   <!-- EVENTS SECTION -->
   <div id="section-events" class="week-section hidden">
-    <div id="fb-banner" class="fb-banner" onclick="openFBModal()">
-      <span class="fb-banner-icon">🔄</span>
-      <span class="fb-banner-text" id="fb-banner-text">Ativar sincronização automática com iPhone</span>
-      <span style="font-size:.75rem;opacity:.6">›</span>
+    <div class="event-section-intro">
+      <h3>🎯 Eventos & Corridas de Abril</h3>
+      <p>Registre corridas, parkruns ou qualquer evento que ocorra durante o mês de preparação. Os eventos aparecerão marcados nos seus dias de treino correspondentes.</p>
+      <button class="add-event-btn" onclick="openAddEventModal()">+ Adicionar Evento</button>
     </div>
     <div id="events-list"></div>
   </div>
@@ -1422,7 +1422,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v365</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v366</span></footer>
 
 <script>
 function showLoginForm(){
