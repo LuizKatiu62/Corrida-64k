@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v350</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v351</span></footer>
 
 <script>
 function showLoginForm(){
@@ -8341,11 +8341,13 @@ handleStravaCallback();
 // showWeek must run AFTER GOAL_META is defined
 showWeek('dashboard');
 
-// Sempre que o app voltar ao foco (iPhone minimiza e reabre), ir para o dashboard
+// Sempre que o app voltar ao foco ou for reaberto no iPhone, ir para o dashboard
 document.addEventListener('visibilitychange', function(){
-  if(document.visibilityState === 'visible'){
-    showWeek('dashboard');
-  }
+  if(document.visibilityState === 'visible') showWeek('dashboard');
+});
+window.addEventListener('pageshow', function(e){
+  // e.persisted = true quando iOS restaura do cache (back/forward cache)
+  showWeek('dashboard');
 });
 
 </script>
