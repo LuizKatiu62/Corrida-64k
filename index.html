@@ -1422,7 +1422,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v372</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v373</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4907,6 +4907,7 @@ function buildCard(day, isToday, p){
   </div>
   <div class="day-body${openTab==='run'?' active':''}" id="body-${tabId}-run">
     ${reschedBadge}
+    ${dayEvent&&isFullRest?`<div style="background:#f3eafb;border-radius:10px;padding:.65rem 1rem;margin-bottom:.6rem;font-size:.83rem;color:var(--roxo);font-weight:700">🎯 ${dayEvent.title}${dayEvent.km?' · '+dayEvent.km+' km':''}</div>`:''}
     ${runBodyContent}
     ${reschedButton}
   </div>
