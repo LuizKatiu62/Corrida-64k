@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v353</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v354</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4866,9 +4866,18 @@ function buildCard(day, isToday, p){
     gymBodyContent = '<div class="loc">'+day.gym.title+'</div><ul>'+gymItems+'</ul>'+calChipHtml(gymCal, day.gym.title);
   }
 
-  // km efetivo para badge (0 se movido/pulado)
-  const effectiveKm = runMoved ? 0 : runReceive && PLAN.find(function(d){return d.date===rSched.from;})
-    ? day.run.km + (PLAN.find(function(d){return d.date===rSched.from;}).run.km) : day.run.km;
+  // km efetivo para badge — se dia cedeu seu treino original E recebeu outro, mostrar só o recebido
+  var effectiveKm;
+  if(runMoved){
+    effectiveKm = 0;
+  } else if(runReceive){
+    var rFromDayKm = PLAN.find(function(d){return d.date===rSched.from;});
+    var fromKm = rFromDayKm ? rFromDayKm.run.km : 0;
+    // Se este dia também cedeu seu treino (outro dia aponta move.to === day.date), usar só o recebido
+    effectiveKm = thisOriginalMoved ? fromKm : day.run.km + fromKm;
+  } else {
+    effectiveKm = day.run.km;
+  }
   const kmBadgeHtml = runMoved
     ? '<span class="day-km-badge km-rest">Descanso</span>'
     : effectiveKm !== day.run.km
