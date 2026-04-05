@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v361</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v362</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4215,13 +4215,18 @@ function openRescheduleModal(date){
   const current = prog.reschedule || null;
   const today = getToday();
 
-  // Build list of candidate days: future plan days that are not this day and have a run
+  // Build list of candidate days: future plan days that are not this day
   var dayOpts = '';
   PLAN.forEach(function(d){
     if(d.date === date) return;
     if(d.date < today) return;
     var dp = p[d.date] || {};
-    var alreadyReceiving = dp.reschedule && dp.reschedule.type === 'receive';
+    var rs = dp.reschedule || null;
+    // Exclude days that already moved their own workout elsewhere
+    if(rs && rs.type === 'move') return;
+    // Exclude days that already skipped their workout
+    if(rs && rs.type === 'skip') return;
+    var alreadyReceiving = rs && rs.type === 'receive';
     var label = dateLabel(d.date);
     var typeLabel = d.run.km > 0 ? (d.type === 'rest' ? 'descanso+corrida' : d.type) : 'descanso';
     var typeClass = d.run.km === 0 ? 'rest' : '';
