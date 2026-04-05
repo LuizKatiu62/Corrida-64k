@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v377</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v378</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2536,6 +2536,51 @@ function importGPX(date){
     reader.readAsText(file);
   };
   inp.click();
+}
+
+// ============================================================
+// TREINO EXTRA
+// ============================================================
+function openExtraRunModal(date){
+  const existing = (loadProgress()[date]||{}).extraRun || null;
+  const overlay = document.createElement('div');
+  overlay.className = 'event-modal-overlay';
+  overlay.id = 'extra-run-modal';
+  overlay.innerHTML = `<div class="event-modal">
+    <h3>➕ Treino Extra</h3>
+    <label>Distância (km)</label>
+    <input type="number" id="extra-km" min="0.1" step="0.1" placeholder="Ex: 8" value="${existing?existing.km:''}">
+    <label>Descrição (opcional)</label>
+    <input type="text" id="extra-title" placeholder="Ex: Corrida leve no parque" value="${existing?existing.title:''}">
+    <label>Observações (opcional)</label>
+    <textarea id="extra-notes" placeholder="Como foi?">${existing?existing.notes:''}</textarea>
+    <div class="event-modal-actions">
+      <button class="event-modal-save" onclick="saveExtraRun('${date}')">Salvar</button>
+      <button class="event-modal-cancel" onclick="document.getElementById('extra-run-modal').remove()">Cancelar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function saveExtraRun(date){
+  const km = parseFloat(document.getElementById('extra-km').value);
+  if(!km || km <= 0){ alert('Informe a distância em km.'); return; }
+  const title = document.getElementById('extra-title').value.trim();
+  const notes = document.getElementById('extra-notes').value.trim();
+  const p = loadProgress();
+  if(!p[date]) p[date] = {};
+  p[date].extraRun = { km, title, notes };
+  saveProgress(p);
+  document.getElementById('extra-run-modal').remove();
+  rebuildDayCard(date);
+}
+
+function removeExtraRun(date){
+  if(!confirm('Remover treino extra?')) return;
+  const p = loadProgress();
+  if(p[date]) delete p[date].extraRun;
+  saveProgress(p);
+  rebuildDayCard(date);
 }
 
 function removeGarminData(date){
