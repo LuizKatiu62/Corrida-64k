@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v343</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v344</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2047,16 +2047,21 @@ function fbMsgEl(msg, type){
 }
 
 function saveFBConfig(){
+  // Read custom syncId
+  const customId = (document.getElementById('fb-syncid-custom')?.value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!customId){ fbMsgEl('Digite um código de sync (ex: LUIZ64).','err'); return; }
+  localStorage.setItem(FB_SYNCID_KEY, customId);
+  fbSyncId = customId;
+
   const raw = (document.getElementById('fb-config-input').value||'').trim();
   if(!raw){ fbMsgEl('Cole a configuração do Firebase antes de continuar.','err'); return; }
 
   let config;
   try{
-    // Accept both JS object literal and JSON
     const cleaned = raw
-      .replace(/^.*?firebaseConfig\s*=\s*/,'')  // remove "const firebaseConfig = "
-      .replace(/;?\s*$/,'')                       // remove trailing semicolon
-      .replace(/([{,]\s*)(\w+)(\s*:)/g,'$1"$2"$3'); // quote unquoted keys
+      .replace(/^.*?firebaseConfig\s*=\s*/,'')
+      .replace(/;?\s*$/,'')
+      .replace(/([{,]\s*)(\w+)(\s*:)/g,'$1"$2"$3');
     config = JSON.parse(cleaned);
   }catch(e){
     fbMsgEl('Configuração inválida. Copie o objeto firebaseConfig exatamente como aparece no Firebase.','err');
