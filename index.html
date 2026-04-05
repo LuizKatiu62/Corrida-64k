@@ -1422,7 +1422,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v366</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v367</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3027,10 +3027,12 @@ function openAddEventModal(editId){
     <label>Data do evento</label>
     <input type="date" id="ev-date" value="${ev?ev.date:''}" min="2026-01-01">
     <label>Nome do evento</label>
-    <input type="text" id="ev-title" placeholder="Ex: Parkrun 5km, Saint Patrick 10k..." value="${ev?ev.title:''}">
+    <input type="text" id="ev-title" placeholder="Ex: Parkrun 5km, corrida livre..." value="${ev?ev.title:''}">
+    <label>Distância (km)</label>
+    <input type="number" id="ev-km" min="0" step="0.1" placeholder="Ex: 8.5" value="${ev&&ev.km?ev.km:''}">
     <label>Cidade do evento</label>
     <input type="text" id="ev-loc" placeholder="Ex: Saint John NB, Moncton NB..." value="${ev?ev.location:''}">
-    <label>Tempo alvo — usado para comparar com o GPX Garmin</label>
+    <label>Tempo alvo (opcional)</label>
     <input type="text" id="ev-target" placeholder="Ex: 27:30 ou 1:05:00 (mm:ss ou h:mm:ss)" value="${ev?ev.targetTime:''}">
     <label>Observações (opcional)</label>
     <textarea id="ev-notes" placeholder="Notas sobre o evento...">${ev?ev.notes:''}</textarea>
