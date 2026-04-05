@@ -1421,7 +1421,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v344</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v345</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2080,8 +2080,8 @@ function saveFBConfig(){
 }
 
 function applyFBSyncId(){
-  const val = (document.getElementById('fb-syncid-input')?.value||'').trim().toUpperCase();
-  if(val.length !== 8){ fbMsgEl('O código deve ter 8 caracteres.','err'); return; }
+  const val = (document.getElementById('fb-syncid-input')?.value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(val.length < 3){ fbMsgEl('Digite um código com pelo menos 3 caracteres.','err'); return; }
   // Save new syncId and reconnect listener
   localStorage.setItem(FB_SYNCID_KEY, val);
   const oldSyncId = fbSyncId;
