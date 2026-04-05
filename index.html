@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v380</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v381</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4927,14 +4927,24 @@ function buildCard(day, isToday, p){
   } else {
     effectiveKm = day.run.km;
   }
-  const kmBadgeHtml = runMoved
-    ? '<span class="day-km-badge km-rest">Descanso</span>'
-    : effectiveKm !== day.run.km
-      ? '<span class="day-km-badge km-long">'+effectiveKm+' km 🔀</span>'
-      : kmBadge(day);
+  // Se há treino extra, substituir runBodyContent e overrides
+  if(extraRun){
+    runBodyContent = '<div style="font-size:.85rem;font-weight:700;color:var(--roxo);margin-bottom:.35rem">➕ Treino extra</div>'
+      + '<ul><li>'+extraRun.km+' km'+( extraRun.title ? ' — '+extraRun.title : '')+'</li>'
+      + (extraRun.notes ? '<li style="color:#888;font-style:italic">'+extraRun.notes+'</li>' : '')
+      + '</ul>';
+  }
+
+  const kmBadgeHtml = extraRun
+    ? '<span class="day-km-badge km-long">'+extraRun.km+' km ➕</span>'
+    : runMoved
+      ? '<span class="day-km-badge km-rest">Descanso</span>'
+      : effectiveKm !== day.run.km
+        ? '<span class="day-km-badge km-long">'+effectiveKm+' km 🔀</span>'
+        : kmBadge(day);
 
   const openTab   = activeTabMap[day.date] || 'run';
-  const noRun   = runMoved || (day.run.km === 0 && !runReceive);
+  const noRun   = !extraRun && (runMoved || (day.run.km === 0 && !runReceive));
   const noGym   = gymMoved || (!gymReceive && day.gym.ex.every(e => /^(sem |descanso)/i.test(e.trim())));
   const noNutri = day.nutri.length === 0;
   const isFullRest = runMoved;
