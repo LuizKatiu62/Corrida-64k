@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v375</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v376</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4770,6 +4770,7 @@ function buildCard(day, isToday, p){
   const allDone = doneRun && (day.gym.ex.length===0 || doneGym) && doneNutri;
   const hasGym = day.gym.ex.length > 0;
   const hevyData = loadHevyData()[day.date];
+  const extraRun = prog.extraRun || null;
 
   const runItems = day.run.items.map(i=>`<li>${i}</li>`).join('');
   const exDone   = prog.exDone || {};
