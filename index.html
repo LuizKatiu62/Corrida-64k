@@ -1154,18 +1154,32 @@ function _authGetCred(cb){
   });
 }
 
-// On page load — restore auth from IDB if localStorage is empty
+// On page load — restore auth from IDB, show login only if truly no credentials found
 (function(){
+  var ov = document.getElementById('login-overlay');
   var ls = localStorage.getItem(window._AUTH_KEY);
-  if(!ls){
-    _authRestoreIDB(function(v){
-      if(!v) return;
+  var sess = localStorage.getItem(window._SESSION_KEY);
+
+  if(ls && sess){
+    // Already logged in — keep overlay hidden
+    return;
+  }
+  if(ls && !sess){
+    // Has credentials but no session — restore session silently
+    localStorage.setItem(window._SESSION_KEY, Date.now().toString());
+    return;
+  }
+  // No credentials in localStorage — try IDB
+  _authRestoreIDB(function(v){
+    if(v){
+      // Found in IDB — restore silently, no login needed
       localStorage.setItem(window._AUTH_KEY, v);
       localStorage.setItem(window._SESSION_KEY, Date.now().toString());
-      var ov = document.getElementById('login-overlay');
-      if(ov) ov.style.display='none';
-    });
-  }
+    } else {
+      // Truly no credentials — show login overlay
+      if(ov) ov.style.display='flex';
+    }
+  });
 })();
 
 window.doLogout = function(){
@@ -1518,7 +1532,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v482</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v483</span></footer>
 
 <script>
 function showLoginForm(){
