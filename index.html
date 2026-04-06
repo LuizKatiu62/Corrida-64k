@@ -1518,7 +1518,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v476</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v477</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4715,6 +4715,14 @@ function kmBadge(day){
   if(day.type==='race') return `<span class="day-km-badge km-race">64 km 🏁</span>`;
   if(day.run.km===0)    return `<span class="day-km-badge km-rest">Descanso</span>`;
   const cls={easy:'km-easy',medium:'km-medium',long:'km-long'}[day.type]||'km-easy';
+  // Use real GPS distance when available
+  const gData = loadGarmin()[day.date];
+  const realKm = gData ? Math.round((gData.dist||0)*100)/100 : null;
+  if(realKm && realKm > 0){
+    const diff = Math.round((realKm - day.run.km)*10)/10;
+    const diffStr = diff > 0 ? ' (+'+diff+')' : diff < 0 ? ' ('+diff+')' : '';
+    return `<span class="day-km-badge ${cls}">${realKm} km${diffStr}</span>`;
+  }
   return `<span class="day-km-badge ${cls}">${day.run.km} km</span>`;
 }
 
