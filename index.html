@@ -1169,25 +1169,31 @@ window.doRegister = function(){
 };
 
 window.showResetConfirm = function(){
-  if(confirm('Isso vai apagar seu cadastro. Continuar?')){
+  var cred = JSON.parse(localStorage.getItem(window._AUTH_KEY)||'{}');
+  var nome = cred.name ? 'Conta: '+cred.name+'\n\n' : '';
+  var msg = nome
+    + 'Não é possível recuperar a senha pois ela é armazenada de forma segura no dispositivo.\n\n'
+    + 'Opções:\n'
+    + '1️⃣  Lembre sua senha e tente novamente\n'
+    + '2️⃣  Criar nova senha — seus dados de treino são mantidos\n\n'
+    + 'Deseja criar uma nova senha agora?';
+  if(confirm(msg)){
     localStorage.removeItem(window._AUTH_KEY);
     localStorage.removeItem(window._SESSION_KEY);
     location.reload();
   }
 };
 
-// Ao voltar do background, verifica se a sessão ainda é válida (sem apagar — só mostra login se já não havia sessão)
+// Ao voltar do background — mantém sessão ativa se credenciais existem (iOS apaga sessão mas não credenciais)
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
     var cred = localStorage.getItem(window._AUTH_KEY);
     var sess = localStorage.getItem(window._SESSION_KEY);
     var ov   = document.getElementById('login-overlay');
-    if(ov && cred && !sess){
-      // sessão expirou por outra aba/logout — mostra login
-      document.getElementById('login-form-login').style.display='block';
-      document.getElementById('login-form-create').style.display='none';
-      ov.style.display='flex';
-      return;
+    if(cred && !sess){
+      // iOS apagou a sessão mas as credenciais existem — restaura sessão automaticamente
+      localStorage.setItem(window._SESSION_KEY, Date.now().toString());
+      if(ov) ov.style.display='none';
     }
     // App voltou ao foco — push dados locais e re-renderiza a tela ativa
     setTimeout(function(){
@@ -1457,7 +1463,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v467</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v468</span></footer>
 
 <script>
 function showLoginForm(){
