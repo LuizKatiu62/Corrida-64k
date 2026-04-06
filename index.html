@@ -1443,7 +1443,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v435</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v436</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5066,13 +5066,37 @@ function buildCard(day, isToday, p){
   const noGym   = gymMoved || (!gymReceive && day.gym.ex.every(e => /^(sem |descanso)/i.test(e.trim())));
   const noNutri = day.nutri.length === 0;
   const isFullRest = runMoved && !extraRun;
-  return `<div class="day-card type-${isFullRest?'rest':extraRun?'easy':day.type}${isToday&&!isFullRest?' is-today':''}${allDone?' is-done':''}" id="card-${day.date}">
+
+  // Título e tipo efetivos considerando reagendamento
+  var effectiveTitle, effectiveType;
+  if(isFullRest){
+    effectiveTitle = '🛌 Descanso Total — treino reagendado';
+    effectiveType = 'rest';
+  } else if(extraRun){
+    effectiveTitle = '🏃 ' + (extraRun.title || 'Treino extra');
+    effectiveType = 'easy';
+  } else if(runReceive && thisOriginalMoved){
+    // Dia cedeu seu treino e recebeu outro — usar info do dia de origem
+    var rFromDayInfo = PLAN.find(function(d){ return d.date === rSched.from; });
+    effectiveTitle = rFromDayInfo ? rFromDayInfo.run.title : day.run.title;
+    effectiveType = rFromDayInfo ? rFromDayInfo.type : day.type;
+  } else if(runReceive && day.run.km === 0){
+    // Dia sem treino original que recebeu um treino
+    var rFromDayInfo2 = PLAN.find(function(d){ return d.date === rSched.from; });
+    effectiveTitle = rFromDayInfo2 ? rFromDayInfo2.run.title : day.run.title;
+    effectiveType = rFromDayInfo2 ? rFromDayInfo2.type : day.type;
+  } else {
+    effectiveTitle = day.run.title;
+    effectiveType = day.type;
+  }
+
+  return `<div class="day-card type-${effectiveType}${isToday&&!isFullRest?' is-today':''}${allDone?' is-done':''}" id="card-${day.date}">
   <div class="day-header" onclick="switchTab('${tabId}','run')">
     <div class="day-header-left">
       <div class="day-date-label">${dateLabel(day.date)} · ${day.phase}</div>
       ${buildWeatherHtml(day.date)}
       ${isFullRest ? '' : todayTag}
-      <div class="day-title">${isFullRest ? '🛌 Descanso Total — treino reagendado' : extraRun ? '🏃 '+( extraRun.title||'Treino extra') : day.run.title}${eventTag}</div>
+      <div class="day-title">${effectiveTitle}${eventTag}</div>
     </div>
     ${kmBadgeHtml}
   </div>
