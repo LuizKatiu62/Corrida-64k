@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v391</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v392</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2639,7 +2639,7 @@ function extractPlannedPace(items){
 }
 
 function buildGarminComparePanel(day, gData){
-  const plannedKm   = day.run.km;
+  const plannedKm   = getEffectivePlanKm(day.date, loadProgress());
   const actualKm    = gData.dist;
   const pct         = plannedKm > 0 ? Math.round((actualKm / plannedKm) * 100) : 100;
   const kmDiff      = Math.round((actualKm - plannedKm) * 10) / 10;
