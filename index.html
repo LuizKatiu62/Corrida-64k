@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v412</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v413</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3340,10 +3340,14 @@ function renderEventsSection(){
     const inPlan = PLAN.some(d=>d.date===ev.date);
     const evGpx = gpxStore[ev.id];
     const pace  = estPace(ev);
-    return `<div class="event-card">
+    const isCancelled = !!ev.cancelled;
+    return `<div class="event-card" style="${isCancelled?'opacity:.55;filter:grayscale(.4)':''}">
       <div class="event-card-header" onclick="openAddEventModal('${ev.id}')">
-        <div class="event-type-badge" style="${ev.type==='64k'?'background:#d5f5e3;color:#1a7a42;font-size:.72rem':ev.type==='maratona'?'background:#fadbd8;color:#922b21':ev.type==='meia'?'background:#d6eaf8;color:#1a5276':''}">${typeLabels[ev.type]||'Evento'}</div>
-        <div class="event-title">${ev.title}</div>
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <div class="event-type-badge" style="${ev.type==='64k'?'background:#d5f5e3;color:#1a7a42;font-size:.72rem':ev.type==='maratona'?'background:#fadbd8;color:#922b21':ev.type==='meia'?'background:#d6eaf8;color:#1a5276':''}">${typeLabels[ev.type]||'Evento'}</div>
+          ${isCancelled?'<span style="background:#fde8e6;color:#c0392b;font-size:.68rem;font-weight:800;padding:.15rem .55rem;border-radius:999px;border:1px solid #f5c6c6">🚫 CANCELADO</span>':''}
+        </div>
+        <div class="event-title" style="${isCancelled?'text-decoration:line-through;color:#aaa':''}">${ev.title}</div>
         <div class="event-meta">
           📅 ${dateLabel(ev.date)}
           ${ev.km?` &nbsp;·&nbsp; 📏 <strong>${ev.km} km</strong>`:''}
@@ -3357,17 +3361,18 @@ function renderEventsSection(){
       <div class="event-body">
         <span style="font-size:.75rem;color:#aaa">Toque no título para editar</span>
         <div class="event-gpx-row">
-          ${evGpx
+          ${!isCancelled ? (evGpx
             ? `<button class="event-gpx-btn gpx-dl" onclick="downloadEventGPX('${ev.id}')">⬇️ Baixar GPX</button>
                <span style="font-size:.7rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px" title="${evGpx.filename}">📎 ${evGpx.filename}</span>
                ${!evGpx.stats ? `<button class="event-gpx-btn" style="background:#fff8e1;color:#e67e22;border-color:#f0c060" onclick="event.stopPropagation();reparseEventGPX('${ev.id}')">🔄 Analisar GPX</button>` : ''}
                <button class="event-gpx-btn gpx-rm" onclick="event.stopPropagation();removeEventGPX('${ev.id}')" title="Remover GPX">✕</button>`
-            : `<button class="event-gpx-btn" onclick="attachEventGPX('${ev.id}')">📎 Anexar GPX Garmin</button>`
-          }
-          <button class="event-gpx-btn gpx-rm" style="margin-left:auto" onclick="event.stopPropagation();deleteEvent('${ev.id}')" title="Apagar evento">🗑 Apagar</button>
+            : `<button class="event-gpx-btn" onclick="attachEventGPX('${ev.id}')">📎 Anexar GPX Garmin</button>`)
+          : '' }
+          <button class="event-gpx-btn" style="margin-left:auto;background:${isCancelled?'#eafaf1':'#fde8e6'};color:${isCancelled?'#1a7a42':'#c0392b'};border-color:${isCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelEvent('${ev.id}')">${isCancelled?'↩️ Reativar':'🚫 Cancelar'}</button>
+          <button class="event-gpx-btn gpx-rm" onclick="event.stopPropagation();deleteEvent('${ev.id}')" title="Apagar evento">🗑 Apagar</button>
         </div>
       </div>
-      ${evGpx && evGpx.stats ? buildEventGPXStatsHTML(ev, evGpx) : ''}
+      ${evGpx && evGpx.stats && !isCancelled ? buildEventGPXStatsHTML(ev, evGpx) : ''}
     </div>`;
   }).join('');
 }
