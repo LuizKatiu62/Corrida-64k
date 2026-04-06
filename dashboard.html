@@ -524,6 +524,8 @@ function renderReadiness(days, today){
     const ak = d.gpx?(d.gpx.dist||0):d.prog.run?d.km:0;
     if(ak>longestDone) longestDone=ak;
   });
+  // Debug: log what each day has
+  console.log('pastRunDays:', pastRunDays.map(d=>({date:d.date, gpx:d.gpx?d.gpx.dist:'none', prog:d.prog.run, km:d.km})));
   const volumeScore = Math.min(100, Math.round(longestDone/33*100));
 
   // CRITERIA 3 — Pace quality (20%) — % of GPX runs where dist met target
