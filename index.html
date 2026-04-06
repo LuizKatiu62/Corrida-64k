@@ -1229,6 +1229,15 @@ window.doRegister = function(){
   localStorage.setItem(window._SESSION_KEY, Date.now().toString());
   _authSaveIDB(credJson); // backup to IDB
   document.getElementById('login-overlay').style.display='none';
+  // Restore Firebase config from IDB after registration (in case localStorage was wiped)
+  if(!localStorage.getItem('desafio64_fbconfig')){
+    fbRestoreFromIDB(function(cfg, sid){
+      if(!cfg) return;
+      localStorage.setItem('desafio64_fbconfig', cfg);
+      if(sid) localStorage.setItem('desafio64_syncid', sid);
+      try{ if(typeof initFirebaseSync==='function') initFirebaseSync(JSON.parse(cfg)); }catch(e){}
+    });
+  }
 };
 
 window.showResetConfirm = function(){
@@ -1532,7 +1541,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v483</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v484</span></footer>
 
 <script>
 function showLoginForm(){
