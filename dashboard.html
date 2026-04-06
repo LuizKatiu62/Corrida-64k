@@ -502,7 +502,7 @@ function renderWeeks(days){
 
 // ---- readiness gauge ----
 function renderReadiness(days, today){
-  const pastRunDays = days.filter(d=>d.km>0 && d.isPast && d.type!=='race');
+  const pastRunDays = days.filter(d=>d.km>0 && (d.isPast||d.isToday) && d.type!=='race');
   const total = pastRunDays.length;
 
   if(total === 0){
