@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v423</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v424</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3177,18 +3177,30 @@ function toggleCancelEvent(id){
   renderEventsSection();
 }
 
-function toggleCancelEventModal(id){
-  const evts = loadEvents();
-  const ev = evts.find(e=>e.id===id);
-  if(!ev) return;
-  if(ev.cancelled){
-    ev.cancelled = false;
+function toggleCancelEventModal(id, source){
+  if(source === 'goal'){
+    const goalType = id.replace('goal_','');
+    const cancelled = JSON.parse(localStorage.getItem('desafio64_cancelled_goals')||'{}');
+    if(cancelled[goalType]){
+      delete cancelled[goalType];
+    } else {
+      if(!confirm('Marcar este evento como cancelado?')) return;
+      cancelled[goalType] = true;
+    }
+    localStorage.setItem('desafio64_cancelled_goals', JSON.stringify(cancelled));
   } else {
-    if(!confirm('Marcar este evento como cancelado?')) return;
-    ev.cancelled = true;
+    const evts = loadEvents();
+    const ev = evts.find(e=>e.id===id);
+    if(!ev) return;
+    if(ev.cancelled){
+      ev.cancelled = false;
+    } else {
+      if(!confirm('Marcar este evento como cancelado?')) return;
+      ev.cancelled = true;
+    }
+    saveEventsData(evts);
+    renderEventsSection();
   }
-  saveEventsData(evts);
-  renderEventsSection();
   const modal = document.getElementById('all-events-overlay');
   if(modal){ modal.remove(); openAllEventsModal(); }
 }
