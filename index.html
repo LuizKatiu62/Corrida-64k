@@ -1518,7 +1518,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v478</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v479</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2287,7 +2287,19 @@ function fbForcePush(){
   if(!fbDB){ fbMsgEl('Firebase não conectado.','err'); return; }
   fbPush('progress', localStorage.getItem(STORAGE_KEY)||'{}');
   fbPush('events',   localStorage.getItem(EVENTS_KEY)||'[]');
-  fbPush('garmin',   localStorage.getItem(GARMIN_KEY)||'{}');
+  // Garmin must be sent as object (not string) — date keys like "2026-04-06" otherwise corrupt
+  try{
+    var garminObj = JSON.parse(localStorage.getItem(GARMIN_KEY)||'{}');
+    // Strip raw GPX text before sending (too large for Firebase)
+    var garminClean = {};
+    Object.keys(garminObj).forEach(function(k){
+      var e = Object.assign({}, garminObj[k]);
+      delete e.raw;
+      garminClean[k] = e;
+    });
+    fbDB.ref('d64/'+fbSyncId+'/garmin').set(garminClean)
+      .catch(function(e){ console.warn('garmin push error:',e); });
+  } catch(e){ console.warn('garmin parse error:',e); }
   // Hevy must be sent as object, not string, so Firebase stores it correctly
   try{
     var hevyObj = JSON.parse(localStorage.getItem(HEVY_DATA_STORE)||'{}');
