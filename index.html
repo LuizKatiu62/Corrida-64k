@@ -1449,7 +1449,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v457</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v458</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6872,6 +6872,7 @@ if('serviceWorker' in navigator){
         // Clear SW cache and reload — do NOT push local data to Firebase here,
         // as this device may have stale data and would overwrite a more up-to-date device.
         // Firebase listeners will pull fresh data automatically after reload.
+        if(document.getElementById('fb-modal-overlay')) return; // don't reload while sync modal is open
         if('caches' in window){
           caches.keys().then(function(keys){
             return Promise.all(keys.map(function(k){ return caches.delete(k); }));
