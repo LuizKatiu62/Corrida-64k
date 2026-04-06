@@ -1443,7 +1443,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v439</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v440</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2769,16 +2769,33 @@ function buildGarminComparePanel(day, gData){
   const p_ = loadProgress();
   const prog_ = p_[day.date] || {};
   const rSched_ = prog_.reschedule || null;
+  const extraRun_ = prog_.extraRun || null;
+  const runMoved_ = rSched_ && (rSched_.type === 'move' || rSched_.type === 'skip');
   const thisOriginalMoved_ = PLAN.some(function(pd){
     var pp = p_[pd.date]||{}; var rs = pp.reschedule||null;
     return rs && rs.type==='move' && rs.to===day.date;
   });
   let effectivePlanDay = day;
-  if(rSched_ && rSched_.type==='receive' && (thisOriginalMoved_ || day.run.km===0)){
+  let effectivePlanTitle, effectivePlanItems;
+  if(extraRun_){
+    // Extra run: show extra run info
+    effectivePlanTitle = extraRun_.title || 'Treino Extra';
+    effectivePlanItems = [extraRun_.km + ' km' + (extraRun_.notes ? ' — ' + extraRun_.notes : '')];
+  } else if(runMoved_){
+    // Run was moved away: no planned content
+    effectivePlanTitle = 'Treino reagendado para outro dia';
+    effectivePlanItems = [];
+  } else if(rSched_ && rSched_.type==='receive' && (thisOriginalMoved_ || day.run.km===0)){
+    // Received a run from another day (and gave its own away or had none)
     const fromDay = PLAN.find(function(d){ return d.date===rSched_.from; });
-    if(fromDay) effectivePlanDay = fromDay;
+    if(fromDay){ effectivePlanDay = fromDay; }
+    effectivePlanTitle = effectivePlanDay.run.title;
+    effectivePlanItems = effectivePlanDay.run.items;
+  } else {
+    effectivePlanTitle = day.run.title;
+    effectivePlanItems = day.run.items;
   }
-  const plannedItemsHtml = effectivePlanDay.run.items.map(i=>`<div class="cmp-plan-item">${i}</div>`).join('');
+  const plannedItemsHtml = effectivePlanItems.map(i=>`<div class="cmp-plan-item">${i}</div>`).join('');
 
   return `<div class="garmin-panel">
     <div class="garmin-panel-title">
@@ -2786,8 +2803,8 @@ function buildGarminComparePanel(day, gData){
       <button class="garmin-remove-btn" onclick="event.stopPropagation();removeGarminData('${day.date}')">✕ remover</button>
     </div>
     <div class="cmp-plan-section">
-      <div class="cmp-plan-section-title">📋 Treino Planejado — ${effectivePlanDay.run.title}</div>
-      ${plannedItemsHtml}
+      <div class="cmp-plan-section-title">📋 Treino Planejado — ${effectivePlanTitle}</div>
+      ${plannedItemsHtml || '<div class="cmp-plan-item" style="color:#aaa">—</div>'}
     </div>
     <div class="cmp-row">
       <span class="cmp-metric">📏 Distância</span>
