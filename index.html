@@ -1452,7 +1452,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v462</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v463</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4390,6 +4390,20 @@ function updateProgressStats(p){
   document.getElementById('progress-pct').textContent = pct+'%';
   document.getElementById('stat-done').textContent = totalDone;
   document.getElementById('stat-km').textContent = totalKm;
+
+  // Mark completed weeks on S1–S5 buttons
+  const today = getToday();
+  [1,2,3,4,5].forEach(wn => {
+    const btn = document.getElementById('btn-w'+wn);
+    if(!btn) return;
+    const days = PLAN.filter(d => d.week === wn);
+    // Week is "done" if all days are past AND all run days have run checked
+    const allPast = days.every(d => d.date <= today);
+    const runDays = days.filter(d => getEffectivePlanKm(d.date, p) > 0);
+    const allRunDone = runDays.length > 0 && runDays.every(d => !!(p[d.date]||{}).run);
+    const isDone = allPast && allRunDone;
+    btn.classList.toggle('week-done', isDone);
+  });
 }
 
 function toggleExercise(date, idx, btn){
