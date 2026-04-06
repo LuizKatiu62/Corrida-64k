@@ -1518,7 +1518,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v480</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v481</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2428,23 +2428,60 @@ function fbRestoreFromIDB(cb){
 // ============================================================
 const GARMIN_KEY = 'desafio64_garmin';
 
+function _garminIDB(mode, dataToWrite){
+  return new Promise(function(resolve){
+    try{
+      var req = indexedDB.open('desafio64-garmin', 1);
+      req.onupgradeneeded = function(e){ e.target.result.createObjectStore('kv',{keyPath:'k'}); };
+      req.onsuccess = function(e){
+        var db = e.target.result;
+        if(mode === 'write'){
+          db.transaction('kv','readwrite').objectStore('kv').put({k:'data', v: dataToWrite});
+          resolve(null);
+        } else {
+          var r = db.transaction('kv','readonly').objectStore('kv').get('data');
+          r.onsuccess = function(ev){ resolve(ev.target.result ? ev.target.result.v : null); };
+          r.onerror   = function(){ resolve(null); };
+        }
+      };
+      req.onerror = function(){ resolve(null); };
+    }catch(e){ resolve(null); }
+  });
+}
+
 function loadGarmin(){
   try{ return JSON.parse(localStorage.getItem(GARMIN_KEY))||{}; }
   catch(e){ return {}; }
 }
-function saveGarmin(data){
-  localStorage.setItem(GARMIN_KEY, JSON.stringify(data));
-  // Send to Firebase without raw GPX text (too large; raw kept only in localStorage)
-  const fbData={};
-  Object.keys(data).forEach(function(k){
-    const e=data[k];
-    if(e && typeof e==='object'){
-      const copy=Object.assign({},e);
-      delete copy.raw;
-      fbData[k]=copy;
-    } else { fbData[k]=e; }
+
+// Restore garmin from IDB if localStorage was wiped by iOS
+(function restoreGarminFromIDB(){
+  var ls = localStorage.getItem(GARMIN_KEY);
+  if(ls && ls !== '{}') return;
+  _garminIDB('read').then(function(v){
+    if(!v) return;
+    localStorage.setItem(GARMIN_KEY, v);
   });
-  fbPush('garmin', JSON.stringify(fbData));
+})();
+
+function saveGarmin(data){
+  var jsonStr = JSON.stringify(data);
+  localStorage.setItem(GARMIN_KEY, jsonStr);
+  // Backup to IDB (without raw GPX — too large)
+  var clean = {};
+  Object.keys(data).forEach(function(k){
+    if(data[k] && typeof data[k]==='object'){
+      var copy = Object.assign({}, data[k]);
+      delete copy.raw;
+      clean[k] = copy;
+    } else { clean[k] = data[k]; }
+  });
+  _garminIDB('write', JSON.stringify(clean));
+  // Send to Firebase as object
+  if(fbDB && fbSyncId){
+    fbDB.ref('d64/'+fbSyncId+'/garmin').set(clean)
+      .catch(function(e){ console.warn('garmin push error:',e); });
+  }
 }
 
 function haversineKm(lat1,lon1,lat2,lon2){
