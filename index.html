@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v387</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v388</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6198,8 +6198,14 @@ function renderRunReport(){
       race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
     };
 
-    // All running days from project start (km > 0)
-    const runDays = PLAN.filter(function(d){ return d.run && d.run.km > 0; });
+    // All running days: original km > 0 OR has extraRun OR receives a rescheduled run
+    const runDays = PLAN.filter(function(d){
+      if(d.run && d.run.km > 0) return true;
+      var prog = progress[d.date] || {};
+      if(prog.extraRun) return true;
+      if(prog.reschedule && prog.reschedule.type === 'receive') return true;
+      return false;
+    });
 
     let totalPlan = 0, totalReal = 0, doneCount = 0, cumReal = 0;
     const rowsHtml = [];
@@ -6210,7 +6216,8 @@ function renderRunReport(){
       var prog   = progress[d.date] || {};
       var isFut  = d.date > today;
       var isToday= d.date === today;
-      var planKm = d.run.km;
+      var planKm = getEffectivePlanKm(d.date, progress);
+      if(planKm === 0) continue; // skip days where run was moved away
       totalPlan += planKm;
 
       // ── real data ──────────────────────────────────────────
