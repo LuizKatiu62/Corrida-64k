@@ -1449,7 +1449,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v454</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v455</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2101,7 +2101,7 @@ function saveFBConfig(){
   fbMsgEl('Conectando...','ok');
   const ok = initFirebaseSync(config);
   if(ok){
-    setTimeout(()=>{ document.getElementById('fb-modal-overlay')?.remove(); },800);
+    setTimeout(()=>{ fbMsgEl('✅ Firebase conectado! Sync ativo.','ok'); openFBModal(); },800);
   } else {
     fbMsgEl('Erro ao conectar. Verifique a configuração e tente novamente.','err');
   }
