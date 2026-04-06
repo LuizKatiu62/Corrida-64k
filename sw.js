@@ -1,4 +1,4 @@
-const CACHE = 'desafio64-v59';
+const CACHE = 'desafio64-v60';
 
 // Core app files — cached on install
 const CORE_ASSETS = [
