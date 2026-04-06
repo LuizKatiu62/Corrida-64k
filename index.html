@@ -1448,7 +1448,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v444</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v445</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6465,7 +6465,10 @@ function renderRunReport(){
           '<td colspan="2">TOTAL</td>' +
           '<td>' + totalPlan + ' km</td>' +
           '<td>' + totalRealRnd + ' km</td>' +
-          '<td colspan="4"></td>' +
+          '<td></td>' +
+          '<td class="rpt-col-hide"></td>' +
+          '<td class="rpt-col-hide"></td>' +
+          '<td class="rpt-col-hide"></td>' +
           '<td><span class="rpt-pct-pill ' + (overallPct>=95?'rpt-pct-ok':overallPct>=70?'rpt-pct-warn':'rpt-pct-bad') + '">' + overallPct + '%</span></td>' +
           '<td>' + totalRealRnd + ' km</td>' +
         '</tr></tfoot>' +
