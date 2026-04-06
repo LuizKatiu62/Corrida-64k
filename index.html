@@ -100,6 +100,11 @@
     .week-nav button.active{background:var(--escuro);border-color:var(--escuro);color:#fff}
     .week-nav button.today-week{border-color:var(--laranja);color:var(--laranja)}
     .week-nav button.today-week.active{background:var(--laranja);border-color:var(--laranja);color:#fff}
+    #btn-today{background:linear-gradient(135deg,#e67e22,#f39c12);border-color:#e67e22;color:#fff;font-weight:900;box-shadow:0 3px 10px rgba(230,126,34,.4);letter-spacing:.3px}
+    #btn-today:hover{background:linear-gradient(135deg,#cf6d17,#e67e22);box-shadow:0 4px 14px rgba(230,126,34,.55);color:#fff}
+    #btn-today.active{background:linear-gradient(135deg,#d35400,#e67e22);border-color:#c0392b;box-shadow:0 4px 14px rgba(211,84,0,.5);color:#fff}
+    @keyframes hoje-pulse{0%,100%{box-shadow:0 3px 10px rgba(230,126,34,.4)}50%{box-shadow:0 3px 18px rgba(230,126,34,.75)}}
+    #btn-today{animation:hoje-pulse 2.2s ease-in-out infinite}
     .week-nav button.week-done{border-color:#27ae60;color:#1a7a41;background:linear-gradient(135deg,#eafaf1,#d5f5e3);position:relative}
     .week-nav button.week-done::after{content:'✓';position:absolute;top:-5px;right:-5px;background:#27ae60;color:#fff;border-radius:50%;width:14px;height:14px;font-size:.55rem;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.2)}
     .week-nav button.week-done.active{background:linear-gradient(135deg,#27ae60,#1a7a41);border-color:#1a7a41;color:#fff}
@@ -1452,7 +1457,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v466</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v467</span></footer>
 
 <script>
 function showLoginForm(){
