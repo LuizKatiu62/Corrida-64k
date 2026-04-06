@@ -1463,7 +1463,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v471</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v472</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2262,6 +2262,14 @@ function fbSendHevyOnly(){
       .then(function(){ alert('✅ Hevy enviado!\nCódigo: '+syncCode+'\nDias: '+dias); })
       .catch(function(e){ alert('Erro ao enviar: '+e.message); });
   } catch(e){ alert('Erro local: '+e.message); }
+}
+
+function diagGarminToday(){
+  var today = getToday ? getToday() : new Date().toISOString().slice(0,10);
+  var g = loadGarmin ? loadGarmin() : (function(){ try{ return JSON.parse(localStorage.getItem('desafio64_garmin'))||{}; }catch(e){ return {}; } })();
+  var d = g[today];
+  if(!d){ alert('Garmin '+today+': nenhum dado salvo.\n\nO Strava não foi importado para hoje.'); return; }
+  alert('Garmin '+today+':\ndist: '+d.dist+'km\npace: '+d.pace+'\nduração: '+d.duration+'\nFC: '+(d.hr||'—')+'\nstrava: '+(d.stravaId||'—'));
 }
 
 function forceAppUpdate(){
