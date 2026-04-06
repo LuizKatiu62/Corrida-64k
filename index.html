@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v421</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v422</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3238,6 +3238,8 @@ function openAllEventsModal(){
   const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const typeLabels = {'5k':'Corrida 5km','10k':'Corrida 10km','meia':'Meia Maratona','maratona':'Maratona','64k':'Desafio 64km — Luiz 🎂','ultra':'Ultra Maratona','trail':'Trail / Trilha','treino':'Treino','outro':'Evento'};
 
+  const cancelledGoals = JSON.parse(localStorage.getItem('desafio64_cancelled_goals')||'{}');
+
   // Collect events from goals
   const goalEvents = [];
   Object.entries(GOAL_META).forEach(([type, meta]) => {
@@ -3246,6 +3248,7 @@ function openAllEventsModal(){
       : loadGoalData(type);
     if(!gd || !gd.eventDate) return;
     goalEvents.push({
+      id: 'goal_'+type,
       date: gd.eventDate,
       title: meta.label,
       icon: meta.icon,
@@ -3254,6 +3257,7 @@ function openAllEventsModal(){
       province: gd.province||'',
       targetTime: gd.targetTime||'',
       registered: gd.registered||false,
+      cancelled: !!cancelledGoals[type],
       source: 'goal'
     });
   });
