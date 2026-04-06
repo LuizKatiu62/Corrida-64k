@@ -1121,6 +1121,53 @@ window._authHash = function(str){
   return (h>>>0).toString(36);
 };
 
+// Save/restore auth credentials from IndexedDB — survives iOS localStorage wipe
+function _authIDBOpen(cb){
+  try{
+    var req = indexedDB.open('desafio64-auth', 1);
+    req.onupgradeneeded = function(e){ e.target.result.createObjectStore('kv',{keyPath:'k'}); };
+    req.onsuccess = function(e){ cb(e.target.result); };
+    req.onerror   = function(){ cb(null); };
+  }catch(e){ cb(null); }
+}
+function _authSaveIDB(credJson){
+  _authIDBOpen(function(db){
+    if(!db) return;
+    db.transaction('kv','readwrite').objectStore('kv').put({k:'cred',v:credJson});
+  });
+}
+function _authRestoreIDB(cb){
+  _authIDBOpen(function(db){
+    if(!db){ cb(null); return; }
+    var req = db.transaction('kv','readonly').objectStore('kv').get('cred');
+    req.onsuccess = function(e){ cb(e.target.result ? e.target.result.v : null); };
+    req.onerror   = function(){ cb(null); };
+  });
+}
+function _authGetCred(cb){
+  var ls = localStorage.getItem(window._AUTH_KEY);
+  if(ls){ cb(ls); return; }
+  // localStorage was wiped — try IDB
+  _authRestoreIDB(function(v){
+    if(v) localStorage.setItem(window._AUTH_KEY, v);
+    cb(v);
+  });
+}
+
+// On page load — restore auth from IDB if localStorage is empty
+(function(){
+  var ls = localStorage.getItem(window._AUTH_KEY);
+  if(!ls){
+    _authRestoreIDB(function(v){
+      if(!v) return;
+      localStorage.setItem(window._AUTH_KEY, v);
+      localStorage.setItem(window._SESSION_KEY, Date.now().toString());
+      var ov = document.getElementById('login-overlay');
+      if(ov) ov.style.display='none';
+    });
+  }
+})();
+
 window.doLogout = function(){
   localStorage.removeItem(window._SESSION_KEY);
   var lp = document.getElementById('login-pass');
@@ -1133,24 +1180,24 @@ window.doLogout = function(){
 
 window.doLogin = function(){
   var email = (document.getElementById('login-email').value||'').trim().toLowerCase();
-  var pass  = (document.getElementById('login-pass').value||'');
-  // strip any trailing whitespace iOS may inject
-  pass = pass.replace(/^\s+|\s+$/g,'');
+  var pass  = (document.getElementById('login-pass').value||'').replace(/^\s+|\s+$/g,'');
   var err   = document.getElementById('login-error');
   if(!email){ err.textContent='Informe o e-mail.'; return; }
   if(!pass){  err.textContent='Informe a senha.';  return; }
-  try {
-    var cred = JSON.parse(localStorage.getItem(window._AUTH_KEY)||'{}');
-    if(window._authHash(email)===cred.user && window._authHash(pass)===cred.pass){
-      localStorage.setItem(window._SESSION_KEY, Date.now().toString());
-      document.getElementById('login-overlay').style.display='none';
-      err.textContent='';
-    } else {
-      err.textContent='E-mail ou senha incorretos.';
-      document.getElementById('login-pass').value='';
-      document.getElementById('login-pass').focus();
-    }
-  } catch(e){ err.textContent='Erro ao verificar credenciais. Tente novamente.'; }
+  _authGetCred(function(credRaw){
+    try{
+      var cred = JSON.parse(credRaw||'{}');
+      if(window._authHash(email)===cred.user && window._authHash(pass)===cred.pass){
+        localStorage.setItem(window._SESSION_KEY, Date.now().toString());
+        document.getElementById('login-overlay').style.display='none';
+        err.textContent='';
+      } else {
+        err.textContent='E-mail ou senha incorretos.';
+        document.getElementById('login-pass').value='';
+        document.getElementById('login-pass').focus();
+      }
+    } catch(e){ err.textContent='Erro ao verificar credenciais. Tente novamente.'; }
+  });
 };
 
 window.doRegister = function(){
@@ -1163,8 +1210,10 @@ window.doRegister = function(){
   if(!email||email.indexOf('@')<0){err.textContent='Informe um e-mail válido.';return;}
   if(pass.length<8){err.textContent='A senha deve ter pelo menos 8 caracteres.';return;}
   if(pass!==pass2){err.textContent='As senhas não coincidem.';return;}
-  localStorage.setItem(window._AUTH_KEY,JSON.stringify({user:window._authHash(email),pass:window._authHash(pass),name:name}));
+  var credJson = JSON.stringify({user:window._authHash(email),pass:window._authHash(pass),name:name});
+  localStorage.setItem(window._AUTH_KEY, credJson);
   localStorage.setItem(window._SESSION_KEY, Date.now().toString());
+  _authSaveIDB(credJson); // backup to IDB
   document.getElementById('login-overlay').style.display='none';
 };
 
@@ -1180,25 +1229,31 @@ window.showResetConfirm = function(){
   if(confirm(msg)){
     localStorage.removeItem(window._AUTH_KEY);
     localStorage.removeItem(window._SESSION_KEY);
+    _authIDBOpen(function(db){ if(db) db.transaction('kv','readwrite').objectStore('kv').delete('cred'); });
     location.reload();
   }
 };
 
-// Ao voltar do background — mantém sessão ativa se credenciais existem (iOS apaga sessão mas não credenciais)
+// Ao voltar do background — restaura sessão automaticamente do IDB se localStorage foi apagado
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
     var cred = localStorage.getItem(window._AUTH_KEY);
     var sess = localStorage.getItem(window._SESSION_KEY);
     var ov   = document.getElementById('login-overlay');
-    if(cred && !sess){
-      // iOS apagou a sessão mas as credenciais existem — restaura sessão automaticamente
+    if(!cred){
+      // localStorage apagado pelo iOS — restaura do IDB
+      _authRestoreIDB(function(v){
+        if(v){
+          localStorage.setItem(window._AUTH_KEY, v);
+          localStorage.setItem(window._SESSION_KEY, Date.now().toString());
+          if(ov) ov.style.display='none';
+        }
+      });
+    } else if(!sess){
       localStorage.setItem(window._SESSION_KEY, Date.now().toString());
       if(ov) ov.style.display='none';
     }
-    // App voltou ao foco — push dados locais e re-renderiza a tela ativa
-    setTimeout(function(){
-      try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){}
-    }, 400);
+    setTimeout(function(){ try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){} }, 400);
     setTimeout(function(){
       try{ if(typeof renderAll==='function') renderAll(); }catch(e){}
       try{ rerenderActiveSection(); }catch(e){}
@@ -1463,7 +1518,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v475</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v476</span></footer>
 
 <script>
 function showLoginForm(){
