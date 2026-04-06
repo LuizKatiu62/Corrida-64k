@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v406</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v407</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4641,14 +4641,9 @@ const SHOES = {
   },
 };
 
-function buildShoeRec(day){
-  if(day.run.km === 0) return '';
-
-  const km = day.run.km;
-  const type = day.type;
-
+function buildShoeRecKmType(km, type){
+  if(!km || km === 0) return '';
   let primary, reason, alt;
-
   if(type === 'race'){
     primary = SHOES.adizero;
     reason = 'Dia de prova — máximo retorno de energia, leveza e resposta rápida para os 64km.';
@@ -4662,7 +4657,6 @@ function buildShoeRec(day){
     reason = 'Treino de qualidade — plataforma veloz para ritmos de limiar e desenvolvimento de força.';
     alt = 'Alternativa: Rebel V5 para um estímulo mais suave preservando as pernas.';
   } else {
-    // easy
     if(km >= 10){
       primary = SHOES.superblast;
       reason = 'Corrida fácil longa — amortecimento generoso mantém as pernas frescas para os próximos treinos.';
@@ -4673,7 +4667,6 @@ function buildShoeRec(day){
       alt = 'Alternativa: Superblast 3 para dias de recuperação com mais proteção.';
     }
   }
-
   return '<div class="shoe-rec">'
     + '<div class="shoe-rec-icon">' + primary.icon + '</div>'
     + '<div class="shoe-rec-body">'
@@ -4683,6 +4676,11 @@ function buildShoeRec(day){
     +   '<div class="shoe-rec-alt">' + alt + '</div>'
     + '</div>'
     + '</div>';
+}
+
+function buildShoeRec(day){
+  if(day.run.km === 0) return '';
+  return buildShoeRecKmType(day.run.km, day.type);
 }
 
 function buildTodayChart(day, p){
