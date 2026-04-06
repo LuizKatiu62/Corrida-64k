@@ -1449,7 +1449,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v459</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v460</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3453,6 +3453,7 @@ function renderEventsSection(){
                <button class="event-gpx-btn gpx-rm" onclick="event.stopPropagation();removeEventGPX('${ev.id}')" title="Remover GPX">✕</button>`
             : `<button class="event-gpx-btn" onclick="attachEventGPX('${ev.id}')">📎 Anexar GPX Garmin</button>`)
           : '' }
+          ${!isCancelled ? `<button class="event-gpx-btn" style="background:#fce8e1;color:#c13a00;border-color:#fc4c02" onclick="event.stopPropagation();openStravaForDate('${ev.date}')">🟠 Strava</button>` : ''}
           <button class="event-gpx-btn" style="margin-left:auto;background:${isCancelled?'#eafaf1':'#fde8e6'};color:${isCancelled?'#1a7a42':'#c0392b'};border-color:${isCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelEvent('${ev.id}')">${isCancelled?'↩️ Reativar':'🚫 Cancelar'}</button>
           <button class="event-gpx-btn gpx-rm" onclick="event.stopPropagation();deleteEvent('${ev.id}')" title="Apagar evento">🗑 Apagar</button>
         </div>
