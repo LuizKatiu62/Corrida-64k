@@ -641,7 +641,32 @@ function tryFirebaseSync(){
 
 // ---- boot ----
 render();
-tryFirebaseSync();
+
+// Try to restore Firebase config from IndexedDB if localStorage is missing (iOS/Mac wipe)
+(function(){
+  var cfgRaw = localStorage.getItem('desafio64_fbconfig');
+  var syncId = localStorage.getItem('desafio64_syncid');
+  if(cfgRaw && syncId){ tryFirebaseSync(); return; }
+  try{
+    var req = indexedDB.open('desafio64-meta', 1);
+    req.onsuccess = function(e){
+      var db = e.target.result;
+      var tx = db.transaction('kv','readonly');
+      var st = tx.objectStore('kv');
+      var cfg=null, sid=null, done=0;
+      function check(){
+        if(++done<2) return;
+        if(cfg) localStorage.setItem('desafio64_fbconfig', cfg);
+        if(sid) localStorage.setItem('desafio64_syncid', sid);
+        if(cfg && sid) tryFirebaseSync();
+      }
+      st.get('fbcfg').onsuccess  = function(ev){ cfg = ev.target.result ? ev.target.result.v : null; check(); };
+      st.get('syncid').onsuccess = function(ev){ sid = ev.target.result ? ev.target.result.v : null; check(); };
+    };
+    req.onerror = function(){ tryFirebaseSync(); };
+  }catch(e){ tryFirebaseSync(); }
+})();
+
 // refresh every 30s in case user switches tabs and marks workouts
 setInterval(render, 30000);
 
