@@ -80,8 +80,11 @@
     .progress-pct{font-size:.85rem;font-weight:700;color:var(--verde-esc);white-space:nowrap}
 
     /* NAV WEEKS */
-    .week-nav{background:#fff;border-bottom:2px solid #eee;padding:.5rem 1rem;display:flex;gap:.4rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .week-nav{background:#fff;border-bottom:2px solid #eee;padding:.5rem 1rem;display:flex;gap:.4rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);align-items:center}
     .week-nav button{white-space:nowrap;padding:.4rem .9rem;border:2px solid #ddd;border-radius:999px;background:#fff;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0;line-height:1.3;text-align:center}
+    .nav-sep{display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;padding:0 .2rem;gap:.1rem;cursor:default}
+    .nav-sep-label{font-size:.5rem;font-weight:800;color:#ccc;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap}
+    .nav-sep-line{width:1.5px;height:22px;background:#e4e4e4;border-radius:1px}
     /* Mobile — rolagem horizontal */
     @media(max-width:699px){
       .week-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
@@ -90,6 +93,7 @@
     @media(min-width:700px){
       .week-nav{flex-wrap:wrap;padding:.65rem 1.5rem;gap:.5rem}
       .week-nav button{font-size:.82rem;padding:.45rem 1.1rem}
+      .nav-sep{display:none}
     }
     .week-nav button .btn-dates{display:block;font-size:.65rem;font-weight:500;opacity:.7}
     .week-nav button:hover{border-color:var(--verde);color:var(--verde-esc)}
@@ -1430,7 +1434,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v427</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v428</span></footer>
 
 <script>
 function showLoginForm(){
