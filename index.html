@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v384</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v385</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4215,6 +4215,35 @@ function loadProgress(){
 function saveProgress(p){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
   fbPush('progress', JSON.stringify(p));
+}
+
+// Retorna o km planejado efetivo para um dia, considerando reagendamentos e treino extra
+function getEffectivePlanKm(date, p){
+  const day = PLAN.find(d => d.date === date);
+  if(!day) return 0;
+  const prog = p[date] || {};
+  const rs = prog.reschedule || null;
+
+  // Treino extra sobrepõe tudo
+  if(prog.extraRun) return prog.extraRun.km;
+
+  // Treino movido para outro dia — este dia fica com 0
+  if(rs && (rs.type === 'skip' || rs.type === 'move')) return 0;
+
+  // Este dia recebe treino de outro dia
+  if(rs && rs.type === 'receive'){
+    const fromDay = PLAN.find(d => d.date === rs.from);
+    const fromKm = fromDay ? fromDay.run.km : 0;
+    // Verifica se o treino original deste dia foi movido para outro lugar
+    const ownMoved = PLAN.some(function(pd){
+      var pp = p[pd.date] || {};
+      var prs = pp.reschedule || null;
+      return prs && prs.type === 'move' && prs.to === date;
+    });
+    return ownMoved ? fromKm : day.run.km + fromKm;
+  }
+
+  return day.run.km;
 }
 
 function updateProgressStats(p){
