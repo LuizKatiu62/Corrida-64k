@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v393</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v394</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6258,7 +6258,17 @@ function renderRunReport(){
       var dt = new Date(d.date + 'T12:00:00');
       var dayName = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][dt.getDay()];
       var dtFmt   = String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0');
-      var tConf = TYPE_LABEL[d.type] || TYPE_LABEL.easy;
+      // Tipo efetivo: se recebeu treino de outro dia, usar o tipo do dia de origem
+      var effectiveType = d.type;
+      var effectiveTitle = (d.run.title || '').replace(/🌟\s*/g,'');
+      if(prog.reschedule && prog.reschedule.type === 'receive'){
+        var originDay = PLAN.find(function(x){ return x.date === prog.reschedule.from; });
+        if(originDay){ effectiveType = originDay.type; effectiveTitle = (originDay.run.title||'').replace(/🌟\s*/g,''); }
+      } else if(prog.extraRun){
+        effectiveType = 'easy';
+        effectiveTitle = prog.extraRun.title || 'Treino extra';
+      }
+      var tConf = TYPE_LABEL[effectiveType] || TYPE_LABEL.easy;
       var typeBadge = '<span class="rpt-type-badge" style="background:' + tConf.bg + ';color:' + tConf.color + '">' + tConf.label + '</span>';
       var rowCls = isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
 
