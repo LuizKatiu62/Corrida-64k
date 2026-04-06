@@ -100,6 +100,9 @@
     .week-nav button.active{background:var(--escuro);border-color:var(--escuro);color:#fff}
     .week-nav button.today-week{border-color:var(--laranja);color:var(--laranja)}
     .week-nav button.today-week.active{background:var(--laranja);border-color:var(--laranja);color:#fff}
+    .week-nav button.week-done{border-color:#27ae60;color:#1a7a41;background:linear-gradient(135deg,#eafaf1,#d5f5e3);position:relative}
+    .week-nav button.week-done::after{content:'✓';position:absolute;top:-5px;right:-5px;background:#27ae60;color:#fff;border-radius:50%;width:14px;height:14px;font-size:.55rem;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .week-nav button.week-done.active{background:linear-gradient(135deg,#27ae60,#1a7a41);border-color:#1a7a41;color:#fff}
 
     /* MAIN */
     main{max-width:980px;margin:0 auto;padding:1.5rem 1rem 3rem}
@@ -1449,7 +1452,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v461</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v462</span></footer>
 
 <script>
 function showLoginForm(){
