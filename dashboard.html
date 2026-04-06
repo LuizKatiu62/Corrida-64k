@@ -643,6 +643,21 @@ render();
 tryFirebaseSync();
 // refresh every 30s in case user switches tabs and marks workouts
 setInterval(render, 30000);
+
+// Diagnostic button
+(function(){
+  var btn = document.createElement('button');
+  btn.textContent = '🔍 Ver dados 06/Abr';
+  btn.style.cssText = 'position:fixed;bottom:1rem;right:1rem;z-index:9999;background:#6c3fc5;color:#fff;border:none;border-radius:10px;padding:.6rem 1rem;font-size:.8rem;font-weight:700;cursor:pointer';
+  btn.onclick = function(){
+    var g = JSON.parse(localStorage.getItem('desafio64_garmin')||'{}');
+    var p = JSON.parse(localStorage.getItem('desafio64_progress')||'{}');
+    var gToday = g['2026-04-06'];
+    var pToday = p['2026-04-06'];
+    alert('Garmin 06/Abr:\n' + JSON.stringify(gToday, null, 2) + '\n\nProgress 06/Abr:\n' + JSON.stringify(pToday, null, 2));
+  };
+  document.body.appendChild(btn);
+})();
 </script>
 </body>
 </html>
