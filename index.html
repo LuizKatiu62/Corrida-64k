@@ -1443,7 +1443,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v432</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v433</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6715,7 +6715,10 @@ function dashReadiness(days){
     var ak=d.gpx?(d.gpx.dist||0):(d.prog.run?km:(d.prog.extraRun?d.prog.extraRun.km:0));
     if(ak>longestDone) longestDone=ak;
   });
-  var volumeScore=Math.min(100,Math.round(longestDone/33*100));
+  // Longest planned run in the entire plan (respecting reschedules), excluding race day
+  var maxPlannedKm=Math.max.apply(null, days.filter(function(d){return d.effectiveKm>0&&d.type!=='race';}).map(function(d){return d.effectiveKm;}));
+  if(!maxPlannedKm||maxPlannedKm<=0) maxPlannedKm=33;
+  var volumeScore=Math.min(100,Math.round(longestDone/maxPlannedKm*100));
   var gpxDays=pastRun.filter(function(d){return d.gpx;});
   var gpxOk=gpxDays.filter(function(d){var km=d.effectiveKm||0; return dashPct(d.gpx.dist||0,km)>=90;}).length;
   var paceScore=gpxDays.length>0?Math.round(gpxOk/gpxDays.length*100):consistScore;
