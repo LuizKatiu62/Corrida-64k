@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v411</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v412</span></footer>
 
 <script>
 function showLoginForm(){
@@ -3161,6 +3161,20 @@ function deleteEvent(id){
   closeEventModal();
   renderEventsSection();
   renderAll();
+}
+
+function toggleCancelEvent(id){
+  const evts = loadEvents();
+  const ev = evts.find(e=>e.id===id);
+  if(!ev) return;
+  if(ev.cancelled){
+    ev.cancelled = false;
+  } else {
+    if(!confirm('Marcar este evento como cancelado?')) return;
+    ev.cancelled = true;
+  }
+  saveEventsData(evts);
+  renderEventsSection();
 }
 
 function openResultModal(id){
