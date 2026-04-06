@@ -1443,7 +1443,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v430</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v431</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6707,21 +6707,21 @@ function dashReadiness(days){
     return '<div class="dash-box"><div class="dash-box-title">🏆 Aptidão para o Desafio</div>'
       +'<p style="color:var(--cinza);font-size:.85rem;text-align:center;padding:.5rem 0">Aguardando os primeiros treinos — plano inicia em 31 de março.</p></div>';
   }
-  var doneCount=pastRun.filter(function(d){return d.prog.run||d.gpx;}).length;
+  var doneCount=pastRun.filter(function(d){return d.prog.run||d.gpx||d.prog.extraRun;}).length;
   var consistScore=Math.round(doneCount/pastRun.length*100);
   var longestDone=0;
   pastRun.forEach(function(d){
     var km=d.effectiveKm||0;
-    var ak=d.gpx?(d.gpx.dist||0):(d.prog.run?km:0);
+    var ak=d.gpx?(d.gpx.dist||0):(d.prog.run?km:(d.prog.extraRun?d.prog.extraRun.km:0));
     if(ak>longestDone) longestDone=ak;
   });
   var volumeScore=Math.min(100,Math.round(longestDone/33*100));
   var gpxDays=pastRun.filter(function(d){return d.gpx;});
-  var gpxOk=gpxDays.filter(function(d){var km=d.run&&d.run.km||0; return dashPct(d.gpx.dist||0,km)>=90;}).length;
+  var gpxOk=gpxDays.filter(function(d){var km=d.effectiveKm||0; return dashPct(d.gpx.dist||0,km)>=90;}).length;
   var paceScore=gpxDays.length>0?Math.round(gpxOk/gpxDays.length*100):consistScore;
   var maxGap=0,gap=0;
   pastRun.forEach(function(d){
-    if(!d.prog.run&&!d.gpx){gap++;if(gap>maxGap)maxGap=gap;}else gap=0;
+    if(!d.prog.run&&!d.gpx&&!d.prog.extraRun){gap++;if(gap>maxGap)maxGap=gap;}else gap=0;
   });
   var gapScore=maxGap===0?100:maxGap===1?80:maxGap===2?55:Math.max(0,40-maxGap*5);
   var overall=Math.round(consistScore*.35+volumeScore*.25+paceScore*.20+gapScore*.20);
