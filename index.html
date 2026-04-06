@@ -1443,7 +1443,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v437</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v438</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2765,7 +2765,20 @@ function buildGarminComparePanel(day, gData){
   const dateDiffWarn = gData.actDate && gData.actDate !== day.date
     ? `<span style="color:var(--laranja)"> · ⚠️ arquivo: ${dateLabel(gData.actDate)}</span>` : '';
 
-  const plannedItemsHtml = day.run.items.map(i=>`<div class="cmp-plan-item">${i}</div>`).join('');
+  // Use effective day info (respects reschedules)
+  const p_ = loadProgress();
+  const prog_ = p_[day.date] || {};
+  const rSched_ = prog_.reschedule || null;
+  const thisOriginalMoved_ = PLAN.some(function(pd){
+    var pp = p_[pd.date]||{}; var rs = pp.reschedule||null;
+    return rs && rs.type==='move' && rs.to===day.date;
+  });
+  let effectivePlanDay = day;
+  if(rSched_ && rSched_.type==='receive' && (thisOriginalMoved_ || day.run.km===0)){
+    const fromDay = PLAN.find(function(d){ return d.date===rSched_.from; });
+    if(fromDay) effectivePlanDay = fromDay;
+  }
+  const plannedItemsHtml = effectivePlanDay.run.items.map(i=>`<div class="cmp-plan-item">${i}</div>`).join('');
 
   return `<div class="garmin-panel">
     <div class="garmin-panel-title">
@@ -2773,7 +2786,7 @@ function buildGarminComparePanel(day, gData){
       <button class="garmin-remove-btn" onclick="event.stopPropagation();removeGarminData('${day.date}')">✕ remover</button>
     </div>
     <div class="cmp-plan-section">
-      <div class="cmp-plan-section-title">📋 Treino Planejado — ${day.run.title}</div>
+      <div class="cmp-plan-section-title">📋 Treino Planejado — ${effectivePlanDay.run.title}</div>
       ${plannedItemsHtml}
     </div>
     <div class="cmp-row">
