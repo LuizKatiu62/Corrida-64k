@@ -684,10 +684,15 @@
     .rpt-sum-card{background:#fff;border:1.5px solid #e0e9f5;border-radius:12px;padding:.6rem 1rem;min-width:100px;text-align:center}
     .rpt-sum-val{font-size:1.3rem;font-weight:900;color:var(--azul);display:block}
     .rpt-sum-lbl{font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
-    .rpt-table{width:100%;border-collapse:collapse;min-width:640px;font-size:.8rem}
+    .rpt-table{width:100%;border-collapse:collapse;font-size:.8rem}
     .rpt-table th{background:var(--escuro);color:#fff;padding:.5rem .65rem;text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
     .rpt-table th:last-child,.rpt-table td:last-child{text-align:right}
     .rpt-table td{padding:.5rem .65rem;border-bottom:1px solid #eef0f2;vertical-align:middle;white-space:nowrap}
+    @media(max-width:699px){
+      .rpt-table{font-size:.7rem}
+      .rpt-table th,.rpt-table td{padding:.35rem .4rem}
+      .rpt-col-hide{display:none}
+    }
     .rpt-table tr:hover td{background:#f7fbff}
     .rpt-table tr.rpt-future td{color:#bbb}
     .rpt-table tr.rpt-today td{background:#fffbf0}
@@ -1443,7 +1448,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v441</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v442</span></footer>
 
 <script>
 function showLoginForm(){
