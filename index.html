@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v389</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v390</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5785,12 +5785,13 @@ function renderShoppingSection(){
 
   // ---- week stats from PLAN ----
   function weekStats(wn){
+    var p     = loadProgress();
     var days  = PLAN.filter(function(d){ return d.week === wn; });
-    var km    = days.reduce(function(s,d){ return s+(d.run.km||0); }, 0);
-    var run   = days.filter(function(d){ return d.run.km > 0; }).length;
+    var km    = days.reduce(function(s,d){ return s + getEffectivePlanKm(d.date, p); }, 0);
+    var run   = days.filter(function(d){ return getEffectivePlanKm(d.date, p) > 0; }).length;
     var gym   = days.filter(function(d){ return !d.gym.ex.every(function(e){ return /^(sem |descanso)/i.test(e.trim()); }); }).length;
-    var rest  = days.filter(function(d){ return d.run.km === 0; }).length;
-    var long  = Math.max.apply(null, days.map(function(d){ return d.run.km||0; }));
+    var rest  = days.filter(function(d){ return getEffectivePlanKm(d.date, p) === 0; }).length;
+    var long  = Math.max.apply(null, days.map(function(d){ return getEffectivePlanKm(d.date, p)||0; }));
     var race  = days.some(function(d){ return d.type==='race'; });
     return { km:km, run:run, gym:gym, rest:rest, long:long, race:race, days:days.length };
   }
