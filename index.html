@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v394</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v395</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6276,7 +6276,7 @@ function renderRunReport(){
         ? '<span class="rpt-km" style="color:' + (realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)') + '">' + realKm + ' km</span>'
         : (prog.run ? '<span style="color:#888;font-size:.75rem">✓ manual</span>' : '<span style="color:#ccc">—</span>');
 
-      var runTitle = (d.run.title || '').replace(/🌟\s*/g,'');
+      var runTitle = effectiveTitle;
 
       rowsHtml.push('<tr class="' + rowCls + '">' +
         '<td class="rpt-date">' + dtFmt + '<small>' + dayName + ' · Sem ' + d.week + '</small></td>' +
