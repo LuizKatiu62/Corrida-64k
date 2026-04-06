@@ -1430,7 +1430,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v407</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v408</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2543,13 +2543,23 @@ function importGPX(date){
 // ============================================================
 function openExtraRunModal(date){
   const existing = (loadProgress()[date]||{}).extraRun || null;
+  const typeOpts = [
+    {val:'easy',  label:'🏃 Fácil / Recuperação'},
+    {val:'medium',label:'⚡ Qualidade / Tempo'},
+    {val:'long',  label:'⭐ Longo'},
+    {val:'race',  label:'🏁 Competição / Prova'},
+  ];
+  const typeSelect = typeOpts.map(o=>`<option value="${o.val}"${existing&&existing.runType===o.val?' selected':''}>${o.label}</option>`).join('');
   const overlay = document.createElement('div');
   overlay.className = 'event-modal-overlay';
   overlay.id = 'extra-run-modal';
   overlay.innerHTML = `<div class="event-modal">
     <h3>➕ Treino Extra</h3>
+    <label>Tipo de corrida</label>
+    <select id="extra-type" onchange="updateExtraRunShoePreview()">${typeSelect}</select>
     <label>Distância (km)</label>
-    <input type="number" id="extra-km" min="0.1" step="0.1" placeholder="Ex: 8" value="${existing?existing.km:''}">
+    <input type="number" id="extra-km" min="0.1" step="0.1" placeholder="Ex: 8" value="${existing?existing.km:''}" oninput="updateExtraRunShoePreview()">
+    <div id="extra-shoe-preview" style="margin:.4rem 0 .2rem"></div>
     <label>Descrição (opcional)</label>
     <input type="text" id="extra-title" placeholder="Ex: Corrida leve no parque" value="${existing?existing.title:''}">
     <label>Observações (opcional)</label>
@@ -2560,16 +2570,28 @@ function openExtraRunModal(date){
     </div>
   </div>`;
   document.body.appendChild(overlay);
+  updateExtraRunShoePreview();
+}
+
+function updateExtraRunShoePreview(){
+  const kmEl = document.getElementById('extra-km');
+  const typeEl = document.getElementById('extra-type');
+  const previewEl = document.getElementById('extra-shoe-preview');
+  if(!kmEl||!typeEl||!previewEl) return;
+  const km = parseFloat(kmEl.value)||0;
+  const type = typeEl.value;
+  previewEl.innerHTML = km > 0 ? buildShoeRecKmType(km, type) : '';
 }
 
 function saveExtraRun(date){
   const km = parseFloat(document.getElementById('extra-km').value);
   if(!km || km <= 0){ alert('Informe a distância em km.'); return; }
+  const runType = document.getElementById('extra-type').value;
   const title = document.getElementById('extra-title').value.trim();
   const notes = document.getElementById('extra-notes').value.trim();
   const p = loadProgress();
   if(!p[date]) p[date] = {};
-  p[date].extraRun = { km, title, notes };
+  p[date].extraRun = { km, runType, title, notes };
   saveProgress(p);
   document.getElementById('extra-run-modal').remove();
   renderAll();
