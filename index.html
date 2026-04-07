@@ -1541,7 +1541,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v485</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v486</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2239,6 +2239,28 @@ function applyFBSyncId(){
   }
   document.getElementById('modal-syncid').textContent = val;
   fbMsgEl('Código atualizado! Este dispositivo agora sincroniza com o código '+val+'.','ok');
+}
+
+function revealFBConfig(){
+  const box = document.getElementById('fb-config-reveal');
+  const ta  = document.getElementById('fb-config-text');
+  if(!box || !ta) return;
+  const cfg = localStorage.getItem(FB_CFG_KEY);
+  if(!cfg){ alert('Firebase Config não encontrado neste dispositivo.'); return; }
+  try{ ta.value = JSON.stringify(JSON.parse(cfg), null, 2); }catch(e){ ta.value = cfg; }
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function copyFBConfig(){
+  const ta = document.getElementById('fb-config-text');
+  if(!ta || !ta.value) return;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(ta.value).then(()=>{ alert('Firebase Config copiado!'); });
+  } else {
+    ta.select();
+    document.execCommand('copy');
+    alert('Firebase Config copiado!');
+  }
 }
 
 function copyFBSyncId(){
