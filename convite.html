@@ -661,14 +661,24 @@ function closeModalOutside(e){
 function submitName(){
   var name = (document.getElementById('modal-name').value || '').trim();
   if(!name) { document.getElementById('modal-name').focus(); return; }
+  var km   = document.getElementById('modal-km').value   || '';
+  var time = document.getElementById('modal-time').value || '';
+  var entry = { nome: name, ts: Date.now() };
+  if(km)               entry.km       = Number(km);
+  if(selectedActivity) entry.activity = selectedActivity;
+  if(time)             entry.time     = time;
   if(fbRef){
-    fbRef.push({ nome: name, ts: Date.now() });
+    fbRef.push(entry);
   } else {
     var arr = loadNamesLocal();
     if(arr.indexOf(name) === -1){ arr.push(name); localStorage.setItem(PART_KEY, JSON.stringify(arr)); }
     renderNamesArr(arr);
   }
   document.getElementById('modal-name').value = '';
+  document.getElementById('modal-km').value   = '';
+  document.getElementById('modal-time').value = '';
+  selectedActivity = '';
+  document.querySelectorAll('.modal-act-btn').forEach(function(b){ b.classList.remove('selected'); });
   document.getElementById('modal-confirm').style.display = 'block';
   setTimeout(function(){
     document.getElementById('modal-confirm').style.display='none';
