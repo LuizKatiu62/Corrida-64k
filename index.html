@@ -1541,7 +1541,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v484</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v485</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2149,6 +2149,11 @@ function openFBModal(){
       + '<button class="fb-btn-cancel" style="background:#fadbd8;color:var(--vermelho)" onclick="deactivateFBSync()">Desativar Sync</button>'
       + '</div>'
       + '<div style="margin-top:.75rem;border-top:1px solid #eee;padding-top:.75rem">'
+      + '<button class="fb-btn-cancel" style="width:100%;background:#e8f4fd;color:#1a6a9a;font-size:.85rem;margin-bottom:.4rem" onclick="revealFBConfig()">👁 Ver / Copiar Firebase Config</button>'
+      + '<div id="fb-config-reveal" style="display:none;margin-bottom:.5rem">'
+      + '<textarea id="fb-config-text" readonly style="width:100%;height:120px;font-size:.7rem;font-family:monospace;border:1.5px solid #bde0fa;border-radius:8px;padding:.5rem;box-sizing:border-box;background:#f0f8ff;color:#1a3a4a;resize:none"></textarea>'
+      + '<button class="fb-btn-primary" style="width:100%;margin-top:.3rem;background:#1a6a9a;font-size:.85rem" onclick="copyFBConfig()">📋 Copiar Config</button>'
+      + '</div>'
       + '<button class="fb-btn-cancel" style="width:100%;background:#f4f6f8;color:#555;font-size:.78rem" onclick="forceAppUpdate()">🔄 Atualizar app (limpar cache)</button>'
       + '</div>';
   }
