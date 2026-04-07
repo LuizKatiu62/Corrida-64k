@@ -498,8 +498,18 @@
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-title">🏃 Confirm Your Attendance</div>
-    <div class="modal-sub">Leave your name and be part of this story! It doesn't matter if you'll run, walk or cheer.</div>
+    <div class="modal-sub">Fill in the details below and be part of this story!</div>
     <input class="modal-input" id="modal-name" type="text" placeholder="Your name" maxlength="60" autocomplete="off">
+    <label style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:.35rem;letter-spacing:.05em;text-transform:uppercase">How many km do you plan to do?</label>
+    <input class="modal-input" id="modal-km" type="number" placeholder="e.g. 10" min="1" max="64" style="margin-bottom:.85rem">
+    <label style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:.35rem;letter-spacing:.05em;text-transform:uppercase">Activity</label>
+    <div style="display:flex;gap:.5rem;margin-bottom:.85rem" id="modal-activity-btns">
+      <button type="button" class="modal-act-btn" data-val="running" onclick="selectActivity('running')">🏃 Running</button>
+      <button type="button" class="modal-act-btn" data-val="walking" onclick="selectActivity('walking')">🚶 Walking</button>
+      <button type="button" class="modal-act-btn" data-val="biking"  onclick="selectActivity('biking')">🚴 Biking</button>
+    </div>
+    <label style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:.35rem;letter-spacing:.05em;text-transform:uppercase">Planned arrival time</label>
+    <input class="modal-input" id="modal-time" type="time" style="margin-bottom:.85rem;color-scheme:dark">
     <button class="modal-btn" onclick="submitName()">✅ Confirm my attendance</button>
     <div class="modal-confirm" id="modal-confirm">🎉 Thank you for being with me on this Challenge! See you on May 2nd!</div>
     <div class="modal-list" id="modal-list">
