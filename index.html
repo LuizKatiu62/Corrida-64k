@@ -1541,7 +1541,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v495</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v496</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6474,7 +6474,7 @@ function renderParticipantes(){
       var entries = [];
       Object.keys(data).forEach(function(key){
         var e = data[key];
-        if(e && e.nome) entries.push({key:key, nome:e.nome, ts:e.ts||0});
+        if(e && e.nome) entries.push({key:key, nome:e.nome, ts:e.ts||0, km:e.km||null, activity:e.activity||null, time:e.time||null});
       });
       entries.sort(function(a,b){ return a.ts - b.ts; });
 
@@ -6483,14 +6483,21 @@ function renderParticipantes(){
         return;
       }
 
+      var actIcon = {running:'🏃',walking:'🚶',biking:'🚴'};
       var rows = entries.map(function(e, i){
-        var dt = e.ts ? new Date(e.ts).toLocaleDateString('pt-BR') : '—';
+        var dt  = e.ts ? new Date(e.ts).toLocaleDateString('pt-BR') : '—';
+        var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '<span style="opacity:.35">—</span>';
+        var km  = e.km ? '<strong style="color:#f1c40f">'+e.km+' km</strong>' : '<span style="opacity:.35">—</span>';
+        var tm  = e.time || '<span style="opacity:.35">—</span>';
         return '<tr style="border-bottom:1px solid rgba(255,255,255,.06)">'
-          + '<td style="padding:.6rem .8rem;color:rgba(255,255,255,.4);font-size:.8rem">'+(i+1)+'</td>'
-          + '<td style="padding:.6rem .8rem;font-weight:600">'+e.nome+'</td>'
-          + '<td style="padding:.6rem .8rem;font-size:.78rem;color:rgba(255,255,255,.45)">'+dt+'</td>'
-          + '<td style="padding:.6rem .8rem;text-align:right">'
-          + '<button onclick="deleteParticipante(\''+e.key+'\')" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:6px;padding:.25rem .55rem;font-size:.72rem;cursor:pointer;font-weight:700">🗑 Apagar</button>'
+          + '<td style="padding:.55rem .6rem;color:rgba(255,255,255,.35);font-size:.78rem">'+(i+1)+'</td>'
+          + '<td style="padding:.55rem .6rem;font-weight:700">'+e.nome+'</td>'
+          + '<td style="padding:.55rem .6rem;font-size:.82rem">'+km+'</td>'
+          + '<td style="padding:.55rem .6rem;font-size:.8rem;color:rgba(255,255,255,.75)">'+act+'</td>'
+          + '<td style="padding:.55rem .6rem;font-size:.82rem;font-weight:600;color:#81ecec">'+tm+'</td>'
+          + '<td style="padding:.55rem .6rem;font-size:.72rem;color:rgba(255,255,255,.3)">'+dt+'</td>'
+          + '<td style="padding:.55rem .6rem;text-align:right">'
+          + '<button onclick="deleteParticipante(\''+e.key+'\')" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:6px;padding:.2rem .45rem;font-size:.7rem;cursor:pointer;font-weight:700">🗑</button>'
           + '</td>'
           + '</tr>';
       }).join('');
@@ -6500,15 +6507,20 @@ function renderParticipantes(){
         + '<h2 style="font-size:1.3rem;font-weight:900">🏅 Participantes Confirmados</h2>'
         + '<span style="background:rgba(212,160,23,.2);border:1px solid rgba(212,160,23,.4);color:#d4a017;border-radius:999px;padding:.3rem .9rem;font-size:.85rem;font-weight:800">'+entries.length+' confirmados</span>'
         + '</div>'
-        + '<table style="width:100%;border-collapse:collapse;background:rgba(255,255,255,.03);border-radius:12px;overflow:hidden">'
+        + '<div style="overflow-x:auto">'
+        + '<table style="width:100%;border-collapse:collapse;background:rgba(255,255,255,.03);border-radius:12px;overflow:hidden;min-width:440px">'
         + '<thead><tr style="background:rgba(255,255,255,.06)">'
-        + '<th style="padding:.6rem .8rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)">#</th>'
-        + '<th style="padding:.6rem .8rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)">Nome</th>'
-        + '<th style="padding:.6rem .8rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)">Data</th>'
+        + '<th style="padding:.5rem .6rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">#</th>'
+        + '<th style="padding:.5rem .6rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">Nome</th>'
+        + '<th style="padding:.5rem .6rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">Km</th>'
+        + '<th style="padding:.5rem .6rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">Atividade</th>'
+        + '<th style="padding:.5rem .6rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">Horário</th>'
+        + '<th style="padding:.5rem .6rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">Confirmou</th>'
         + '<th></th>'
         + '</tr></thead>'
         + '<tbody>'+rows+'</tbody>'
         + '</table>'
+        + '</div>'
         + '<p style="margin-top:.8rem;font-size:.72rem;color:rgba(255,255,255,.3);text-align:center;padding:0 .5rem">Atualizado agora · <button onclick="renderParticipantes()" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:.72rem;text-decoration:underline">Atualizar</button></p>'
         + '</div>';
     }).catch(function(e){
