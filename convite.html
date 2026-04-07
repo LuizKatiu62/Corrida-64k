@@ -634,9 +634,20 @@ function renderNames(){
   if(fbRef) return;
   renderNamesArr(loadNamesLocal());
 }
+var selectedActivity = '';
+function selectActivity(val){
+  selectedActivity = val;
+  document.querySelectorAll('.modal-act-btn').forEach(function(b){
+    b.classList.toggle('selected', b.dataset.val === val);
+  });
+}
 function openModal(){
   document.getElementById('modal-participar').classList.add('open');
   document.getElementById('modal-name').value = '';
+  document.getElementById('modal-km').value = '';
+  document.getElementById('modal-time').value = '';
+  selectedActivity = '';
+  document.querySelectorAll('.modal-act-btn').forEach(function(b){ b.classList.remove('selected'); });
   document.getElementById('modal-confirm').style.display = 'none';
   renderNames();
   setTimeout(function(){ document.getElementById('modal-name').focus(); }, 100);
