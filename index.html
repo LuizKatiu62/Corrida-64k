@@ -1541,7 +1541,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v488</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v489</span></footer>
 
 <script>
 function showLoginForm(){
@@ -1844,7 +1844,8 @@ function fbApplyRemote(data){
       // Merge Firebase garmin with local: Firebase is authoritative for base fields,
       // but local keeps raw/dominantZone/dominantZonePct/avgCadence (not stored in Firebase)
       try{
-        const fbGarmin=JSON.parse(data.garmin)||{};
+        // data.garmin may arrive as object (stored as object in Firebase) or string — handle both
+        const fbGarmin = (typeof data.garmin === 'string') ? (JSON.parse(data.garmin)||{}) : (data.garmin||{});
         const localGarmin=(function(){try{return JSON.parse(localStorage.getItem(GARMIN_KEY))||{};}catch(e){return{};}})();
         Object.keys(fbGarmin).forEach(function(date){
           const loc=localGarmin[date];
