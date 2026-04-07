@@ -1541,7 +1541,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v500</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v501</span></footer>
 
 <script>
 function showLoginForm(){
@@ -8718,7 +8718,10 @@ function removeHevyData(date){
   if(!confirm('Remover treino do Hevy para este dia?')) return;
   const d = loadHevyData(); delete d[date]; saveHevyData(d);
   const p = loadProgress();
-  if(p[date]) { delete p[date].gym; saveProgress(p); }
+  if(!p[date]) p[date] = {};
+  delete p[date].gym;
+  p[date].gymRemoved = true;
+  saveProgress(p);
   renderAll();
 }
 
