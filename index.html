@@ -2006,6 +2006,10 @@ function initFirebaseSync(config){
   try{
     if(!firebase.apps.length) firebase.initializeApp(config);
     else firebase.app();
+firebase.auth().setPersistence(
+  firebase.auth.Auth.Persistence.SESSION
+);
+
     fbDB     = firebase.database();
     fbSyncId = getFBSyncId();
 
