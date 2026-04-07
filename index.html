@@ -1192,7 +1192,11 @@ window.doLogout = function(){
   if(ov) ov.style.display = 'flex';
 };
 
-window.doLogin = function(){
+window.doLogin = function()
+
+// ✅ Limpa sessão antiga (Safari fix)
+  firebase.auth().signOut();
+{
   var email = (document.getElementById('login-email').value||'').trim().toLowerCase();
   var pass  = (document.getElementById('login-pass').value||'').replace(/^\s+|\s+$/g,'');
   var err   = document.getElementById('login-error');
