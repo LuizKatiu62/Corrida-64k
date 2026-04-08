@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="Desafio 64km — May 2, 2026 · Saint John NB">
+<meta property="og:description" content="Running with gratitude, finishing for His Glory. Come run, walk or cheer! Saint John, NB — May 2, 2026.">
+<meta property="og:image" content="./login-bg.jpg">
+<title>Desafio 64km — May 2, 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Lora:ital,wght@1,400;1,600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --verde:#1e8449;
+    --verde-light:#27ae60;
+    --ouro:#d4a017;
+    --azul:#1a73e8;
+    --roxo:#6c3fa0;
+    --escuro:#0d1f0f;
+    --branco:#fff;
+  }
+  body{font-family:'Montserrat',sans-serif;background:#0d1f0f;color:#fff;overflow-x:hidden}
+
+  /* ── HERO ── */
+  .hero{
+    position:relative;min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:2rem 1.5rem;
+  }
+  .hero-bg{
+    position:absolute;inset:0;
+    background:url('./login-bg.jpg') center 30%/cover no-repeat;
+    filter:brightness(.35);
+  }
+  .hero-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(10,40,15,.85) 70%,rgba(10,40,15,1) 100%);
+  }
+  .hero-content{position:relative;z-index:2;max-width:680px}
+
+  .badge{
+    display:inline-block;background:var(--ouro);color:#000;
+    font-size:.7rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;
+    padding:.35rem 1rem;border-radius:999px;margin-bottom:1.2rem;
+  }
+  .hero-date{
+    font-size:.85rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+    color:rgba(255,255,255,.6);margin-bottom:.6rem;
+  }
+  .hero-title{
+    font-size:clamp(2.8rem,10vw,5.5rem);font-weight:900;line-height:.95;
+    letter-spacing:-.02em;margin-bottom:.5rem;
+  }
+  .hero-title span{color:var(--ouro)}
+  .hero-km{
+    font-size:clamp(5rem,20vw,11rem);font-weight:900;line-height:.85;
+    color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.15);
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    pointer-events:none;z-index:1;white-space:nowrap;user-select:none;
+  }
+  .hero-theme{
+    font-family:'Lora',serif;font-style:italic;font-size:clamp(1rem,3.5vw,1.4rem);
+    color:rgba(255,255,255,.8);margin-bottom:1.8rem;line-height:1.5;
+  }
+  .hero-theme strong{color:var(--ouro);font-weight:600}
+
+  .hero-cta-wrap{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+  .cta-btn{
+    padding:.8rem 1.8rem;border-radius:999px;font-size:.88rem;font-weight:800;
+    cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.45rem;
+    letter-spacing:.02em;transition:transform .15s,box-shadow .15s;border:none;
+  }
+  .cta-btn:active{transform:scale(.97)}
+  .cta-primary{background:var(--verde-light);color:#fff;box-shadow:0 6px 24px rgba(39,174,96,.45)}
+  .cta-primary:hover{background:#219a52;box-shadow:0 8px 32px rgba(39,174,96,.6)}
+  .cta-secondary{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35)!important;backdrop-filter:blur(8px)}
+  .cta-secondary:hover{background:rgba(255,255,255,.2)}
+  .cta-gold{background:var(--ouro);color:#000;box-shadow:0 6px 24px rgba(212,160,23,.45)}
+  .cta-gold:hover{background:#b8860b}
+
+  .hero-location{font-size:.78rem;color:rgba(255,255,255,.5);letter-spacing:.06em}
+  .hero-location strong{color:rgba(255,255,255,.8)}
+
+  /* ── COUNTER STRIP ── */
+  .strip{
+    background:var(--verde);padding:1.2rem 1.5rem;
+    display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;
+  }
+  .strip-item{text-align:center}
+  .strip-val{font-size:1.8rem;font-weight:900;line-height:1}
+  .strip-lbl{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.8;margin-top:.15rem}
+
+  /* ── SECTIONS ── */
+  section{padding:4rem 1.5rem;max-width:760px;margin:0 auto}
+
+  .section-label{
+    font-size:.65rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--verde-light);margin-bottom:.6rem;
+  }
+  .section-title{
+    font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;line-height:1.1;
+    margin-bottom:1.2rem;
+  }
+  .section-body{font-size:.95rem;color:rgba(255,255,255,.75);line-height:1.8}
+
+  /* ── WHAT IS ── */
+  .what-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:2rem}
+  .what-card{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+    border-radius:16px;padding:1.4rem 1.2rem;text-align:center;
+  }
+  .what-icon{font-size:2.2rem;margin-bottom:.6rem}
+  .what-title{font-size:.88rem;font-weight:800;margin-bottom:.3rem}
+  .what-desc{font-size:.75rem;color:rgba(255,255,255,.55);line-height:1.6}
+
+  /* ── STORY ── */
+  .story-block{
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;padding:2.2rem 2rem;margin-top:2rem;position:relative;overflow:hidden;
+  }
+  .story-block::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--verde-light),var(--ouro));
+  }
+  .story-quote{
+    font-family:'Lora',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.2rem);
+    color:rgba(255,255,255,.85);line-height:1.8;margin-bottom:1.2rem;
+  }
+  .story-stats{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.08)}
+  .story-stat{text-align:center}
+  .story-stat-val{font-size:1.6rem;font-weight:900;color:var(--ouro);line-height:1}
+  .story-stat-lbl{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:.2rem}
+
+  /* ── FUNDRAISER ── */
+  .fundraiser-section{
+    background:linear-gradient(135deg,rgba(26,115,232,.12),rgba(108,63,160,.12));
+    border:1px solid rgba(26,115,232,.3);border-radius:24px;
+    padding:2.5rem 2rem;margin-top:2rem;text-align:center;
+  }
+  .fundraiser-ribbon{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:rgba(26,115,232,.2);border:1px solid rgba(26,115,232,.4);
+    border-radius:999px;padding:.35rem 1rem;font-size:.7rem;font-weight:900;
+    letter-spacing:.1em;text-transform:uppercase;color:#6ab0ff;margin-bottom:1.2rem;
+  }
+  .fundraiser-title{font-size:clamp(1.4rem,4vw,2rem);font-weight:900;line-height:1.15;margin-bottom:.8rem}
+  .fundraiser-title span{color:#6ab0ff}
+  .fundraiser-body{font-size:.9rem;color:rgba(255,255,255,.72);line-height:1.8;margin-bottom:1.5rem}
+  .fundraiser-org{
+    display:inline-flex;align-items:center;gap:.6rem;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;padding:.8rem 1.2rem;margin-bottom:1.5rem;
+    font-size:.85rem;font-weight:700;
+  }
+  .fundraiser-note{
+    font-size:.78rem;color:rgba(255,255,255,.45);margin-top:1rem;
+    font-style:italic;line-height:1.6;
+  }
+
+  /* ── HOW TO PARTICIPATE ── */
+  .how-list{list-style:none;margin-top:1.5rem;display:flex;flex-direction:column;gap:.9rem}
+  .how-list li{
+    display:flex;align-items:flex-start;gap:.9rem;
+    background:rgba(255,255,255,.04);border-left:3px solid var(--verde-light);
+    border-radius:0 10px 10px 0;padding:.9rem 1rem;
+  }
+  .how-num{
+    font-size:1.1rem;font-weight:900;color:var(--verde-light);
+    flex-shrink:0;min-width:1.5rem;
+  }
+  .how-text{font-size:.88rem;color:rgba(255,255,255,.8);line-height:1.6}
+  .how-text strong{color:#fff;font-weight:700}
+
+  /* ── VERSE ── */
+  .verse-block{
+    background:linear-gradient(135deg,rgba(212,160,23,.12),rgba(30,132,73,.12));
+    border:1px solid rgba(212,160,23,.3);border-radius:20px;
+    padding:2.5rem 2rem;text-align:center;margin:3rem 0;
+  }
+  .verse-text{
+    font-family:'Lora',serif;font-style:italic;font-size:clamp(1.1rem,3vw,1.5rem);
+    color:rgba(255,255,255,.9);line-height:1.7;margin-bottom:.8rem;
+  }
+  .verse-ref{font-size:.78rem;color:var(--ouro);font-weight:700;letter-spacing:.05em}
+
+  /* ── DETAILS ── */
+  .details-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.5rem}
+  .detail-card{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;padding:1.2rem;
+  }
+  .detail-icon{font-size:1.4rem;margin-bottom:.5rem}
+  .detail-label{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.2rem}
+  .detail-val{font-size:.95rem;font-weight:700;color:#fff}
+  .detail-sub{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.1rem}
+
+  /* ── SHARE ── */
+  .share-section{text-align:center;padding:3rem 1.5rem 5rem;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.07)}
+  .share-title{font-size:1.4rem;font-weight:900;margin-bottom:.5rem}
+  .share-sub{font-size:.88rem;color:rgba(255,255,255,.55);margin-bottom:1.5rem}
+  .share-hashtags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+  .hashtag{
+    background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.3);
+    color:var(--verde-light);border-radius:999px;padding:.3rem .85rem;
+    font-size:.78rem;font-weight:700;cursor:pointer;transition:background .15s;
+  }
+  .hashtag:hover{background:rgba(39,174,96,.3)}
+
+  .share-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+  .share-fb{background:#1877f2;color:#fff;padding:.75rem 1.5rem;border-radius:999px;font-size:.85rem;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+  .share-wa{background:#25d366;color:#fff;padding:.75rem 1.5rem;border-radius:999px;font-size:.85rem;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+  .share-copy{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);padding:.75rem 1.5rem;border-radius:999px;font-size:.85rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;font-family:inherit}
+
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
+  .modal-overlay.open{opacity:1;pointer-events:all}
+  .modal-box{background:#1a3320;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:420px;position:relative}
+  .modal-close{position:absolute;top:.8rem;right:1rem;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer;line-height:1}
+  .modal-title{font-size:1.3rem;font-weight:900;margin-bottom:.4rem}
+  .modal-sub{font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:1.2rem;line-height:1.5}
+  .modal-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:.75rem 1rem;color:#fff;font-size:1rem;font-family:inherit;outline:none;margin-bottom:.85rem}
+  .modal-input:focus{border-color:var(--verde-light)}
+  .modal-btn{width:100%;background:var(--verde-light);color:#fff;border:none;border-radius:10px;padding:.8rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:inherit;transition:background .15s}
+  .modal-btn:hover{background:#219a52}
+  .modal-list{margin-top:1.5rem}
+  .modal-list-title{font-size:.65rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.6rem}
+  .modal-list ul{list-style:none;display:flex;flex-direction:column;gap:.4rem;max-height:180px;overflow-y:auto}
+  .modal-list ul li{background:rgba(255,255,255,.06);border-radius:8px;padding:.45rem .8rem;font-size:.85rem;display:flex;align-items:center;gap:.5rem}
+  .modal-list ul li::before{content:'✅';font-size:.75rem}
+  .modal-confirm{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.3);border-radius:10px;padding:.75rem 1rem;font-size:.85rem;color:var(--verde-light);font-weight:700;text-align:center;display:none;margin-top:.6rem}
+  .modal-act-btn{flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:.55rem .3rem;color:rgba(255,255,255,.65);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+  .modal-act-btn.selected{background:var(--verde-light);border-color:var(--verde-light);color:#fff}
+
+  /* ── BACK TO TOP ── */
+  .back-top{
+    position:fixed;bottom:1.5rem;right:1.5rem;z-index:900;
+    background:var(--verde-light);color:#fff;border:none;border-radius:999px;
+    width:48px;height:48px;font-size:1.2rem;cursor:pointer;
+    box-shadow:0 4px 16px rgba(39,174,96,.5);
+    opacity:0;pointer-events:none;transition:opacity .25s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .back-top.visible{opacity:1;pointer-events:all}
+
+  /* ── FOOTER ── */
+  footer{text-align:center;padding:1.5rem;font-size:.72rem;color:rgba(255,255,255,.25);border-top:1px solid rgba(255,255,255,.07)}
+
+  /* ── COUNTDOWN ── */
+  .countdown{display:flex;gap:1rem;justify-content:center;margin:1.5rem 0}
+  .cd-box{text-align:center;background:rgba(255,255,255,.08);border-radius:12px;padding:.7rem 1rem;min-width:64px}
+  .cd-num{font-size:1.8rem;font-weight:900;line-height:1;color:#fff}
+  .cd-lbl{font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:.15rem}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-km">64km</div>
+  <div class="hero-content">
+    <div class="badge">🏅 Special Invitation</div>
+    
+<div style="margin-top:10px; text-align:center;">
+  <a href="https://translate.google.com/translate?sl=en&tl=pt&u=https://luizkatiu62.github.io/Corrida-64k/convite.html"
+     target="_blank"
+     style="padding:8px 16px; background:#f5c770; color:#000; border-radius:16px; font-size:0.85em; font-weight:600; text-decoration:none;">
+    🇧🇷 Ver em Português
+  </a>
+</div>
+``
+
+
+
+    <div class="hero-date">📅 May 2, 2026 · Saint John, NB · Canada</div>
+    <h1 class="hero-title">Challenge<br><span>64 km</span></h1>
+    <p class="hero-theme">
+      <strong>"Running with gratitude,<br>finishing for His Glory."</strong>
+    </p>
+    <div class="countdown" id="countdown">
+      <div class="cd-box"><div class="cd-num" id="cd-d">--</div><div class="cd-lbl">days</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-h">--</div><div class="cd-lbl">hours</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-m">--</div><div class="cd-lbl">min</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-s">--</div><div class="cd-lbl">sec</div></div>
+    </div>
+    <div class="hero-cta-wrap">
+      <button onclick="openModal()" class="cta-btn cta-primary">🏃 I Want to Join</button>
+      <a href="#detalhes" class="cta-btn cta-secondary">📍 Event Details</a>
+      <a href="#story" class="cta-btn cta-secondary">📖 My Story</a>
+      
+<a href="#fundraiser " class="cta-btn cta-gold">
+  💙 Support the Cause
+</a>
+``
+    </div>
+    <div class="hero-location">📍 <strong>Little River Reservoir Trail</strong> · Saint John, NB</div>
+  </div>
+</div>
+
+<!-- STRIP -->
+<div class="strip">
+  <div class="strip-item"><div class="strip-val">64</div><div class="strip-lbl">kilometers</div></div>
+  <div class="strip-item"><div class="strip-val">~19</div><div class="strip-lbl">3.3km loops</div></div>
+  <div class="strip-item"><div class="strip-val">1 day</div><div class="strip-lbl">of challenge</div></div>
+  <div class="strip-item"><div class="strip-val">∞</div><div class="strip-lbl">gratitude</div></div>
+</div>
+
+<!-- WHAT IS -->
+<section>
+  <div class="section-label">The Challenge</div>
+  <h2 class="section-title">What is the<br>64km Challenge?</h2>
+  <div class="section-body">
+    On <strong style="color:#fff">May 2, 2026</strong>, Luiz Silva turns <strong style="color:#fff">64 years old</strong> and celebrates in the best way he knows — running. The goal is to complete <strong style="color:#fff">64 kilometers</strong> in 3.3km loops at the <strong style="color:#fff">Little River Reservoir Trail</strong> in Saint John, NB.<br><br>
+    But this challenge is not just about distance. It is about gratitude for life, health, family and faith. It is about proving that the best chapter of life starts now.
+  </div>
+  <div class="what-grid">
+    <div class="what-card">
+      <div class="what-icon">🏃‍♂️</div>
+      <div class="what-title">Run with me</div>
+      <div class="what-desc">Join for 1 loop, a few km or the whole day. Every step counts.</div>
+    </div>
+    <div class="what-card">
+      <div class="what-icon">🚶‍♀️</div>
+      <div class="what-title">Walk</div>
+      <div class="what-desc">Prefer walking? Perfect. The trail is beautiful and the energy is amazing.</div>
+    </div>
+    <div class="what-card">
+      <div class="what-icon">📣</div>
+      <div class="what-title">Cheer</div>
+      <div class="what-desc">Come even if you don't love running. Your presence is more than enough.</div>
+    </div>
+    <div class="what-card">
+      <div class="what-icon">🙏</div>
+      <div class="what-title">Pray</div>
+      <div class="what-desc">Pray for the event, for safety and for every person on the trail.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VERSE -->
+<section style="padding:0 1.5rem">
+  <div class="verse-block">
+    <div class="verse-text">"I can do all things through Christ who strengthens me."</div>
+    <div class="verse-ref">Philippians 4:13</div>
+  </div>
+</section>
+
+<!-- MY STORY -->
+<section id="story">
+  <div class="section-label">My Story</div>
+  <h2 class="section-title">From diagnosis<br>to the finish line</h2>
+  <div class="section-body">
+    First and above all, I give all the glory to God — He was and continues to be ahead of every single step of this journey. His grace has been present in every moment, and I am deeply aware that none of this would be possible without Him.
+  </div>
+  <div class="story-block">
+    <div class="story-quote">
+      "In early 2025, I was diagnosed with prostate cancer. The news was hard to receive, but my faith was greater than my fear. I went through surgery, and the results were remarkable — the procedure was a complete success.<br><br>
+      What happened next surprised even my doctors. Thanks to a lifestyle built around physical activity — running, training and dedication — my recovery was extraordinary. In just <strong style="color:#fff">7 weeks</strong> I was back on the trail, running again.<br><br>
+      From surgery day to early 2026, I had already run more than <strong style="color:#fff">800 kilometers</strong>. This 64km challenge on my 64th birthday is my way of saying thank you — to God, to life, to health, and to everyone who walked beside me through it all."
+    </div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.5);font-style:italic">— Luiz Silva</div>
+    <div class="story-stats">
+      <div class="story-stat">
+        <div class="story-stat-val">7 wks</div>
+        <div class="story-stat-lbl">to recovery</div>
+      </div>
+      <div class="story-stat">
+        <div class="story-stat-val">800+</div>
+        <div class="story-stat-lbl">km post-surgery</div>
+      </div>
+      <div class="story-stat">
+        <div class="story-stat-val">64</div>
+        <div class="story-stat-lbl">km on his birthday</div>
+      </div>
+      <div class="story-stat">
+        <div class="story-stat-val">∞</div>
+        <div class="story-stat-lbl">faith & gratitude</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNDRAISER -->
+<section id="fundraiser">
+  <div class="section-label">Support the Cause</div>
+  <h2 class="section-title">Running for<br><span style="color:#6ab0ff">Prostate Cancer</span></h2>
+  <div class="section-body">
+    This challenge is also an opportunity to give back. Together with this event, we are raising funds to support those fighting prostate cancer and their families.
+  </div>
+  <div class="fundraiser-section">
+    <div class="fundraiser-ribbon">
+      💙 Fundraiser · GoFundMe
+    </div>
+    <div class="fundraiser-title">
+      Every dollar goes to<br><span>St. Joseph's Hospital Foundation</span>
+    </div>
+    <div class="fundraiser-body">
+      All funds raised through this campaign will be donated in full to <strong style="color:#fff">St. Joseph's Hospital Foundation - Urology Wellness</strong> — an organization dedicated to supporting patients, survivors and families across our province.<br><br>
+      I know firsthand what a difference support makes during that journey. This is my way of paying it forward. Give what is in your heart — no amount is too small, and every contribution makes a difference.
+    </div>
+    <div class="fundraiser-org">
+      💙 St. Joseph's Hospital Foundation - Urology Wellness
+    </div>
+    <a href="https://gofund.me/c9b5622aa" target="_blank" class="cta-btn cta-gold" style="font-size:.95rem;padding:.9rem 2rem;display:inline-flex;margin-bottom:.5rem">
+      💙 Donate on GoFundMe
+    </a>
+    <div class="fundraiser-note">
+            Give what is in your heart — 100% goes to St. Joseph's Hospital Foundation NB.
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO PARTICIPATE -->
+<section id="participar">
+  <div class="section-label">Join Us</div>
+  <h2 class="section-title">How to participate?</h2>
+  <ul class="how-list">
+    <li>
+      <div class="how-num">1</div>
+      <div class="how-text"><strong>Choose how you want to join</strong> — running, walking or cheering. There is no minimum distance required.</div>
+    </li>
+    <li>
+      <div class="how-num">2</div>
+      <div class="how-text"><strong>Let me know you're coming</strong> — click "I Want to Join", comment here or send a message. It helps me plan logistics.</div>
+    </li>
+    <li>
+      <div class="how-num">3</div>
+      <div class="how-text"><strong>Show up on the day</strong> — come when you can, stay as long as you want. The event starts early and goes until the 64km are done.</div>
+    </li>
+    <li>
+      <div class="how-num">4</div>
+      <div class="how-text"><strong>Bring good energy</strong> — family, friends, smiles. The more people, the more beautiful this story becomes.</div>
+    </li>
+  </ul>
+</section>
+
+<!-- DETAILS -->
+<section id="detalhes">
+  <div class="section-label">Information</div>
+  <h2 class="section-title">Event Details</h2>
+  <div class="details-grid">
+    <div class="detail-card">
+      <div class="detail-icon">📅</div>
+      <div class="detail-label">Date</div>
+      <div class="detail-val">May 2, 2026</div>
+      <div class="detail-sub">Saturday · Spring Holiday</div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">📍</div>
+      <div class="detail-label">Location</div>
+      <div class="detail-val">Little River Reservoir</div>
+      <div class="detail-sub">Saint John, NB, Canada</div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">⏰</div>
+      <div class="detail-label">Start Time</div>
+      <div class="detail-val">7:30 AM</div>
+      <div class="detail-sub">Estimated duration: 10–12h</div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">🔄</div>
+      <div class="detail-label">Route</div>
+      <div class="detail-val">3.3 km loops</div>
+      <div class="detail-sub">~19 laps to complete 64km</div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">💧</div>
+      <div class="detail-label">Support</div>
+      <div class="detail-val">Water & Nutrition</div>
+      <div class="detail-sub">Bring your own water and nutrition.</div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">🎟️</div>
+      <div class="detail-label">Registration</div>
+      <div class="detail-val">Free</div>
+      <div class="detail-sub">Open to everyone</div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARE -->
+<div class="share-section">
+  <div class="section-label" style="margin-bottom:.5rem">Spread the word</div>
+  <div class="share-title">Invite your friends!</div>
+  <div class="share-sub">Share this invitation and help make this day unforgettable</div>
+  <div class="share-hashtags">
+    <span class="hashtag">#Desafio64km</span>
+    <span class="hashtag">#RunningWithGratitude</span>
+    <span class="hashtag">#FinishingForHisGlory</span>
+    <span class="hashtag">#SaintJohnRuns</span>
+    <span class="hashtag">#Luiz64</span>
+    <span class="hashtag">#ProstateCancerSupport</span>
+  </div>
+  <div class="share-btns">
+    <a class="share-fb" id="btn-fb" href="#" onclick="shareFacebook();return false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      Share on Facebook
+    </a>
+    <a class="share-wa" id="btn-wa" href="#" onclick="shareWhatsApp();return false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.99.576 3.842 1.568 5.398L2.046 22l4.718-1.509A9.963 9.963 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="none" stroke="white" stroke-width="1.5"/></svg>
+      WhatsApp
+    </a>
+    <button class="share-copy" onclick="copyLink()">
+      🔗 Copy Link
+    </button>
+  </div>
+  <div id="copy-msg" style="margin-top:.75rem;font-size:.78rem;color:var(--verde-light);display:none">✅ Link copied!</div>
+</div>
+
+<!-- MODAL PARTICIPAR -->
+<div class="modal-overlay" id="modal-participar" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">🏃 Confirm Your Attendance</div>
+    <div class="modal-sub">Fill in the details below and be part of this story!</div>
+    <input class="modal-input" id="modal-name" type="text" placeholder="Your name" maxlength="60" autocomplete="off">
+    <label style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:.35rem;letter-spacing:.05em;text-transform:uppercase">How many km do you plan to do?</label>
+    <input class="modal-input" id="modal-km" type="number" placeholder="e.g. 10" min="1" max="64" style="margin-bottom:.85rem">
+    <label style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:.35rem;letter-spacing:.05em;text-transform:uppercase">Activity</label>
+    <div style="display:flex;gap:.5rem;margin-bottom:.85rem" id="modal-activity-btns">
+      <button type="button" class="modal-act-btn" data-val="running" onclick="selectActivity('running')">🏃 Running</button>
+      <button type="button" class="modal-act-btn" data-val="walking" onclick="selectActivity('walking')">🚶 Walking</button>
+      <button type="button" class="modal-act-btn" data-val="biking"  onclick="selectActivity('biking')">🚴 Biking</button>
+    </div>
+    <label style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:.35rem;letter-spacing:.05em;text-transform:uppercase">Planned arrival time</label>
+    <input class="modal-input" id="modal-time" type="time" style="margin-bottom:.85rem;color-scheme:dark">
+    <button class="modal-btn" onclick="submitName()">✅ Confirm my attendance</button>
+    <div class="modal-confirm" id="modal-confirm">🎉 Thank you for being with me on this Challenge! See you on May 2nd!</div>
+  </div>
+</div>
+
+<button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<footer>
+  © 2026 Luiz Silva · Desafio 64km · Saint John, NB, Canada<br>
+  <span style="font-style:italic;opacity:.7">"Running with gratitude, finishing for His Glory"</span>
+</footer>
+
+<script>
+// Countdown
+function updateCountdown(){
+  var target = new Date('2026-05-02T07:30:00-03:00');
+  var now = new Date();
+  var diff = target - now;
+  if(diff <= 0){ document.getElementById('countdown').innerHTML='<div style="font-size:1.2rem;font-weight:900;color:var(--ouro)">🎉 The day is here!</div>'; return; }
+  var d = Math.floor(diff/86400000);
+  var h = Math.floor((diff%86400000)/3600000);
+  var m = Math.floor((diff%3600000)/60000);
+  var s = Math.floor((diff%60000)/1000);
+  document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+var PAGE_URL = (window.location.protocol === 'file:')
+  ? 'https://luizkatiu62.github.io/Corrida-64k/convite.html'
+  : window.location.href;
+var MSG = '🏃 Desafio 64km — May 2, 2026, Saint John NB!\n"Running with gratitude, finishing for His Glory"\nCome run, walk or cheer! ' + PAGE_URL;
+
+function shareFacebook(){
+  window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(PAGE_URL),'_blank');
+}
+function shareWhatsApp(){
+  window.open('https://wa.me/?text='+encodeURIComponent(MSG),'_blank');
+}
+function copyLink(){
+  function showMsg(){
+    var msg = document.getElementById('copy-msg');
+    msg.style.display='block';
+    setTimeout(function(){ msg.style.display='none'; }, 3000);
+  }
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(PAGE_URL).then(showMsg).catch(fallback);
+  } else {
+    fallback();
+  }
+  function fallback(){
+    var inp = document.createElement('textarea');
+    inp.value = PAGE_URL;
+    inp.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+    document.body.appendChild(inp);
+    inp.focus();
+    inp.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    inp.remove();
+    showMsg();
+  }
+}
+
+// ── FIREBASE PARTICIPANTES ──
+var fbDb = null;
+var fbRef = null;
+
+(function initFb(){
+  var cfg = {
+    apiKey: "AIzaSyAWD-KEgeIpaMU8z3sKmxKqs-BypQGbLjs",
+    authDomain: "corrida-64k.firebaseapp.com",
+    databaseURL: "https://corrida-64k-default-rtdb.firebaseio.com",
+    projectId: "corrida-64k",
+    storageBucket: "corrida-64k.firebasestorage.app",
+    messagingSenderId: "931451150684",
+    appId: "1:931451150684:web:0112ba7eddb4c936776199"
+  };
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    else firebase.app();
+    fbDb = firebase.database();
+    fbRef = fbDb.ref('desafio64/participantes');
+    fbRef.on('value', function(snap){
+      var data = snap.val() || {};
+      var names = Object.values(data).map(function(e){ return e.nome; }).filter(Boolean);
+      names.sort(function(a,b){ return a.localeCompare(b); });
+      renderNamesArr(names);
+    });
+  }catch(e){ fbDb = null; }
+})();
+
+// ── MODAL ──
+var PART_KEY = 'desafio64_participantes_local';
+
+function loadNamesLocal(){
+  try{ return JSON.parse(localStorage.getItem(PART_KEY)||'[]'); }catch(e){ return []; }
+}
+function renderNamesArr(arr){
+  var ul = document.getElementById('name-list');
+  if(!ul) return;
+  ul.innerHTML = '';
+  if(arr.length === 0){
+    ul.innerHTML = '<li style="opacity:.45;font-size:.78rem">Be the first to confirm!</li>';
+  } else {
+    arr.forEach(function(n){
+      var li = document.createElement('li');
+      li.textContent = n;
+      ul.appendChild(li);
+    });
+  }
+}
+function renderNames(){
+  if(fbRef) return;
+  renderNamesArr(loadNamesLocal());
+}
+var selectedActivity = '';
+function selectActivity(val){
+  selectedActivity = val;
+  document.querySelectorAll('.modal-act-btn').forEach(function(b){
+    b.classList.toggle('selected', b.dataset.val === val);
+  });
+}
+function openModal(){
+  document.getElementById('modal-participar').classList.add('open');
+  document.getElementById('modal-name').value = '';
+  document.getElementById('modal-km').value = '';
+  document.getElementById('modal-time').value = '';
+  selectedActivity = '';
+  document.querySelectorAll('.modal-act-btn').forEach(function(b){ b.classList.remove('selected'); });
+  document.getElementById('modal-confirm').style.display = 'none';
+  renderNames();
+  setTimeout(function(){ document.getElementById('modal-name').focus(); }, 100);
+}
+function closeModal(){
+  document.getElementById('modal-participar').classList.remove('open');
+}
+function closeModalOutside(e){
+  if(e.target === document.getElementById('modal-participar')) closeModal();
+}
+function submitName(){
+  var name = (document.getElementById('modal-name').value || '').trim();
+  if(!name) { document.getElementById('modal-name').focus(); return; }
+  var km   = document.getElementById('modal-km').value   || '';
+  var time = document.getElementById('modal-time').value || '';
+  var entry = { nome: name, ts: Date.now() };
+  if(km)               entry.km       = Number(km);
+  if(selectedActivity) entry.activity = selectedActivity;
+  if(time)             entry.time     = time;
+  if(fbRef){
+    fbRef.push(entry);
+  } else {
+    var arr = loadNamesLocal();
+    if(arr.indexOf(name) === -1){ arr.push(name); localStorage.setItem(PART_KEY, JSON.stringify(arr)); }
+    renderNamesArr(arr);
+  }
+  document.getElementById('modal-name').value = '';
+  document.getElementById('modal-km').value   = '';
+  document.getElementById('modal-time').value = '';
+  selectedActivity = '';
+  document.querySelectorAll('.modal-act-btn').forEach(function(b){ b.classList.remove('selected'); });
+  document.getElementById('modal-confirm').style.display = 'block';
+  setTimeout(function(){
+    document.getElementById('modal-confirm').style.display='none';
+    closeModal();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }, 3000);
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+document.getElementById('modal-name').addEventListener('keydown', function(e){ if(e.key==='Enter') submitName(); });
+
+// Back to top button
+window.addEventListener('scroll', function(){
+  var btn = document.getElementById('back-top');
+  if(!btn) return;
+  if(window.scrollY > 400) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var el = document.querySelector(this.getAttribute('href'));
+    if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
+</script>
+</body>
+</html>
