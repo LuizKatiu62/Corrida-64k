@@ -2112,31 +2112,27 @@ async function writePhotoBackup(photos){
 }
 
 function downloadBackup(){
-  alert('Testando backup...');
-  try{
-    collectBackupStorage().then(async function(storage){
-      const photos = await readPhotoBackup();
-      const payload = {
-        meta: {
-          app: 'desafio64',
-          version: '1',
-          createdAt: new Date().toISOString(),
-        },
-        storage: storage,
-        photos: photos,
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'desafio64_backup_' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
-    }).catch(err => alert('Erro ao exportar: ' + err.message));
-  }catch(err){
-    alert('Erro: ' + err.message);
-  }
+  collectBackupStorage().then(async function(storage){
+    const photos = await readPhotoBackup();
+    const payload = {
+      meta: {
+        app: 'desafio64',
+        version: '1',
+        createdAt: new Date().toISOString(),
+      },
+      storage: storage,
+      photos: photos,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'desafio64_backup_' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    alert('✅ Backup exportado com sucesso!');
+  }).catch(err => alert('❌ Erro ao exportar: ' + err.message));
 }
 
 function importBackupFile(event){
