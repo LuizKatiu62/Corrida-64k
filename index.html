@@ -1096,6 +1096,7 @@ document.addEventListener('visibilitychange',function(){
   <div class="nav-sep"><span class="nav-sep-label">Mais</span><div class="nav-sep-line"></div></div>
   <button onclick="showWeek('photos')" id="btn-photos" style="border-color:#e67e22;color:#e67e22">📸 Fotos</button>
   <button onclick="openFBModal()" style="border-color:#27ae60;color:#27ae60">🔄 Sync</button>
+  <button onclick="downloadBackup()" style="border-color:#1b4f72;color:#1b4f72">📦 Backup</button>
 </div>
 
 <div class="week-nav" id="week-nav-gen" style="display:none"></div>
@@ -1847,6 +1848,11 @@ function openFBModal(){
       + '<div class="fb-actions">'
       + '<button class="fb-btn-primary" onclick="saveFBConfig()">Ativar Sync</button>'
       + '<button class="fb-btn-cancel" onclick="document.getElementById(\'fb-modal-overlay\').remove()">Cancelar</button>'
+      + '</div>'
+      + '<hr class="fb-divider">'
+      + '<div style="margin-top:.75rem">'
+      + '<button class="fb-btn-primary" style="width:100%;background:#1b4f72" onclick="downloadBackup()">📦 Exportar backup</button>'
+      + '<button class="fb-btn-cancel" style="width:100%;margin-top:.5rem;background:#eaf3fb;color:#1a5276;border:1.5px solid #aed6f1" onclick="document.getElementById(\'backup-import-file\').click()">📥 Importar backup</button>'
       + '</div>';
   } else {
     var alertHtml = '';
@@ -1901,6 +1907,11 @@ function openFBModal(){
       + '<button class="fb-btn-primary" style="width:100%;margin-top:.3rem;background:#1a6a9a;font-size:.85rem" onclick="copyFBConfig()">📋 Copiar Config</button>'
       + '</div>'
       + '<button class="fb-btn-cancel" style="width:100%;background:#f4f6f8;color:#555;font-size:.78rem" onclick="forceAppUpdate()">🔄 Atualizar app (limpar cache)</button>'
+      + '</div>'
+      + '<hr class="fb-divider">'
+      + '<div style="margin-top:.75rem">'
+      + '<button class="fb-btn-primary" style="width:100%;background:#1b4f72" onclick="downloadBackup()">📦 Exportar backup</button>'
+      + '<button class="fb-btn-cancel" style="width:100%;margin-top:.5rem;background:#eaf3fb;color:#1a5276;border:1.5px solid #aed6f1" onclick="document.getElementById(\'backup-import-file\').click()">📥 Importar backup</button>'
       + '</div>';
   }
 
@@ -2045,6 +2056,132 @@ function copyFBSyncId(){
     document.querySelector('.fb-copy-btn').textContent = 'Copiado!';
     setTimeout(()=>{ const b=document.querySelector('.fb-copy-btn'); if(b) b.textContent='Copiar'; },1500);
   });
+}
+
+async function collectBackupStorage(){
+  const prefixes = ['desafio64_', 'd64_', 'shop_w'];
+  const payload = {};
+  for(let i=0;i<localStorage.length;i++){
+    const key = localStorage.key(i);
+    if(!key) continue;
+    if(prefixes.some(pref => key.startsWith(pref))){
+      payload[key] = localStorage.getItem(key);
+    }
+  }
+  return payload;
+}
+
+async function readPhotoBackup(){
+  try{
+    const db = await openPhotoDB();
+    return new Promise((resolve,reject)=>{
+      const tx = db.transaction('photos','readonly');
+      const req = tx.objectStore('photos').getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }catch(e){ return []; }
+}
+
+async function writePhotoBackup(photos){
+  try{
+    const db = await openPhotoDB();
+    return new Promise((resolve,reject)=>{
+      const tx = db.transaction('photos','readwrite');
+      const store = tx.objectStore('photos');
+      const clearReq = store.clear();
+      clearReq.onsuccess = function(){
+        let count = 0;
+        if(!photos || !photos.length){ resolve(); return; }
+        photos.forEach(photo => {
+          const req = store.put(photo);
+          req.onsuccess = function(){ count += 1; if(count === photos.length) resolve(); };
+          req.onerror = function(){
+            count += 1;
+            console.warn('Falha ao restaurar foto:', photo.id, req.error);
+            if(count === photos.length) resolve();
+          };
+        });
+      };
+      clearReq.onerror = () => reject(clearReq.error);
+    });
+  }catch(e){
+    console.warn('writePhotoBackup error', e);
+    return Promise.resolve();
+  }
+}
+
+function downloadBackup(){
+  collectBackupStorage().then(async function(storage){
+    const photos = await readPhotoBackup();
+    const payload = {
+      meta: {
+        app: 'desafio64',
+        version: '1',
+        createdAt: new Date().toISOString(),
+      },
+      storage: storage,
+      photos: photos,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'desafio64_backup_' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  });
+}
+
+function importBackupFile(event){
+  const file = event.target.files?.[0];
+  if(!file) return;
+  event.target.value = '';
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const payload = JSON.parse(e.target.result);
+      applyBackupPayload(payload);
+    }catch(err){
+      alert('Arquivo inválido. Selecione o backup correto do Desafio 64km.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function applyBackupPayload(payload){
+  if(!payload || typeof payload !== 'object' || !payload.storage){
+    alert('Backup inválido. Não foi possível restaurar.');
+    return;
+  }
+  if(!confirm('Restaurar backup vai sobrescrever os dados locais do app. Continuar?')) return;
+  const prefixes = ['desafio64_', 'd64_', 'shop_w'];
+  const keysToRemove = [];
+  for(let i=0;i<localStorage.length;i++){
+    const key = localStorage.key(i);
+    if(key && prefixes.some(pref => key.startsWith(pref))){
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+  Object.keys(payload.storage).forEach(key => {
+    if(payload.storage[key] != null){
+      localStorage.setItem(key, payload.storage[key]);
+    }
+  });
+  if(payload.photos && Array.isArray(payload.photos)){
+    writePhotoBackup(payload.photos).then(function(){
+      alert('Backup restaurado com sucesso! A página será recarregada.');
+      location.reload(true);
+    }).catch(function(){
+      alert('Backup restaurado, mas houve erro ao restaurar fotos.');
+      location.reload(true);
+    });
+  } else {
+    alert('Backup restaurado com sucesso! A página será recarregada.');
+    location.reload(true);
+  }
 }
 
 function fbForceReceive(){
@@ -8725,5 +8862,6 @@ document.addEventListener('visibilitychange', function(){
 </div>
 <!-- Hevy file picker — must be in DOM at page load for iOS Safari -->
 <input type="file" id="hevy-file-picker" accept=".csv" style="position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
+<input type="file" id="backup-import-file" accept=".json,application/json" style="position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
 </body>
 </html>
