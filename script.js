@@ -25,7 +25,7 @@ async function handleStravaRedirect() {
           `https://summer-surf-93af.lcdsilva46.workers.dev/exchange_token?code=${code}`
         );
 
-        const data = await response.json();
+        const data = await res.json();
 
         localStorage.setItem("strava_token", data.access_token);
 
@@ -34,3 +34,9 @@ async function handleStravaRedirect() {
 }
 
 handleStravaRedirect();
+
+// FUNÇÃO PARA O BOTÃO DE SAIR
+function doLogout() {
+    localStorage.clear();
+    location.reload();
+}

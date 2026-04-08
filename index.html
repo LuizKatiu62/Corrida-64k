@@ -1307,17 +1307,8 @@ function showLoginForm(){
 
 // AUTH — funções definidas no primeiro <script> acima, só roda authInit aqui
 function authInit(){
-  var cred    = localStorage.getItem(window._AUTH_KEY);
   var overlay = document.getElementById('login-overlay');
-  var sess    = localStorage.getItem(window._SESSION_KEY);
-  if(sess && cred){
-    overlay.style.display='none'; return;
-  }
-  // Always show login form — never show "create account" on load
-  // (user already has an account; iOS sometimes wipes localStorage)
-  document.getElementById('login-sub').textContent = 'Bem-vindo de volta!';
-  document.getElementById('login-form-login').style.display = 'block';
-  document.getElementById('login-form-create').style.display = 'none';
+  if(overlay) overlay.style.display='none';
 }
 authInit();
 
