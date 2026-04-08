@@ -40,6 +40,6 @@ handleStravaRedirect();
 
 // FUNÇÃO PARA O BOTÃO DE SAIR
 function doLogout() {
-    localStorage.clear();
-    location.reload();
+    // Não apagar os dados do app — só sair do fluxo.
+    window.location.href = 'logout.html';
 }
