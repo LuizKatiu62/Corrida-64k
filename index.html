@@ -967,6 +967,7 @@
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
@@ -1752,9 +1753,6 @@ function initFirebaseSync(config){
   try{
     if(!firebase.apps.length) firebase.initializeApp(config);
     else firebase.app();
-firebase.auth().setPersistence(
-  firebase.auth.Auth.Persistence.SESSION
-);
 
     fbDB     = firebase.database();
     fbSyncId = getFBSyncId();
@@ -1933,21 +1931,50 @@ function saveFBConfig(){
   if(!raw){ fbMsgEl('Cole a configuração do Firebase antes de continuar.','err'); return; }
 
   let config;
+  let cleaned = raw
+    .replace(/^(?:const|let|var)\s+firebaseConfig\s*=\s*/,'')
+    .replace(/^[\s\S]*?firebaseConfig\s*=\s*/,'')
+    .replace(/;\s*$/,'')
+    .trim();
+
+  var firstBrace = cleaned.indexOf('{');
+  var lastBrace = cleaned.lastIndexOf('}');
+  if(firstBrace >= 0 && lastBrace > firstBrace){
+    cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+  }
+
+  cleaned = cleaned
+    .replace(/\/\*[\s\S]*?\*\//g,'')
+    .replace(/\/\/.*$/gm,'')
+    .replace(/,\s*([}\]])/g,'$1')
+    .trim();
+
   try{
-    const cleaned = raw
-      .replace(/^.*?firebaseConfig\s*=\s*/,'')
-      .replace(/;?\s*$/,'')
-      .replace(/([{,]\s*)(\w+)(\s*:)/g,'$1"$2"$3');
-    config = JSON.parse(cleaned);
+    config = JSON.parse(cleaned.replace(/([{,]\s*)([A-Za-z0-9_$]+)(\s*:)/g,'$1"$2"$3'));
   }catch(e){
-    fbMsgEl('Configuração inválida. Copie o objeto firebaseConfig exatamente como aparece no Firebase.','err');
+    try{
+      config = Function('return (' + cleaned + ')')();
+    }catch(evalError){
+      console.error('FB config parse error:', e, evalError, cleaned);
+      fbMsgEl('Configuração inválida. Cole o objeto firebaseConfig exatamente como aparece no Firebase.','err');
+      return;
+    }
+  }
+
+  if(!config || typeof config !== 'object' || !config.databaseURL){
+    fbMsgEl('O campo "databaseURL" não foi encontrado. Certifique-se de ativar o Realtime Database no Firebase.','err');
     return;
   }
 
-  if(!config.databaseURL){ fbMsgEl('O campo "databaseURL" não foi encontrado. Certifique-se de ativar o Realtime Database no Firebase.','err'); return; }
-
   fbMsgEl('Conectando...','ok');
-  const ok = initFirebaseSync(config);
+  let ok = false;
+  try {
+    ok = initFirebaseSync(config);
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    fbMsgEl('Erro ao conectar: '+(e.message||e)+'','err');
+    return;
+  }
   if(ok){
     setTimeout(()=>{ fbMsgEl('✅ Firebase conectado! Sync ativo.','ok'); openFBModal(); },800);
   } else {
