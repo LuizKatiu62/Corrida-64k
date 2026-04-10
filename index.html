@@ -120,19 +120,21 @@
     .scroll-today-btn:hover{background:var(--verde-esc)}
 
     /* MAPS SECTION */
-    .maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;padding:.5rem 0}
-    .map-card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden}
-    .map-card-header{padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#1a252f,#2c3e50);color:#fff}
-    .map-card-header .map-date{font-size:.8rem;opacity:.75;margin-left:auto}
-    .map-card-title{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+    #section-maps{overflow-x:hidden;width:100%}
+    .maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:1rem;padding:.5rem 0;width:100%}
+    .map-card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;min-width:0;max-width:100%}
+    .map-card-header{padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#1a252f,#2c3e50);color:#fff;min-width:0}
+    .map-card-header .map-date{font-size:.8rem;opacity:.75;margin-left:auto;white-space:nowrap;flex-shrink:0}
+    .map-card-title{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
     .map-card-stats{display:flex;gap:1rem;padding:.5rem 1rem;font-size:.8rem;color:#555;flex-wrap:wrap;border-bottom:1px solid #f0f0f0}
     .map-card-stat{display:flex;flex-direction:column;align-items:center}
     .map-card-stat strong{font-size:.95rem;color:#2c3e50}
-    .map-leaflet{width:100%;height:220px}
+    .map-leaflet{width:100%;height:220px;display:block}
     .map-no-route{height:80px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:.85rem;font-style:italic}
     .maps-empty{text-align:center;padding:3rem 1rem;color:#aaa}
     .maps-empty .maps-empty-icon{font-size:3rem;margin-bottom:.75rem}
     .maps-reimport-note{background:#eafaf1;border:1px solid #a9dfbf;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#1e8449}
+    @media(max-width:600px){.maps-grid{grid-template-columns:1fr}}
 
     /* WEEK SECTION */
     .week-section{margin-bottom:2.5rem}
@@ -1321,7 +1323,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v538</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v539</span></footer>
 
 <script>
 function showLoginForm(){
