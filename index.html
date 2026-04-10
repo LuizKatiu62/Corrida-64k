@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v588</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v589</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2342,30 +2342,45 @@ function rebuildProgressFromActivities(){
   var gymDates  = Object.keys(hevy);
   var changed = 0;
 
-  // For a day to count as "done" it needs run + nutri (+ gym if scheduled).
-  // Since we lost the original progress, mark nutri=true for any day with a run activity,
-  // and gym=true for any day with a Hevy entry.
+  // Mark which plan days have REAL gym exercises (ignore "Sem academia" placeholders)
+  var realGymDates = {};
+  PLAN.forEach(function(d){
+    var exs = d.gym && d.gym.ex ? d.gym.ex : [];
+    var hasReal = exs.length > 0 && !exs.every(function(e){ return /^sem\s/i.test(e.trim()); });
+    if(hasReal) realGymDates[d.date] = true;
+  });
+
   runDates.forEach(function(date){
     if(!progress[date]) progress[date] = {};
     if(!progress[date].run)   { progress[date].run   = true; changed++; }
     if(!progress[date].nutri) { progress[date].nutri = true; changed++; }
+    // If this day has real gym and we have no hevy entry, still restore gym done
+    if(realGymDates[date] && !progress[date].gym) { progress[date].gym = true; changed++; }
   });
   gymDates.forEach(function(date){
     if(!progress[date]) progress[date] = {};
-    if(!progress[date].gym) { progress[date].gym = true; changed++; }
+    if(!progress[date].gym)   { progress[date].gym   = true; changed++; }
+    if(!progress[date].nutri) { progress[date].nutri = true; changed++; }
   });
+
+  // Also restore the 04/05 ↔ 04/09 run swap that was lost with the cache
+  var d0405 = '2026-04-05', d0409 = '2026-04-09';
+  if(!progress[d0405]) progress[d0405] = {};
+  if(!progress[d0409]) progress[d0409] = {};
+  progress[d0405].reschedule = { type: 'receive', from: d0409 };
+  progress[d0409].reschedule = { type: 'receive', from: d0405 };
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 
-  // Re-render
-  try{ renderAll(); }catch(e){}
-  try{ updateProgressStats(progress); }catch(e){}
+  // Re-read from storage to make sure render uses latest data
+  var fresh = (function(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}; }catch(e){ return progress; } })();
+  try{ updateProgressStats(fresh); }catch(e){ console.warn('updateProgressStats error:',e); }
   var today = getToday();
   [1,2,3,4,5].forEach(function(w){
     var grid = document.getElementById('grid-w'+w);
     if(!grid) return;
     var days = PLAN.filter(function(d){ return d.week===w; });
-    grid.innerHTML = days.map(function(d){ return buildCard(d, d.date===today, progress); }).join('');
+    grid.innerHTML = days.map(function(d){ return buildCard(d, d.date===today, fresh); }).join('');
   });
 
   // Push to Firebase if connected
