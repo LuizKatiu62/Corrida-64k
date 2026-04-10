@@ -1321,7 +1321,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v537</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v538</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6437,7 +6437,7 @@ function renderMapsSection(){
   if(!el) return;
 
   var g = loadGarmin();
-  var entries = Object.keys(g).sort().reverse(); // newest first
+  var entries = Object.keys(g).sort(function(a,b){ return b>a?1:b<a?-1:0; }); // newest first
 
   if(!entries.length){
     el.innerHTML='<div class="maps-empty"><div class="maps-empty-icon">🗺️</div><p>Nenhuma atividade importada do Strava ainda.</p><p style="margin-top:.5rem;font-size:.85rem">Importe atividades pelo botão <strong>Sync</strong> e os mapas aparecerão aqui.</p></div>';
