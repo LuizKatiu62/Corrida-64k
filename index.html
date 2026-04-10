@@ -1323,7 +1323,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v545</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v546</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7615,29 +7615,28 @@ function openGoalSelector(){
   const cards = Object.entries(GOAL_META).map(([type, meta])=>{
     const gd = type !== '64k' ? loadGoalData(type) : null;
     const isSelected = type === activeGoal;
+    // Pills row
+    const pills = (meta.pills||[]).map(p=>`<span class="goal-card-pill">${p}</span>`).join('');
+    // Event info below pills
     let extra = '';
     if(type === '64k'){
-      extra = `<div class="goal-card-event">📅 02 Mai 2026 · 📍 Saint John, NB · 64km fixo</div>`;
+      extra = `<div class="goal-card-event">📅 02 Mai 2026 · 📍 Saint John, NB</div>`;
     } else if(gd && gd.eventDate){
       const d = new Date(gd.eventDate+'T12:00:00');
       const lines = [];
       lines.push(`📅 ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
       if(gd.city) lines.push(`📍 ${gd.city}${gd.province?', '+gd.province:''}`);
       if(gd.targetTime) lines.push(`🎯 ${gd.targetTime}`);
-      const regTag = gd.registered
-        ? `<span style="color:#27ae60;font-weight:700">✅ Inscrito</span>`
-        : `<span style="color:#e67e22;font-weight:700">⚠️ Inscrição pendente</span>`;
-      extra = `<div class="goal-card-event">${lines.join(' · ')}</div><div style="margin-top:.2rem;font-size:.7rem">${regTag} <span style="color:#aaa;font-size:.68rem">· toque para editar</span></div>`;
-    } else {
-      extra = `<div class="goal-card-setup">+ Definir data e detalhes do evento</div>`;
+      const regTag = gd.registered ? '✅ Inscrito' : '⚠️ Pendente';
+      extra = `<div class="goal-card-event">${lines.join(' · ')} · ${regTag}</div>`;
+    } else if(!meta.noPlan || type!=='64k'){
+      extra = `<div class="goal-card-setup">+ Toque para definir o evento</div>`;
     }
-    return `<div class="goal-card${isSelected?' selected':''}" onclick="selectGoalType('${type}')">
-      <div class="goal-card-icon">${meta.icon}</div>
-      <div class="goal-card-body">
-        <div class="goal-card-name" style="color:${meta.color}">${meta.label}</div>
-        <div class="goal-card-desc">${meta.desc}${meta.noPlan?' <span style="font-size:.65rem;background:#f0f0f0;color:#888;border-radius:4px;padding:.1rem .35rem;font-weight:600">sem plano de treino</span>':''}</div>${extra}
-      </div>
-      <span style="color:#ddd;font-size:1.1rem;flex-shrink:0">›</span>
+    return `<div class="goal-card${isSelected?' selected':''}" onclick="selectGoalType('${type}')" style="background:${meta.color}">
+      <span class="goal-card-icon">${meta.icon}</span>
+      <div class="goal-card-name">${meta.label}</div>
+      <div class="goal-card-pills">${pills}</div>
+      ${extra}
     </div>`;
   }).join('');
   overlay.innerHTML = `<div class="goal-modal">
