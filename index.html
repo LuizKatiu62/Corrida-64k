@@ -1321,7 +1321,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v540</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v541</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6435,6 +6435,18 @@ function decodePolyline(encoded){
 function renderMapsSection(){
   var el = document.getElementById('maps-content');
   if(!el) return;
+  // Load Leaflet lazily on first use
+  if(typeof L === 'undefined'){
+    el.innerHTML='<p style="text-align:center;padding:2rem;color:#888">Carregando biblioteca de mapas...</p>';
+    var css = document.createElement('link');
+    css.rel='stylesheet'; css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; css.crossOrigin='';
+    document.head.appendChild(css);
+    var js = document.createElement('script');
+    js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; js.crossOrigin='';
+    js.onload = function(){ renderMapsSection(); };
+    document.head.appendChild(js);
+    return;
+  }
 
   var g = loadGarmin();
   var entries = Object.keys(g).sort(function(a,b){ return b>a?1:b<a?-1:0; }); // newest first
