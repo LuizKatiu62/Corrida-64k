@@ -735,19 +735,32 @@ function openParticipantesModal(){
     label.textContent = entries.length+' confirmed participant'+(entries.length!==1?'s':'');
     var actIcon={running:'🏃',walking:'🚶',biking:'🚴'};
     var rows = entries.map(function(e,i){
-      var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '';
-      var km  = e.km ? '<span style="color:#f7c948;font-weight:700">'+e.km+'km</span>' : '';
-      var tm  = e.time ? '<span style="color:#5dade2">⏱ '+e.time+'</span>' : '';
-      var tags = [km,act,tm].filter(Boolean).join(' · ');
-      return '<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border-radius:10px;background:rgba(255,255,255,'+(i%2===0?'.04':'.07')+')">'
-        +'<span style="color:rgba(255,255,255,.3);font-size:.75rem;width:1.4rem;text-align:right;flex-shrink:0">'+(i+1)+'</span>'
-        +'<div style="flex:1;min-width:0">'
-          +'<div style="font-weight:700;font-size:.95rem">'+e.nome+'</div>'
-          +(tags?'<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.1rem">'+tags+'</div>':'')
-        +'</div>'
-      +'</div>';
+      var dt  = e.ts ? new Date(e.ts).toLocaleDateString('en-CA') : '—';
+      var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '<span style="color:rgba(255,255,255,.3)">—</span>';
+      var km  = e.km ? '<strong style="color:#f7c948">'+e.km+' km</strong>' : '<span style="color:rgba(255,255,255,.3)">—</span>';
+      var tm  = e.time ? '<strong style="color:#5dade2">'+e.time+'</strong>' : '<span style="color:rgba(255,255,255,.3)">—</span>';
+      var bg  = i%2===0 ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.07)';
+      return '<tr style="background:'+bg+';border-bottom:1px solid rgba(255,255,255,.06)">'
+        +'<td style="padding:.55rem .7rem;color:rgba(255,255,255,.35);font-size:.78rem">'+(i+1)+'</td>'
+        +'<td style="padding:.55rem .7rem;font-weight:700;color:#fff">'+e.nome+'</td>'
+        +'<td style="padding:.55rem .7rem;font-size:.85rem">'+km+'</td>'
+        +'<td style="padding:.55rem .7rem;font-size:.82rem">'+act+'</td>'
+        +'<td style="padding:.55rem .7rem;font-size:.85rem">'+tm+'</td>'
+        +'<td style="padding:.55rem .7rem;font-size:.72rem;color:rgba(255,255,255,.35)">'+dt+'</td>'
+        +'</tr>';
     }).join('');
-    body.innerHTML = '<div style="display:flex;flex-direction:column;gap:.35rem">'+rows+'</div>';
+    body.innerHTML = '<div style="overflow-x:auto">'
+      +'<table style="width:100%;border-collapse:collapse;min-width:360px">'
+      +'<thead><tr style="background:#1a3a5c">'
+      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">#</th>'
+      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Name</th>'
+      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Km</th>'
+      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Activity</th>'
+      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Time</th>'
+      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Confirmed</th>'
+      +'</tr></thead>'
+      +'<tbody>'+rows+'</tbody>'
+      +'</table></div>';
   }).catch(function(){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#e74c3c">Error loading list.</p>'; });
 }
 function closeParticipantesModal(){
