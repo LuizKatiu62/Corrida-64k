@@ -595,51 +595,38 @@ function openParticipantesModal(){
   document.getElementById('modal-participantes').classList.add('open');
   var body = document.getElementById('part-list-body');
   var label = document.getElementById('part-count-label');
-  body.innerHTML = '<p style="text-align:center;padding:2rem;color:rgba(255,255,255,.4)">Carregando...</p>';
-  label.textContent = 'Carregando lista...';
-  if(!fbDb){ body.innerHTML='<p style="text-align:center;padding:1rem;color:rgba(255,255,255,.4)">Não foi possível conectar ao banco de dados.</p>'; return; }
+  body.innerHTML = '<p style="text-align:center;padding:2rem;color:#bbb">Carregando...</p>';
+  label.textContent = '';
+  if(!fbDb){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#bbb">Não foi possível conectar.</p>'; return; }
   fbDb.ref('desafio64/participantes').once('value').then(function(snap){
     var data = snap.val()||{};
     var entries = [];
-    Object.keys(data).forEach(function(k){
-      var e=data[k]; if(e&&e.nome) entries.push(e);
-    });
+    Object.keys(data).forEach(function(k){ var e=data[k]; if(e&&e.nome) entries.push(e); });
     entries.sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
     if(!entries.length){
-      label.textContent='Nenhum participante confirmado ainda.';
-      body.innerHTML='<p style="text-align:center;padding:2rem;color:rgba(255,255,255,.35);font-size:.9rem">Seja o primeiro a confirmar! 🏃</p>';
+      label.textContent='';
+      body.innerHTML='<div style="text-align:center;padding:2.5rem 1rem;color:#bbb"><div style="font-size:2.5rem;margin-bottom:.5rem">🏃</div><p>Nenhum participante confirmado ainda.</p><p style="font-size:.8rem;margin-top:.3rem">Seja o primeiro!</p></div>';
       return;
     }
     label.textContent = entries.length+' participante'+(entries.length!==1?'s confirmados':' confirmado');
-    var actIcon={running:'🏃',walking:'🚶',biking:'🚴'};
-    var rows = entries.map(function(e,i){
-      var dt  = e.ts ? new Date(e.ts).toLocaleDateString('pt-BR') : '—';
-      var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '<span style="color:#ccc">—</span>';
-      var km  = e.km ? '<strong style="color:#b8860b">'+e.km+' km</strong>' : '<span style="color:#ccc">—</span>';
-      var tm  = e.time ? '<strong style="color:#1a5276">'+e.time+'</strong>' : '<span style="color:#ccc">—</span>';
-      var bg  = i%2===0 ? '#fff' : '#f7f7f7';
-      return '<tr style="background:'+bg+';border-bottom:1px solid #e8e8e8">'
-        +'<td style="padding:.55rem .7rem;color:#aaa;font-size:.78rem">'+(i+1)+'</td>'
-        +'<td style="padding:.55rem .7rem;font-weight:700;color:#111">'+e.nome+'</td>'
-        +'<td style="padding:.55rem .7rem;font-size:.85rem">'+km+'</td>'
-        +'<td style="padding:.55rem .7rem;font-size:.82rem;color:#333">'+act+'</td>'
-        +'<td style="padding:.55rem .7rem;font-size:.85rem">'+tm+'</td>'
-        +'<td style="padding:.55rem .7rem;font-size:.72rem;color:#999">'+dt+'</td>'
-        +'</tr>';
+    var actLabel={running:'Correndo 🏃',walking:'Caminhando 🚶',biking:'Pedalando 🚴'};
+    var actColor={running:'#27ae60',walking:'#2980b9',biking:'#e67e22'};
+    var cards = entries.map(function(e,i){
+      var pills = '';
+      if(e.km)       pills += '<span style="background:#fef3cd;color:#7d6008;border-radius:999px;padding:.2rem .65rem;font-size:.75rem;font-weight:700">'+e.km+' km</span> ';
+      if(e.activity) pills += '<span style="background:'+(actColor[e.activity]||'#eee')+'22;color:'+(actColor[e.activity]||'#555')+';border:1px solid '+(actColor[e.activity]||'#ddd')+'44;border-radius:999px;padding:.2rem .65rem;font-size:.75rem;font-weight:600">'+(actLabel[e.activity]||e.activity)+'</span> ';
+      if(e.time)     pills += '<span style="background:#eaf3fb;color:#1a5276;border-radius:999px;padding:.2rem .65rem;font-size:.75rem;font-weight:700">⏱ '+e.time+'</span>';
+      return '<div style="display:flex;align-items:center;gap:.85rem;padding:.75rem .5rem;border-bottom:1px solid #f0f0f0">'
+        +'<div style="width:28px;height:28px;border-radius:50%;background:#1a3a5c;color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-weight:800;font-size:.97rem;color:#1a252f;margin-bottom:.3rem">'+e.nome+'</div>'
+          +(pills ? '<div style="display:flex;gap:.35rem;flex-wrap:wrap">'+pills+'</div>' : '')
+        +'</div>'
+        +(e.ts ? '<div style="font-size:.68rem;color:#ccc;flex-shrink:0;text-align:right">'+new Date(e.ts).toLocaleDateString('pt-BR')+'</div>' : '')
+      +'</div>';
     }).join('');
-    body.innerHTML = '<div style="overflow-x:auto">'
-      +'<table style="width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;min-width:380px;box-shadow:0 1px 6px rgba(0,0,0,.08)">'
-      +'<thead><tr style="background:#1a3a5c">'
-      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">#</th>'
-      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Nome</th>'
-      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Km</th>'
-      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Atividade</th>'
-      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Horário</th>'
-      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Confirmou</th>'
-      +'</tr></thead>'
-      +'<tbody>'+rows+'</tbody>'
-      +'</table></div>'
-      +'<p style="margin-top:.75rem;font-size:.72rem;color:#aaa;text-align:center">Atualizado agora · <button onclick="openParticipantesModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:.72rem;text-decoration:underline">Atualizar</button></p>';
+    body.innerHTML = '<div>'+cards+'</div>'
+      +'<p style="margin-top:.75rem;font-size:.72rem;color:#bbb;text-align:center">Atualizado agora · <button onclick="openParticipantesModal()" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:.72rem;text-decoration:underline">Atualizar</button></p>';
   }).catch(function(){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#e74c3c">Erro ao carregar a lista.</p>'; });
 }
 function closeParticipantesModal(){
