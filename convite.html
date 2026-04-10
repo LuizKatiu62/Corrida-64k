@@ -736,31 +736,32 @@ function openParticipantesModal(){
     var actIcon={running:'🏃',walking:'🚶',biking:'🚴'};
     var rows = entries.map(function(e,i){
       var dt  = e.ts ? new Date(e.ts).toLocaleDateString('en-CA') : '—';
-      var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '<span style="color:rgba(255,255,255,.3)">—</span>';
-      var km  = e.km ? '<strong style="color:#f7c948">'+e.km+' km</strong>' : '<span style="color:rgba(255,255,255,.3)">—</span>';
-      var tm  = e.time ? '<strong style="color:#5dade2">'+e.time+'</strong>' : '<span style="color:rgba(255,255,255,.3)">—</span>';
-      var bg  = i%2===0 ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.07)';
-      return '<tr style="background:'+bg+';border-bottom:1px solid rgba(255,255,255,.06)">'
-        +'<td style="padding:.55rem .7rem;color:rgba(255,255,255,.35);font-size:.78rem">'+(i+1)+'</td>'
-        +'<td style="padding:.55rem .7rem;font-weight:700;color:#fff">'+e.nome+'</td>'
+      var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '<span style="color:#ccc">—</span>';
+      var km  = e.km ? '<strong style="color:#b8860b">'+e.km+' km</strong>' : '<span style="color:#ccc">—</span>';
+      var tm  = e.time ? '<strong style="color:#1a5276">'+e.time+'</strong>' : '<span style="color:#ccc">—</span>';
+      var bg  = i%2===0 ? '#fff' : '#f7f7f7';
+      return '<tr style="background:'+bg+';border-bottom:1px solid #e8e8e8">'
+        +'<td style="padding:.55rem .7rem;color:#aaa;font-size:.78rem">'+(i+1)+'</td>'
+        +'<td style="padding:.55rem .7rem;font-weight:700;color:#111">'+e.nome+'</td>'
         +'<td style="padding:.55rem .7rem;font-size:.85rem">'+km+'</td>'
-        +'<td style="padding:.55rem .7rem;font-size:.82rem">'+act+'</td>'
+        +'<td style="padding:.55rem .7rem;font-size:.82rem;color:#333">'+act+'</td>'
         +'<td style="padding:.55rem .7rem;font-size:.85rem">'+tm+'</td>'
-        +'<td style="padding:.55rem .7rem;font-size:.72rem;color:rgba(255,255,255,.35)">'+dt+'</td>'
+        +'<td style="padding:.55rem .7rem;font-size:.72rem;color:#999">'+dt+'</td>'
         +'</tr>';
     }).join('');
     body.innerHTML = '<div style="overflow-x:auto">'
-      +'<table style="width:100%;border-collapse:collapse;min-width:360px">'
+      +'<table style="width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;min-width:380px;box-shadow:0 1px 6px rgba(0,0,0,.08)">'
       +'<thead><tr style="background:#1a3a5c">'
-      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">#</th>'
-      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Name</th>'
-      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Km</th>'
-      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Activity</th>'
-      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Time</th>'
-      +'<th style="padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)">Confirmed</th>'
+      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">#</th>'
+      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Name</th>'
+      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Km</th>'
+      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Activity</th>'
+      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Time</th>'
+      +'<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)">Confirmed</th>'
       +'</tr></thead>'
       +'<tbody>'+rows+'</tbody>'
-      +'</table></div>';
+      +'</table></div>'
+      +'<p style="margin-top:.75rem;font-size:.72rem;color:#aaa;text-align:center">Updated just now · <button onclick="openParticipantesModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:.72rem;text-decoration:underline">Refresh</button></p>';
   }).catch(function(){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#e74c3c">Error loading list.</p>'; });
 }
 function closeParticipantesModal(){
