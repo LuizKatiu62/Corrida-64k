@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v598</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v599</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5335,16 +5335,11 @@ function buildCard(day, isToday, p){
   } else if(extraRun){
     effectiveTitle = '🏃 ' + (extraRun.title || 'Treino extra');
     effectiveType = 'easy';
-  } else if(runReceive && thisOriginalMoved){
-    // Dia cedeu seu treino e recebeu outro — usar info do dia de origem
+  } else if(runReceive){
+    // Reagendamento sempre substitui — usar título e tipo do dia de origem
     var rFromDayInfo = PLAN.find(function(d){ return d.date === rSched.from; });
     effectiveTitle = rFromDayInfo ? rFromDayInfo.run.title : day.run.title;
     effectiveType = rFromDayInfo ? rFromDayInfo.type : day.type;
-  } else if(runReceive && day.run.km === 0){
-    // Dia sem treino original que recebeu um treino
-    var rFromDayInfo2 = PLAN.find(function(d){ return d.date === rSched.from; });
-    effectiveTitle = rFromDayInfo2 ? rFromDayInfo2.run.title : day.run.title;
-    effectiveType = rFromDayInfo2 ? rFromDayInfo2.type : day.type;
   } else {
     effectiveTitle = day.run.title;
     effectiveType = day.type;
