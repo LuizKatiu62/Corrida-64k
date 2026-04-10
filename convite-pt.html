@@ -203,8 +203,8 @@
     </div>
     <div class="hero-cta-wrap">
       <button onclick="openModal()" class="cta-btn cta-primary">🏃 Quero Participar</button>
-      <a href="#detalhes" class="cta-btn cta-secondary">📍 Detalhes do Evento</a>
-      <a href="#historia" class="cta-btn cta-secondary">📖 Minha História</a>
+      <a href="#detalhes" onclick="event.preventDefault();document.getElementById('detalhes').scrollIntoView({behavior:'smooth'})" class="cta-btn cta-secondary">📍 Detalhes do Evento</a>
+      <a href="#historia" onclick="event.preventDefault();document.getElementById('historia').scrollIntoView({behavior:'smooth'})" class="cta-btn cta-secondary">📖 Minha História</a>
       <a href="#arrecadacao" onclick="event.preventDefault();document.getElementById('arrecadacao').scrollIntoView({behavior:'smooth'})" class="cta-btn cta-gold">💙 Apoiar a Causa</a>
     </div>
     <div class="hero-location">📍 <strong>Little River Reservoir Trail</strong> · Saint John, NB</div>
