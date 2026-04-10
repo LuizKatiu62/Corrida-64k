@@ -1328,7 +1328,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v551</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v552</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6456,77 +6456,139 @@ function renderMapsSection(){
   }
 
   var g = loadGarmin();
-  var entries = Object.keys(g).sort(function(a,b){ return b>a?1:b<a?-1:0; }); // newest first
+  var allDates = Object.keys(g).sort(); // oldest first for grouping
 
-  if(!entries.length){
+  if(!allDates.length){
     el.innerHTML='<div class="maps-empty"><div class="maps-empty-icon">🗺️</div><p>Nenhuma atividade importada do Strava ainda.</p><p style="margin-top:.5rem;font-size:.85rem">Importe atividades pelo botão <strong>Sync</strong> e os mapas aparecerão aqui.</p></div>';
     return;
   }
 
-  var withPolyline = entries.filter(function(d){ return g[d].polyline && g[d].polyline.length>10; });
-  var withoutPolyline = entries.filter(function(d){ return !g[d].polyline || g[d].polyline.length<=10; });
+  var withPolyline = allDates.filter(function(d){ return g[d].polyline && g[d].polyline.length>10; });
+  var withoutPolyline = allDates.filter(function(d){ return !g[d].polyline || g[d].polyline.length<=10; });
 
-  var html='<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">'
-    +'<h3 style="font-size:1.1rem;font-weight:800">🗺️ Mapas — Treinos & Evento</h3>'
-    +'<span style="font-size:.8rem;color:#888">'+entries.length+' atividade'+(entries.length!==1?'s':'')+' · '+withPolyline.length+' com mapa</span>'
-    +'</div>';
-
-  if(withoutPolyline.length>0 && withPolyline.length===0){
-    html+='<div class="maps-reimport-note">ℹ️ As atividades existentes foram importadas sem dados de rota. Para ver os mapas, reimporte cada atividade pelo botão <strong>Sync → Importar</strong> e os mapas serão salvos automaticamente.</div>';
-  } else if(withoutPolyline.length>0){
-    html+='<div class="maps-reimport-note">ℹ️ '+withoutPolyline.length+' atividade'+(withoutPolyline.length!==1?'s foram importadas':' foi importada')+' sem dados de rota. Reimporte pelo <strong>Sync</strong> para adicionar o mapa.</div>';
+  // Build date→week map from PLAN
+  var dateToWeek = {};
+  var weekMeta = {
+    1:{label:'S1 · Adaptação',   color:'#27ae60', icon:'🌱'},
+    2:{label:'S2 · Construção',  color:'#2980b9', icon:'🔨'},
+    3:{label:'S3 · Pico',        color:'#e67e22', icon:'🔥'},
+    4:{label:'S4 · Taper',       color:'#8e44ad', icon:'⚡'},
+    5:{label:'S5 · Corrida',     color:'#e74c3c', icon:'🏁'},
+  };
+  if(typeof PLAN !== 'undefined'){
+    PLAN.forEach(function(d){ dateToWeek[d.date] = d.week; });
   }
 
-  if(!withPolyline.length){
-    html+='<div class="maps-empty"><div class="maps-empty-icon">📍</div><p>Nenhuma rota disponível ainda.</p></div>';
-    el.innerHTML=html;
-    return;
-  }
-
-  html+='<div class="maps-grid" id="maps-grid">';
-  withPolyline.forEach(function(date){
-    var a = g[date];
-    var label = a.filename || date;
-    var dist = a.dist ? a.dist+'km' : '—';
-    var dur = a.duration || '—';
-    var pace = a.pace || '—';
-    var dateLabel = date;
-    try{ var d=new Date(date+'T12:00:00'); dateLabel=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){}
-    html+='<div class="map-card">'
-      +'<div class="map-card-header">'
-        +'<span class="map-card-title">🏃 '+label+'</span>'
-        +'<span class="map-date">'+dateLabel+'</span>'
-      +'</div>'
-      +'<div class="map-card-stats">'
-        +'<div class="map-card-stat"><strong>'+dist+'</strong><span>Distância</span></div>'
-        +'<div class="map-card-stat"><strong>'+dur+'</strong><span>Tempo</span></div>'
-        +'<div class="map-card-stat"><strong>'+pace+'</strong><span>Pace</span></div>'
-      +'</div>'
-      +'<div class="map-leaflet" id="map-'+date+'"></div>'
-    +'</div>';
+  // Build date→event map from saved events
+  var dateToEvent = {};
+  var evts = typeof loadEvents === 'function' ? loadEvents() : [];
+  evts.forEach(function(ev){
+    if(ev.date) dateToEvent[ev.date] = ev.title || 'Evento';
   });
-  html+='</div>';
-  el.innerHTML=html;
+
+  // Group dates: event takes priority over week, else 'other'
+  var groups = {}; // key → {type:'week'|'event'|'other', label, color, icon, dates:[]}
+  allDates.forEach(function(date){
+    var key, meta;
+    if(dateToEvent[date]){
+      key = 'ev_'+date;
+      if(!groups[key]) groups[key] = {type:'event', label:dateToEvent[date], color:'#d4880a', icon:'🏅', dates:[]};
+    } else if(dateToWeek[date]){
+      var w = dateToWeek[date];
+      key = 'w'+w;
+      if(!groups[key]) groups[key] = Object.assign({type:'week'}, weekMeta[w]||{label:'Semana '+w,color:'#555',icon:'📅'}, {dates:[]});
+    } else {
+      key = 'other';
+      if(!groups[key]) groups[key] = {type:'other', label:'Outros Treinos', color:'#636e72', icon:'🏃', dates:[]};
+    }
+    groups[key].dates.push(date);
+  });
+
+  // Sort group keys: weeks first (w1→w5), then events by date, then other
+  var groupKeys = Object.keys(groups).sort(function(a,b){
+    var wa = a.startsWith('w') ? parseInt(a.slice(1)) : 99;
+    var wb = b.startsWith('w') ? parseInt(b.slice(1)) : 99;
+    if(a==='other') wa=999; if(b==='other') wb=999;
+    return wa-wb;
+  });
+
+  var withoutCount = withoutPolyline.length;
+  var html = '<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">'
+    +'<h3 style="font-size:1.1rem;font-weight:800">🗺️ Mapas — Treinos & Evento</h3>'
+    +'<span style="font-size:.8rem;color:#888">'+allDates.length+' atividade'+(allDates.length!==1?'s':'')+' · '+withPolyline.length+' com mapa</span>'
+    +'</div>';
+
+  if(withoutCount>0 && withPolyline.length===0){
+    html+='<div class="maps-reimport-note">ℹ️ As atividades existentes foram importadas sem dados de rota. Para ver os mapas, reimporte cada atividade pelo botão <strong>Sync → Importar</strong>.</div>';
+  } else if(withoutCount>0){
+    html+='<div class="maps-reimport-note">ℹ️ '+withoutCount+' atividade'+(withoutCount!==1?'s sem':'  sem')+' rota. Reimporte pelo <strong>Sync</strong> para adicionar o mapa.</div>';
+  }
+
+  var allMapDates = [];
+
+  groupKeys.forEach(function(key){
+    var grp = groups[key];
+    var datesWithMap = grp.dates.filter(function(d){ return g[d].polyline && g[d].polyline.length>10; });
+    var datesTotal = grp.dates.length;
+    if(!datesTotal) return;
+
+    html += '<div class="maps-group">'
+      +'<div class="maps-group-header" style="border-left-color:'+grp.color+'">'
+        +'<span class="maps-group-icon">'+grp.icon+'</span>'
+        +'<span class="maps-group-label" style="color:'+grp.color+'">'+grp.label+'</span>'
+        +'<span class="maps-group-count">'+datesWithMap.length+' mapa'+(datesWithMap.length!==1?'s':'')+' · '+datesTotal+' treino'+(datesTotal!==1?'s':'')+'</span>'
+      +'</div>';
+
+    if(!datesWithMap.length){
+      html+='<div class="map-no-route" style="padding:1rem">Nenhum mapa disponível nesta semana — reimporte as atividades.</div>';
+    } else {
+      html+='<div class="maps-grid">';
+      datesWithMap.forEach(function(date){
+        var a = g[date];
+        var label = a.filename || date;
+        var dist = a.dist ? a.dist+'km' : '—';
+        var dur = a.duration || '—';
+        var pace = a.pace || '—';
+        var dateLabel = date;
+        try{ var dd=new Date(date+'T12:00:00'); dateLabel=dd.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}); }catch(e){}
+        html+='<div class="map-card">'
+          +'<div class="map-card-header" style="background:linear-gradient(135deg,'+grp.color+','+grp.color+'cc)">'
+            +'<span class="map-card-title">🏃 '+label+'</span>'
+            +'<span class="map-date">'+dateLabel+'</span>'
+          +'</div>'
+          +'<div class="map-card-stats">'
+            +'<div class="map-card-stat"><strong>'+dist+'</strong><span>Distância</span></div>'
+            +'<div class="map-card-stat"><strong>'+dur+'</strong><span>Tempo</span></div>'
+            +'<div class="map-card-stat"><strong>'+pace+'</strong><span>Pace</span></div>'
+          +'</div>'
+          +'<div class="map-leaflet" id="map-'+date+'"></div>'
+        +'</div>';
+        allMapDates.push({date:date, color:grp.color});
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+
+  el.innerHTML = html;
 
   // Init Leaflet maps after DOM is ready
   setTimeout(function(){
-    withPolyline.forEach(function(date){
-      var a = g[date];
-      if(!a.polyline) return;
+    allMapDates.forEach(function(item){
+      var a = g[item.date];
+      if(!a || !a.polyline) return;
       var coords = decodePolyline(a.polyline);
       if(!coords.length) return;
       try{
-        var mapEl = document.getElementById('map-'+date);
+        var mapEl = document.getElementById('map-'+item.date);
         if(!mapEl || mapEl._leaflet_id) return;
         var m = L.map(mapEl, {zoomControl:true, scrollWheelZoom:false, attributionControl:false});
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(m);
-        var line = L.polyline(coords, {color:'#16a085', weight:4, opacity:.85}).addTo(m);
-        // Start marker
+        var line = L.polyline(coords, {color:item.color, weight:4, opacity:.9}).addTo(m);
         L.circleMarker(coords[0], {radius:6, color:'#27ae60', fillColor:'#27ae60', fillOpacity:1}).addTo(m);
-        // End marker
         L.circleMarker(coords[coords.length-1], {radius:6, color:'#e74c3c', fillColor:'#e74c3c', fillOpacity:1}).addTo(m);
         m.fitBounds(line.getBounds(), {padding:[16,16]});
-      }catch(e){ console.warn('Map error for '+date, e); }
+      }catch(e){ console.warn('Map error for '+item.date, e); }
     });
   }, 80);
 }
