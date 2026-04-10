@@ -535,12 +535,12 @@
 
 <!-- MODAL PARTICIPANTES LIST -->
 <div class="modal-overlay" id="modal-participantes" onclick="if(event.target===this)closeParticipantesModal()">
-  <div class="modal-box" style="max-width:500px;max-height:85vh;display:flex;flex-direction:column">
-    <button class="modal-close" onclick="closeParticipantesModal()">✕</button>
-    <div class="modal-title">🏅 Confirmed Participants</div>
-    <div class="modal-sub" id="part-count-label">Loading list...</div>
-    <div id="part-list-body" style="overflow-y:auto;flex:1;margin-top:.5rem"></div>
-    <button class="modal-btn" style="margin-top:1rem;background:rgba(255,255,255,.1);font-size:.85rem" onclick="closeParticipantesModal()">Close</button>
+  <div class="modal-box" style="max-width:540px;max-height:88vh;display:flex;flex-direction:column;background:#fff;color:#2c3e50;border:none">
+    <button class="modal-close" onclick="closeParticipantesModal()" style="color:#aaa">✕</button>
+    <div class="modal-title" style="color:#1a252f">🏅 Confirmed Participants</div>
+    <div style="font-size:.78rem;color:#999;margin-bottom:.75rem" id="part-count-label">Loading list...</div>
+    <div id="part-list-body" style="overflow-y:auto;flex:1"></div>
+    <button class="modal-btn" style="margin-top:1rem;background:#f4f6f8;color:#555;font-size:.85rem;border:1px solid #e0e0e0" onclick="closeParticipantesModal()">Close</button>
   </div>
 </div>
 
