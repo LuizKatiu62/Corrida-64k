@@ -1325,7 +1325,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v549</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v550</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7634,7 +7634,7 @@ function openGoalSelector(){
     } else if(!meta.noPlan || type!=='64k'){
       extra = `<div class="goal-card-setup">+ Toque para definir o evento</div>`;
     }
-    return `<div class="goal-card${isSelected?' selected':''}" onclick="selectGoalType('${type}')" style="background:${meta.color}">
+    return `<div class="goal-card${isSelected?' selected':''}" onclick="selectGoalType('${type}')" style="background:${meta.grad||meta.color}">
       <span class="goal-card-icon">${meta.icon}</span>
       <div class="goal-card-name">${meta.label}</div>
       <div class="goal-card-pills">${pills}</div>
