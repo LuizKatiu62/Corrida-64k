@@ -1321,7 +1321,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v530</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v531</span></footer>
 
 <script>
 function showLoginForm(){
@@ -6411,6 +6411,105 @@ function openWhatsAppListModal(sendMode){
     +'</div>';
 
   document.body.appendChild(overlay);
+}
+
+// ============================================================
+// MAPS — TREINOS / EVENTO
+// ============================================================
+
+// Decode Google encoded polyline → array of [lat,lng]
+function decodePolyline(encoded){
+  var result=[], index=0, lat=0, lng=0;
+  while(index<encoded.length){
+    var b,shift=0,r=0;
+    do{ b=encoded.charCodeAt(index++)-63; r|=(b&0x1f)<<shift; shift+=5; }while(b>=0x20);
+    var dlat=((r&1)?~(r>>1):(r>>1)); lat+=dlat;
+    shift=0; r=0;
+    do{ b=encoded.charCodeAt(index++)-63; r|=(b&0x1f)<<shift; shift+=5; }while(b>=0x20);
+    var dlng=((r&1)?~(r>>1):(r>>1)); lng+=dlng;
+    result.push([lat/1e5, lng/1e5]);
+  }
+  return result;
+}
+
+function renderMapsSection(){
+  var el = document.getElementById('maps-content');
+  if(!el) return;
+
+  var g = loadGarmin();
+  var entries = Object.keys(g).sort().reverse(); // newest first
+
+  if(!entries.length){
+    el.innerHTML='<div class="maps-empty"><div class="maps-empty-icon">🗺️</div><p>Nenhuma atividade importada do Strava ainda.</p><p style="margin-top:.5rem;font-size:.85rem">Importe atividades pelo botão <strong>Sync</strong> e os mapas aparecerão aqui.</p></div>';
+    return;
+  }
+
+  var withPolyline = entries.filter(function(d){ return g[d].polyline && g[d].polyline.length>10; });
+  var withoutPolyline = entries.filter(function(d){ return !g[d].polyline || g[d].polyline.length<=10; });
+
+  var html='<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">'
+    +'<h3 style="font-size:1.1rem;font-weight:800">🗺️ Mapas — Treinos & Evento</h3>'
+    +'<span style="font-size:.8rem;color:#888">'+entries.length+' atividade'+(entries.length!==1?'s':'')+' · '+withPolyline.length+' com mapa</span>'
+    +'</div>';
+
+  if(withoutPolyline.length>0 && withPolyline.length===0){
+    html+='<div class="maps-reimport-note">ℹ️ As atividades existentes foram importadas sem dados de rota. Para ver os mapas, reimporte cada atividade pelo botão <strong>Sync → Importar</strong> e os mapas serão salvos automaticamente.</div>';
+  } else if(withoutPolyline.length>0){
+    html+='<div class="maps-reimport-note">ℹ️ '+withoutPolyline.length+' atividade'+(withoutPolyline.length!==1?'s foram importadas':' foi importada')+' sem dados de rota. Reimporte pelo <strong>Sync</strong> para adicionar o mapa.</div>';
+  }
+
+  if(!withPolyline.length){
+    html+='<div class="maps-empty"><div class="maps-empty-icon">📍</div><p>Nenhuma rota disponível ainda.</p></div>';
+    el.innerHTML=html;
+    return;
+  }
+
+  html+='<div class="maps-grid" id="maps-grid">';
+  withPolyline.forEach(function(date){
+    var a = g[date];
+    var label = a.filename || date;
+    var dist = a.dist ? a.dist+'km' : '—';
+    var dur = a.duration || '—';
+    var pace = a.pace || '—';
+    var dateLabel = date;
+    try{ var d=new Date(date+'T12:00:00'); dateLabel=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){}
+    html+='<div class="map-card">'
+      +'<div class="map-card-header">'
+        +'<span class="map-card-title">🏃 '+label+'</span>'
+        +'<span class="map-date">'+dateLabel+'</span>'
+      +'</div>'
+      +'<div class="map-card-stats">'
+        +'<div class="map-card-stat"><strong>'+dist+'</strong><span>Distância</span></div>'
+        +'<div class="map-card-stat"><strong>'+dur+'</strong><span>Tempo</span></div>'
+        +'<div class="map-card-stat"><strong>'+pace+'</strong><span>Pace</span></div>'
+      +'</div>'
+      +'<div class="map-leaflet" id="map-'+date+'"></div>'
+    +'</div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+
+  // Init Leaflet maps after DOM is ready
+  setTimeout(function(){
+    withPolyline.forEach(function(date){
+      var a = g[date];
+      if(!a.polyline) return;
+      var coords = decodePolyline(a.polyline);
+      if(!coords.length) return;
+      try{
+        var mapEl = document.getElementById('map-'+date);
+        if(!mapEl || mapEl._leaflet_id) return;
+        var m = L.map(mapEl, {zoomControl:true, scrollWheelZoom:false, attributionControl:false});
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(m);
+        var line = L.polyline(coords, {color:'#16a085', weight:4, opacity:.85}).addTo(m);
+        // Start marker
+        L.circleMarker(coords[0], {radius:6, color:'#27ae60', fillColor:'#27ae60', fillOpacity:1}).addTo(m);
+        // End marker
+        L.circleMarker(coords[coords.length-1], {radius:6, color:'#e74c3c', fillColor:'#e74c3c', fillOpacity:1}).addTo(m);
+        m.fitBounds(line.getBounds(), {padding:[16,16]});
+      }catch(e){ console.warn('Map error for '+date, e); }
+    });
+  }, 80);
 }
 
 // ============================================================
