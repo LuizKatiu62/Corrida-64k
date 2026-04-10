@@ -590,6 +590,48 @@ function submitName(){
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal(); closeParticipantesModal(); } });
 document.getElementById('modal-name').addEventListener('keydown', function(e){ if(e.key==='Enter') submitName(); });
 
+// ── MODAL LISTA DE PARTICIPANTES ──
+function openParticipantesModal(){
+  document.getElementById('modal-participantes').classList.add('open');
+  var body = document.getElementById('part-list-body');
+  var label = document.getElementById('part-count-label');
+  body.innerHTML = '<p style="text-align:center;padding:2rem;color:rgba(255,255,255,.4)">Carregando...</p>';
+  label.textContent = 'Carregando lista...';
+  if(!fbDb){ body.innerHTML='<p style="text-align:center;padding:1rem;color:rgba(255,255,255,.4)">Não foi possível conectar ao banco de dados.</p>'; return; }
+  fbDb.ref('desafio64/participantes').once('value').then(function(snap){
+    var data = snap.val()||{};
+    var entries = [];
+    Object.keys(data).forEach(function(k){
+      var e=data[k]; if(e&&e.nome) entries.push(e);
+    });
+    entries.sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
+    if(!entries.length){
+      label.textContent='Nenhum participante confirmado ainda.';
+      body.innerHTML='<p style="text-align:center;padding:2rem;color:rgba(255,255,255,.35);font-size:.9rem">Seja o primeiro a confirmar! 🏃</p>';
+      return;
+    }
+    label.textContent = entries.length+' participante'+(entries.length!==1?'s confirmados':' confirmado');
+    var actIcon={running:'🏃',walking:'🚶',biking:'🚴'};
+    var rows = entries.map(function(e,i){
+      var act = e.activity ? (actIcon[e.activity]||'')+'&nbsp;'+e.activity : '';
+      var km  = e.km ? '<span style="color:#f7c948;font-weight:700">'+e.km+'km</span>' : '';
+      var tm  = e.time ? '<span style="color:#5dade2">⏱ '+e.time+'</span>' : '';
+      var tags = [km,act,tm].filter(Boolean).join(' · ');
+      return '<div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border-radius:10px;background:rgba(255,255,255,'+(i%2===0?'.04':'.07')+')">'
+        +'<span style="color:rgba(255,255,255,.3);font-size:.75rem;width:1.4rem;text-align:right;flex-shrink:0">'+(i+1)+'</span>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-weight:700;font-size:.95rem">'+e.nome+'</div>'
+          +(tags?'<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.1rem">'+tags+'</div>':'')
+        +'</div>'
+      +'</div>';
+    }).join('');
+    body.innerHTML = '<div style="display:flex;flex-direction:column;gap:.35rem">'+rows+'</div>';
+  }).catch(function(){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#e74c3c">Erro ao carregar a lista.</p>'; });
+}
+function closeParticipantesModal(){
+  document.getElementById('modal-participantes').classList.remove('open');
+}
+
 // Voltar ao topo
 window.addEventListener('scroll', function(){
   var btn = document.getElementById('back-top');
