@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v584</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v585</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2307,6 +2307,27 @@ function fbForcePush(){
     };
     tx.onerror = function(){ fbMsgEl('✅ Dados enviados (erro ao ler fotos locais).','ok'); };
   }).catch(function(){ fbMsgEl('✅ Dados enviados (sem acesso ao banco de fotos).','ok'); });
+}
+
+function diagRebuild(){
+  var garmin   = (function(){ try{ return JSON.parse(localStorage.getItem(GARMIN_KEY))||{}; }catch(e){ return {}; } })();
+  var hevy     = (function(){ try{ return JSON.parse(localStorage.getItem(HEVY_DATA_STORE))||{}; }catch(e){ return {}; } })();
+  var progress = (function(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}; }catch(e){ return {}; } })();
+  var planDates = PLAN.map(function(d){ return d.date; });
+  var garminDates = Object.keys(garmin);
+  var hevyDates   = Object.keys(hevy);
+  var progDates   = Object.keys(progress);
+  var msg = '📊 DIAGNÓSTICO\n\n'
+    + 'PLAN: ' + planDates.length + ' dias (' + planDates[0] + ' → ' + planDates[planDates.length-1] + ')\n\n'
+    + 'GARMIN: ' + garminDates.length + ' entradas\n'
+    + garminDates.slice(0,10).join(', ') + (garminDates.length>10?' ...':'')+'\n\n'
+    + 'HEVY: ' + hevyDates.length + ' entradas\n'
+    + hevyDates.slice(0,5).join(', ') + (hevyDates.length>5?' ...':'')+'\n\n'
+    + 'PROGRESS: ' + progDates.length + ' entradas\n'
+    + progDates.slice(0,5).map(function(d){ return d+':'+JSON.stringify(progress[d]); }).join('\n')
+    + '\n\nGarmin datas que batem com PLAN: '
+    + garminDates.filter(function(d){ return planDates.indexOf(d)>=0; }).length;
+  alert(msg);
 }
 
 function rebuildProgressFromActivities(){
