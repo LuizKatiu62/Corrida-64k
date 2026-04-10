@@ -1325,7 +1325,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v548</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v549</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7572,12 +7572,12 @@ let activeGeneratedPlan = null;
 const activeGoalCardOpen = {};
 
 const GOAL_META = {
-  '64k':     { label:'Desafio 64km',   badge:'64km',  icon:'🏆', desc:'Seu desafio principal — 64km em loops de 3,3km',    color:'#1a7a41', pills:['5 semanas','Avançado','5 treinos/sem'] },
-  '5k':      { label:'Corrida 5km',    badge:'5km',   icon:'⭐', desc:'5km · Registre data, cidade e sua meta de tempo',    color:'#c0392b', pills:['4–6 semanas','Iniciante','3 treinos/sem'], noPlan:true },
-  '10k':     { label:'Corrida 10km',   badge:'10km',  icon:'🏅', desc:'10km · Registre data, cidade e sua meta de tempo',   color:'#d4880a', pills:['6–8 semanas','Intermediário','3 treinos/sem'], noPlan:true },
-  'meia':    { label:'Meia Maratona',  badge:'21km',  icon:'🥈', desc:'21,1km · Meta: 2h00–2h05 · Pace: ~5:47/km',         color:'#1a6fa8', pills:['12 semanas','Intermediário','4 treinos/sem'] },
-  'maratona':{ label:'Maratona',       badge:'42km',  icon:'🥇', desc:'42,2km · Meta: 3h30 · Pace: ~4:58/km',              color:'#6c3483', pills:['16 semanas','Avançado','4 treinos/sem'] },
-  'ultra':   { label:'Ultra Maratona', badge:'Ultra', icon:'💪', desc:'50km+ · Foco em tempo em pé e resistência máxima',   color:'#117a65', pills:['20 semanas','Avançado','5 treinos/sem'] }
+  '64k':     { label:'Desafio 64km',   badge:'64km',  icon:'🏆', desc:'Seu desafio principal — 64km em loops de 3,3km',    color:'#27ae60', grad:'linear-gradient(145deg,#27ae60,#1a7a41)', pills:['5 semanas','Avançado','5 treinos/sem'] },
+  '5k':      { label:'Corrida 5km',    badge:'5km',   icon:'⭐', desc:'5km · Registre data, cidade e sua meta de tempo',    color:'#e74c3c', grad:'linear-gradient(145deg,#e74c3c,#a93226)', pills:['4–6 semanas','Iniciante','3 treinos/sem'], noPlan:true },
+  '10k':     { label:'Corrida 10km',   badge:'10km',  icon:'🏅', desc:'10km · Registre data, cidade e sua meta de tempo',   color:'#e6ac00', grad:'linear-gradient(145deg,#f1c40f,#d4880a)', pills:['6–8 semanas','Intermediário','3 treinos/sem'], noPlan:true },
+  'meia':    { label:'Meia Maratona',  badge:'21km',  icon:'🥈', desc:'21,1km · Meta: 2h00–2h05 · Pace: ~5:47/km',         color:'#2980b9', grad:'linear-gradient(145deg,#3498db,#1a6fa8)', pills:['12 semanas','Intermediário','4 treinos/sem'] },
+  'maratona':{ label:'Maratona',       badge:'42km',  icon:'🥇', desc:'42,2km · Meta: 3h30 · Pace: ~4:58/km',              color:'#8e44ad', grad:'linear-gradient(145deg,#9b59b6,#6c3483)', pills:['16 semanas','Avançado','4 treinos/sem'] },
+  'ultra':   { label:'Ultra Maratona', badge:'Ultra', icon:'💪', desc:'50km+ · Foco em tempo em pé e resistência máxima',   color:'#16a085', grad:'linear-gradient(145deg,#1abc9c,#117a65)', pills:['20 semanas','Avançado','5 treinos/sem'] }
 };
 
 function updateGoalBar(){
