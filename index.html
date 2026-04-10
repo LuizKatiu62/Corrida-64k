@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v593</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v594</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4558,17 +4558,10 @@ function getEffectivePlanKm(date, p){
   // Treino movido para outro dia — este dia fica com 0
   if(rs && (rs.type === 'skip' || rs.type === 'move')) return 0;
 
-  // Este dia recebe treino de outro dia
+  // Este dia recebe treino de outro dia — substitui o original, nunca soma
   if(rs && rs.type === 'receive'){
     const fromDay = PLAN.find(d => d.date === rs.from);
-    const fromKm = fromDay ? fromDay.run.km : 0;
-    // Verifica se o treino original deste dia foi movido para outro lugar
-    const ownMoved = PLAN.some(function(pd){
-      var pp = p[pd.date] || {};
-      var prs = pp.reschedule || null;
-      return prs && prs.type === 'move' && prs.to === date;
-    });
-    return ownMoved ? fromKm : day.run.km + fromKm;
+    return fromDay ? fromDay.run.km : 0;
   }
 
   return day.run.km;
