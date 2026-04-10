@@ -250,6 +250,14 @@
   .cd-box{text-align:center;background:rgba(255,255,255,.08);border-radius:12px;padding:.7rem 1rem;min-width:64px}
   .cd-num{font-size:1.8rem;font-weight:900;line-height:1;color:#fff}
   .cd-lbl{font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:.15rem}
+
+  /* ── LANG BAR ── */
+  .lang-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(13,31,15,.93);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:flex-end;padding:.45rem 1.2rem;gap:.5rem}
+  .lang-lbl{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.08em;text-transform:uppercase;margin-right:.3rem}
+  .lang-btn{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .85rem;border-radius:999px;font-size:.72rem;font-weight:800;cursor:pointer;text-decoration:none;letter-spacing:.03em;border:1.5px solid transparent;transition:all .15s}
+  .lang-btn.active{background:var(--verde-light);color:#fff;border-color:var(--verde-light)}
+  .lang-btn.other{background:transparent;color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.18)}
+  .lang-btn.other:hover{color:#fff;border-color:rgba(255,255,255,.5)}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
