@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v579</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v580</span></footer>
 
 <script>
 function showLoginForm(){
@@ -1881,8 +1881,16 @@ function openFBModal(){
       + '<input type="text" id="fb-syncid-custom" maxlength="16"'
       + ' style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:.45rem .75rem;font-size:.95rem;font-family:monospace;text-transform:uppercase;letter-spacing:2px;outline:none;box-sizing:border-box;margin-bottom:.75rem"'
       + ' placeholder="Ex: LUIZ64" value="' + (localStorage.getItem(FB_SYNCID_KEY)||'') + '">'
-      + '<label style="font-size:.75rem;font-weight:700;color:#555;display:block;margin-bottom:.3rem">Firebase Config</label>'
-      + '<textarea class="fb-input" id="fb-config-input" placeholder="Cole aqui o objeto firebaseConfig">' + (savedCfg||'') + '</textarea>'
+      + '<label style="font-size:.75rem;font-weight:700;color:#555;display:block;margin-bottom:.5rem">Firebase Config</label>'
+      + (function(){
+          var p={};try{p=JSON.parse(savedCfg||'{}')}catch(e){}
+          var fld=function(id,ph,val){ return '<input type="text" id="fb-'+id+'" placeholder="'+ph+'" value="'+(val||'')+'" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:.45rem .75rem;font-size:.82rem;font-family:monospace;outline:none;box-sizing:border-box;margin-bottom:.45rem">'; };
+          return fld('apiKey','apiKey',p.apiKey)
+            +fld('authDomain','authDomain',p.authDomain)
+            +fld('databaseURL','databaseURL  ⚠️ obrigatório',p.databaseURL)
+            +fld('projectId','projectId',p.projectId)
+            +fld('appId','appId',p.appId);
+        })()
       + '<div id="fb-msg"></div>'
       + '<div class="fb-actions">'
       + '<button class="fb-btn-primary" onclick="saveFBConfig()">Ativar Sync</button>'
