@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v605</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v606</span></footer>
 
 <script>
 function showLoginForm(){
@@ -1626,7 +1626,19 @@ function fbApplyRemote(data){
   fbRemoteWrite = true; fbRemoteWriteAt = Date.now();
   try{
     if(data.progress != null) localStorage.setItem(STORAGE_KEY, data.progress);
-    if(data.events   != null) localStorage.setItem(EVENTS_KEY,  data.events);
+    if(data.events   != null){
+      // Merge incoming events with local — never overwrite local-only events with a stale remote payload
+      try{
+        const incoming = (typeof data.events === 'string') ? (JSON.parse(data.events)||[]) : (data.events||[]);
+        const local = (function(){ try{ return JSON.parse(localStorage.getItem(EVENTS_KEY))||[]; }catch(e){ return []; } })();
+        const merged = [...local];
+        incoming.forEach(function(ev){
+          const idx = merged.findIndex(function(x){ return x.id === ev.id; });
+          if(idx >= 0) merged[idx] = ev; else merged.push(ev);
+        });
+        localStorage.setItem(EVENTS_KEY, JSON.stringify(merged));
+      } catch(e){ localStorage.setItem(EVENTS_KEY, typeof data.events === 'string' ? data.events : JSON.stringify(data.events)); }
+    }
     if(data.garmin   != null){
       // Merge Firebase garmin with local: Firebase is authoritative for base fields,
       // but local keeps raw/dominantZone/dominantZonePct/avgCadence (not stored in Firebase)
