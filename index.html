@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v597</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v598</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5250,16 +5250,10 @@ function buildCard(day, isToday, p){
     var rFromDay = PLAN.find(function(d){ return d.date === rSched.from; });
     var extraRunItems = rFromDay ? rFromDay.run.items.map(function(i){ return '<li>'+i+'</li>'; }).join('') : '';
     var extraRunCal = rFromDay ? calcRunCalories(rFromDay) : 0;
-    if(thisOriginalMoved || day.run.km === 0){
-      // Dia cedeu seu treino original — mostrar apenas o treino recebido
-      runBodyContent = rFromDay
-        ? '<div class="loc">'+rFromDay.run.loc+'</div><ul>'+extraRunItems+'</ul>'+calChipHtml(extraRunCal, rFromDay.run.km+' km')+buildShoeRec(rFromDay)
-        : '<div style="color:#aaa;font-size:.85rem;text-align:center;padding:1rem 0">Sem treino</div>';
-    } else {
-      // Dia tem treino próprio + recebe treino extra
-      runBodyContent = '<div class="loc">'+day.run.loc+'</div><ul>'+runItems+'</ul>'+calChipHtml(runCal, day.run.km+' km')+buildShoeRec(day)
-        + (rFromDay ? '<div style="border-top:2px dashed #aed6f1;margin:.75rem 0 .5rem;padding-top:.6rem;font-size:.72rem;font-weight:800;color:#2980b9">➕ Treino extra de '+dateLabel(rSched.from)+' · '+rFromDay.run.km+'km</div><ul>'+extraRunItems+'</ul>'+calChipHtml(extraRunCal, rFromDay.run.km+' km') : '');
-    }
+    // Reagendamento substitui o treino original — mostrar apenas o treino recebido
+    runBodyContent = rFromDay
+      ? '<div class="loc">'+rFromDay.run.loc+'</div><ul>'+extraRunItems+'</ul>'+calChipHtml(extraRunCal, rFromDay.run.km+' km')+buildShoeRec(rFromDay)
+      : '<div style="color:#aaa;font-size:.85rem;text-align:center;padding:1rem 0">Sem treino</div>';
   } else {
     runBodyContent = '<div class="loc">'+day.run.loc+'</div><ul>'+runItems+'</ul>'+calChipHtml(runCal, day.run.km+' km')+buildShoeRec(day);
   }
