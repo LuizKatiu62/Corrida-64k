@@ -609,7 +609,7 @@ function openParticipantesModal(){
       return;
     }
     label.textContent = entries.length+' participante'+(entries.length!==1?'s confirmados':' confirmado');
-    var actLabel={running:'Correndo 🏃',walking:'Caminhando 🚶',biking:'Pedalando 🚴'};
+    var actLabel={running:'Running 🏃',walking:'Walking 🚶',biking:'Biking 🚴'};
     var actColor={running:'#27ae60',walking:'#2980b9',biking:'#e67e22'};
     var cards = entries.map(function(e,i){
       var pills = '';
