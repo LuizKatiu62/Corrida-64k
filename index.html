@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v580</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v581</span></footer>
 
 <script>
 function showLoginForm(){
@@ -1985,39 +1985,18 @@ function saveFBConfig(){
   localStorage.setItem(FB_SYNCID_KEY, customId);
   fbSyncId = customId;
 
-  const raw = (document.getElementById('fb-config-input').value||'').trim();
-  if(!raw){ fbMsgEl('Cole a configuração do Firebase antes de continuar.','err'); return; }
-
-  let config;
-  let cleaned = raw
-    .replace(/^(?:const|let|var)\s+firebaseConfig\s*=\s*/,'')
-    .replace(/^[\s\S]*?firebaseConfig\s*=\s*/,'')
-    .replace(/;\s*$/,'')
-    .trim();
-
-  var firstBrace = cleaned.indexOf('{');
-  var lastBrace = cleaned.lastIndexOf('}');
-  if(firstBrace >= 0 && lastBrace > firstBrace){
-    cleaned = cleaned.slice(firstBrace, lastBrace + 1);
-  }
-
-  cleaned = cleaned
-    .replace(/\/\*[\s\S]*?\*\//g,'')
-    .replace(/\/\/.*$/gm,'')
-    .replace(/,\s*([}\]])/g,'$1')
-    .trim();
-
-  try{
-    config = JSON.parse(cleaned.replace(/([{,]\s*)([A-Za-z0-9_$]+)(\s*:)/g,'$1"$2"$3'));
-  }catch(e){
-    try{
-      config = Function('return (' + cleaned + ')')();
-    }catch(evalError){
-      console.error('FB config parse error:', e, evalError, cleaned);
-      fbMsgEl('Configuração inválida. Cole o objeto firebaseConfig exatamente como aparece no Firebase.','err');
-      return;
-    }
-  }
+  const v = function(id){ return (document.getElementById('fb-'+id)?.value||'').trim(); };
+  const config = {
+    apiKey:            v('apiKey'),
+    authDomain:        v('authDomain'),
+    databaseURL:       v('databaseURL'),
+    projectId:         v('projectId'),
+    appId:             v('appId'),
+    storageBucket:     v('projectId') ? v('projectId')+'.firebasestorage.app' : '',
+    messagingSenderId: ''
+  };
+  if(!config.databaseURL){ fbMsgEl('Preencha o campo databaseURL.','err'); return; }
+  if(!config.apiKey){      fbMsgEl('Preencha o campo apiKey.','err'); return; }
 
   if(!config || typeof config !== 'object' || !config.databaseURL){
     fbMsgEl('O campo "databaseURL" não foi encontrado. Certifique-se de ativar o Realtime Database no Firebase.','err');
