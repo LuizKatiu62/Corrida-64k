@@ -1306,7 +1306,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v528</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v529</span></footer>
 
 <script>
 function showLoginForm(){
@@ -8443,6 +8443,7 @@ async function importStravaActivity(date, actId, name, distM, movingSecs, elevGa
     elevGain: Math.round(elevGain),
     actDate, filename: name,
     stravaId: String(actId),
+    polyline,
     importedAt: new Date().toISOString()
   };
 
