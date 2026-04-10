@@ -428,6 +428,17 @@
   </div>
 </div>
 
+<!-- MODAL LISTA DE PARTICIPANTES -->
+<div class="modal-overlay" id="modal-participantes" onclick="if(event.target===this)closeParticipantesModal()">
+  <div class="modal-box" style="max-width:500px;max-height:85vh;display:flex;flex-direction:column">
+    <button class="modal-close" onclick="closeParticipantesModal()">✕</button>
+    <div class="modal-title">🏅 Participantes Confirmados</div>
+    <div class="modal-sub" id="part-count-label">Carregando lista...</div>
+    <div id="part-list-body" style="overflow-y:auto;flex:1;margin-top:.5rem"></div>
+    <button class="modal-btn" style="margin-top:1rem;background:rgba(255,255,255,.1);font-size:.85rem" onclick="closeParticipantesModal()">Fechar</button>
+  </div>
+</div>
+
 <button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">↑</button>
 
 <footer>
