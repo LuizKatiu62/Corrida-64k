@@ -82,7 +82,11 @@
 
     /* NAV WEEKS */
     .week-nav{background:linear-gradient(180deg,#1e2d3d 0%,#162233 100%);border-bottom:1px solid rgba(255,255,255,.06);padding:.55rem 1rem;display:flex;gap:.35rem;position:sticky;top:0;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.28);align-items:center}
-    .week-nav button{white-space:nowrap;padding:.38rem .95rem;border:1.5px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.75);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .18s;flex-shrink:0;line-height:1.3;text-align:center;letter-spacing:.15px;backdrop-filter:blur(4px)}
+    .week-nav button{white-space:nowrap;padding:.38rem .95rem;border:1.5px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.75);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .18s;flex-shrink:0;line-height:1.3;text-align:center;letter-spacing:.15px;backdrop-filter:blur(4px);text-shadow:0 1px 4px rgba(0,0,0,.4)}
+    /* Botões com cor inline — glow usando currentColor */
+    .week-nav button[style*="color:"]{background:rgba(255,255,255,.05);text-shadow:0 0 8px currentColor;filter:drop-shadow(0 0 4px currentColor)}
+    .week-nav button[style*="color:"]:hover{background:rgba(255,255,255,.12);transform:translateY(-1px);filter:drop-shadow(0 0 8px currentColor);opacity:1}
+    .week-nav button[style*="color:"].active{filter:none;text-shadow:none}
     .week-nav button:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.35);color:#fff;transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.25)}
     .week-nav button:active{transform:translateY(0);box-shadow:none}
     .week-nav button.active{background:#fff;border-color:#fff;color:#1e2d3d;box-shadow:0 3px 12px rgba(0,0,0,.3)}
@@ -1333,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v554</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v555</span></footer>
 
 <script>
 function showLoginForm(){
