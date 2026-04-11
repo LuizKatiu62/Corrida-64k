@@ -4520,18 +4520,20 @@ let WEATHER = {};
 
 function fetchWeather(){
   const url = 'https://api.open-meteo.com/v1/forecast?latitude=45.2733&longitude=-66.0633'
-    + '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode'
-    + '&timezone=America%2FHalifax&forecast_days=16';
+    + '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code,wind_speed_10m_max'
+    + '&timezone=America%2FHalifax&forecast_days=16&wind_speed_unit=kmh';
   fetch(url)
     .then(r => r.json())
     .then(data => {
       const d = data.daily;
+      if(!d || !d.time) return;
       d.time.forEach((date, i) => {
         WEATHER[date] = {
           max:  Math.round(d.temperature_2m_max[i]),
           min:  Math.round(d.temperature_2m_min[i]),
           rain: d.precipitation_probability_max[i] ?? 0,
-          code: d.weathercode[i]
+          code: d.weather_code[i] ?? 0,
+          wind: Math.round(d.wind_speed_10m_max[i] ?? 0)
         };
       });
       renderAll();
