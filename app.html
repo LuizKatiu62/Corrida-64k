@@ -4864,11 +4864,19 @@ function cancelReceivedRun(receiveDate){
   const rs = prog.reschedule;
   if(!rs || rs.type !== 'receive') return;
   const fromDate = rs.from;
-  // Remove receive from this day
+  // Remove run receive from this day
   delete p[receiveDate].reschedule;
-  // Remove move from source day so it reverts to normal
+  // Restore run on source day
   if(fromDate && p[fromDate] && p[fromDate].reschedule && p[fromDate].reschedule.type === 'move'){
     delete p[fromDate].reschedule;
+  }
+  // If gym was also rescheduled from the same source day, undo that too
+  const gymRs = prog.gymReschedule;
+  if(gymRs && gymRs.type === 'receive' && gymRs.from === fromDate){
+    delete p[receiveDate].gymReschedule;
+    if(p[fromDate] && p[fromDate].gymReschedule && p[fromDate].gymReschedule.type === 'move'){
+      delete p[fromDate].gymReschedule;
+    }
   }
   saveProgress(p);
   renderAll();
