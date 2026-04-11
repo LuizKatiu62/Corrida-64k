@@ -4863,8 +4863,15 @@ function cancelReceivedRun(receiveDate){
   const prog = p[receiveDate] || {};
   const rs = prog.reschedule;
   if(!rs || rs.type !== 'receive') return;
-  // Remove only the received run from this day — source day stays as-is, gym untouched
+  const fromDate = rs.from;
+  // Remove the received run — day reverts to its own original run
   delete p[receiveDate].reschedule;
+  // If gym was also received from the same source, remove it too — day reverts to its own original gym
+  const gymRs = prog.gymReschedule;
+  if(gymRs && gymRs.type === 'receive' && gymRs.from === fromDate){
+    delete p[receiveDate].gymReschedule;
+  }
+  // Source day is NOT touched — stays as "reagendado"
   saveProgress(p);
   renderAll();
 }
