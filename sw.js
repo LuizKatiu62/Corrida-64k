@@ -99,12 +99,12 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
         return res;
-      }).catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
+      }).catch(() => caches.match(e.request).then(r => r || caches.match('./convite.html')))
     );
     return;
   }
 
-  // For everything else (app files, weather API, etc.): cache-first, fallback to index.html
+  // For everything else (app files, weather API, etc.): cache-first, fallback to convite.html
   e.respondWith(
     caches.match(e.request).then(cached => {
       if(cached) return cached;
@@ -114,7 +114,7 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
         return res;
-      }).catch(() => caches.match('./index.html'));
+      }).catch(() => caches.match('./convite.html'));
     })
   );
 });
