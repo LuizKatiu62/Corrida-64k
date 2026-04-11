@@ -1346,7 +1346,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v664</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v665</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5497,11 +5497,11 @@ function buildCard(day, isToday, p){
              ${extraRun.notes?`<div class="extra-run-sub">${extraRun.notes}</div>`:''}
              ${buildShoeRecKmType(extraRun.km, extraRun.runType || 'easy')}
            </div>
-           <button class="extra-run-rm" onclick="event.stopPropagation();removeExtraRun('${day.date}')">✕ Remover</button>
+           <button class="extra-run-rm edit-only" onclick="event.stopPropagation();removeExtraRun('${day.date}')">✕ Remover</button>
          </div>`
-      : `<button class="extra-run-btn" onclick="event.stopPropagation();openExtraRunModal('${day.date}')">➕ Registrar treino extra</button>`
+      : `<button class="extra-run-btn edit-only" onclick="event.stopPropagation();openExtraRunModal('${day.date}')">➕ Registrar treino extra</button>`
     }
-    ${!runMoved && !runReceive ? `<button class="resched-btn" style="background:${isRunCancelled?'#eafaf1':'#fde8e6'};color:${isRunCancelled?'#1a7a42':'#c0392b'};border-color:${isRunCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelRun('${day.date}')">${isRunCancelled?'↩️ Reativar corrida':'🚫 Cancelar corrida'}</button>` : ''}
+    ${!runMoved && !runReceive ? `<button class="resched-btn edit-only" style="background:${isRunCancelled?'#eafaf1':'#fde8e6'};color:${isRunCancelled?'#1a7a42':'#c0392b'};border-color:${isRunCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelRun('${day.date}')">${isRunCancelled?'↩️ Reativar corrida':'🚫 Cancelar corrida'}</button>` : ''}
   </div>
   <div class="day-body${openTab==='gym'?' active':''}" id="body-${tabId}-gym">
     ${gymReschedBadge}
