@@ -1346,7 +1346,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v665</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v666</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5508,7 +5508,7 @@ function buildCard(day, isToday, p){
     ${isGymCancelled ? '<div style="background:#fde8e6;border-radius:10px;padding:.6rem 1rem;margin-bottom:.5rem;font-size:.83rem;color:#922b21;font-weight:700">🚫 Academia cancelada neste dia</div>' : ''}
     ${isGymCancelled ? '' : gymBodyContent}
     ${gymReschedButton}
-    ${hasGym && !gymMoved && !gymReceive ? `<button class="resched-btn" style="background:${isGymCancelled?'#eafaf1':'#fde8e6'};color:${isGymCancelled?'#1a7a42':'#c0392b'};border-color:${isGymCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelGym('${day.date}')">${isGymCancelled?'↩️ Reativar academia':'🚫 Cancelar academia'}</button>` : ''}
+    ${hasGym && !gymMoved && !gymReceive ? `<button class="resched-btn edit-only" style="background:${isGymCancelled?'#eafaf1':'#fde8e6'};color:${isGymCancelled?'#1a7a42':'#c0392b'};border-color:${isGymCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelGym('${day.date}')">${isGymCancelled?'↩️ Reativar academia':'🚫 Cancelar academia'}</button>` : ''}
   </div>
   <div class="day-body${openTab==='nutri'?' active':''}" id="body-${tabId}-nutri">
     ${buildNutriTarget(day)}
