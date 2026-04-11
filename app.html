@@ -4883,9 +4883,14 @@ function cancelReceivedGym(receiveDate){
   const prog = p[receiveDate] || {};
   const gymRs = prog.gymReschedule;
   if(!gymRs || gymRs.type !== 'receive') return;
-  // Remove only the received gym — day reverts to its own original gym
-  // Source day is NOT touched — stays as "reagendado"
+  const fromDate = gymRs.from;
+  // Remove received gym from this day
   delete p[receiveDate].gymReschedule;
+  // Mark source day's gym as skipped (cancelled) so it disappears from training entirely
+  if(fromDate){
+    if(!p[fromDate]) p[fromDate] = {};
+    p[fromDate].gymReschedule = { type: 'skip' };
+  }
   saveProgress(p);
   renderAll();
 }
