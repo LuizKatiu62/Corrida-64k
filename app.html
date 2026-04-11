@@ -4557,10 +4557,12 @@ function buildWeatherHtml(date){
   const w = WEATHER[date];
   if(!w) return '<span class="weather-loading">previsão a carregar…</span>';
   const rainCls = w.rain >= 60 ? 'weather-rain-high' : w.rain >= 30 ? 'weather-rain-mid' : 'weather-rain-low';
+  const windCls = w.wind >= 40 ? 'weather-rain-high' : w.wind >= 20 ? 'weather-rain-mid' : 'weather-rain-low';
   return `<div class="weather-strip">
     <span class="weather-icon">${weatherIcon(w.code)}</span>
     <span class="weather-temp">↑${w.max}°C ↓${w.min}°C</span>
-    <span class="weather-rain ${rainCls}">💧 ${w.rain}% chuva</span>
+    <span class="weather-rain ${rainCls}">💧 ${w.rain}%</span>
+    <span class="weather-rain ${windCls}">💨 ${w.wind} km/h</span>
   </div>`;
 }
 
