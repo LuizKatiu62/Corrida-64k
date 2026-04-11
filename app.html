@@ -5373,8 +5373,8 @@ function buildCard(day, isToday, p){
   const rSched = prog.reschedule || null;
   const runMoved = rSched && (rSched.type === 'skip' || rSched.type === 'move');
   const runReceive = rSched && rSched.type === 'receive';
-  // Cancellation can override even a received reschedule
-  const isRunCancelled = !!prog.runCancelled;
+  // Cancellation only applies when there is no received reschedule
+  const isRunCancelled = !!prog.runCancelled && !runReceive;
   // Verifica se outro dia moveu seu treino para ESTE dia (usando o p já passado para buildCard)
   const thisOriginalMoved = PLAN.some(function(pd){
     var pp = p[pd.date] || {};
