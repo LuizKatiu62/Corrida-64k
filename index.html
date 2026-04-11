@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v608</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v609</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5380,7 +5380,8 @@ function buildCard(day, isToday, p){
   </div>
   <div class="day-body${openTab==='run'?' active':''}" id="body-${tabId}-run">
     ${reschedBadge}
-    ${runBodyContent}
+    ${prog.runCancelled ? '<div style="background:#fde8e6;border-radius:10px;padding:.6rem 1rem;margin-bottom:.5rem;font-size:.83rem;color:#922b21;font-weight:700">🚫 Corrida cancelada neste dia</div>' : ''}
+    ${prog.runCancelled ? '' : runBodyContent}
     ${reschedButton}
     ${extraRun
       ? `<div class="extra-run-banner">
@@ -5393,11 +5394,14 @@ function buildCard(day, isToday, p){
          </div>`
       : `<button class="extra-run-btn" onclick="event.stopPropagation();openExtraRunModal('${day.date}')">➕ Registrar treino extra</button>`
     }
+    ${!runMoved ? `<button class="resched-btn" style="background:${prog.runCancelled?'#eafaf1':'#fde8e6'};color:${prog.runCancelled?'#1a7a42':'#c0392b'};border-color:${prog.runCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelRun('${day.date}')">${prog.runCancelled?'↩️ Reativar corrida':'🚫 Cancelar corrida'}</button>` : ''}
   </div>
   <div class="day-body${openTab==='gym'?' active':''}" id="body-${tabId}-gym">
     ${gymReschedBadge}
-    ${gymBodyContent}
+    ${prog.gymCancelled ? '<div style="background:#fde8e6;border-radius:10px;padding:.6rem 1rem;margin-bottom:.5rem;font-size:.83rem;color:#922b21;font-weight:700">🚫 Academia cancelada neste dia</div>' : ''}
+    ${prog.gymCancelled ? '' : gymBodyContent}
     ${gymReschedButton}
+    ${hasGym && !gymMoved ? `<button class="resched-btn" style="background:${prog.gymCancelled?'#eafaf1':'#fde8e6'};color:${prog.gymCancelled?'#1a7a42':'#c0392b'};border-color:${prog.gymCancelled?'#a9dfbf':'#f5c6c6'}" onclick="event.stopPropagation();toggleCancelGym('${day.date}')">${prog.gymCancelled?'↩️ Reativar academia':'🚫 Cancelar academia'}</button>` : ''}
   </div>
   <div class="day-body${openTab==='nutri'?' active':''}" id="body-${tabId}-nutri">
     ${buildNutriTarget(day)}
