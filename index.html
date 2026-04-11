@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v636</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v637</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5501,11 +5501,31 @@ function switchTab(date, tab){
   });
 }
 
+function updateWeekKmLabels(p){
+  var dateRanges = {
+    1:'31 Mar – 05 Abr', 2:'06 – 12 Abr', 3:'13 – 19 Abr', 4:'20 – 26 Abr', 5:'27 Abr – 02 Mai'
+  };
+  [1,2,3,4,5].forEach(function(wn){
+    var el = document.getElementById('week-km-'+wn);
+    if(!el) return;
+    var days = PLAN.filter(function(d){ return d.week === wn; });
+    var totalKm = days.reduce(function(sum, d){
+      var prog = p[d.date] || {};
+      var hasReceive = prog.reschedule && prog.reschedule.type === 'receive';
+      if(prog.runCancelled && !hasReceive) return sum;
+      return sum + getEffectivePlanKm(d.date, p);
+    }, 0);
+    var range = dateRanges[wn] || '';
+    el.textContent = range + (totalKm > 0 ? ' · ' + totalKm + ' km' : '');
+  });
+}
+
 function renderAll(){
   const today = getToday();
   const p = loadProgress();
 
   updateProgressStats(p);
+  updateWeekKmLabels(p);
 
   // today banner
   const todayDay = PLAN.find(d=>d.date===today);
