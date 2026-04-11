@@ -90,6 +90,12 @@ self.addEventListener('fetch', e => {
     return;
   }
 
+  // Weather API — always network, never cache (forecast changes daily)
+  if(url.includes('open-meteo.com')){
+    e.respondWith(fetch(e.request, {cache:'no-store'}).catch(() => new Response('{}', {status:200})));
+    return;
+  }
+
   // For HTML files: network-first so updates are always visible
   if(e.request.headers.get('accept')&&e.request.headers.get('accept').includes('text/html')){
     e.respondWith(
