@@ -293,7 +293,7 @@
     <div class="hero-cta-wrap">
       <button onclick="openModal()" class="cta-btn cta-primary">🏃 I Want to Join</button>
       <button onclick="openParticipantesModal()" class="cta-btn cta-secondary">🏅 Participants</button>
-      <button onclick="window.close();if(!window.closed)history.back()" class="cta-btn cta-secondary">🚪 Exit</button>
+      <button onclick="window.close();setTimeout(function(){if(!window.closed){document.body.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#555;font-size:1.1rem&quot;>You can close this tab.</div>';}},300)" class="cta-btn cta-secondary">🚪 Exit</button>
       <a href="#detalhes" class="cta-btn cta-secondary">📍 Event Details</a>
       <a href="#story" class="cta-btn cta-secondary">📖 My Story</a>
       <a href="#fundraiser" class="cta-btn cta-gold">💙 Support the Cause</a>
