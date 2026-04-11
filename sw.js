@@ -58,17 +58,6 @@ self.addEventListener('fetch', e => {
 
   const url = e.request.url;
 
-  // Redirect root domain to convite (only exact root path)
-  if(e.request.headers.get('accept') && e.request.headers.get('accept').includes('text/html')){
-    try{
-      const u = new URL(url);
-      if((u.hostname==='runwithgratitude.ca'||u.hostname==='www.runwithgratitude.ca')
-         && u.pathname==='/'){
-        e.respondWith(Response.redirect('/convite.html',302));
-        return;
-      }
-    }catch(err){}
-  }
 
   // For external CDN/Firebase scripts: cache-first, no network fallback needed
   const isExt = EXT_URLS.some(u => url.startsWith(u) || url.includes('gstatic.com') || url.includes('cloudflare.com') || url.includes('unpkg.com'));
