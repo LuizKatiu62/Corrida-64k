@@ -58,13 +58,12 @@ self.addEventListener('fetch', e => {
 
   const url = e.request.url;
 
-  // Redirect root domain to convite — unless ?treino64 param is present
+  // Redirect root domain to convite (only exact root path)
   if(e.request.headers.get('accept') && e.request.headers.get('accept').includes('text/html')){
     try{
       const u = new URL(url);
       if((u.hostname==='runwithgratitude.ca'||u.hostname==='www.runwithgratitude.ca')
-         && (u.pathname==='/'||u.pathname==='/index.html')
-         && !u.searchParams.has('treino64')){
+         && u.pathname==='/'){
         e.respondWith(Response.redirect('/convite.html',302));
         return;
       }
