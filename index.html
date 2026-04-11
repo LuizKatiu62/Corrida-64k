@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v639</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v640</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7247,11 +7247,13 @@ function dashWeeks(days){
   var weeks={};
   days.forEach(function(d){
     var km=d.effectiveKm||0;
+    var hasReceive = d.prog.reschedule && d.prog.reschedule.type==='receive';
+    var isCancelled = d.prog.runCancelled && !hasReceive;
     if(!weeks[d.week]) weeks[d.week]={week:d.week,phase:d.phase,planKm:0,doneKm:0,planCount:0,doneCount:0};
     var w=weeks[d.week];
-    if(km>0&&d.type!=='race'){ w.planKm+=km; w.planCount++; }
+    if(!isCancelled && km>0 && d.type!=='race'){ w.planKm+=km; w.planCount++; }
     var ak=d.gpx?(d.gpx.dist||0):(d.prog.run?km:0);
-    if(ak>0&&km>0){ w.doneKm+=ak; w.doneCount++; }
+    if(!isCancelled && ak>0 && km>0){ w.doneKm+=ak; w.doneCount++; }
   });
   var phaseColors={'Adaptação':'#3498db','Construção':'#e67e22','Pico':'#e74c3c','Taper':'#9b59b6','Sem. Corrida':'#2ecc71'};
   var rows=Object.values(weeks).map(function(w){
