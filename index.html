@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v612</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v613</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4580,13 +4580,16 @@ function getEffectivePlanKm(date, p){
 }
 
 function updateProgressStats(p){
-  let totalDone=0, totalKm=0;
+  let totalDone=0, totalKm=0, totalDays=0;
   PLAN.forEach(d=>{
     const prog = p[d.date]||{};
+    // Cancelled run days are excluded from all metrics (neutral — not done, not missed)
+    if(prog.runCancelled) return;
+    totalDays++;
     if(prog.run) totalDone++;
     if(prog.run || prog.extraRun) totalKm += getEffectivePlanKm(d.date, p);
   });
-  const pct = Math.round((totalDone/PLAN.length)*100);
+  const pct = totalDays > 0 ? Math.round((totalDone/totalDays)*100) : 0;
   document.getElementById('progress-fill').style.width = pct+'%';
   document.getElementById('progress-pct').textContent = pct+'%';
   document.getElementById('stat-done').textContent = totalDone;
