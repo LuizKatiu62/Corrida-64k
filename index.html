@@ -1346,7 +1346,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v652</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v653</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4547,6 +4547,38 @@ function buildWeatherHtml(date){
 const RACE_DATE = new Date('2026-05-02T07:00:00');
 const STORAGE_KEY = 'desafio64_progress';
 let activeView = 'dashboard';
+
+// === EDIT MODE ===
+const EDIT_PIN = '6464'; // change this PIN to your preference
+let EDIT_MODE = false;
+
+function toggleEditMode(){
+  if(EDIT_MODE){
+    EDIT_MODE = false;
+    document.body.classList.remove('edit-mode');
+    const btn = document.getElementById('lock-btn');
+    if(btn) btn.textContent = '🔒';
+  } else {
+    const pin = prompt('Digite o PIN para entrar no Modo Edição:');
+    if(pin === null) return; // cancelled
+    if(pin !== EDIT_PIN){
+      alert('PIN incorreto. Acesso negado.');
+      return;
+    }
+    EDIT_MODE = true;
+    document.body.classList.add('edit-mode');
+    const btn = document.getElementById('lock-btn');
+    if(btn) btn.textContent = '🔓';
+  }
+}
+
+function requireEditMode(){
+  if(!EDIT_MODE){
+    alert('🔒 Ative o Modo Edição para fazer alterações.');
+    return false;
+  }
+  return true;
+}
 
 function getToday(){
   const d = new Date();
