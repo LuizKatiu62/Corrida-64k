@@ -431,10 +431,18 @@
 
 <!-- MODAL LISTA DE PARTICIPANTES -->
 <div class="modal-overlay" id="modal-participantes" onclick="if(event.target===this)closeParticipantesModal()">
-  <div style="background:#fff;color:#2c3e50;border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:540px;max-height:88vh;display:flex;flex-direction:column;position:relative">
+  <div style="background:#fff;color:#2c3e50;border-radius:20px;padding:2rem 1.5rem;width:96%;max-width:780px;max-height:88vh;display:flex;flex-direction:column;position:relative">
     <button onclick="closeParticipantesModal()" style="position:absolute;top:.8rem;right:1rem;background:none;border:none;color:#aaa;font-size:1.4rem;cursor:pointer;line-height:1">✕</button>
-    <div style="font-size:1.3rem;font-weight:900;margin-bottom:.25rem;color:#1a252f">🏅 Participantes Confirmados</div>
-    <div style="font-size:.78rem;color:#999;margin-bottom:.75rem" id="part-count-label"></div>
+    <div style="background:linear-gradient(135deg,#1a3a5c,#2e6da4);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+      <div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:.25rem">Desafio 64km · 2 de Maio de 2026</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#fff">🏅 Participantes Confirmados</div>
+      </div>
+      <div style="text-align:center;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:.6rem 1.2rem;min-width:90px">
+        <div style="font-size:2rem;font-weight:900;color:#f1c40f;line-height:1" id="part-count-num">—</div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-top:.15rem">confirmados</div>
+      </div>
+    </div>
     <div id="part-list-body" style="overflow-y:auto;flex:1"></div>
     <button onclick="closeParticipantesModal()" style="margin-top:1rem;width:100%;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:10px;padding:.7rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit">Fechar</button>
   </div>
