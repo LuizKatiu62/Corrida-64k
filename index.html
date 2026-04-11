@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v609</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v610</span></footer>
 
 <script>
 function showLoginForm(){
@@ -4630,6 +4630,36 @@ function toggleCheck(date, field){
   const day = PLAN.find(d=>d.date===date);
   if(day){
     const card = document.getElementById(`card-${date}`);
+    if(card) card.outerHTML = buildCard(day, date===getToday(), p);
+  }
+  updateProgressStats(p);
+}
+
+function toggleCancelRun(date){
+  const p = loadProgress();
+  if(!p[date]) p[date] = {};
+  p[date].runCancelled = !p[date].runCancelled;
+  // If cancelling, also unmark run as done
+  if(p[date].runCancelled) p[date].run = false;
+  saveProgress(p);
+  const day = PLAN.find(d => d.date === date);
+  if(day){
+    const card = document.getElementById('card-'+date);
+    if(card) card.outerHTML = buildCard(day, date===getToday(), p);
+  }
+  updateProgressStats(p);
+}
+
+function toggleCancelGym(date){
+  const p = loadProgress();
+  if(!p[date]) p[date] = {};
+  p[date].gymCancelled = !p[date].gymCancelled;
+  // If cancelling, also unmark gym as done
+  if(p[date].gymCancelled) p[date].gym = false;
+  saveProgress(p);
+  const day = PLAN.find(d => d.date === date);
+  if(day){
+    const card = document.getElementById('card-'+date);
     if(card) card.outerHTML = buildCard(day, date===getToday(), p);
   }
   updateProgressStats(p);
