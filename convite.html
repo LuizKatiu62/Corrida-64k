@@ -738,21 +738,21 @@ function buildParticipantesTable(entries, locale){
     var act = e.activity ? (actIcon[e.activity]||e.activity) : '<span style="color:#ccc">—</span>';
     var km  = e.km ? '<strong style="color:#b8860b">'+e.km+' km</strong>' : '<span style="color:#ccc">—</span>';
     var tm  = e.time ? '<strong style="color:#1a5276">'+e.time+'</strong>' : '<span style="color:#ccc">—</span>';
-    var bg  = i%2===0 ? '#fff' : '#f7f7f7';
-    return '<tr style="background:'+bg+';border-bottom:1px solid #e8e8e8">'
-      +'<td style="padding:.55rem .7rem;color:#aaa;font-size:.78rem">'+(i+1)+'</td>'
-      +'<td style="padding:.55rem .7rem;font-weight:700;color:#111">'+e.nome+'</td>'
-      +'<td style="padding:.55rem .7rem;font-size:.85rem">'+km+'</td>'
-      +'<td style="padding:.55rem .7rem;font-size:.82rem;color:#333">'+act+'</td>'
-      +'<td style="padding:.55rem .7rem;font-size:.85rem">'+tm+'</td>'
-      +'<td style="padding:.55rem .7rem;font-size:.72rem;color:#999">'+dt+'</td>'
+    var bg  = i%2===0 ? '#fff' : '#f0f4f8';
+    return '<tr style="background:'+bg+';border-bottom:1px solid #e4e8ed">'
+      +'<td style="padding:.45rem .65rem;color:#bbb;font-size:.75rem;white-space:nowrap">'+(i+1)+'</td>'
+      +'<td style="padding:.45rem .65rem;font-weight:700;color:#111;white-space:nowrap">'+e.nome+'</td>'
+      +'<td style="padding:.45rem .65rem;font-size:.85rem;white-space:nowrap;text-align:center">'+km+'</td>'
+      +'<td style="padding:.45rem .65rem;font-size:.82rem;color:#333;white-space:nowrap">'+act+'</td>'
+      +'<td style="padding:.45rem .65rem;font-size:.85rem;white-space:nowrap;text-align:center">'+tm+'</td>'
+      +'<td style="padding:.45rem .65rem;font-size:.72rem;color:#999;white-space:nowrap">'+dt+'</td>'
       +'</tr>';
   }).join('');
-  var th = '<th style="padding:.55rem .7rem;text-align:left;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.75)">';
-  return '<div style="overflow-x:auto">'
-    +'<table style="width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)">'
+  var th = function(txt,center){ return '<th style="padding:.5rem .65rem;text-align:'+(center?'center':'left')+';font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8);white-space:nowrap">'+txt+'</th>'; };
+  return '<div style="overflow-x:auto;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.1)">'
+    +'<table style="width:100%;border-collapse:collapse;min-width:480px">'
     +'<thead><tr style="background:#1a3a5c">'
-    +th+'#</th>'+th+'Name</th>'+th+'Km</th>'+th+'Activity</th>'+th+'Time</th>'+th+'Confirmed</th>'
+    +th('#')+th('Name')+th('Km',true)+th('Activity')+th('Arrival',true)+th('Date')
     +'</tr></thead>'
     +'<tbody>'+rows+'</tbody>'
     +'</table></div>';
