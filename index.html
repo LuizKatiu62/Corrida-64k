@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v620</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v621</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5281,6 +5281,8 @@ function buildCard(day, isToday, p){
   const rSched = prog.reschedule || null;
   const runMoved = rSched && (rSched.type === 'skip' || rSched.type === 'move');
   const runReceive = rSched && rSched.type === 'receive';
+  // Cancellation is overridden when a rescheduled workout is received
+  const isRunCancelled = !!prog.runCancelled && !runReceive;
   // Verifica se outro dia moveu seu treino para ESTE dia (usando o p já passado para buildCard)
   const thisOriginalMoved = PLAN.some(function(pd){
     var pp = p[pd.date] || {};
