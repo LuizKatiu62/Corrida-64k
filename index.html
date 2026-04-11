@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v619</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v620</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5253,10 +5253,18 @@ function buildCard(day, isToday, p){
     : day;
 
   const runItems = originDay.run.items.map(i=>`<li>${i}</li>`).join('');
+  // When a gym is rescheduled here, use the origin day's gym data
+  const gRSchedEarly = prog.gymReschedule || null;
+  const originGymDay = (gRSchedEarly && gRSchedEarly.type === 'receive')
+    ? (PLAN.find(function(d){ return d.date === gRSchedEarly.from; }) || day)
+    : day;
+
   const exDone   = prog.exDone || {};
-  const gymItems = hasGym ? day.gym.ex.map((i,idx)=>gymItemHtml(i, day.date, idx, !!exDone[idx])).join('') : '<li style="color:#aaa">Descanso — sem treino de força</li>';
+  const gymItems = originGymDay.gym.ex.length > 0
+    ? originGymDay.gym.ex.map((i,idx)=>gymItemHtml(i, originGymDay.date, idx, !!exDone[idx])).join('')
+    : '<li style="color:#aaa">Descanso — sem treino de força</li>';
   const runCal = calcRunCalories(originDay);
-  const gymCal = calcGymCalories(day);
+  const gymCal = calcGymCalories(originGymDay);
   const nutriList  = mfMergeIntoNutri(addCafeComLeite(originDay.nutri, originDay), originDay);
   const nutriItems = nutriList.map(i=>nutriItemHtml(i)).join('');
 
