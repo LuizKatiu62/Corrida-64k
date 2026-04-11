@@ -4856,6 +4856,24 @@ function applyReschedule(fromDate, toDate){
   renderAll();
 }
 
+function cancelReceivedRun(receiveDate){
+  if(!requireEditMode()) return;
+  if(!confirm('Cancelar a corrida reagendada para este dia?')) return;
+  const p = loadProgress();
+  const prog = p[receiveDate] || {};
+  const rs = prog.reschedule;
+  if(!rs || rs.type !== 'receive') return;
+  const fromDate = rs.from;
+  // Remove receive from this day
+  delete p[receiveDate].reschedule;
+  // Remove move from source day so it reverts to normal
+  if(fromDate && p[fromDate] && p[fromDate].reschedule && p[fromDate].reschedule.type === 'move'){
+    delete p[fromDate].reschedule;
+  }
+  saveProgress(p);
+  renderAll();
+}
+
 function openGymRescheduleModal(date){
   if(!requireEditMode()) return;
   document.getElementById('resched-modal-overlay')?.remove();
