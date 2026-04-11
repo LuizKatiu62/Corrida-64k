@@ -5,6 +5,8 @@ const CORE_ASSETS = [
   './index.html',
   './convite.html',
   './convite-pt.html',
+  './goodbye.html',
+  './goodbye-pt.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
