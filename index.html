@@ -1346,7 +1346,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v695</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v696</span></footer>
 
 <script>
 function showLoginForm(){
@@ -2488,13 +2488,23 @@ function fbRestoreFromIDB(cb){
   }catch(e){ cb(null, null); }
 }
 
-// Auto-init: try localStorage first, fall back to IndexedDB backup
+// Default Firebase config — used automatically if nothing is saved
+var FB_DEFAULT_CFG = {
+  apiKey:            'AIzaSyAWD-KEgeIpaMU8z3sKmxKqs-BypQGbLjs',
+  authDomain:        'corrida-64k.firebaseapp.com',
+  databaseURL:       'https://corrida-64k-default-rtdb.firebaseio.com',
+  projectId:         'corrida-64k',
+  storageBucket:     'corrida-64k.firebasestorage.app',
+  messagingSenderId: '931451150684',
+  appId:             '1:931451150684:web:0112ba7eddb4c936776199'
+};
+
+// Auto-init: try localStorage first, fall back to IndexedDB, then default config
 (function tryAutoInit(){
   var lsCfg    = localStorage.getItem(FB_CFG_KEY);
   var lsSyncId = localStorage.getItem(FB_SYNCID_KEY);
 
   if(lsCfg){
-    // Restore syncId from IDB if localStorage syncId is missing (iOS wipe partial)
     if(!lsSyncId){
       fbRestoreFromIDB(function(cfg, sid){
         if(sid){ localStorage.setItem(FB_SYNCID_KEY, sid); }
@@ -2506,11 +2516,18 @@ function fbRestoreFromIDB(cb){
 
   // localStorage wiped — try restoring from IndexedDB
   fbRestoreFromIDB(function(cfg, sid){
-    if(!cfg) return;
-    // Restore to localStorage
-    localStorage.setItem(FB_CFG_KEY, cfg);
-    if(sid) localStorage.setItem(FB_SYNCID_KEY, sid);
-    try{ initFirebaseSync(JSON.parse(cfg)); }catch(e){}
+    if(cfg){
+      localStorage.setItem(FB_CFG_KEY, cfg);
+      if(sid) localStorage.setItem(FB_SYNCID_KEY, sid);
+      try{ initFirebaseSync(JSON.parse(cfg)); }catch(e){}
+      return;
+    }
+    // Nothing saved anywhere — use default config automatically
+    var cfgStr = JSON.stringify(FB_DEFAULT_CFG);
+    localStorage.setItem(FB_CFG_KEY, cfgStr);
+    localStorage.setItem(FB_SYNCID_KEY, 'LUIZ64');
+    fbBackupToIDB(cfgStr, 'LUIZ64');
+    try{ initFirebaseSync(FB_DEFAULT_CFG); }catch(e){}
   });
 })();
 
