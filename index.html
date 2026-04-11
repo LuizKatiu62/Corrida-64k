@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v643</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v644</span></footer>
 
 <script>
 function showLoginForm(){
@@ -7079,6 +7079,12 @@ function dashSecsToMm(s){
   if(!s||s===0) return '—';
   var m=Math.floor(s/60), r=Math.round(s%60);
   return m+':'+(r<10?'0'+r:r);
+}
+
+// Central helper — a cancelled day is only truly cancelled if it's not receiving a rescheduled workout
+function isCancelledDay(prog){
+  var hasReceive = prog.reschedule && prog.reschedule.type === 'receive';
+  return !!prog.runCancelled && !hasReceive;
 }
 
 function dashStats(days){
