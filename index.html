@@ -1103,10 +1103,12 @@ document.addEventListener('visibilitychange',function(){
     <span class="goal-bar-sub" id="goal-bar-sub">Toque para ver ou mudar seu objetivo de corrida</span>
   </div>
   <div style="display:flex;gap:.5rem;flex-shrink:0">
-    <button class="goal-bar-btn" onclick="event.stopPropagation();openGoalSelector()">🎯 Meu Objetivo</button>
+    <button class="goal-bar-btn edit-only" onclick="event.stopPropagation();openGoalSelector()">🎯 Meu Objetivo</button>
+    <button class="lock-btn" onclick="event.stopPropagation();toggleEditMode()" id="lock-btn" title="Modo Edição">🔒</button>
     <button class="goal-bar-btn" style="background:linear-gradient(135deg,#636e72,#2d3436)" onclick="event.stopPropagation();window.location.href='logout.html'">🚪 Sair</button>
   </div>
 </div>
+<div class="edit-mode-banner">✏️ Modo Edição ativo — você está no controle</div>
 
 <div class="week-nav" id="week-nav">
   <!-- PLANO -->
@@ -1344,7 +1346,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v650</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v651</span></footer>
 
 <script>
 function showLoginForm(){
