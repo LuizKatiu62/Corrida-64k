@@ -1337,7 +1337,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v616</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v617</span></footer>
 
 <script>
 function showLoginForm(){
@@ -5246,12 +5246,18 @@ function buildCard(day, isToday, p){
   const hevyData = loadHevyData()[day.date];
   const extraRun = prog.extraRun || null;
 
-  const runItems = day.run.items.map(i=>`<li>${i}</li>`).join('');
+  // When a run is rescheduled here, use the origin day's data for run content and nutrition
+  const rSchedEarly = prog.reschedule || null;
+  const originDay = (rSchedEarly && rSchedEarly.type === 'receive')
+    ? (PLAN.find(function(d){ return d.date === rSchedEarly.from; }) || day)
+    : day;
+
+  const runItems = originDay.run.items.map(i=>`<li>${i}</li>`).join('');
   const exDone   = prog.exDone || {};
   const gymItems = hasGym ? day.gym.ex.map((i,idx)=>gymItemHtml(i, day.date, idx, !!exDone[idx])).join('') : '<li style="color:#aaa">Descanso — sem treino de força</li>';
-  const runCal = calcRunCalories(day);
+  const runCal = calcRunCalories(originDay);
   const gymCal = calcGymCalories(day);
-  const nutriList  = mfMergeIntoNutri(addCafeComLeite(day.nutri, day), day);
+  const nutriList  = mfMergeIntoNutri(addCafeComLeite(originDay.nutri, originDay), originDay);
   const nutriItems = nutriList.map(i=>nutriItemHtml(i)).join('');
 
   const dayEvent = loadEvents().find(e=>e.date===day.date);
