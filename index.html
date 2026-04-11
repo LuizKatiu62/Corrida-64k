@@ -996,6 +996,13 @@
     .mf-in-nutri{background:#fff0f0;border:1.5px dashed #f5c6c6;border-radius:10px;padding:.6rem .8rem;margin-top:.6rem}
     .mf-in-nutri-title{font-size:.7rem;font-weight:800;color:#c0392b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
     .mf-in-nutri-chip{display:inline-block;background:#ffe0e0;border-radius:999px;padding:.15rem .55rem;font-size:.75rem;color:#c0392b;font-weight:600;margin:.15rem .15rem 0 0}
+    /* === EDIT MODE === */
+    body:not(.edit-mode) .edit-only{display:none!important}
+    .lock-btn{background:linear-gradient(135deg,#636e72,#2d3436);border:none;color:#fff;border-radius:12px;padding:.55rem 1.1rem;font-size:.8rem;font-weight:900;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:inherit;box-shadow:0 3px 10px rgba(0,0,0,.25);letter-spacing:.3px;transition:transform .1s,box-shadow .1s}
+    .lock-btn:hover,.lock-btn:active{transform:scale(1.05);box-shadow:0 5px 16px rgba(0,0,0,.3)}
+    body.edit-mode .lock-btn{background:linear-gradient(135deg,#27ae60,#1e8449)}
+    .edit-mode-banner{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,#27ae60,#1e8449);color:#fff;text-align:center;font-size:.78rem;font-weight:800;padding:.45rem;z-index:9999;letter-spacing:.04em}
+    body.edit-mode .edit-mode-banner{display:block}
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1337,7 +1344,7 @@ document.addEventListener('visibilitychange',function(){
 
 </main>
 
-<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v649</span></footer>
+<footer>Desafio 64 km · Saint John, NB · 02 de Maio de 2026 · Luiz — 64 anos em 30/04 🎂 <span style="opacity:.5;font-size:.7rem">· v650</span></footer>
 
 <script>
 function showLoginForm(){
