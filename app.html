@@ -5520,7 +5520,9 @@ function buildCard(day, isToday, p){
 
   const openTab   = activeTabMap[day.date] || 'run';
   const noRun   = !extraRun && (runMoved || isRunCancelled || (day.run.km === 0 && !runReceive));
-  const noGym   = gymMoved || isGymCancelled || (!gymReceive && day.gym.ex.every(e => /^(sem |descanso)/i.test(e.trim())));
+  const _gymSourceDay = gymReceive ? PLAN.find(function(d){ return d.date === gRSched.from; }) : null;
+  const _gymExToCheck = _gymSourceDay ? _gymSourceDay.gym.ex : day.gym.ex;
+  const noGym   = gymMoved || isGymCancelled || _gymExToCheck.every(e => /^(sem |descanso)/i.test(e.trim()));
   const noNutri = day.nutri.length === 0;
   const isFullRest = runMoved && !extraRun;
 
