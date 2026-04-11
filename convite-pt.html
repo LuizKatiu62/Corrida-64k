@@ -629,9 +629,9 @@ function buildParticipantesTable(entries, locale){
 function openParticipantesModal(){
   document.getElementById('modal-participantes').classList.add('open');
   var body = document.getElementById('part-list-body');
-  var label = document.getElementById('part-count-label');
+  var countNum = document.getElementById('part-count-num');
   body.innerHTML = '<p style="text-align:center;padding:2rem;color:#bbb">Carregando...</p>';
-  label.textContent = '';
+  countNum.textContent = '—';
   if(!fbDb){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#bbb">Não foi possível conectar.</p>'; return; }
   fbDb.ref('desafio64/participantes').once('value').then(function(snap){
     var data = snap.val()||{};
@@ -639,10 +639,11 @@ function openParticipantesModal(){
     Object.keys(data).forEach(function(k){ var e=data[k]; if(e&&e.nome) entries.push(e); });
     entries.sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
     if(!entries.length){
+      countNum.textContent = '0';
       body.innerHTML='<p style="text-align:center;padding:2rem;color:#bbb">Nenhum participante confirmado ainda. Seja o primeiro! 🏃</p>';
       return;
     }
-    label.textContent = entries.length+' participante'+(entries.length!==1?'s confirmados':' confirmado');
+    countNum.textContent = entries.length;
     body.innerHTML = buildParticipantesTable(entries,'pt-BR')
       +'<p style="margin-top:.6rem;font-size:.72rem;color:#bbb;text-align:center">Atualizado agora · <button onclick="openParticipantesModal()" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:.72rem;text-decoration:underline">Atualizar</button></p>';
   }).catch(function(){ body.innerHTML='<p style="text-align:center;padding:1rem;color:#e74c3c">Erro ao carregar a lista.</p>'; });
