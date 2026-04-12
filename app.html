@@ -6994,13 +6994,12 @@ function renderRunReport(){
       race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
     };
 
-    // All running days: original km > 0 OR has extraRun OR receives a rescheduled run
+    // All running days with effective km > 0 (excludes days where run was moved away)
     const runDays = PLAN.filter(function(d){
-      if(d.run && d.run.km > 0) return true;
       var prog = progress[d.date] || {};
       if(prog.extraRun) return true;
-      if(prog.reschedule && prog.reschedule.type === 'receive') return true;
-      return false;
+      var km = getEffectivePlanKm(d.date, progress);
+      return km > 0;
     });
 
     let totalPlan = 0, totalReal = 0, doneCount = 0, cumReal = 0;
@@ -7013,7 +7012,6 @@ function renderRunReport(){
       var isFut  = d.date > today;
       var isToday= d.date === today;
       var planKm = getEffectivePlanKm(d.date, progress);
-      if(planKm === 0) continue; // skip days where run was moved away
       totalPlan += planKm;
 
       // ── real data ──────────────────────────────────────────
