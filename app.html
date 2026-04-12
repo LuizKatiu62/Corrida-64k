@@ -6994,9 +6994,12 @@ function renderRunReport(){
       race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
     };
 
-    // All running days with effective km > 0 (excludes days where run was moved away)
+    // All running days with effective km > 0, excluding cancelled and moved-away days
     const runDays = PLAN.filter(function(d){
       var prog = progress[d.date] || {};
+      var hasReceive = prog.reschedule && prog.reschedule.type === 'receive';
+      // Excluded: cancelled without a received replacement
+      if(prog.runCancelled && !hasReceive) return false;
       if(prog.extraRun) return true;
       var km = getEffectivePlanKm(d.date, progress);
       return km > 0;
