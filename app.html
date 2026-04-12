@@ -7051,8 +7051,8 @@ function renderRunReport(){
       var dayName = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][dt.getDay()];
       var dtFmt   = String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0');
       // Tipo efetivo: se recebeu treino de outro dia, usar o tipo do dia de origem
-      var effectiveType = d.type;
-      var effectiveTitle = (d.run.title || '').replace(/🌟\s*/g,'');
+      var effectiveType = d.type || 'easy';
+      var effectiveTitle = d.run ? (d.run.title || '').replace(/🌟\s*/g,'') : '';
       if(prog.reschedule && prog.reschedule.type === 'receive'){
         var originDay = PLAN.find(function(x){ return x.date === prog.reschedule.from; });
         if(originDay){ effectiveType = originDay.type; effectiveTitle = (originDay.run.title||'').replace(/🌟\s*/g,''); }
