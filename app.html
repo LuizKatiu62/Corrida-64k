@@ -5019,10 +5019,10 @@ function applyGymReschedule(fromDate, toDate){
 }
 
 // Replace a km value in text — e.g. "8km Tranquilo" → "12km Tranquilo"
-// Only replaces whole-number occurrences to avoid touching sub-distances like "1km" in intervals
+// Uses \b word boundary so "18km" is not affected when replacing "8km"
 function replaceKmInText(text, origKm, newKm){
   if(!text) return text;
-  var re = new RegExp('(?<![\\d.])' + origKm + '(?=\\s*km)', 'gi');
+  var re = new RegExp('\\b' + origKm + '(?=\\s*km)', 'gi');
   return text.replace(re, newKm);
 }
 
