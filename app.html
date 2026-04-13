@@ -4688,11 +4688,9 @@ function updateProgressStats(p){
     const btn = document.getElementById('btn-w'+wn);
     if(!btn) return;
     const days = PLAN.filter(d => d.week === wn);
-    // Week is "done" if all days are past AND all run days have run checked
+    // Week is "done" if all days of that week are in the past
     const allPast = days.every(d => d.date <= today);
-    const runDays = days.filter(d => getEffectivePlanKm(d.date, p) > 0);
-    const allRunDone = runDays.length > 0 && runDays.every(d => !!(p[d.date]||{}).run);
-    const isDone = allPast && allRunDone;
+    const isDone = allPast && days.length > 0;
     btn.classList.toggle('week-done', isDone);
   });
 }
