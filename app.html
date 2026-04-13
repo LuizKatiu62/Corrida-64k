@@ -5586,7 +5586,9 @@ function buildCard(day, isToday, p){
     effectiveTitle = rFromDayInfo ? rFromDayInfo.run.title : day.run.title;
     effectiveType = rFromDayInfo ? rFromDayInfo.type : day.type;
   } else {
-    effectiveTitle = day.run.title;
+    effectiveTitle = overrideKm
+      ? replaceKmInText(day.run.title, day.run.km, overrideKm)
+      : day.run.title;
     effectiveType = day.type;
   }
 
