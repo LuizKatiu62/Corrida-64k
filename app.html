@@ -5450,7 +5450,8 @@ function buildCard(day, isToday, p){
       ? '<div class="loc">'+rFromDay.run.loc+'</div><ul>'+extraRunItems+'</ul>'+calChipHtml(extraRunCal, rFromDay.run.km+' km')+buildShoeRec(rFromDay)
       : '<div style="color:#aaa;font-size:.85rem;text-align:center;padding:1rem 0">Sem treino</div>';
   } else {
-    runBodyContent = '<div class="loc">'+day.run.loc+'</div><ul>'+runItems+'</ul>'+calChipHtml(runCal, day.run.km+' km')+buildShoeRec(day);
+    const displayKm = overrideKm || day.run.km;
+    runBodyContent = '<div class="loc">'+day.run.loc+'</div><ul>'+runItems+'</ul>'+calChipHtml(runCal, displayKm+' km'+(overrideKm ? ' ✏️' : ''))+buildShoeRec(day);
   }
 
   // Gym reschedule
