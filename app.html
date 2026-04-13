@@ -7048,7 +7048,7 @@ function renderRunReport(){
       var isFut  = d.date > today;
       var isToday= d.date === today;
       var planKm = getEffectivePlanKm(d.date, progress);
-      totalPlan += planKm;
+      if(d.type !== 'race') totalPlan += planKm;
 
       // ── real data ──────────────────────────────────────────
       var realKm   = gData ? Math.round((gData.dist||0) * 10) / 10 : null;
