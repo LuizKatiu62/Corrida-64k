@@ -5018,6 +5018,14 @@ function applyGymReschedule(fromDate, toDate){
   updateProgressStats(p);
 }
 
+// Replace a km value in text — e.g. "8km Tranquilo" → "12km Tranquilo"
+// Only replaces whole-number occurrences to avoid touching sub-distances like "1km" in intervals
+function replaceKmInText(text, origKm, newKm){
+  if(!text) return text;
+  var re = new RegExp('(?<![\\d.])' + origKm + '(?=\\s*km)', 'gi');
+  return text.replace(re, newKm);
+}
+
 function dateLabel(dateStr){
   const d = new Date(dateStr+'T12:00:00');
   const days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
