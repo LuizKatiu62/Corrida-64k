@@ -7120,7 +7120,8 @@ function renderRunReport(){
       '</tr>');
     }
 
-    var overallPct = totalPlan > 0 ? Math.round((totalReal / totalPlan) * 100) : 0;
+    var totalPlanRnd = Math.round(totalPlan * 10) / 10;
+    var overallPct = totalPlanRnd > 0 ? Math.round((totalReal / totalPlanRnd) * 100) : 0;
     var pctColor   = overallPct >= 90 ? 'var(--verde-esc)' : overallPct >= 70 ? 'var(--laranja)' : 'var(--vermelho)';
     var totalRealRnd = Math.round(totalReal * 10) / 10;
 
@@ -7128,7 +7129,7 @@ function renderRunReport(){
       '<div class="rpt-title">📋 Relatório de Corridas</div>' +
       '<div class="rpt-sub">Todas as corridas do plano — desde o início do projeto · dados reais via GPX Garmin</div>' +
       '<div class="rpt-summary">' +
-        '<div class="rpt-sum-card"><span class="rpt-sum-val">' + totalPlan + ' km</span><span class="rpt-sum-lbl">Planejado total</span></div>' +
+        '<div class="rpt-sum-card"><span class="rpt-sum-val">' + totalPlanRnd + ' km</span><span class="rpt-sum-lbl">Planejado total</span></div>' +
         '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--verde-esc)">' + totalRealRnd + ' km</span><span class="rpt-sum-lbl">Realizado total</span></div>' +
         '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:' + pctColor + '">' + overallPct + '%</span><span class="rpt-sum-lbl">Conclusão geral</span></div>' +
         '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--roxo)">' + doneCount + '/' + runDays.length + '</span><span class="rpt-sum-lbl">Treinos feitos</span></div>' +
