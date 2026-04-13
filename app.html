@@ -5502,7 +5502,7 @@ function buildCard(day, isToday, p){
     // Se este dia também cedeu seu treino (outro dia aponta move.to === day.date), usar só o recebido
     effectiveKm = fromKm;
   } else {
-    effectiveKm = day.run.km;
+    effectiveKm = overrideKm || day.run.km;
   }
   // Se há treino extra, substituir runBodyContent e overrides
   if(extraRun){
