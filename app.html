@@ -5518,9 +5518,11 @@ function buildCard(day, isToday, p){
       ? '<span class="day-km-badge km-long">'+extraRun.km+' km ➕</span>'
       : runMoved
         ? '<span class="day-km-badge km-rest">Descanso</span>'
-        : effectiveKm !== day.run.km
-          ? '<span class="day-km-badge km-long">'+effectiveKm+' km 🔀</span>'
-          : kmBadge(day);
+        : overrideKm
+          ? '<span class="day-km-badge km-long">'+effectiveKm+' km ✏️</span>'
+          : effectiveKm !== day.run.km
+            ? '<span class="day-km-badge km-long">'+effectiveKm+' km 🔀</span>'
+            : kmBadge(day);
 
   const openTab   = activeTabMap[day.date] || 'run';
   const noRun   = !extraRun && (runMoved || isRunCancelled || (day.run.km === 0 && !runReceive));
