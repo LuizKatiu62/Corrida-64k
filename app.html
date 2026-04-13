@@ -5420,7 +5420,10 @@ function buildCard(day, isToday, p){
     ? (PLAN.find(function(d){ return d.date === rSchedEarly.from; }) || day)
     : day;
 
-  const runItems = originDay.run.items.map(i=>`<li>${i}</li>`).join('');
+  const runItems = originDay.run.items.map(function(i){
+    var txt = overrideKm ? replaceKmInText(i, day.run.km, overrideKm) : i;
+    return '<li>' + txt + '</li>';
+  }).join('');
   // When a gym is rescheduled here, use the origin day's gym data
   const gRSchedEarly = prog.gymReschedule || null;
   const originGymDay = (gRSchedEarly && gRSchedEarly.type === 'receive')
