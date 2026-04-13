@@ -4662,6 +4662,9 @@ function getEffectivePlanKm(date, p){
     return fromDay ? fromDay.run.km : 0;
   }
 
+  // km alterado manualmente pelo usuário
+  if(prog.overrideKm) return prog.overrideKm;
+
   return day.run.km;
 }
 
