@@ -4759,6 +4759,32 @@ function toggleCancelGym(date){
   updateProgressStats(p);
 }
 
+function openEditKmModal(date){
+  if(!requireEditMode()) return;
+  const day = PLAN.find(d => d.date === date);
+  if(!day) return;
+  const p = loadProgress();
+  const current = (p[date] && p[date].overrideKm) || day.run.km;
+  const input = prompt(
+    'Alterar distância da corrida\n' + dateLabel(date) + '\n' +
+    '(planejado original: ' + day.run.km + ' km)\n\n' +
+    'Nova distância (km):', current
+  );
+  if(input === null) return;
+  const km = parseFloat(String(input).replace(',', '.'));
+  if(isNaN(km) || km < 0){ alert('Valor inválido. Use números, ex: 12 ou 12.5'); return; }
+  if(!p[date]) p[date] = {};
+  if(km === day.run.km){
+    delete p[date].overrideKm; // volta ao original
+  } else {
+    p[date].overrideKm = km;
+  }
+  saveProgress(p);
+  const card = document.getElementById('card-' + date);
+  if(card) card.outerHTML = buildCard(day, date === getToday(), p);
+  updateProgressStats(p);
+}
+
 // ============================================================
 // RESCHEDULE
 // ============================================================
