@@ -5377,6 +5377,9 @@ function buildCard(day, isToday, p){
   const hasGym = day.gym.ex.length > 0;
   const hevyData = loadHevyData()[day.date];
   const extraRun = prog.extraRun || null;
+  // km override: only applies when there's no rescheduling and no extra run
+  const overrideKm = (!prog.extraRun && (!prog.reschedule || prog.reschedule.type === 'receive') === false) ? null
+    : (!prog.extraRun && !prog.reschedule) ? (prog.overrideKm || null) : null;
 
   // When a run is rescheduled here, use the origin day's data for run content and nutrition
   const rSchedEarly = prog.reschedule || null;
