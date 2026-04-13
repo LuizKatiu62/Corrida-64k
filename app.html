@@ -5579,6 +5579,7 @@ function buildCard(day, isToday, p){
     ${isRunCancelled ? '<div style="background:#fde8e6;border-radius:10px;padding:.6rem 1rem;margin-bottom:.5rem;font-size:.83rem;color:#922b21;font-weight:700">🚫 Corrida cancelada neste dia</div>' : ''}
     ${isRunCancelled ? '' : runBodyContent}
     ${reschedButton}
+    ${day.run.km > 0 && !runMoved && !runReceive && !isRunCancelled && !extraRun ? `<button class="resched-btn edit-only" onclick="event.stopPropagation();openEditKmModal('${day.date}')" style="background:#f0f8ff;color:#1a6eba;border-color:#b8d9f5">✏️ ${overrideKm ? 'Alterar km ('+overrideKm+' km)' : 'Alterar km'}</button>` : ''}
     ${extraRun
       ? `<div class="extra-run-banner">
            <div style="flex:1;min-width:0">
