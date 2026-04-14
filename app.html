@@ -5891,6 +5891,10 @@ function showWeek(w){
     document.getElementById('section-participantes').classList.remove('hidden');
     var tb = document.getElementById('today-banner'); if(tb) tb.style.display='none';
     renderParticipantes();
+  } else if(w==='bike'){
+    document.getElementById('btn-bike').classList.add('active');
+    document.getElementById('section-bike').classList.remove('hidden');
+    renderBikeSection();
   } else if(w==='maps'){
     document.getElementById('btn-maps').classList.add('active');
     document.getElementById('section-maps').classList.remove('hidden');
