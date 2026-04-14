@@ -9447,6 +9447,280 @@ document.addEventListener('visibilitychange', function(){
   if(document.visibilityState === 'visible') showWeek('dashboard');
 });
 
+// ============================================================
+// TREINO DE BIKE — completamente separado das métricas de corrida
+// ============================================================
+const BIKE_KEY = 'd64_bike_data';
+
+function loadBikeData(){
+  try{ return JSON.parse(localStorage.getItem(BIKE_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveBikeData(d){
+  localStorage.setItem(BIKE_KEY, JSON.stringify(d));
+}
+
+const BIKE_HR_ZONES = [
+  {z:1,name:'Z1 · Recuperação',   min:0,                  max:Math.round(157*.60),color:'#2980b9'},
+  {z:2,name:'Z2 · Base aeróbica', min:Math.round(157*.60),max:Math.round(157*.70),color:'#27ae60'},
+  {z:3,name:'Z3 · Aeróbico',      min:Math.round(157*.70),max:Math.round(157*.80),color:'#e67e22'},
+  {z:4,name:'Z4 · Limiar',        min:Math.round(157*.80),max:Math.round(157*.90),color:'#e74c3c'},
+  {z:5,name:'Z5 · VO₂max',        min:Math.round(157*.90),max:300,                color:'#8e44ad'},
+];
+
+function bikeZoneFromHR(hr){
+  for(var i=BIKE_HR_ZONES.length-1;i>=0;i--){
+    if(hr>=BIKE_HR_ZONES[i].min) return BIKE_HR_ZONES[i];
+  }
+  return BIKE_HR_ZONES[0];
+}
+
+function calcBikeZonesFromStream(vals){
+  if(!vals||!vals.length) return [];
+  var counts=[0,0,0,0,0];
+  vals.forEach(function(v){
+    for(var i=BIKE_HR_ZONES.length-1;i>=0;i--){
+      if(v>=BIKE_HR_ZONES[i].min){counts[i]++;break;}
+    }
+  });
+  return BIKE_HR_ZONES.map(function(z,i){
+    return {zone:z, pct:Math.round((counts[i]/vals.length)*100)};
+  }).filter(function(x){ return x.pct>0; });
+}
+
+function fmtBikeDur(secs){
+  if(!secs) return '—';
+  var h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
+  return h>0 ? h+'h'+String(m).padStart(2,'0')+'min' : m+'min'+String(s).padStart(2,'0')+'s';
+}
+
+function renderBikeSection(){
+  var el = document.getElementById('bike-content');
+  if(!el) return;
+  var data = loadBikeData();
+  var rides = Object.values(data).sort(function(a,b){ return b.date.localeCompare(a.date); });
+
+  // Summary stats
+  var totalDist=0, totalRides=rides.length, totalPower=0, powerCount=0, totalSecs=0;
+  rides.forEach(function(r){
+    totalDist += r.dist||0;
+    totalSecs += r.movingSecs||0;
+    if(r.avgPower){ totalPower+=r.avgPower; powerCount++; }
+  });
+  var avgPower = powerCount>0 ? Math.round(totalPower/powerCount) : null;
+
+  var summaryHtml = totalRides>0
+    ? '<div class="bike-summary">'
+      + '<div class="bike-sum-card"><span class="bike-sum-val">'+totalRides+'</span><span class="bike-sum-lbl">Treinos</span></div>'
+      + '<div class="bike-sum-card"><span class="bike-sum-val">'+(Math.round(totalDist*10)/10)+' km</span><span class="bike-sum-lbl">Total km</span></div>'
+      + '<div class="bike-sum-card"><span class="bike-sum-val">'+(avgPower||'—')+(avgPower?' W':'')+'</span><span class="bike-sum-lbl">Potência Média</span></div>'
+      + '<div class="bike-sum-card"><span class="bike-sum-val">'+fmtBikeDur(totalSecs)+'</span><span class="bike-sum-lbl">Tempo Total</span></div>'
+      + '</div>'
+    : '';
+
+  // Ride cards
+  var ridesHtml;
+  if(rides.length===0){
+    ridesHtml = '<div class="bike-empty"><div class="bike-empty-icon">🚲</div><div style="font-weight:700;color:#aaa;margin-bottom:.4rem">Nenhum treino importado ainda</div><div style="font-size:.8rem;color:#ccc">Use "Buscar no Strava" para importar seus treinos de bike.</div></div>';
+  } else {
+    ridesHtml = rides.map(function(r){
+      var d = new Date(r.date+'T12:00:00');
+      var days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+      var months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      var dateStr = days[d.getDay()]+' · '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+      var zonesHtml = (r.hrZones||[]).filter(function(z){return z.pct>0;}).map(function(z){
+        return '<span class="bike-zone-pill" style="background:'+z.zone.color+'">'+z.zone.name.split('·')[0].trim()+' '+z.pct+'%</span>';
+      }).join('');
+      return '<div class="bike-card">'
+        +'<button class="bike-del-btn" onclick="deleteBikeRide(\''+r.id+'\')" title="Remover">✕</button>'
+        +'<div class="bike-card-header">'
+        +'  <div class="bike-card-name">🚲 '+r.name+'</div>'
+        +'  <div class="bike-card-date">'+dateStr+'</div>'
+        +'</div>'
+        +'<div class="bike-metrics">'
+        +'  <div class="bike-metric"><span class="bike-metric-val">'+r.dist+' km</span><span class="bike-metric-lbl">Distância</span></div>'
+        +'  <div class="bike-metric"><span class="bike-metric-val">'+(r.avgSpeed||'—')+(r.avgSpeed?' km/h':'')+'</span><span class="bike-metric-lbl">Vel. Média</span></div>'
+        +'  <div class="bike-metric"><span class="bike-metric-val">'+(r.avgPower||'—')+(r.avgPower?' W':'')+'</span><span class="bike-metric-lbl">Potência Média</span></div>'
+        +'  <div class="bike-metric"><span class="bike-metric-val">'+(r.avgHr||'—')+(r.avgHr?' bpm':'')+'</span><span class="bike-metric-lbl">FC Média</span></div>'
+        +'  <div class="bike-metric"><span class="bike-metric-val">'+fmtBikeDur(r.movingSecs)+'</span><span class="bike-metric-lbl">Duração</span></div>'
+        +'  <div class="bike-metric"><span class="bike-metric-val">'+(r.elevGain||0)+' m</span><span class="bike-metric-lbl">Elevação</span></div>'
+        +'</div>'
+        +(zonesHtml ? '<div class="bike-zones">'+zonesHtml+'</div>' : '')
+        +'</div>';
+    }).join('');
+  }
+
+  // Default date range: last 60 days
+  var now = new Date();
+  var toDate = now.toISOString().split('T')[0];
+  var fromDate = new Date(now.getTime()-60*24*3600*1000).toISOString().split('T')[0];
+
+  el.innerHTML = '<div class="bike-wrap">'
+    +'<div class="bike-header"><span class="bike-title">🚲 Treino de Bike</span></div>'
+    +'<div class="bike-fetch-bar">'
+    +'  <div class="bike-fetch-field"><label>De</label><input type="date" id="bike-from" value="'+fromDate+'"></div>'
+    +'  <div class="bike-fetch-field"><label>Até</label><input type="date" id="bike-to" value="'+toDate+'"></div>'
+    +'  <button class="bike-fetch-btn" onclick="fetchStravaBikeRides()">🟠 Buscar no Strava</button>'
+    +'</div>'
+    + summaryHtml
+    + ridesHtml
+    +'</div>';
+}
+
+function deleteBikeRide(id){
+  if(!confirm('Remover este treino de bike?')) return;
+  var data = loadBikeData();
+  delete data[id];
+  saveBikeData(data);
+  renderBikeSection();
+}
+
+async function fetchStravaBikeRides(){
+  var token = await ensureStravaToken();
+  if(!token){ openStravaSetup(''); return; }
+
+  var fromEl = document.getElementById('bike-from');
+  var toEl   = document.getElementById('bike-to');
+  if(!fromEl||!toEl){ alert('Preencha as datas.'); return; }
+  var fromDate = fromEl.value, toDate = toEl.value;
+  if(!fromDate||!toDate){ alert('Preencha as datas de início e fim.'); return; }
+
+  var after  = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
+  var before = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
+
+  var loadEl = document.getElementById('bike-content');
+  if(loadEl){
+    loadEl.insertAdjacentHTML('afterbegin','<div id="bike-loading" style="text-align:center;padding:1.5rem;font-weight:700;color:#e67e22">🟠 Buscando treinos de bike no Strava...</div>');
+  }
+
+  try{
+    var per = 50;
+    var allActs = [];
+    for(var page=1;page<=3;page++){
+      var r = await fetch('https://www.strava.com/api/v3/athlete/activities?after='+after+'&before='+before+'&per_page='+per+'&page='+page,{
+        headers:{'Authorization':'Bearer '+token}
+      });
+      var acts = await r.json();
+      if(!Array.isArray(acts)||acts.length===0) break;
+      allActs = allActs.concat(acts);
+      if(acts.length<per) break;
+    }
+    document.getElementById('bike-loading')?.remove();
+
+    var bikeTypes = ['Ride','VirtualRide','EBikeRide','MountainBikeRide','GravelRide','Handcycle'];
+    var bikes = allActs.filter(function(a){
+      return bikeTypes.includes(a.type)||bikeTypes.includes(a.sport_type);
+    });
+
+    if(bikes.length===0){
+      alert('Nenhum treino de bike encontrado no período selecionado.');
+      return;
+    }
+    showStravaBikeList(bikes);
+  } catch(e){
+    document.getElementById('bike-loading')?.remove();
+    alert('Erro ao buscar Strava: '+e.message);
+  }
+}
+
+function showStravaBikeList(activities){
+  var existing = document.getElementById('bike-select-overlay');
+  if(existing) existing.remove();
+
+  var months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var days2=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  var items = activities.map(function(act){
+    var km = Math.round(act.distance/10)/100;
+    var secs = act.moving_time||0;
+    var h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60);
+    var dur = h>0 ? h+'h'+String(m).padStart(2,'0') : m+'min';
+    var spd = secs>0 ? Math.round((act.distance/1000)/(secs/3600)*10)/10 : 0;
+    var d = new Date((act.start_date_local||act.start_date||'').split('T')[0]+'T12:00:00');
+    var dateStr = days2[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()];
+    var pwr = act.average_watts ? ' · ⚡ '+Math.round(act.average_watts)+' W' : '';
+    var hr  = act.average_heartrate ? ' · ❤️ '+Math.round(act.average_heartrate)+' bpm' : '';
+    return '<div class="strava-activity-item" onclick="importBikeRide('+JSON.stringify(act).replace(/'/g,'`').replace(/"/g,"'")+');document.getElementById(\'bike-select-overlay\').remove()">'
+      +'<div style="font-weight:700;font-size:.88rem;color:#e67e22">'+act.name+'</div>'
+      +'<div style="font-size:.75rem;color:#555;margin-top:.2rem">'+(act.sport_type||act.type)+' · '+dateStr+'</div>'
+      +'<div style="font-size:.78rem;color:#777;margin-top:.25rem">📏 '+km+' km &nbsp;·&nbsp; ⏱ '+dur+' &nbsp;·&nbsp; 🚀 '+spd+' km/h'+pwr+hr+'</div>'
+      +'</div>';
+  }).join('');
+
+  var overlay = document.createElement('div');
+  overlay.className = 'strava-modal-overlay';
+  overlay.id = 'bike-select-overlay';
+  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = '<div class="strava-modal">'
+    +'<h3 style="color:#e67e22">🚲 Treinos de Bike no Strava</h3>'
+    +'<p style="font-size:.78rem;color:#888;margin-bottom:.85rem">Toque em um treino para importar.</p>'
+    +items
+    +'<button style="width:100%;padding:.5rem;background:none;border:none;color:#aaa;cursor:pointer;font-size:.8rem;margin-top:.5rem;font-family:inherit" onclick="document.getElementById(\'bike-select-overlay\').remove()">Fechar</button>'
+    +'</div>';
+  document.body.appendChild(overlay);
+}
+
+async function importBikeRide(act){
+  var actId  = act.id;
+  var km     = Math.round(act.distance/10)/100;
+  var secs   = act.moving_time||0;
+  var spd    = secs>0 ? Math.round((act.distance/1000)/(secs/3600)*10)/10 : null;
+  var pwr    = act.average_watts ? Math.round(act.average_watts) : null;
+  var hrAvg  = act.average_heartrate ? Math.round(act.average_heartrate) : null;
+  var elev   = Math.round(act.total_elevation_gain||0);
+  var date   = (act.start_date_local||act.start_date||'').split('T')[0];
+
+  var hrZones = [];
+  if(hrAvg){
+    hrZones = [{zone: bikeZoneFromHR(hrAvg), pct:100}];
+  }
+
+  // Fetch HR stream for accurate zone breakdown
+  try{
+    var token = await ensureStravaToken();
+    if(token){
+      var sr = await fetch('https://www.strava.com/api/v3/activities/'+actId+'/streams?keys=heartrate,watts&key_by_type=true',{
+        headers:{'Authorization':'Bearer '+token}
+      });
+      if(sr.ok){
+        var streams = await sr.json();
+        if(streams.heartrate && streams.heartrate.data){
+          var hrData = streams.heartrate.data.filter(function(v){return v>30&&v<250;});
+          if(hrData.length>0){
+            hrZones = calcBikeZonesFromStream(hrData);
+            if(!hrAvg) hrAvg = Math.round(hrData.reduce(function(a,b){return a+b;},0)/hrData.length);
+          }
+        }
+        if(!pwr && streams.watts && streams.watts.data){
+          var wData = streams.watts.data.filter(function(v){return v>0;});
+          if(wData.length>0) pwr = Math.round(wData.reduce(function(a,b){return a+b;},0)/wData.length);
+        }
+      }
+    }
+  }catch(e){}
+
+  var ride = {
+    id:         String(actId),
+    name:       act.name||'Treino de Bike',
+    date:       date,
+    dist:       km,
+    movingSecs: secs,
+    avgSpeed:   spd,
+    avgPower:   pwr,
+    avgHr:      hrAvg,
+    elevGain:   elev,
+    hrZones:    hrZones,
+    sport:      act.sport_type||act.type||'Ride'
+  };
+
+  var data = loadBikeData();
+  data[String(actId)] = ride;
+  saveBikeData(data);
+  renderBikeSection();
+  // Scroll to top of bike section
+  document.getElementById('section-bike')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 </script>
 <script src="script.js"></script>
 
