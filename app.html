@@ -866,16 +866,18 @@
       .progress-pct{font-size:.7rem}
 
       /* — Nav semanal — */
-      .week-nav{
-        padding:.35rem .5rem;
-        padding-left:calc(.5rem + env(safe-area-inset-left));
-        padding-right:calc(.5rem + env(safe-area-inset-right));
+      .week-nav-weeks{
+        padding:.35rem calc(.5rem + env(safe-area-inset-left)) .3rem calc(.5rem + env(safe-area-inset-left));
         gap:.25rem;
-        /* esconde scrollbar mas mantém scroll */
-        scrollbar-width:none;
       }
-      .week-nav::-webkit-scrollbar{display:none}
-      .week-nav button{font-size:.65rem;padding:.3rem .55rem;border-radius:999px}
+      .week-nav-sections{
+        padding:.3rem calc(.5rem + env(safe-area-inset-left)) .4rem calc(.5rem + env(safe-area-inset-left));
+        gap:.35rem;
+      }
+      .week-nav button{font-size:.63rem;padding:.28rem .5rem;border-radius:999px}
+      .week-nav-sections button{font-size:.6rem;padding:.22rem .45rem}
+      .nav-group-btns{padding:.18rem .22rem;gap:.2rem}
+      .nav-group-sep{height:32px}
 
       /* — Main — */
       main{
