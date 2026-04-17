@@ -4690,6 +4690,10 @@ function getEffectivePlanKm(date, p){
   // Treino extra sobrepõe tudo
   if(prog.extraRun) return prog.extraRun.km;
 
+  // Corrida cancelada (sem recebimento pendente) — 0 km
+  const hasReceive = rs && rs.type === 'receive';
+  if(prog.runCancelled && !hasReceive) return 0;
+
   // Treino movido para outro dia — este dia fica com 0
   if(rs && (rs.type === 'skip' || rs.type === 'move')) return 0;
 
