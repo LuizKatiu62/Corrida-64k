@@ -4711,6 +4711,7 @@ function getEffectivePlanKm(date, p){
 
 function updateProgressStats(p){
   let totalDone=0, totalKm=0, totalDays=0;
+  const garmin = loadGarmin();
   PLAN.forEach(d=>{
     const prog = p[d.date]||{};
     const hasReceive = prog.reschedule && prog.reschedule.type === 'receive';
@@ -4718,8 +4719,13 @@ function updateProgressStats(p){
     if(prog.runCancelled && !hasReceive) return;
     totalDays++;
     if(prog.run) totalDone++;
-    if(prog.run || prog.extraRun) totalKm += getEffectivePlanKm(d.date, p);
+    if(prog.run || prog.extraRun){
+      const gpx = garmin[d.date];
+      const gpxKm = gpx && gpx.dist > 0 ? gpx.dist : 0;
+      totalKm += gpxKm > 0 ? gpxKm : getEffectivePlanKm(d.date, p);
+    }
   });
+  totalKm = Math.round(totalKm * 10) / 10;
   const pct = totalDays > 0 ? Math.round((totalDone/totalDays)*100) : 0;
   document.getElementById('progress-fill').style.width = pct+'%';
   document.getElementById('progress-pct').textContent = pct+'%';
