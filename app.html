@@ -1148,36 +1148,56 @@ document.addEventListener('visibilitychange',function(){
 </div>
 <div class="edit-mode-banner">✏️ Modo Edição ativo — você está no controle</div>
 
-<div class="week-nav" id="week-nav">
-  <!-- PLANO -->
-  <button onclick="showWeek('today')" class="active" id="btn-today">📍 Hoje</button>
-  <button onclick="showWeek(1)" id="btn-w1">S1 · Adaptação</button>
-  <button onclick="showWeek(2)" id="btn-w2">S2 · Construção</button>
-  <button onclick="showWeek(3)" id="btn-w3">S3 · Pico</button>
-  <button onclick="showWeek(4)" id="btn-w4">S4 · Taper</button>
-  <button onclick="showWeek(5)" id="btn-w5">S5 · Corrida</button>
-  <button onclick="showWeek('maps')" id="btn-maps" style="border-color:#1abc9c;color:#1abc9c">🗺️ Mapas (Treinos/Evento)</button>
-  <!-- SEP: ANÁLISE -->
-  <div class="nav-sep"><span class="nav-sep-label">Análise</span><div class="nav-sep-line"></div></div>
-  <button onclick="showWeek('dashboard')" id="btn-dashboard" style="border-color:#5dade2;color:#5dade2">📊 Dashboard</button>
-  <button onclick="showWeek('report')" id="btn-report" style="border-color:#48c9b0;color:#48c9b0">📋 Relatório</button>
-  <button onclick="showWeek('bike')" id="btn-bike" style="border-color:#e67e22;color:#e67e22">🚲 Treino de Bike</button>
-  <!-- SEP: PREPARAÇÃO -->
-  <div class="nav-sep"><span class="nav-sep-label">Preparação</span><div class="nav-sep-line"></div></div>
-  <button onclick="showWeek('race')" id="btn-race" style="border-color:#f1948a;color:#f1948a">🏁 Estratégia Prova</button>
-  <button onclick="showWeek('myfoods')" id="btn-myfoods" style="border-color:#f1948a;color:#f1948a">🥗 Alimentos</button>
-  <button onclick="showWeek('shopping')" id="btn-shopping" style="border-color:#58d68d;color:#58d68d">🛒 Compras</button>
-  <!-- SEP: EVENTOS -->
-  <div class="nav-sep"><span class="nav-sep-label">Eventos</span><div class="nav-sep-line"></div></div>
-  <button onclick="openAllEventsModal()" style="border-color:#f7c948;color:#f7c948">📅 Inscrições</button>
-  <button onclick="showWeek('events')" id="btn-events" style="border-color:#c39bd3;color:#c39bd3">🎯 Gerenciar Eventos</button>
-  <button onclick="openRaces2026Modal()" style="border-color:#85c1e9;color:#85c1e9">🍁 Canadá 2026</button>
-  <button onclick="showWeek('participantes')" id="btn-participantes" style="border-color:#f7c948;color:#f7c948">🏅 Participantes do Desafio 64</button>
-  <!-- SEP: MAIS -->
-  <div class="nav-sep"><span class="nav-sep-label">Mais</span><div class="nav-sep-line"></div></div>
-  <button onclick="showWeek('photos')" id="btn-photos" style="border-color:#f0a04b;color:#f0a04b">📸 Fotos</button>
-  <button class="edit-only" onclick="openFBModal()" style="border-color:#58d68d;color:#58d68d">🔄 Sync</button>
-  <button class="edit-only" onclick="downloadBackup()" style="border-color:#85c1e9;color:#85c1e9">📦 Backup</button>
+<div class="nav-wrapper" id="week-nav">
+  <!-- ROW 1: Semanas do plano -->
+  <div class="week-nav week-nav-weeks">
+    <button onclick="showWeek('today')" class="active" id="btn-today">📍 Hoje</button>
+    <button onclick="showWeek(1)" id="btn-w1">S1 · Adaptação</button>
+    <button onclick="showWeek(2)" id="btn-w2">S2 · Construção</button>
+    <button onclick="showWeek(3)" id="btn-w3">S3 · Pico</button>
+    <button onclick="showWeek(4)" id="btn-w4">S4 · Taper</button>
+    <button onclick="showWeek(5)" id="btn-w5">S5 · Corrida</button>
+  </div>
+  <!-- ROW 2: Seções agrupadas -->
+  <div class="week-nav week-nav-sections">
+    <div class="nav-group">
+      <span class="nav-group-label">Análise</span>
+      <div class="nav-group-btns">
+        <button onclick="showWeek('dashboard')" id="btn-dashboard">📊 Dashboard</button>
+        <button onclick="showWeek('report')" id="btn-report">📋 Relatório</button>
+        <button onclick="showWeek('bike')" id="btn-bike">🚲 Bike</button>
+        <button onclick="showWeek('maps')" id="btn-maps">🗺️ Mapas</button>
+      </div>
+    </div>
+    <div class="nav-group-sep"></div>
+    <div class="nav-group">
+      <span class="nav-group-label">Preparação</span>
+      <div class="nav-group-btns">
+        <button onclick="showWeek('race')" id="btn-race">🏁 Estratégia</button>
+        <button onclick="showWeek('myfoods')" id="btn-myfoods">🥗 Alimentos</button>
+        <button onclick="showWeek('shopping')" id="btn-shopping">🛒 Compras</button>
+      </div>
+    </div>
+    <div class="nav-group-sep"></div>
+    <div class="nav-group">
+      <span class="nav-group-label">Eventos & Mais</span>
+      <div class="nav-group-btns">
+        <button onclick="openAllEventsModal()">📅 Inscrições</button>
+        <button onclick="showWeek('events')" id="btn-events">🎯 Gerenciar</button>
+        <button onclick="openRaces2026Modal()">🍁 Canadá 2026</button>
+        <button onclick="showWeek('participantes')" id="btn-participantes">🏅 Participantes</button>
+        <button onclick="showWeek('photos')" id="btn-photos">📸 Fotos</button>
+      </div>
+    </div>
+    <div class="nav-group-sep edit-only"></div>
+    <div class="nav-group edit-only">
+      <span class="nav-group-label">Admin</span>
+      <div class="nav-group-btns">
+        <button class="edit-only" onclick="openFBModal()">🔄 Sync</button>
+        <button class="edit-only" onclick="downloadBackup()">📦 Backup</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="week-nav" id="week-nav-gen" style="display:none"></div>
