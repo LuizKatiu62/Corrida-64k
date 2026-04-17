@@ -7525,9 +7525,9 @@ function dashReadiness(days){
     var ak=d.gpx?(d.gpx.dist||0):(d.prog.run?km:(d.prog.extraRun?d.prog.extraRun.km:0));
     if(ak>longestDone) longestDone=ak;
   });
-  // Longest planned run in the entire plan (respecting reschedules), excluding race day
-  var maxPlannedKm=Math.max.apply(null, days.filter(function(d){return d.effectiveKm>0&&d.type!=='race';}).map(function(d){return d.effectiveKm;}));
-  if(!maxPlannedKm||maxPlannedKm<=0) maxPlannedKm=33;
+  // Longest planned run in the entire plan (respecting reschedules and cancellations), excluding race day
+  var maxPlannedKm=Math.max.apply(null, days.filter(function(d){return d.effectiveKm>0&&d.type!=='race'&&!isCancelledDay(d.prog);}).map(function(d){return d.effectiveKm;}));
+  if(!maxPlannedKm||maxPlannedKm<0||maxPlannedKm===Infinity||isNaN(maxPlannedKm)) maxPlannedKm=27;
   var volumeScore=Math.min(100,Math.round(longestDone/maxPlannedKm*100));
   var gpxDays=pastRun.filter(function(d){return d.gpx;});
   var gpxOk=gpxDays.filter(function(d){var km=d.effectiveKm||0; return dashPct(d.gpx.dist||0,km)>=90;}).length;
