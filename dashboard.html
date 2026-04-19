@@ -265,7 +265,7 @@ function renderHeader(today){
 // ---- stats cards ----
 function renderStats(days, today){
   const runDays   = days.filter(d=>d.km>0 && d.type!=='race');
-  const pastRun   = runDays.filter(d=>d.isPast);
+  const pastRun   = runDays.filter(d=>d.isPast || d.isToday);
   const doneCount = pastRun.filter(d=>d.prog.run||d.gpx).length;
   const totalPlanned = runDays.reduce((s,d)=>s+d.km,0);
 
