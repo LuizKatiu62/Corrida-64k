@@ -7464,8 +7464,8 @@ function dashChart(days, today){
       prevWeek=d.week;
     }
 
-    svg+='<rect x="'+x+'" y="'+planY+'" width="'+BAR_W+'" height="'+planH+'" rx="3" fill="'+planFill+'"/>';
-    if(d.isPast&&!hasActual){
+    if(planH>0) svg+='<rect x="'+x+'" y="'+planY+'" width="'+BAR_W+'" height="'+planH+'" rx="3" fill="'+planFill+'"/>';
+    if(!isCancExtra&&(d.isPast||d.isToday)&&!hasActual&&km>0){
       svg+='<rect x="'+x+'" y="'+(baseY-3)+'" width="'+BAR_W+'" height="3" rx="1" fill="var(--vermelho)" opacity="0.7"/>';
     }
     if(hasActual){
