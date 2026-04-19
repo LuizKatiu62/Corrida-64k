@@ -7159,8 +7159,11 @@ function renderRunReport(){
       var prog   = progress[d.date] || {};
       var isFut  = d.date > today;
       var isToday= d.date === today;
-      var planKm = getEffectivePlanKm(d.date, progress);
-      if(d.type !== 'race') totalPlan += planKm;
+      // Is this an "extra run" day (cancelled with GPX, or rest day with GPX)?
+      var hasReceiveR = prog.reschedule && prog.reschedule.type === 'receive';
+      var isExtraRun = (prog.runCancelled && !hasReceiveR && !!gData) || (d.km === 0 && !prog.runCancelled && !!gData);
+      var planKm = isExtraRun ? 0 : getEffectivePlanKm(d.date, progress);
+      if(d.type !== 'race' && !isExtraRun) totalPlan += planKm;
 
       // ── real data ──────────────────────────────────────────
       var realKm   = gData ? Math.round((gData.dist||0) * 10) / 10 : null;
