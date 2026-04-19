@@ -7136,11 +7136,14 @@ function renderRunReport(){
       race:   { label:'Prova',   bg:'#fff3e0', color:'#e65100' },
     };
 
-    // All running days with effective km > 0, excluding cancelled and moved-away days
+    // All running days: planned km > 0, plus any day with GPX data (rest days or cancelled with actual run)
     const runDays = PLAN.filter(function(d){
       var prog = progress[d.date] || {};
       var hasReceive = prog.reschedule && prog.reschedule.type === 'receive';
-      // Excluded: cancelled without a received replacement
+      var hasCancGpx = (prog.runCancelled && !hasReceive) && !!garmin[d.date];
+      var hasRestGpx = !prog.runCancelled && d.km === 0 && !!garmin[d.date];
+      // Include: cancelled days with GPX, rest days with GPX, planned days, extraRun days
+      if(hasCancGpx || hasRestGpx) return true;
       if(prog.runCancelled && !hasReceive) return false;
       if(prog.extraRun) return true;
       var km = getEffectivePlanKm(d.date, progress);
