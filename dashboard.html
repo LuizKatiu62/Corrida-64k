@@ -305,8 +305,9 @@ function renderStats(days, today){
 
 // ---- bar chart ----
 function renderChart(days, today){
-  const runDays = days.filter(d=>d.km>0);
-  const maxKm   = Math.max(...runDays.map(d=>d.km), 10);
+  // Include rest days that have a Strava activity imported
+  const runDays = days.filter(d=>d.km>0 || d.gpx);
+  const maxKm   = Math.max(...runDays.map(d=>Math.max(d.km, d.gpx?d.gpx.dist||0:0)), 10);
 
   const BAR_W  = 22;
   const GAP    = 6;
