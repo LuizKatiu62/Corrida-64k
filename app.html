@@ -7369,7 +7369,7 @@ function dashStats(days){
   var runDays=days.filter(function(d){
     return (d.effectiveKm>0) && d.type!=='race' && !isCancelledDay(d.prog);
   });
-  var pastRun=runDays.filter(function(d){return d.isPast;});
+  var pastRun=runDays.filter(function(d){return d.isPast||d.isToday;});
   var doneCount=pastRun.filter(function(d){return d.prog.run||d.gpx;}).length;
   var totalPlanned=runDays.reduce(function(s,d){return s+(d.effectiveKm||0);},0);
   var totalDoneKm=0, totalGpxKm=0, totalCheckKm=0, longestDone=0, paceSum=0, paceCount=0;
