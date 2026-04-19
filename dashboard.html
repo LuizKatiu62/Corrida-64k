@@ -689,6 +689,16 @@ render();
 setInterval(render, 30000);
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') render(); });
 
+// Register service worker so dashboard gets updates + can serve offline
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js', {scope:'./', updateViaCache:'none'})
+    .then(function(reg){ reg.update(); })
+    .catch(function(){});
+  navigator.serviceWorker.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'SW_UPDATED') location.reload();
+  });
+}
+
 </script>
 </body>
 </html>
