@@ -376,11 +376,13 @@ function renderChart(days, today){
       prevWeek = d.week;
     }
 
-    // planned bar (always shown as background)
-    svg += `<rect x="${x}" y="${planY}" width="${BAR_W}" height="${planH}" rx="3" fill="${planFill}"/>`;
+    // planned bar (only when there is a planned workout)
+    if(planH > 0){
+      svg += `<rect x="${x}" y="${planY}" width="${BAR_W}" height="${planH}" rx="3" fill="${planFill}"/>`;
+    }
 
-    // past + not done + no GPX = red bottom border to flag missed
-    if(d.isPast && !hasActual){
+    // past + not done + no GPX = red bottom border to flag missed (only planned days)
+    if(d.isPast && !hasActual && d.km > 0){
       svg += `<rect x="${x}" y="${baseY-3}" width="${BAR_W}" height="3" rx="1" fill="var(--vermelho)" opacity="0.7"/>`;
     }
 
