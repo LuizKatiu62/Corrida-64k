@@ -7219,20 +7219,26 @@ function renderRunReport(){
         effectiveType = 'easy';
         effectiveTitle = prog.extraRun.title || 'Treino extra';
       }
-      var tConf = TYPE_LABEL[effectiveType] || TYPE_LABEL.easy;
-      var typeBadge = '<span class="rpt-type-badge" style="background:' + tConf.bg + ';color:' + tConf.color + '">' + tConf.label + '</span>';
+      var tConf = isExtraRun
+        ? { bg:'#e8f8f0', color:'#16a085' }
+        : (TYPE_LABEL[effectiveType] || TYPE_LABEL.easy);
+      var typeLabel = isExtraRun ? 'Extra' : tConf.label;
+      var typeBadge = '<span class="rpt-type-badge" style="background:' + tConf.bg + ';color:' + tConf.color + '">' + typeLabel + '</span>';
       var rowCls = isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
 
       var realKmCell = (realKm !== null && realKm > 0)
-        ? '<span class="rpt-km" style="color:' + (realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)') + '">' + realKm + ' km</span>'
+        ? '<span class="rpt-km" style="color:' + (isExtraRun?'#16a085':realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)') + '">' + realKm + ' km</span>'
         : (prog.run ? '<span style="color:#888;font-size:.75rem">✓ manual</span>' : '<span style="color:#ccc">—</span>');
 
-      var runTitle = effectiveTitle;
+      var runTitle = isExtraRun ? (gData && gData.filename ? gData.filename : 'Corrida extra') : effectiveTitle;
+      var planCell = isExtraRun
+        ? '<span style="color:#ccc">—</span>'
+        : '<span class="rpt-km" style="color:var(--azul)">' + planKm + ' km</span><br><span style="font-size:.68rem;color:#999">' + runTitle + '</span>';
 
       rowsHtml.push('<tr class="' + rowCls + '">' +
         '<td class="rpt-date">' + dtFmt + '<small>' + dayName + ' · Sem ' + d.week + '</small></td>' +
         '<td>' + typeBadge + '</td>' +
-        '<td><span class="rpt-km" style="color:var(--azul)">' + planKm + ' km</span><br><span style="font-size:.68rem;color:#999">' + runTitle + '</span></td>' +
+        '<td>' + planCell + '</td>' +
         '<td>' + realKmCell + '</td>' +
         '<td style="color:var(--azul);font-weight:700">' + pace + '</td>' +
         '<td class="rpt-col-hide">' + duration + '</td>' +
