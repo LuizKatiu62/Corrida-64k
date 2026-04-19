@@ -7438,15 +7438,19 @@ function dashChart(days, today){
     var x=barX(i);
     var planH=Math.max(2,Math.round(km/maxKm*INNER));
     var planY=baseY-planH;
+    var isCancExtra=isCancelledDay(d.prog)&&!!d.gpx;
     var actualKm=0;
     if(d.gpx) actualKm=d.gpx.dist||0;
     else if(d.prog.run) actualKm=km;
     var hasActual=actualKm>0;
-    var p=d.isPast?dashPct(actualKm,km):null;
+    var p=(d.isPast||d.isToday)&&!isCancExtra?dashPct(actualKm,km):null;
     var actualH=hasActual?Math.max(2,Math.round(actualKm/maxKm*INNER)):0;
     var actualY=baseY-actualH;
+    // cancelled extra: no plan bar; regular: light plan bar
+    var planH=isCancExtra?0:Math.max(2,Math.round(km/maxKm*INNER));
+    var planY=baseY-planH;
     var planFill=d.type==='race'?'#e8dcf5':d.isPast?'#e8eef4':'#dce8f5';
-    var actualFill=d.type==='race'?'var(--roxo)':p===null?'var(--verde)':p>=95?'var(--verde)':p>=70?'var(--laranja)':'var(--vermelho)';
+    var actualFill=isCancExtra?'#1abc9c':d.type==='race'?'var(--roxo)':p===null?'var(--verde)':p>=95?'var(--verde)':p>=70?'var(--laranja)':'var(--vermelho)';
 
     // week separator + label
     if(d.week!==prevWeek){
