@@ -7413,7 +7413,10 @@ function dashStats(days){
 }
 
 function dashChart(days, today){
-  var runDays=days.filter(function(d){return d.effectiveKm>0&&!isCancelledDay(d.prog);});
+  // include cancelled days that have GPX data — show as extra run
+  var runDays=days.filter(function(d){
+    return (d.effectiveKm>0&&!isCancelledDay(d.prog)) || (isCancelledDay(d.prog)&&d.gpx);
+  });
   var maxKm=Math.max.apply(null,runDays.map(function(d){return d.effectiveKm;}).concat([10]));
   var BAR_W=22,GAP=6,H=180,PAD_T=18,PAD_L=24,PAD_B=38;
   var INNER=H-PAD_T-PAD_B;
