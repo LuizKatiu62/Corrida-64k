@@ -5790,6 +5790,19 @@ function renderAll(){
     const todayProg = p[today] || {};
     const rSched  = todayProg.reschedule   || null;
     const gRSched = todayProg.gymReschedule|| null;
+    const todayGpx = loadGarmin()[today];
+
+    // If run was cancelled (and no rescheduled receive), show accordingly
+    var isRunCancelled = !!todayProg.runCancelled && !(rSched && rSched.type === 'receive');
+    if(isRunCancelled){
+      if(todayGpx){
+        bannerTitle.textContent = 'Hoje: 🏃 Corrida extra — ' + (todayGpx.dist||0) + ' km';
+      } else {
+        bannerTitle.textContent = 'Hoje: Descanso — corrida cancelada';
+      }
+      bannerSub.textContent = todayDay.phase + ' · ' + dateLabel(today);
+      // still update rest of renderAll (week grids etc.)
+    }
 
     // Determine effective run title
     var runTitle = todayDay.run.title;
