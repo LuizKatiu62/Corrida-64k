@@ -7514,7 +7514,14 @@ function dashMissed(days){
   var items=[];
   days.forEach(function(d){
     var km=d.effectiveKm||0;
-    if(!d.isPast||km===0||d.type==='race'||isCancelledDay(d.prog)) return;
+    // Cancelled day with GPX = show as bonus extra run
+    if(isCancelledDay(d.prog)&&d.gpx&&(d.isPast||d.isToday)){
+      var ekm=d.gpx.dist||0;
+      items.push({date:d.date,badge:'dash-badge-bonus',badgeTxt:'Extra',
+        text:'Corrida extra — '+ekm+' km (treino planejado cancelado)'});
+      return;
+    }
+    if((!d.isPast&&!d.isToday)||km===0||d.type==='race'||isCancelledDay(d.prog)) return;
     var actualKm=d.gpx?(d.gpx.dist||0):(d.prog.run?km:0);
     var p=dashPct(actualKm,km);
     if(!d.prog.run&&!d.gpx){
