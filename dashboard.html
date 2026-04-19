@@ -485,7 +485,7 @@ function renderWeeks(days){
     const w = weeks[d.week];
     if(d.km>0 && d.type!=='race'){ w.planKm+=d.km; w.planCount++; }
     const actualKm = d.gpx?(d.gpx.dist||0):d.prog.run?d.km:0;
-    if(actualKm>0 && d.km>0){ w.doneKm+=actualKm; w.doneCount++; }
+    if(actualKm>0){ w.doneKm+=actualKm; if(d.km>0 && d.type!=='race') w.doneCount++; }
   });
 
   const phaseColors = {'Adaptação':'#3498db','Construção':'#e67e22','Pico':'#e74c3c','Taper':'#9b59b6','Sem. Corrida':'#2ecc71'};
