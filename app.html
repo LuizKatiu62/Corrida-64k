@@ -7174,7 +7174,15 @@ function renderRunReport(){
 
       // ── % concluído ────────────────────────────────────────
       var pctHtml;
-      if(isFut){
+      if(isExtraRun){
+        // Extra run: no planned km to compare against — just count the actual km
+        if(realKm !== null && realKm > 0){
+          totalReal += realKm;
+          cumReal   += realKm;
+          doneCount++;
+        }
+        pctHtml = '<span class="rpt-pct-pill" style="background:#e8f8f0;color:#16a085">➕ Extra</span>';
+      } else if(isFut){
         pctHtml = '<span class="rpt-pct-pill rpt-pct-future">—</span>';
       } else if(realKm !== null && realKm > 0){
         var pctVal = Math.round((realKm / planKm) * 100);
