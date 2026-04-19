@@ -437,8 +437,17 @@ function renderMissed(days, today){
 
   days.forEach(d=>{
     if(!d.isPast) return;
-    if(d.km === 0) return;
     if(d.type === 'race') return;
+
+    // Extra run on a rest/unplanned day — show as bonus
+    if(d.km === 0){
+      if(d.gpx){
+        const km = d.gpx.dist||0;
+        items.push({date:d.date, badge:'badge-bonus', badgeTxt:'Extra',
+          text:`Corrida extra — ${km} km realizados (dia sem treino planejado)`});
+      }
+      return;
+    }
 
     const actualKm = d.gpx ? (d.gpx.dist||0) : (d.prog.run ? d.km : 0);
     const p = pct(actualKm, d.km);
