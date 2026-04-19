@@ -687,6 +687,7 @@ render();
 
 // refresh every 30s in case user switches tabs and marks workouts
 setInterval(render, 30000);
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') render(); });
 
 </script>
 </body>
