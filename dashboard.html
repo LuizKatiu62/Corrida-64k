@@ -397,10 +397,12 @@ function renderChart(days, today){
     }
 
     // km label above bar
-    const topVal  = hasActual ? actualKm : d.km;
+    const topVal  = hasActual ? actualKm : (d.km > 0 ? d.km : '');
     const topY    = hasActual ? actualY - 3 : planY - 3;
     const topFill = hasActual ? actualFill : (d.isPast ? 'var(--vermelho)' : '#aac');
-    svg += `<text x="${x+BAR_W/2}" y="${topY}" text-anchor="middle" font-size="8" fill="${topFill}" font-weight="${hasActual?'700':'400'}">${topVal}</text>`;
+    if(topVal !== '') svg += `<text x="${x+BAR_W/2}" y="${topY}" text-anchor="middle" font-size="8" fill="${topFill}" font-weight="${hasActual?'700':'400'}">${topVal}</text>`;
+    // ➕ badge for extra runs
+    if(isExtra && hasActual) svg += `<text x="${x+BAR_W/2}" y="${baseY+26}" text-anchor="middle" font-size="9">➕</text>`;
 
     // x-axis date label
     const [,mm,dd] = d.date.split('-');
