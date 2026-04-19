@@ -686,6 +686,20 @@ render();
   }catch(e){ tryFirebaseSync(); }
 })();
 
+function forceDashUpdate(){
+  if('serviceWorker' in navigator){
+    caches.keys().then(function(keys){
+      return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+    }).then(function(){
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        return Promise.all(regs.map(function(r){ return r.unregister(); }));
+      }).then(function(){ location.reload(true); });
+    });
+  } else {
+    location.reload(true);
+  }
+}
+
 // refresh every 30s in case user switches tabs and marks workouts
 setInterval(render, 30000);
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') render(); });
