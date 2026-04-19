@@ -97,10 +97,10 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // For HTML files: network-first so updates are always visible
+  // For HTML files: network-first, bypass HTTP cache to always get latest
   if(e.request.headers.get('accept')&&e.request.headers.get('accept').includes('text/html')){
     e.respondWith(
-      fetch(e.request).then(res => {
+      fetch(e.request, {cache:'no-cache'}).then(res => {
         if(res.ok){
           const clone = res.clone();
           caches.open(CACHE).then(c => c.put(e.request, clone));
