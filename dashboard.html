@@ -436,7 +436,7 @@ function renderMissed(days, today){
   const items = [];
 
   days.forEach(d=>{
-    if(!d.isPast) return;
+    if(!d.isPast && !d.isToday) return;
     if(d.type === 'race') return;
 
     // Extra run on a rest/unplanned day — show as bonus
