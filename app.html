@@ -8962,8 +8962,10 @@ async function fetchStravaActivities(date){
       showStravaNoActivity(date);
       return;
     }
-    const runs = acts.filter(a=>['Run','TrailRun','VirtualRun'].includes(a.type)||['Run','TrailRun','VirtualRun'].includes(a.sport_type));
-    showStravaActivityList(date, runs.length > 0 ? runs : acts);
+    // Show all activities so user can pick — Garmin sometimes syncs runs as 'Workout' type
+    const RUN_TYPES = ['Run','TrailRun','VirtualRun','Workout','Hike','Walk'];
+    const runs = acts.filter(a=>RUN_TYPES.includes(a.type)||RUN_TYPES.includes(a.sport_type));
+    showStravaActivityList(date, acts);
   } catch(e){
     loadingOverlay.remove();
     alert('Erro ao buscar atividades Strava: '+e.message);
