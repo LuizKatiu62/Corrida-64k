@@ -8742,7 +8742,7 @@ function switchToGoal(type){
   document.getElementById('week-nav').style.display = is64k ? '' : 'none';
   document.getElementById('week-nav-gen').style.display = is64k ? 'none' : '';
   document.getElementById('section-genplan').style.display = is64k ? 'none' : '';
-  [1,2,3,4,5].forEach(i=>{ const s=document.getElementById('section-w'+i); if(s) s.style.display=is64k?'':'none'; });
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(i=>{ const s=document.getElementById('section-w'+i); if(s) s.style.display=is64k?'':'none'; });
   const todayBanner = document.getElementById('today-banner');
   if(todayBanner) todayBanner.style.display = is64k ? '' : 'none';
   if(is64k){
