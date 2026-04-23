@@ -1911,7 +1911,7 @@ function initFirebaseSync(config){
 
     // One-time migration: push local bike data to Firebase if Firebase has none
     (function migrateBikeToFirebase(){
-      var localBike = localStorage.getItem(BIKE_KEY);
+      var localBike = localStorage.getItem('d64_bike_data');
       if(!localBike || localBike === '{}') return;
       fbDB.ref('d64/'+fbSyncId+'/bike').once('value').then(function(snap){
         if(!snap.exists() || snap.val() === null){
