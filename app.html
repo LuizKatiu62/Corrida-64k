@@ -1782,7 +1782,7 @@ function fbAttachListeners(syncId){
   var base = 'd64/'+syncId;
 
   // ---- progress / events / garmin (small JSON) ----
-  ['progress','events','garmin','hevy'].forEach(function(key){
+  ['progress','events','garmin','hevy','bike'].forEach(function(key){
     fbDB.ref(base+'/'+key).on('value', function(snap){
       if(!snap.exists() || fbRemoteWrite) return;
       var obj = {}; obj[key] = snap.val();
