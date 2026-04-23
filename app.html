@@ -5106,9 +5106,9 @@ function updateProgressStats(p){
   document.getElementById('stat-done').textContent = totalDone;
   document.getElementById('stat-km').textContent = totalKm;
 
-  // Mark completed weeks on S1–S5 buttons
+  // Mark completed weeks on S1–S11 buttons
   const today = getToday();
-  [1,2,3,4,5].forEach(wn => {
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(wn => {
     const btn = document.getElementById('btn-w'+wn);
     if(!btn) return;
     const days = PLAN.filter(d => d.week === wn);
