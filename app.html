@@ -1742,6 +1742,13 @@ function fbApplyRemote(data){
         localStorage.setItem(HEVY_DATA_STORE, hevyStr);
       } catch(e){ console.warn('fbApplyRemote hevy error:', e); }
     }
+    if(data.bike != null){
+      try{
+        const bikeStr = (typeof data.bike === 'string') ? data.bike : JSON.stringify(data.bike);
+        localStorage.setItem(BIKE_KEY, bikeStr);
+        _bikeIDB('write', bikeStr);
+      } catch(e){ console.warn('fbApplyRemote bike error:', e); }
+    }
   } catch(e){
     console.warn('fbApplyRemote write error:', e);
   } finally {
