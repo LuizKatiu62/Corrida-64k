@@ -6980,7 +6980,7 @@ function renderShoppingSection(){
 
   // ---- week selector bar ----
   var weekBar = '<div class="shop-week-bar">';
-  [1,2,3,4,5].forEach(function(wn){
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(function(wn){
     var ws = weekStats(wn);
     var lbl = weekLabels[wn] + ' &nbsp;<small>'+ws.km+'km</small>';
     weekBar += '<button class="shop-week-btn'+(sw===wn?' active':'')+'" onclick="_shopWeek='+wn+';renderShoppingSection()">'+lbl+'</button>';
