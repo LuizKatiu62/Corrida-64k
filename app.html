@@ -6791,7 +6791,7 @@ document.addEventListener('keydown', e => {
 // Popula os botões de semana com o período (DD/MM–DD/MM)
 function initWeekButtons(){
   const fmt = d => { const [,m,day] = d.split('-'); return `${day}/${m}`; };
-  [1,2,3,4,5].forEach(w => {
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(w => {
     const days = PLAN.filter(d => d.week === w);
     if(!days.length) return;
     const start = fmt(days[0].date);
