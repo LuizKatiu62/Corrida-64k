@@ -3631,7 +3631,7 @@ function openAllEventsModal(){
   const goalEvents = [];
   Object.entries(GOAL_META).forEach(([type, meta]) => {
     const gd = type === '64k'
-      ? { eventDate:'2026-05-02', city:'Saint John', province:'NB', targetTime:'', registered:true }
+      ? { eventDate:'2026-06-13', city:'Saint John', province:'NB', targetTime:'', registered:true }
       : loadGoalData(type);
     if(!gd || !gd.eventDate) return;
     goalEvents.push({
