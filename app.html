@@ -4588,30 +4588,67 @@ function openExerciseModal(key){
   overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 
-  // Fetch exercise photo from Wikipedia summary (fast, reliable) — skip SVG illustrations
-  if(ex.wikiPage){
+  // Fetch exercise photo — tries Wikipedia pageimages API, then Commons search
+  if(ex.wikiPage || ex.photo){
     const wrap = document.getElementById('wiki-photo-wrap-' + thumbUid);
     const emojiHtml = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:.4rem"><span style="font-size:3.5rem">'+(ex.thumbEmoji||'🏋️')+'</span><span style="font-size:.72rem;color:#aaa">'+ex.title+'</span></div>';
-    fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(ex.wikiPage))
-      .then(r => r.ok ? r.json() : {})
-      .then(data => {
-        if(!wrap) return;
-        const thumb = data.thumbnail && data.thumbnail.source;
-        // Skip SVG illustrations (.svg.png are rasterised diagrams, not photos)
-        if(thumb && !/\.svg/i.test(thumb)){
-          const src = thumb.replace(/\/\d+px-/, '/400px-');
-          const img = document.createElement('img');
-          img.alt = ex.title;
-          img.style.cssText = 'width:100%;max-height:260px;object-fit:cover;display:block;border-radius:12px';
-          img.onerror = () => { if(wrap) wrap.innerHTML = emojiHtml; };
-          img.src = src;
-          wrap.innerHTML = '';
-          wrap.appendChild(img);
-        } else {
-          wrap.innerHTML = emojiHtml;
-        }
-      })
-      .catch(() => { if(wrap) wrap.innerHTML = emojiHtml; });
+
+    function showImg(src){
+      if(!wrap) return;
+      const img = document.createElement('img');
+      img.alt = ex.title;
+      img.style.cssText = 'width:100%;max-height:260px;object-fit:cover;display:block;border-radius:12px';
+      img.onerror = () => { if(wrap) wrap.innerHTML = emojiHtml; };
+      img.src = src;
+      wrap.innerHTML = '';
+      wrap.appendChild(img);
+    }
+
+    // If a curated photo URL is provided, use it directly
+    if(ex.photo){ showImg(ex.photo); }
+    else {
+      // Try Wikipedia pageimages API (returns actual article photos, better than summary)
+      const apiUrl = 'https://en.wikipedia.org/w/api.php?action=query&titles='
+        + encodeURIComponent(ex.wikiPage)
+        + '&prop=pageimages&pithumbsize=400&format=json&origin=*';
+      fetch(apiUrl)
+        .then(r => r.ok ? r.json() : {})
+        .then(data => {
+          if(!wrap) return;
+          const pages = data.query && data.query.pages;
+          const page  = pages && Object.values(pages)[0];
+          const src   = page && page.thumbnail && page.thumbnail.source;
+          // Allow .svg.png (rendered PNGs) but skip pure .svg files
+          if(src && !/\.svg$/i.test(src)){
+            showImg(src.replace(/\/\d+px-/, '/400px-'));
+          } else {
+            // Fallback: search Wikimedia Commons for a photo
+            const q = encodeURIComponent(ex.title + ' exercise');
+            fetch('https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch='
+              + q + '+filetype:bitmap&srnamespace=6&srlimit=3&format=json&origin=*')
+              .then(r2 => r2.ok ? r2.json() : {})
+              .then(d2 => {
+                if(!wrap) return;
+                const hits = d2.query && d2.query.search;
+                if(!hits || !hits.length){ wrap.innerHTML = emojiHtml; return; }
+                const fname = hits[0].title.replace('File:','');
+                return fetch('https://commons.wikimedia.org/w/api.php?action=query&titles=File:'
+                  + encodeURIComponent(fname)
+                  + '&prop=imageinfo&iiprop=url&iiurlwidth=400&format=json&origin=*');
+              })
+              .then(r3 => r3 && r3.ok ? r3.json() : null)
+              .then(d3 => {
+                if(!wrap || !d3) return;
+                const pg = d3.query && d3.query.pages && Object.values(d3.query.pages)[0];
+                const ii = pg && pg.imageinfo && pg.imageinfo[0];
+                if(ii && ii.thumburl) showImg(ii.thumburl);
+                else wrap.innerHTML = emojiHtml;
+              })
+              .catch(() => { if(wrap) wrap.innerHTML = emojiHtml; });
+          }
+        })
+        .catch(() => { if(wrap) wrap.innerHTML = emojiHtml; });
+    }
   }
 }
 
