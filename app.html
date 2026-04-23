@@ -6104,9 +6104,10 @@ function switchTab(date, tab){
 
 function updateWeekKmLabels(p){
   var dateRanges = {
-    1:'31 Mar – 05 Abr', 2:'06 – 12 Abr', 3:'13 – 19 Abr', 4:'20 – 26 Abr', 5:'27 Abr – 02 Mai'
+    1:'31 Mar – 05 Abr', 2:'06 – 12 Abr', 3:'13 – 19 Abr', 4:'20 – 26 Abr', 5:'27 Abr – 03 Mai',
+    6:'04 – 10 Mai', 7:'11 – 17 Mai', 8:'18 – 24 Mai', 9:'25 – 31 Mai', 10:'01 – 07 Jun', 11:'08 – 13 Jun'
   };
-  [1,2,3,4,5].forEach(function(wn){
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(function(wn){
     var el = document.getElementById('week-km-'+wn);
     if(!el) return;
     var days = PLAN.filter(function(d){ return d.week === wn; });
