@@ -9543,12 +9543,49 @@ document.addEventListener('visibilitychange', function(){
 // ============================================================
 const BIKE_KEY = 'd64_bike_data';
 
+function _bikeIDB(mode, dataToWrite){
+  return new Promise(function(resolve){
+    try{
+      var req = indexedDB.open('desafio64-bike', 1);
+      req.onupgradeneeded = function(e){ e.target.result.createObjectStore('kv',{keyPath:'k'}); };
+      req.onsuccess = function(e){
+        var db = e.target.result;
+        if(mode === 'write'){
+          db.transaction('kv','readwrite').objectStore('kv').put({k:'data', v: dataToWrite});
+          resolve(null);
+        } else {
+          var r = db.transaction('kv','readonly').objectStore('kv').get('data');
+          r.onsuccess = function(ev){ resolve(ev.target.result ? ev.target.result.v : null); };
+          r.onerror   = function(){ resolve(null); };
+        }
+      };
+      req.onerror = function(){ resolve(null); };
+    }catch(e){ resolve(null); }
+  });
+}
+
+// Restore bike data from IDB if localStorage was wiped by iOS
+(function restoreBikeFromIDB(){
+  var ls = localStorage.getItem(BIKE_KEY);
+  if(ls && ls !== '{}') return;
+  _bikeIDB('read').then(function(v){
+    if(!v) return;
+    localStorage.setItem(BIKE_KEY, v);
+  });
+})();
+
 function loadBikeData(){
   try{ return JSON.parse(localStorage.getItem(BIKE_KEY)) || {}; }
   catch(e){ return {}; }
 }
 function saveBikeData(d){
-  localStorage.setItem(BIKE_KEY, JSON.stringify(d));
+  var jsonStr = JSON.stringify(d);
+  localStorage.setItem(BIKE_KEY, jsonStr);
+  _bikeIDB('write', jsonStr);
+  if(fbDB && fbSyncId){
+    fbDB.ref('d64/'+fbSyncId+'/bike').set(d)
+      .catch(function(e){ console.warn('bike push error:',e); });
+  }
 }
 
 const BIKE_HR_ZONES = [
