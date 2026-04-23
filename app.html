@@ -1856,7 +1856,7 @@ function fbAttachListeners(syncId){
 function fbDetachListeners(syncId){
   if(!fbDB) return;
   var base = 'd64/'+syncId;
-  ['progress','events','garmin','hevy'].forEach(function(key){
+  ['progress','events','garmin','hevy','bike'].forEach(function(key){
     fbDB.ref(base+'/'+key).off();
   });
   fbDB.ref(base+'/photos').off();
