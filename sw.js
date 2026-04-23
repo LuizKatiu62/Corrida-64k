@@ -62,7 +62,7 @@ self.addEventListener('fetch', e => {
 
 
   // For external CDN/Firebase scripts: cache-first, no network fallback needed
-  const isExt = EXT_URLS.some(u => url.startsWith(u) || url.includes('gstatic.com') || url.includes('cloudflare.com') || url.includes('unpkg.com'));
+  const isExt = EXT_URLS.some(u => url.startsWith(u) || url.includes('gstatic.com') || url.includes('cloudflare.com') || url.includes('unpkg.com') || url.includes('wikimedia.org'));
 
   if(isExt){
     e.respondWith(
