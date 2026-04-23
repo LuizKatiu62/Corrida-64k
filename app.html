@@ -1908,6 +1908,17 @@ function initFirebaseSync(config){
 
     fbAttachListeners(fbSyncId);
 
+    // One-time migration: push local bike data to Firebase if Firebase has none
+    (function migrateBikeToFirebase(){
+      var localBike = localStorage.getItem(BIKE_KEY);
+      if(!localBike || localBike === '{}') return;
+      fbDB.ref('d64/'+fbSyncId+'/bike').once('value').then(function(snap){
+        if(!snap.exists() || snap.val() === null){
+          try{ fbDB.ref('d64/'+fbSyncId+'/bike').set(JSON.parse(localBike)); }catch(e){}
+        }
+      }).catch(function(){});
+    })();
+
     localStorage.setItem(FB_CFG_KEY, JSON.stringify(config));
     fbBackupToIDB(JSON.stringify(config), fbSyncId);
     updateFBBanner(true);
