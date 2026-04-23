@@ -68,7 +68,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(
       caches.match(e.request).then(cached => {
         if(cached) return cached;
-        return fetch(e.request).then(res => {
+        return fetch(e.request.url, {mode:'cors', credentials:'omit'}).then(res => {
           if(res.ok){
             caches.open(CACHE).then(c => c.put(e.request, res.clone()));
           }
