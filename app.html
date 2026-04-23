@@ -2538,7 +2538,7 @@ function rebuildProgressFromActivities(){
   var fresh = (function(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}; }catch(e){ return progress; } })();
   try{ updateProgressStats(fresh); }catch(e){ console.warn('updateProgressStats error:',e); }
   var today = getToday();
-  [1,2,3,4,5].forEach(function(w){
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(function(w){
     var grid = document.getElementById('grid-w'+w);
     if(!grid) return;
     var days = PLAN.filter(function(d){ return d.week===w; });
