@@ -5619,24 +5619,30 @@ function buildShoeRecKmType(km, type){
   let primary, reason, alt;
   if(type === 'race'){
     primary = SHOES.adizero;
-    reason = 'Dia de prova — máximo retorno de energia, leveza e resposta rápida para os 64km.';
+    reason = 'Dia de prova — máximo retorno de energia, placa de carbono e leveza para os 64km. Seu calçado de corrida!';
     alt = 'Alternativa: Superblast 3 se preferir mais amortecimento no ultra.';
-  } else if(type === 'long'){
-    primary = SHOES.superblast;
-    reason = 'Treino longo — amortecimento máximo protege as articulações no alto volume de km.';
-    alt = 'Alternativa: Rebel V5 para um estímulo mais responsivo nos últimos km.';
   } else if(type === 'medium'){
     primary = SHOES.adizero;
-    reason = 'Treino de qualidade — plataforma veloz para ritmos de limiar e desenvolvimento de força.';
+    reason = 'Treino de velocidade — placa de carbono e resposta rápida para intervalos, fartlek e ritmos de limiar. Use o Pro 4!';
     alt = 'Alternativa: Rebel V5 para um estímulo mais suave preservando as pernas.';
+  } else if(type === 'long'){
+    if(km >= 30){
+      primary = SHOES.adizero;
+      reason = 'Longo-chave — use o Adios Pro 4 para simular a prova: acostume os pés e testa a nutrição com o calçado de corrida.';
+      alt = 'Dica: reservar o Pro 4 só para estes longos-chave e a prova — no máximo 4–5 vezes antes do desafio.';
+    } else {
+      primary = SHOES.superblast;
+      reason = 'Longo de volume — amortecimento máximo protege as articulações e poupa o Pro 4 para os momentos certos.';
+      alt = 'Alternativa: Rebel V5 para sensação mais ágil.';
+    }
   } else {
     if(km >= 10){
       primary = SHOES.superblast;
-      reason = 'Corrida fácil longa — amortecimento generoso mantém as pernas frescas para os próximos treinos.';
+      reason = 'Corrida fácil longa — amortecimento generoso mantém as pernas frescas. Reserve o Pro 4 para treinos de qualidade.';
       alt = 'Alternativa: Rebel V5 para sensação mais ágil.';
     } else {
       primary = SHOES.rebel;
-      reason = 'Corrida fácil curta — leveza e resposta energética para manter a cadência sem desgastar.';
+      reason = 'Corrida fácil curta — leveza e resposta para manter cadência sem desgastar o Pro 4.';
       alt = 'Alternativa: Superblast 3 para dias de recuperação com mais proteção.';
     }
   }
