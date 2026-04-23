@@ -4565,7 +4565,7 @@ function openExerciseModal(key){
 
   // Exercise photo — loaded via Wikipedia REST API
   const thumbUid = 'ext-' + Date.now();
-  const thumbHtml = ex.wikiPage
+  const thumbHtml = (ex.wikiPage || ex.photo)
     ? `<div id="wiki-photo-wrap-${thumbUid}" style="border-radius:12px;overflow:hidden;background:#f0f4f0;margin-bottom:1rem;min-height:140px;display:flex;align-items:center;justify-content:center"><span style="font-size:2rem;opacity:.3">⏳</span></div>`
     : ex.thumbEmoji
       ? `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;gap:.4rem;margin-bottom:1rem;background:#f0f4f0;border-radius:12px"><span style="font-size:3.5rem">${ex.thumbEmoji}</span></div>`
