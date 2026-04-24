@@ -7691,11 +7691,7 @@ function renderDashboardSection(){
 
 function switchDashGoal(type){ activeDashGoal=type; renderDashboardSection(); }
 
-function animateGauge(){
-  var arc=document.getElementById('dash-gauge-arc');
-  if(arc){ var p=parseInt(arc.getAttribute('data-pct')||'0'),f=Math.round(p/100*402);
-    setTimeout(function(){ arc.setAttribute('stroke-dasharray',f+' '+(402-f)); },80); }
-}
+function animateGauge(){ /* arc value rendered directly in HTML — CSS animation handles entrance */ }
 
 function renderDash64k(){
   try {
