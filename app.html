@@ -399,6 +399,8 @@
     @media(min-width:480px){.dash-readiness{flex-direction:row;align-items:flex-start}}
     .dash-gauge-wrap{flex-shrink:0;text-align:center}
     .dash-gauge-svg{width:150px;height:150px}
+    @keyframes gauge-draw{from{stroke-dasharray:0 402}}
+    #dash-gauge-arc{animation:gauge-draw .9s ease-out}
     .dash-readiness-detail{flex:1}
     .dash-readiness-title{font-size:.95rem;font-weight:800;color:#2c3e50;margin-bottom:.5rem}
     .dash-criteria{list-style:none}
