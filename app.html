@@ -8011,10 +8011,11 @@ function dashReadiness(days){
     {label:'Continuidade',score:gapScore,note:maxGap===0?'Sem falhas seguidas':'Máx. '+maxGap+' falhas seguidas'},
   ];
 
+  var gaugeFill=Math.round(overall/100*circ);
   var gaugeHtml='<svg class="dash-gauge-svg" viewBox="0 0 160 160">'
     +'<circle cx="80" cy="80" r="64" fill="none" stroke="#eee" stroke-width="12"/>'
     +'<circle cx="80" cy="80" r="64" fill="none" stroke="'+gColor+'" stroke-width="12"'
-    +' id="dash-gauge-arc" data-pct="'+overall+'" stroke-dasharray="0 '+circ+'"'
+    +' id="dash-gauge-arc" data-pct="'+overall+'" stroke-dasharray="'+gaugeFill+' '+(circ-gaugeFill)+'"'
     +' stroke-linecap="round" transform="rotate(-90 80 80)"/>'
     +'<text x="80" y="76" text-anchor="middle" font-size="28" font-weight="800" fill="'+gColor+'">'+overall+'%</text>'
     +'<text x="80" y="93" text-anchor="middle" font-size="11" fill="var(--cinza)">aptidão</text>'
