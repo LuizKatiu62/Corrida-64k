@@ -8054,17 +8054,39 @@ const _countdownTimer = setInterval(()=>{
 migrateGarminZones();
 migrateStravaZones();
 
+// Shows a bottom banner asking the user to update, instead of reloading silently.
+// reloadFn is called only when the user taps "Atualizar agora".
+function showUpdateBanner(reloadFn){
+  var existing = document.getElementById('update-banner');
+  if(existing) return; // already showing
+  var banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.innerHTML =
+    '<div class="upd-msg">Nova versão disponível' +
+    '<small>Suas alterações serão salvas antes de atualizar</small></div>' +
+    '<button class="upd-later" onclick="this.closest(\'#update-banner\').remove()">Depois</button>' +
+    '<button class="upd-btn" id="upd-now-btn">Atualizar agora</button>';
+  document.body.appendChild(banner);
+  requestAnimationFrame(function(){ banner.classList.add('visible'); });
+  document.getElementById('upd-now-btn').addEventListener('click', function(){
+    banner.remove();
+    reloadFn();
+  });
+}
+
 // Register service worker for offline support
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js', {scope:'./', updateViaCache:'none'})
     .then(function(reg){ reg.update(); })
     .catch(()=>{});
   navigator.serviceWorker.addEventListener('message', function(e){
-    if(e.data && e.data.type === 'SW_UPDATED' && !document.getElementById('fb-modal-overlay')) location.reload();
+    if(e.data && e.data.type === 'SW_UPDATED'){
+      showUpdateBanner(function(){ location.reload(); });
+    }
   });
 }
 
-// Version check — fetch version.json (no cache) on every load and force-refresh if changed
+// Version check — fetch version.json (no cache) on every load and prompt if changed
 (function checkVersion(){
   const APP_VER_KEY = 'd64_app_ver';
   fetch('./version.json?t='+Date.now(), {cache:'no-store'})
@@ -8072,19 +8094,20 @@ if('serviceWorker' in navigator){
     .then(function(data){
       const stored = localStorage.getItem(APP_VER_KEY);
       const latest = String(data.v);
-      if(stored !== latest){
+      if(stored !== null && stored !== latest){
         localStorage.setItem(APP_VER_KEY, latest);
-        // Clear SW cache and reload — do NOT push local data to Firebase here,
-        // as this device may have stale data and would overwrite a more up-to-date device.
-        // Firebase listeners will pull fresh data automatically after reload.
-        if(document.getElementById('fb-modal-overlay')) return; // don't reload while sync modal is open
-        if('caches' in window){
-          caches.keys().then(function(keys){
-            return Promise.all(keys.map(function(k){ return caches.delete(k); }));
-          }).then(function(){ location.reload(true); });
-        } else {
-          location.reload(true);
-        }
+        showUpdateBanner(function(){
+          if('caches' in window){
+            caches.keys().then(function(keys){
+              return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+            }).then(function(){ location.reload(true); });
+          } else {
+            location.reload(true);
+          }
+        });
+      } else {
+        // First visit or same version — just record it, no prompt
+        localStorage.setItem(APP_VER_KEY, latest);
       }
     }).catch(()=>{});
 })();
