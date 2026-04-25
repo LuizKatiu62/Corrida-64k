@@ -6670,7 +6670,7 @@ async function renderPhotosSection(){
   const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const goalAlbums = Object.entries(GOAL_META).map(([type, meta]) => {
     const gd = type === '64k'
-      ? { eventDate:'2026-05-02', city:'Saint John' }
+      ? { eventDate:'2026-06-13', city:'Saint John' }
       : loadGoalData(type);
     const sub = gd && gd.eventDate
       ? (d => `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`)(new Date(gd.eventDate+'T12:00:00'))
