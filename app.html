@@ -1668,6 +1668,7 @@ let fbDB          = null;
 let fbSyncId      = null;
 let fbRemoteWrite = false; // prevent echo loop
 let fbRemoteWriteAt = 0;  // timestamp when set true — watchdog resets if stuck >3s
+let fbLastPullAt = 0;     // timestamp of last successful fbApplyRemote — blocks stale auto-push
 setInterval(function(){
   if(fbRemoteWrite && Date.now() - fbRemoteWriteAt > 3000){
     fbRemoteWrite = false;
