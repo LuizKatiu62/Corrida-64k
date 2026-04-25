@@ -2461,6 +2461,21 @@ function fbForceReceive(){
   }).catch(function(e){ fbMsgEl('Erro: ' + e.message,'err'); });
 }
 
+function restoreFromIDBSnapshot(){
+  idbRestoreSnapshot().then(function(snap){
+    if(!snap){ fbMsgEl('Nenhum backup local encontrado.','err'); return; }
+    var dt = new Date(snap.ts).toLocaleString('pt-BR');
+    var ok = confirm('Restaurar backup salvo em ' + dt + '?\n\nIsso irá sobrescrever os dados atuais do dispositivo e enviar para o Firebase.');
+    if(!ok) return;
+    if(snap.progress) localStorage.setItem('desafio64_progress', snap.progress);
+    if(snap.events)   localStorage.setItem('desafio64_events',   snap.events);
+    fbPush('progress', snap.progress || '{}');
+    fbPush('events',   snap.events   || '[]');
+    try{ renderAll(); }catch(e){}
+    fbMsgEl('✅ Backup restaurado e enviado para Firebase!','ok');
+  });
+}
+
 function fbForcePush(){
   if(!fbDB){ fbMsgEl('Firebase não conectado.','err'); return; }
   fbPush('progress', localStorage.getItem(STORAGE_KEY)||'{}');
