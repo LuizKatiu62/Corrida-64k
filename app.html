@@ -1117,7 +1117,11 @@
 // Ao voltar do background — sincroniza e rerenderiza
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
-    setTimeout(function(){ try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){} }, 400);
+    setTimeout(function(){
+      // Skip push if Firebase just sent us data (cache fire can precede server fire — avoid echo)
+      if(Date.now() - fbLastPullAt < 4000) return;
+      try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){}
+    }, 400);
     setTimeout(function(){
       try{ if(typeof renderAll==='function') renderAll(); }catch(e){}
       try{ rerenderActiveSection(); }catch(e){}
