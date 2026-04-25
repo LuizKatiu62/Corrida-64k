@@ -5112,6 +5112,7 @@ function loadProgress(){
 
 function saveProgress(p){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  idbSnapshotData();
   fbPush('progress', JSON.stringify(p));
 }
 
