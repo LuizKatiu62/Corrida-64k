@@ -6504,7 +6504,7 @@ const PHOTO_ALBUMS = [
   { id:'w3',    label:'Sem 3 · Pico',         icon:'🏃', sub:'13 – 19 Abr',     cls:'' },
   { id:'w4',    label:'Sem 4 · Taper',        icon:'🏃', sub:'20 – 26 Abr',     cls:'' },
   { id:'w5',    label:'Sem 5 · Corrida',      icon:'🏃', sub:'27 Abr – 01 Mai', cls:'' },
-  { id:'event', label:'Desafio 64 km',        icon:'🏁', sub:'02 Mai 2026',      cls:'event' },
+  { id:'event', label:'Desafio 64 km',        icon:'🏁', sub:'13 Jun 2026',      cls:'event' },
 ];
 
 let photoDB = null;
@@ -8604,7 +8604,7 @@ function updateGoalBar(){
       subEl.textContent = 'Toque para configurar o evento';
     }
   } else {
-    subEl.textContent = '02 Mai 2026 · Little the Rez · Saint John NB';
+    subEl.textContent = '13 Jun 2026 · Little the Rez · Saint John NB';
   }
 }
 
@@ -8624,7 +8624,7 @@ function openGoalSelector(){
     // Event info below pills
     let extra = '';
     if(type === '64k'){
-      extra = `<div class="goal-card-event">📅 02 Mai 2026 · 📍 Saint John, NB</div>`;
+      extra = `<div class="goal-card-event">📅 13 Jun 2026 · 📍 Saint John, NB</div>`;
     } else if(gd && gd.eventDate){
       const d = new Date(gd.eventDate+'T12:00:00');
       const lines = [];
