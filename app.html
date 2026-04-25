@@ -1970,8 +1970,9 @@ function initFirebaseSync(config){
     fbDB.ref('.info/connected').on('value', function(snap){
       fbConnected = snap.val() === true;
       if(fbConnected && !fbWasConnected){
-        // Reconectou: envia dados locais e re-renderiza tela ativa
+        // Reconectou: envia dados locais — mas só se Firebase não acabou de nos enviar dados
         setTimeout(function(){
+          if(Date.now() - fbLastPullAt < 4000) return; // Firebase listener já sincronizou
           try{ fbForcePush(); }catch(e){}
           setTimeout(function(){ try{ rerenderActiveSection(); }catch(e){} }, 600);
         }, 800);
