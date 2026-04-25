@@ -3582,6 +3582,7 @@ function loadEvents(){
 }
 function saveEventsData(evts){
   localStorage.setItem(EVENTS_KEY, JSON.stringify(evts));
+  fbLocalDirty = true;
   idbSnapshotData();
   fbPush('events', JSON.stringify(evts));
 }
