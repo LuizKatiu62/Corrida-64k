@@ -5133,6 +5133,7 @@ function loadProgress(){
 
 function saveProgress(p){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  fbLocalDirty = true;
   idbSnapshotData();
   fbPush('progress', JSON.stringify(p));
 }
