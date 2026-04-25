@@ -2629,6 +2629,39 @@ function fbBackupToIDB(cfg, syncId){
   }catch(e){}
 }
 
+// Snapshot local data to IDB — called after every user change, creates a timestamped restore point
+function idbSnapshotData(){
+  try{
+    var req = indexedDB.open('desafio64-meta', 1);
+    req.onupgradeneeded = function(e){ e.target.result.createObjectStore('kv',{keyPath:'k'}); };
+    req.onsuccess = function(e){
+      var tx = e.target.result.transaction('kv','readwrite');
+      var st = tx.objectStore('kv');
+      st.put({k:'snap_progress', v: localStorage.getItem('desafio64_progress')||'{}', ts: Date.now()});
+      st.put({k:'snap_events',   v: localStorage.getItem('desafio64_events')||'[]',   ts: Date.now()});
+    };
+  }catch(e){}
+}
+
+// Restore data from latest IDB snapshot — returns Promise<{progress, events, ts}|null>
+function idbRestoreSnapshot(){
+  return new Promise(function(resolve){
+    try{
+      var req = indexedDB.open('desafio64-meta', 1);
+      req.onupgradeneeded = function(e){ e.target.result.createObjectStore('kv',{keyPath:'k'}); };
+      req.onsuccess = function(e){
+        var tx = e.target.result.transaction('kv','readonly');
+        var st = tx.objectStore('kv');
+        var prog = null, evts = null, ts = 0, done = 0;
+        function finish(){ if(++done===2) resolve(prog||evts ? {progress:prog, events:evts, ts:ts} : null); }
+        st.get('snap_progress').onsuccess = function(ev){ var r=ev.target.result; prog=r?r.v:null; if(r&&r.ts>ts) ts=r.ts; finish(); };
+        st.get('snap_events').onsuccess   = function(ev){ var r=ev.target.result; evts=r?r.v:null; if(r&&r.ts>ts) ts=r.ts; finish(); };
+      };
+      req.onerror = function(){ resolve(null); };
+    }catch(e){ resolve(null); }
+  });
+}
+
 function fbRestoreFromIDB(cb){
   try{
     const req = indexedDB.open('desafio64-meta', 1);
