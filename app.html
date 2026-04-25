@@ -1826,6 +1826,7 @@ function fbApplyRemote(data){
   if(data.garmin != null){
     try{ if(typeof migrateGarminZones==='function') migrateGarminZones(); }catch(e){}
   }
+  fbLastPullAt = Date.now(); // block stale auto-push for next 4s
   // Render after flag is reset so any fbPush triggered during render is allowed
   try{ renderAll(); } catch(e){ console.warn('fbApplyRemote renderAll error:', e); }
   try{ rerenderActiveSection(); }catch(e){ console.warn('rerenderActiveSection error:', e); }
