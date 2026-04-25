@@ -1118,8 +1118,8 @@
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
     setTimeout(function(){
-      // Skip push if Firebase just sent us data (cache fire can precede server fire — avoid echo)
-      if(Date.now() - fbLastPullAt < 4000) return;
+      // Only push if this device actually made user changes — never push just because we came to foreground
+      if(!fbLocalDirty) return;
       try{ if(typeof fbForcePush==='function') fbForcePush(); }catch(e){}
     }, 400);
     setTimeout(function(){
