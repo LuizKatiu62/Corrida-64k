@@ -3042,16 +3042,37 @@ function openDuathlonModal(date){
   document.body.appendChild(overlay);
 }
 
+function parseDurToSecs(dur){
+  if(!dur) return 0;
+  // 1h45 or 1h45m → hours + minutes
+  var mh = dur.match(/(\d+)h(\d+)/i);
+  if(mh) return parseInt(mh[1])*3600 + parseInt(mh[2])*60;
+  // 1:45:00 → h:mm:ss
+  var mhms = dur.match(/^(\d+):(\d{2}):(\d{2})$/);
+  if(mhms) return parseInt(mhms[1])*3600 + parseInt(mhms[2])*60 + parseInt(mhms[3]);
+  // 45:00 → mm:ss
+  var mms = dur.match(/^(\d+):(\d{2})$/);
+  if(mms) return parseInt(mms[1])*60 + parseInt(mms[2]);
+  return 0;
+}
+
+function calcPaceStr(runKm, durStr){
+  var secs = parseDurToSecs(durStr);
+  if(!secs || !runKm) return null;
+  var paceS = secs / runKm;
+  return Math.floor(paceS/60) + ':' + String(Math.floor(paceS%60)).padStart(2,'0') + '/km';
+}
+
 function saveDuathlon(date, totalKm){
   var runKm = parseFloat(document.getElementById('dua-run-km').value);
   if(!runKm || runKm <= 0){ alert('Informe os km corridos.'); return; }
   var runDur = (document.getElementById('dua-run-dur').value||'').trim();
   var g = loadGarmin();
-  g[date].distTotal = totalKm;
-  g[date].dist      = runKm;
+  g[date].distTotal  = totalKm;
+  g[date].dist       = runKm;
   g[date].isDuathlon = true;
   if(runDur) g[date].duration = runDur;
-  g[date].pace = null;
+  g[date].pace = calcPaceStr(runKm, runDur);
   saveGarmin(g);
   document.getElementById('duathlon-modal').remove();
   rebuildDayCard(date);
