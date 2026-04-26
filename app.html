@@ -3004,7 +3004,10 @@ function importGPX(date){
   inp.click();
 }
 
+var _gpxPendingResult = null; // holds parsed GPX result while confirm modal is open
+
 function showGPXConfirmModal(date, result){
+  _gpxPendingResult = result; // store in memory — result.raw (GPX text) is too large for dataset
   var existing = document.getElementById('gpx-confirm-modal');
   if(existing) existing.remove();
   var overlay = document.createElement('div');
@@ -3037,7 +3040,6 @@ function showGPXConfirmModal(date, result){
       '<button class="event-modal-cancel" onclick="document.getElementById(\'gpx-confirm-modal\').remove()">Cancelar</button>' +
     '</div>' +
     '</div>';
-  overlay.dataset.result = JSON.stringify(result);
   document.body.appendChild(overlay);
 }
 
