@@ -3050,7 +3050,8 @@ function gpxTipoChange(){
 
 function saveGPXConfirm(date){
   var overlay = document.getElementById('gpx-confirm-modal');
-  var result = JSON.parse(overlay.dataset.result);
+  var result = _gpxPendingResult;
+  if(!result){ alert('Erro interno — tente importar novamente.'); overlay && overlay.remove(); return; }
   var tipo = document.getElementById('gpx-tipo').value;
   if(tipo === 'duathlon'){
     var runKm = parseFloat(document.getElementById('gpx-run-km').value);
