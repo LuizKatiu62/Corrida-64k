@@ -3006,7 +3006,68 @@ function importGPX(date){
   inp.click();
 }
 
-var _gpxPendingResult = null; // holds parsed GPX result while confirm modal is open
+var _gpxPendingResult = null;
+
+function openDuathlonModal(date){
+  if(!requireEditMode()) return;
+  var g = loadGarmin();
+  var gData = g[date];
+  if(!gData){ alert('Dados GPX não encontrados.'); return; }
+  var totalKm = gData.isDuathlon ? gData.distTotal : gData.dist;
+  var runKm   = gData.isDuathlon ? gData.dist : '';
+  var ex = document.getElementById('duathlon-modal');
+  if(ex) ex.remove();
+  var overlay = document.createElement('div');
+  overlay.className = 'event-modal-overlay';
+  overlay.id = 'duathlon-modal';
+  overlay.innerHTML =
+    '<div class="event-modal">' +
+    '<h3>🚴🏃 Duathlon / Brick</h3>' +
+    '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.65rem .9rem;margin-bottom:.9rem;font-size:.82rem;color:#374151">' +
+      'Atividade total gravada: <strong>' + totalKm + ' km</strong>' +
+    '</div>' +
+    '<label>km somente da corrida</label>' +
+    '<input type="number" id="dua-run-km" min="0.1" step="0.1" placeholder="Ex: 16.25" value="' + runKm + '" style="margin-bottom:.5rem">' +
+    '<label>Duração da corrida (opcional)</label>' +
+    '<input type="text" id="dua-run-dur" placeholder="Ex: 1h45 ou 45:00" value="' + (gData.isDuathlon&&gData.duration?gData.duration:'') + '" style="margin-bottom:.75rem">' +
+    '<div style="font-size:.78rem;color:#713f12;background:#fef9c3;border-radius:7px;padding:.5rem .75rem;margin-bottom:.75rem">' +
+      '⚠️ Apenas os km de corrida contam para o Desafio 64km.' +
+    '</div>' +
+    '<div class="event-modal-actions">' +
+      '<button class="event-modal-save" onclick="saveDuathlon(\'' + date + '\',' + totalKm + ')">Salvar</button>' +
+      (gData.isDuathlon ? '<button class="event-modal-cancel" onclick="removeDuathlon(\'' + date + '\')">Remover duathlon</button>' : '') +
+      '<button class="event-modal-cancel" onclick="document.getElementById(\'duathlon-modal\').remove()">Cancelar</button>' +
+    '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+}
+
+function saveDuathlon(date, totalKm){
+  var runKm = parseFloat(document.getElementById('dua-run-km').value);
+  if(!runKm || runKm <= 0){ alert('Informe os km corridos.'); return; }
+  var runDur = (document.getElementById('dua-run-dur').value||'').trim();
+  var g = loadGarmin();
+  g[date].distTotal = totalKm;
+  g[date].dist      = runKm;
+  g[date].isDuathlon = true;
+  if(runDur) g[date].duration = runDur;
+  g[date].pace = null;
+  saveGarmin(g);
+  document.getElementById('duathlon-modal').remove();
+  rebuildDayCard(date);
+}
+
+function removeDuathlon(date){
+  var g = loadGarmin();
+  if(g[date]){
+    g[date].dist = g[date].distTotal || g[date].dist;
+    delete g[date].distTotal;
+    delete g[date].isDuathlon;
+    saveGarmin(g);
+  }
+  document.getElementById('duathlon-modal').remove();
+  rebuildDayCard(date);
+}
 
 function showGPXConfirmModal(date, result){
   _gpxPendingResult = result; // store in memory — result.raw (GPX text) is too large for dataset
