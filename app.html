@@ -10300,6 +10300,84 @@ function deleteBikeRide(id){
   renderBikeSection();
 }
 
+function openBikeDuathlonModal(rideId){
+  var data = loadBikeData();
+  var ride = data[rideId];
+  if(!ride){ return; }
+  var ex = document.getElementById('bike-duathlon-modal');
+  if(ex) ex.remove();
+  var overlay = document.createElement('div');
+  overlay.className = 'event-modal-overlay';
+  overlay.id = 'bike-duathlon-modal';
+  overlay.innerHTML =
+    '<div class="event-modal">' +
+    '<h3>🚴🏃 Duathlon / Brick</h3>' +
+    '<div style="background:#fff7ed;border:1px solid #fde3c8;border-radius:8px;padding:.65rem .9rem;margin-bottom:.9rem;font-size:.82rem;color:#374151">' +
+      '🚲 <strong>' + ride.name + '</strong><br>' +
+      '📅 ' + ride.date + ' &nbsp;·&nbsp; 📏 ' + ride.dist + ' km bike' +
+    '</div>' +
+    '<label>km somente da corrida</label>' +
+    '<input type="number" id="bdua-run-km" min="0.1" step="0.1" placeholder="Ex: 16.25" value="' + (ride.runKm||'') + '" style="margin-bottom:.5rem">' +
+    '<label>Duração da corrida (opcional)</label>' +
+    '<input type="text" id="bdua-run-dur" placeholder="Ex: 1h45 ou 45:00" value="' + (ride.runDur||'') + '" style="margin-bottom:.75rem">' +
+    '<div style="font-size:.78rem;color:#713f12;background:#fef9c3;border-radius:7px;padding:.5rem .75rem;margin-bottom:.75rem">' +
+      '⚠️ Os km de corrida serão também registrados no dia <strong>' + ride.date + '</strong> como treino de corrida.' +
+    '</div>' +
+    '<div class="event-modal-actions">' +
+      '<button class="event-modal-save" onclick="saveBikeDuathlon(\'' + rideId + '\')">Salvar</button>' +
+      (ride.runKm ? '<button class="event-modal-cancel" onclick="removeBikeDuathlon(\'' + rideId + '\')">Remover corrida</button>' : '') +
+      '<button class="event-modal-cancel" onclick="document.getElementById(\'bike-duathlon-modal\').remove()">Cancelar</button>' +
+    '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+}
+
+function saveBikeDuathlon(rideId){
+  var runKm = parseFloat(document.getElementById('bdua-run-km').value);
+  if(!runKm || runKm <= 0){ alert('Informe os km corridos.'); return; }
+  var runDur = (document.getElementById('bdua-run-dur').value||'').trim();
+  // Save run km in bike ride record
+  var data = loadBikeData();
+  data[rideId].runKm  = runKm;
+  data[rideId].runDur = runDur||null;
+  saveBikeData(data);
+  // Also register in garmin data for that date so it counts for the Desafio
+  var date = data[rideId].date;
+  var g = loadGarmin();
+  var existing = g[date] || {};
+  g[date] = Object.assign(existing, {
+    dist:       runKm,
+    duration:   runDur||existing.duration||null,
+    pace:       null,
+    isDuathlon: true,
+    distTotal:  data[rideId].dist,
+    filename:   data[rideId].name + ' (Strava)',
+    importedAt: existing.importedAt || new Date().toISOString()
+  });
+  saveGarmin(g);
+  markRunDone(date);
+  document.getElementById('bike-duathlon-modal').remove();
+  renderBikeSection();
+  rebuildDayCard(date);
+}
+
+function removeBikeDuathlon(rideId){
+  var data = loadBikeData();
+  var date = data[rideId].date;
+  delete data[rideId].runKm;
+  delete data[rideId].runDur;
+  saveBikeData(data);
+  // Remove from garmin if it was a duathlon entry
+  var g = loadGarmin();
+  if(g[date] && g[date].isDuathlon){
+    delete g[date];
+    saveGarmin(g);
+  }
+  document.getElementById('bike-duathlon-modal').remove();
+  renderBikeSection();
+  rebuildDayCard(date);
+}
+
 async function fetchStravaBikeRides(){
   var token = await ensureStravaToken();
   if(!token){ openStravaSetup(''); return; }
