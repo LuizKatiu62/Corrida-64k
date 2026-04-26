@@ -10369,7 +10369,7 @@ function saveBikeDuathlon(rideId){
   g[date] = Object.assign(existing, {
     dist:       runKm,
     duration:   runDur||existing.duration||null,
-    pace:       null,
+    pace:       calcPaceStr(runKm, runDur||existing.duration||null),
     isDuathlon: true,
     distTotal:  data[rideId].dist,
     filename:   data[rideId].name + ' (Strava)',
