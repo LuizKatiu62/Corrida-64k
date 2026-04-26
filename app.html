@@ -2997,13 +2997,73 @@ function importGPX(date){
     reader.onload=ev=>{
       const result=parseGPX(ev.target.result,file.name);
       if(!result){alert('Arquivo GPX inválido ou sem dados de percurso (trackpoints).'); return;}
-      const g=loadGarmin(); g[date]=result; saveGarmin(g);
-      markRunDone(date);
-      rebuildDayCard(date);
+      showGPXConfirmModal(date, result);
     };
     reader.readAsText(file);
   };
   inp.click();
+}
+
+function showGPXConfirmModal(date, result){
+  var existing = document.getElementById('gpx-confirm-modal');
+  if(existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.className = 'event-modal-overlay';
+  overlay.id = 'gpx-confirm-modal';
+  overlay.innerHTML =
+    '<div class="event-modal">' +
+    '<h3>📡 Confirmar GPX</h3>' +
+    '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.7rem .9rem;margin-bottom:.9rem;font-size:.82rem">' +
+      '<div style="font-weight:700;color:#166534;margin-bottom:.3rem">Atividade detectada</div>' +
+      '<div style="color:#374151">📏 ' + result.dist + ' km &nbsp;·&nbsp; ⏱️ ' + (result.duration||'—') + ' &nbsp;·&nbsp; ❤️ ' + (result.hr ? result.hr+' bpm' : '—') + '</div>' +
+      (result.pace ? '<div style="color:#374151;margin-top:.2rem">🏃 Ritmo: ' + result.pace + '</div>' : '') +
+    '</div>' +
+    '<label style="font-weight:700">Tipo de atividade</label>' +
+    '<select id="gpx-tipo" onchange="gpxTipoChange()" style="margin-bottom:.75rem">' +
+      '<option value="corrida">🏃 Corrida (100% corrida)</option>' +
+      '<option value="duathlon">🚴🏃 Duathlon / Brick (bike + corrida)</option>' +
+    '</select>' +
+    '<div id="gpx-duathlon-fields" style="display:none">' +
+      '<div style="background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.8rem;color:#713f12">' +
+        '⚠️ A atividade total inclui ciclismo. Informe somente os km <strong>corridos</strong> — apenas esses contam para o Desafio 64km.' +
+      '</div>' +
+      '<label>km de corrida (somente a parte corrida)</label>' +
+      '<input type="number" id="gpx-run-km" min="0.1" step="0.1" placeholder="Ex: 16.25" style="margin-bottom:.5rem">' +
+      '<label>Duração da corrida (opcional)</label>' +
+      '<input type="text" id="gpx-run-dur" placeholder="Ex: 1h45 ou 45:00" style="margin-bottom:.5rem">' +
+    '</div>' +
+    '<div class="event-modal-actions">' +
+      '<button class="event-modal-save" onclick="saveGPXConfirm(\'' + date + '\')">Salvar</button>' +
+      '<button class="event-modal-cancel" onclick="document.getElementById(\'gpx-confirm-modal\').remove()">Cancelar</button>' +
+    '</div>' +
+    '</div>';
+  overlay.dataset.result = JSON.stringify(result);
+  document.body.appendChild(overlay);
+}
+
+function gpxTipoChange(){
+  var tipo = document.getElementById('gpx-tipo').value;
+  document.getElementById('gpx-duathlon-fields').style.display = tipo === 'duathlon' ? 'block' : 'none';
+}
+
+function saveGPXConfirm(date){
+  var overlay = document.getElementById('gpx-confirm-modal');
+  var result = JSON.parse(overlay.dataset.result);
+  var tipo = document.getElementById('gpx-tipo').value;
+  if(tipo === 'duathlon'){
+    var runKm = parseFloat(document.getElementById('gpx-run-km').value);
+    if(!runKm || runKm <= 0){ alert('Informe os km corridos.'); return; }
+    var runDur = (document.getElementById('gpx-run-dur').value||'').trim();
+    result.distTotal = result.dist;   // guarda total da atividade
+    result.dist = runKm;              // apenas corrida conta para o desafio
+    result.isDuathlon = true;
+    if(runDur) result.duration = runDur;
+    result.pace = null;               // ritmo do GPX não é válido para corrida isolada
+  }
+  overlay.remove();
+  const g=loadGarmin(); g[date]=result; saveGarmin(g);
+  markRunDone(date);
+  rebuildDayCard(date);
 }
 
 // ============================================================
