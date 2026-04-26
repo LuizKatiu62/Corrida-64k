@@ -3064,6 +3064,7 @@ function saveGPXConfirm(date){
     result.pace = null;               // ritmo do GPX não é válido para corrida isolada
   }
   overlay.remove();
+  _gpxPendingResult = null;
   const g=loadGarmin(); g[date]=result; saveGarmin(g);
   markRunDone(date);
   rebuildDayCard(date);
