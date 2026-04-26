@@ -3336,6 +3336,7 @@ function buildGarminComparePanel(day, gData){
       <div class="cmp-bar-fill" style="width:${barWidth}%;background:${barColor}"></div>
     </div>
     ${paceRow}${duraRow}${hrRow}${elevRow}${zoneRow}${cadRow}
+    ${gData.isDuathlon ? `<div style="background:#fef9c3;border:1px solid #fde047;border-radius:7px;padding:.45rem .75rem;margin-top:.5rem;font-size:.75rem;color:#713f12;display:flex;align-items:center;gap:.5rem">🚴🏃 <span><strong>Duathlon</strong> · atividade total: ${gData.distTotal} km · corrida computada: <strong>${gData.dist} km</strong></span></div>` : ''}
     <div class="garmin-filename" style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
       <span>📄 ${gData.filename}${dateDiffWarn}</span>
       ${gData.raw ? `<button onclick="event.stopPropagation();downloadGPXRaw('${day.date}')" style="background:#e8f5e9;color:var(--verde-esc);border:1px solid #c8f0d4;border-radius:999px;padding:.2rem .75rem;font-size:.72rem;font-weight:700;cursor:pointer">⬇️ Baixar GPX</button>` : ''}
