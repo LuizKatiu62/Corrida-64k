@@ -2997,7 +2997,9 @@ function importGPX(date){
     reader.onload=ev=>{
       const result=parseGPX(ev.target.result,file.name);
       if(!result){alert('Arquivo GPX inválido ou sem dados de percurso (trackpoints).'); return;}
-      showGPXConfirmModal(date, result);
+      const g=loadGarmin(); g[date]=result; saveGarmin(g);
+      markRunDone(date);
+      rebuildDayCard(date);
     };
     reader.readAsText(file);
   };
