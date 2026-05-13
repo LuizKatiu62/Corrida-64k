@@ -493,6 +493,11 @@ function renderMissed(days, today){
         const km = d.gpx.dist||0;
         items.push({date:d.date, badge:'badge-bonus', badgeTxt:'Extra',
           text:`Corrida extra — ${km} km realizados (dia sem treino planejado)`});
+      } else if(d.prog.extraRun){
+        const er = d.prog.extraRun;
+        const label = er.title ? er.title : 'Corrida extra';
+        items.push({date:d.date, badge:'badge-bonus', badgeTxt:'Extra',
+          text:`${label} — ${er.km} km realizados (dia sem treino planejado)`});
       }
       return;
     }
