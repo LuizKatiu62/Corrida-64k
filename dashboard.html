@@ -321,6 +321,10 @@ function renderStats(days, today){
       totalDoneKm += d.gpx.dist||0;
       if((d.gpx.dist||0) > longestDone) longestDone = d.gpx.dist;
       if(d.gpx.pace){ paceSum += paceToSecs(d.gpx.pace); paceCount++; }
+    } else if(d.prog.extraRun && d.km===0){
+      const ekm = d.prog.extraRun.km||0;
+      totalDoneKm += ekm;
+      if(ekm > longestDone) longestDone = ekm;
     } else if(d.prog.run && d.km>0 && d.type!=='race'){
       totalDoneKm += d.km;
       if(d.km>longestDone) longestDone=d.km;
