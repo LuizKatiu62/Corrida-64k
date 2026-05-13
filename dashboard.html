@@ -546,7 +546,7 @@ function renderWeeks(days){
     if(!weeks[d.week]) weeks[d.week]={week:d.week,phase:d.phase,planKm:0,doneKm:0,planCount:0,doneCount:0};
     const w = weeks[d.week];
     if(d.km>0 && d.type!=='race'){ w.planKm+=d.km; w.planCount++; }
-    const actualKm = d.gpx?(d.gpx.dist||0):d.prog.run?d.km:0;
+    const actualKm = d.gpx?(d.gpx.dist||0):d.prog.extraRun&&d.km===0?d.prog.extraRun.km:d.prog.run?d.km:0;
     if(actualKm>0){ w.doneKm+=actualKm; if(d.km>0 && d.type!=='race') w.doneCount++; }
   });
 
