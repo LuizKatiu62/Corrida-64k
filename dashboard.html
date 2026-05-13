@@ -386,8 +386,9 @@ function renderChart(days, today){
 
     // actual km
     let actualKm = 0;
-    if(d.gpx)        actualKm = d.gpx.dist || 0;
-    else if(d.prog.run) actualKm = d.km;
+    if(d.gpx)                actualKm = d.gpx.dist || 0;
+    else if(d.prog.extraRun) actualKm = d.prog.extraRun.km || 0;
+    else if(d.prog.run)      actualKm = d.km;
 
     const hasActual = actualKm > 0;
     const p         = (d.isPast && d.km > 0) ? pct(actualKm, d.km) : null;
