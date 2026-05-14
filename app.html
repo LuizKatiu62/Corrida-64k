@@ -6133,8 +6133,9 @@ function buildCard(day, isToday, p){
   const rSched = prog.reschedule || null;
   const runMoved = rSched && (rSched.type === 'skip' || rSched.type === 'move');
   const runReceive = rSched && rSched.type === 'receive';
+  const runSwap = rSched && rSched.type === 'swap';
   // Cancellation only applies when there is no received reschedule
-  const isRunCancelled = !!prog.runCancelled && !runReceive;
+  const isRunCancelled = !!prog.runCancelled && !runReceive && !runSwap;
   // Verifica se outro dia moveu seu treino para ESTE dia (usando o p já passado para buildCard)
   const thisOriginalMoved = PLAN.some(function(pd){
     var pp = p[pd.date] || {};
@@ -6146,7 +6147,9 @@ function buildCard(day, isToday, p){
       ? '<div class="resched-badge skipped">⏭️ Treino pulado neste dia</div>'
       : rSched.type === 'move'
         ? '<div class="resched-badge moved-out">📅 Treino movido para ' + dateLabel(rSched.to) + '</div>'
-        : '<div class="resched-badge moved-in">➕ Treino extra de ' + dateLabel(rSched.from) + '</div>'
+        : rSched.type === 'swap'
+          ? '<div class="resched-badge moved-in">🔀 Trocado com ' + dateLabel(rSched.with) + '</div>'
+          : '<div class="resched-badge moved-in">➕ Treino extra de ' + dateLabel(rSched.from) + '</div>'
     : '';
   const canResched = day.run.km > 0 && !doneRun && !runMoved;
   const reschedButton = canResched
