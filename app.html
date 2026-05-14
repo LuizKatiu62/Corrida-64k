@@ -6097,7 +6097,9 @@ function buildCard(day, isToday, p){
   const rSchedEarly = prog.reschedule || null;
   const originDay = (rSchedEarly && rSchedEarly.type === 'receive')
     ? (PLAN.find(function(d){ return d.date === rSchedEarly.from; }) || day)
-    : day;
+    : (rSchedEarly && rSchedEarly.type === 'swap')
+      ? (PLAN.find(function(d){ return d.date === rSchedEarly.with; }) || day)
+      : day;
 
   const runItems = originDay.run.items.map(function(i){
     var txt = overrideKm ? replaceKmInText(i, day.run.km, overrideKm) : i;
