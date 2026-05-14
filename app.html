@@ -2366,6 +2366,36 @@ function downloadBackup(){
   }).catch(err => alert('❌ Erro ao exportar: ' + err.message));
 }
 
+function exportPlanTreinos(){
+  var today = new Date().toISOString().split('T')[0];
+  var p = loadProgress();
+  var days = PLAN.filter(function(d){ return d.date >= today; }).map(function(d){
+    var km = getEffectivePlanKm(d.date, p);
+    var prog = p[d.date]||{};
+    var rs = prog.reschedule||null;
+    var type = d.type;
+    if(km === 0){ type = 'rest'; }
+    else if(rs && rs.type === 'receive'){
+      var fromDay = PLAN.find(function(fd){ return fd.date === rs.from; });
+      if(fromDay) type = fromDay.type;
+    }
+    var title = km > 0 ? d.run.title : 'Descanso';
+    return {date:d.date, week:d.week, phase:d.phase, type:type, km:km, title:title};
+  });
+  var json = JSON.stringify({exported:today, days:days});
+  var ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  ov.innerHTML='<div style="background:#fff;border-radius:18px;padding:1.4rem;max-width:420px;width:100%;max-height:85vh;display:flex;flex-direction:column;gap:12px">'
+    +'<div style="font-size:1rem;font-weight:800">📤 Exportar Plano para Treinos</div>'
+    +'<div style="font-size:.82rem;color:#555;line-height:1.5">1. Copie o texto abaixo<br>2. Abra o app <strong>Treinos → aba 🏆 Desafio</strong><br>3. Toque em <strong>"Importar plano do Desafio 64"</strong> e cole</div>'
+    +'<textarea id="plan-export-txt" style="flex:1;min-height:120px;font-size:.7rem;font-family:monospace;border:1.5px solid #ddd;border-radius:10px;padding:.6rem;resize:none" readonly>'+json+'</textarea>'
+    +'<button onclick="var t=document.getElementById(\'plan-export-txt\');t.select();document.execCommand(\'copy\');this.textContent=\'✅ Copiado!\'" style="background:#27ae60;color:#fff;border:none;border-radius:10px;padding:.65rem;font-size:.9rem;font-weight:700;cursor:pointer">📋 Copiar</button>'
+    +'<button onclick="this.closest(\'div\').parentElement.remove()" style="background:#f0f0f0;color:#555;border:none;border-radius:10px;padding:.55rem;font-size:.85rem;font-weight:700;cursor:pointer">Fechar</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+  setTimeout(function(){ var t=document.getElementById('plan-export-txt'); if(t){t.focus();t.select();} },100);
+}
+
 function importBackupFile(event){
   const file = event.target.files?.[0];
   if(!file) return;
