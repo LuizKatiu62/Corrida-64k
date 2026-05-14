@@ -6225,6 +6225,8 @@ function buildCard(day, isToday, p){
     var fromKm = rFromDayKm ? rFromDayKm.run.km : 0;
     // Se este dia também cedeu seu treino (outro dia aponta move.to === day.date), usar só o recebido
     effectiveKm = fromKm;
+  } else if(runSwap){
+    effectiveKm = originDay.run.km;
   } else {
     effectiveKm = overrideKm || day.run.km;
   }
