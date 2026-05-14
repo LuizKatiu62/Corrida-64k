@@ -6432,6 +6432,9 @@ function renderAll(){
     } else if(rSched && rSched.type === 'receive'){
       var fromRunDay = PLAN.find(function(d){ return d.date === rSched.from; });
       runTitle = fromRunDay ? fromRunDay.run.title + ' (extra de ' + dateLabel(rSched.from) + ')' : todayDay.run.title;
+    } else if(rSched && rSched.type === 'swap'){
+      var swapRunDay = PLAN.find(function(d){ return d.date === rSched.with; });
+      runTitle = swapRunDay ? '🔀 ' + swapRunDay.run.title : todayDay.run.title;
     }
 
     // Determine effective gym title
