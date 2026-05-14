@@ -5595,6 +5595,131 @@ function cancelReceivedGym(receiveDate){
   renderAll();
 }
 
+// ---- PLANEJAR SEMANA ----
+var _wplWeek = null;
+var _wplSel  = null;
+
+function openWeekPlannerModal(wn){
+  if(!requireEditMode()) return;
+  _wplWeek = wn;
+  _wplSel  = null;
+  _renderWpl(wn);
+}
+
+function _renderWpl(wn){
+  document.getElementById('week-planner-overlay')?.remove();
+  var p = loadProgress();
+  var days = PLAN.filter(function(d){ return d.week === wn; });
+  var DN = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  function eff(d){
+    var rs = (p[d.date]||{}).reschedule || null;
+    if(rs && rs.type==='swap'){
+      var o = PLAN.find(function(x){ return x.date===rs.with; });
+      return { title: o ? o.run.title : d.run.title, km: o ? o.run.km : d.run.km, status:'swap', ref:rs.with };
+    }
+    if(rs && rs.type==='receive'){
+      var o2 = PLAN.find(function(x){ return x.date===rs.from; });
+      return { title: o2 ? o2.run.title : d.run.title, km: o2 ? o2.run.km : d.run.km, status:'receive', ref:rs.from };
+    }
+    if(rs && rs.type==='move')  return { title:'— reagendado', km:0, status:'move', ref:rs.to };
+    if(rs && rs.type==='skip')  return { title:'— pulado',     km:0, status:'skip' };
+    return { title: d.run.title, km: d.run.km, status:null };
+  }
+
+  function badge(ef){
+    if(ef.status==='swap'){
+      var d2 = new Date(ef.ref+'T12:00:00');
+      return '<span style="font-size:.62rem;background:#e8f8f0;color:#1a7a42;border-radius:999px;padding:.12rem .5rem;font-weight:700;flex-shrink:0">🔀 '+DN[d2.getDay()]+'</span>';
+    }
+    if(ef.status==='receive'){
+      var d3 = new Date(ef.ref+'T12:00:00');
+      return '<span style="font-size:.62rem;background:#e8f0ff;color:#2c5eab;border-radius:999px;padding:.12rem .5rem;font-weight:700;flex-shrink:0">➕ '+DN[d3.getDay()]+'</span>';
+    }
+    if(ef.status==='move')  return '<span style="font-size:.62rem;background:#fff3e0;color:#b35a00;border-radius:999px;padding:.12rem .5rem;font-weight:700;flex-shrink:0">📅 mov.</span>';
+    if(ef.status==='skip')  return '<span style="font-size:.62rem;background:#fdecea;color:#c0392b;border-radius:999px;padding:.12rem .5rem;font-weight:700;flex-shrink:0">⏭️ skip</span>';
+    return '';
+  }
+
+  var cards = days.map(function(d){
+    var e = eff(d);
+    var dd = new Date(d.date+'T12:00:00');
+    var sel = _wplSel === d.date;
+    var swapped = e.status === 'swap';
+    var cls = 'week-planner-day'+(sel?' selected':'')+(swapped?' swapped':'');
+    var kmStr = e.km > 0 ? e.km+' km' : 'descanso';
+    return '<div class="'+cls+'" id="wpl-'+d.date+'" onclick="selectWplDay(\''+d.date+'\')">'
+      +'<div class="week-planner-day-date">'+DN[dd.getDay()]+'<br><span style="font-size:.63rem;color:#aaa">'+dd.getDate()+'/'+(dd.getMonth()+1)+'</span></div>'
+      +'<div class="week-planner-day-info">'
+      +  '<div class="week-planner-day-title">'+e.title+'</div>'
+      +  '<div class="week-planner-day-sub">'+kmStr+'</div>'
+      +'</div>'
+      +badge(e)
+      +'</div>';
+  }).join('');
+
+  var hint = _wplSel
+    ? (function(){ var dd=new Date(_wplSel+'T12:00:00'); return DN[dd.getDay()]+' selecionado — toque em outro dia para trocar'; })()
+    : 'Toque em dois dias para trocar os treinos entre eles';
+
+  var ov = document.createElement('div');
+  ov.className = 'week-planner-overlay';
+  ov.id = 'week-planner-overlay';
+  ov.onclick = function(e){ if(e.target===ov) ov.remove(); };
+  ov.innerHTML = '<div class="week-planner-modal">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'
+    +  '<h3 style="font-size:1rem;font-weight:800;color:#2c5eab;margin:0">📋 Planejar Semana '+wn+'</h3>'
+    +  '<button style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#aaa" onclick="document.getElementById(\'week-planner-overlay\').remove()">✕</button>'
+    +'</div>'
+    +'<div class="week-planner-hint" id="wpl-hint">'+hint+'</div>'
+    +cards
+    +'<button style="background:#f5f5f5;color:#666;border:none;border-radius:999px;padding:.5rem 1.2rem;font-size:.8rem;font-weight:700;cursor:pointer;width:100%;margin-top:.25rem" onclick="document.getElementById(\'week-planner-overlay\').remove()">Fechar</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+}
+
+function selectWplDay(date){
+  if(!_wplSel){
+    _wplSel = date;
+    var el = document.getElementById('wpl-'+date);
+    if(el) el.classList.add('selected');
+    var hint = document.getElementById('wpl-hint');
+    if(hint){ var dd=new Date(date+'T12:00:00'); var DN2=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']; hint.textContent=DN2[dd.getDay()]+' selecionado — toque em outro dia para trocar'; }
+  } else if(_wplSel === date){
+    var el2 = document.getElementById('wpl-'+date);
+    if(el2) el2.classList.remove('selected');
+    _wplSel = null;
+    var hint2 = document.getElementById('wpl-hint');
+    if(hint2) hint2.textContent = 'Toque em dois dias para trocar os treinos entre eles';
+  } else {
+    applyDaySwap(_wplSel, date);
+  }
+}
+
+function applyDaySwap(dateA, dateB){
+  var p = loadProgress();
+  var rsA = (p[dateA]||{}).reschedule;
+  var rsB = (p[dateB]||{}).reschedule;
+  // Se já estão trocados entre si — desfaz
+  if(rsA && rsA.type==='swap' && rsA.with===dateB && rsB && rsB.type==='swap' && rsB.with===dateA){
+    delete p[dateA].reschedule;
+    delete p[dateB].reschedule;
+  } else {
+    // Limpa links de reagendamento anteriores (move/receive)
+    if(rsA && rsA.type==='move' && rsA.to && p[rsA.to] && (p[rsA.to].reschedule||{}).type==='receive') delete p[rsA.to].reschedule;
+    if(rsB && rsB.type==='move' && rsB.to && p[rsB.to] && (p[rsB.to].reschedule||{}).type==='receive') delete p[rsB.to].reschedule;
+    if(!p[dateA]) p[dateA]={};
+    if(!p[dateB]) p[dateB]={};
+    p[dateA].reschedule = { type:'swap', with:dateB };
+    p[dateB].reschedule = { type:'swap', with:dateA };
+  }
+  saveProgress(p);
+  renderAll();
+  _wplSel = null;
+  if(_wplWeek) _renderWpl(_wplWeek);
+}
+// ---- /PLANEJAR SEMANA ----
+
 function openGymRescheduleModal(date){
   if(!requireEditMode()) return;
   document.getElementById('resched-modal-overlay')?.remove();
