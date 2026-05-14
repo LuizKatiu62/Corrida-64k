@@ -10296,12 +10296,39 @@ window.addEventListener('pagehide', function(){
 });
 
 // Ao reabrir (inclusive BFCache do iOS), sempre vai para o dashboard
-window.addEventListener('pageshow', function(){
+window.addEventListener('pageshow', function(e){
   showWeek('dashboard');
+  // BFCache restore — verificar versão novamente para mostrar banner se houver atualização
+  if(e.persisted) _checkVersionNow();
 });
 document.addEventListener('visibilitychange', function(){
-  if(document.visibilityState === 'visible') showWeek('dashboard');
+  if(document.visibilityState === 'visible'){
+    showWeek('dashboard');
+    _checkVersionNow();
+  }
 });
+
+function _checkVersionNow(){
+  var APP_VER_KEY = 'd64_app_ver';
+  fetch('./version.json?t='+Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var stored = localStorage.getItem(APP_VER_KEY);
+      var latest = String(data.v);
+      if(stored !== null && stored !== latest){
+        localStorage.setItem(APP_VER_KEY, latest);
+        showUpdateBanner(function(){
+          if('caches' in window){
+            caches.keys().then(function(keys){
+              return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+            }).then(function(){ location.reload(true); });
+          } else {
+            location.reload(true);
+          }
+        });
+      }
+    }).catch(function(){});
+}
 
 // ============================================================
 // TREINO DE BIKE — completamente separado das métricas de corrida
