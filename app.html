@@ -6274,6 +6274,9 @@ function buildCard(day, isToday, p){
     var rFromDayInfo = PLAN.find(function(d){ return d.date === rSched.from; });
     effectiveTitle = rFromDayInfo ? rFromDayInfo.run.title : day.run.title;
     effectiveType = rFromDayInfo ? rFromDayInfo.type : day.type;
+  } else if(runSwap){
+    effectiveTitle = originDay.run.title;
+    effectiveType = originDay.type;
   } else {
     effectiveTitle = overrideKm
       ? replaceKmInText(day.run.title, day.run.km, overrideKm)
