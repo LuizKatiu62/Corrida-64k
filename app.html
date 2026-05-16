@@ -1351,18 +1351,33 @@ document.addEventListener('visibilitychange',function(){
 
     <div class="race-section">
       <h3>🏁 Estratégia de Prova — 13/06/2026</h3>
-      <table class="lap-table">
-        <thead>
-          <tr><th>Fase</th><th>Voltas</th><th>Km acum.</th><th>Estratégia</th><th>Tempo est. 10h</th><th>⌚ Pace 10h</th><th>Tempo est. 12h</th><th>⌚ Pace 12h</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Aquecimento</td><td>1–3</td><td>9,9 km</td><td>Ritmo leve, sem ego</td><td>~1h20</td><td class="pace-cell">8:05/km<br><small>26min/volta</small></td><td>~1h35</td><td class="pace-cell">9:35/km<br><small>32min/volta</small></td></tr>
-          <tr><td>Ritmo</td><td>4–8</td><td>26,4 km</td><td>Cruzeiro confortável</td><td>~3h30</td><td class="pace-cell">7:53/km<br><small>26min/volta</small></td><td>~4h10</td><td class="pace-cell">9:23/km<br><small>31min/volta</small></td></tr>
-          <tr><td>Gestão</td><td>9–13</td><td>42,9 km</td><td>Correr/caminhar · 2.8km+500m walk</td><td>~5h40</td><td class="pace-cell">7:53/km<br><small>26min/volta</small></td><td>~6h50</td><td class="pace-cell">9:42/km<br><small>32min/volta</small></td></tr>
-          <tr><td>Força</td><td>14–17</td><td>56,1 km</td><td>2km correr + 1.3km caminhar</td><td>~7h25</td><td class="pace-cell">7:57/km<br><small>26min/volta</small></td><td>~8h50</td><td class="pace-cell">9:05/km<br><small>30min/volta</small></td></tr>
-          <tr><td class="meta">🏆 META</td><td>18–19/20</td><td>~64 km</td><td>Garra pura!</td><td class="meta">~10h</td><td class="pace-cell" style="font-size:.75rem;color:#888">Livre</td><td class="meta">~12h</td><td class="pace-cell" style="font-size:.75rem;color:#888">Livre</td></tr>
-        </tbody>
-      </table>
+
+      <!-- Pace selector -->
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px;padding:12px 14px;background:#f8fafc;border-radius:12px;border:1.5px solid #e2e8f0">
+        <div>
+          <div style="font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🎯 Meta A</div>
+          <input id="strat-meta-a" type="text" value="10:00"
+            style="width:72px;font-size:1rem;font-weight:800;color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;padding:5px 8px;text-align:center;outline:none;background:#fff"
+            placeholder="10:00" maxlength="5">
+          <div style="font-size:.65rem;color:#94a3b8;margin-top:2px;text-align:center">h:mm</div>
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🎯 Meta B</div>
+          <input id="strat-meta-b" type="text" value="12:00"
+            style="width:72px;font-size:1rem;font-weight:800;color:#2563eb;border:1.5px solid #93c5fd;border-radius:8px;padding:5px 8px;text-align:center;outline:none;background:#fff"
+            placeholder="12:00" maxlength="5">
+          <div style="font-size:.65rem;color:#94a3b8;margin-top:2px;text-align:center">h:mm</div>
+        </div>
+        <button onclick="recalcStrategy()"
+          style="padding:8px 18px;background:var(--vermelho);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;margin-bottom:20px">
+          Recalcular
+        </button>
+        <div style="font-size:.7rem;color:#94a3b8;margin-bottom:20px;flex:1;min-width:140px">
+          Digite qualquer tempo (ex: 9:30, 11:00, 13:30) e clique Recalcular
+        </div>
+      </div>
+
+      <div id="strategy-table-wrap" style="overflow-x:auto"></div>
       <p style="font-size:.75rem;color:#888;margin-top:.5rem">⌚ Paces incluem tempo de paradas. Configure alertas de pace no relógio para cada fase.</p>
     </div>
 
@@ -6667,6 +6682,89 @@ function badgeClass(week){
   return ['','adapt','build','peak','build','peak','peak','taper','taper','race','race','race'][week]||'adapt';
 }
 
+// ── Strategy pace calculator ──
+var _STRAT_PHASES=[
+  {name:'Aquecimento',laps:'1–3',  cumKm:9.9, desc:'Ritmo leve, sem ego',              baseMins:80},
+  {name:'Ritmo',      laps:'4–8',  cumKm:26.4,desc:'Cruzeiro confortável',             baseMins:210},
+  {name:'Gestão',     laps:'9–13', cumKm:42.9,desc:'Correr/caminhar · 2.8km+500m walk',baseMins:340},
+  {name:'Força',      laps:'14–17',cumKm:56.1,desc:'2km correr + 1.3km caminhar',      baseMins:445},
+];
+var _STRAT_BASE=600, _STRAT_TOTAL=64;
+
+function _parseMetaTime(str){
+  var parts=(str||'').trim().split(':');
+  if(parts.length!==2) return 0;
+  var h=parseInt(parts[0]),m=parseInt(parts[1]);
+  if(isNaN(h)||isNaN(m)||m<0||m>59||h<1) return 0;
+  return h*60+m;
+}
+function _fmtCumTime(mins){
+  var h=Math.floor(mins/60),m=mins%60;
+  return '~'+h+'h'+(m>0?String(m).padStart(2,'0'):'');
+}
+function _fmtPace(minPerKm){
+  var m=Math.floor(minPerKm),s=Math.round((minPerKm-m)*60);
+  if(s===60){m++;s=0;}
+  return m+':'+String(s).padStart(2,'0')+'/km';
+}
+function _calcPhaseRows(targetMins){
+  var rows=[], prevKm=0, prevMins=0;
+  for(var i=0;i<_STRAT_PHASES.length;i++){
+    var p=_STRAT_PHASES[i];
+    var cum=Math.round(p.baseMins*targetMins/_STRAT_BASE);
+    var delta=cum-prevMins, dKm=p.cumKm-prevKm;
+    var paceVal=dKm>0?delta/dKm:0;
+    var mVolta=Math.round(3.3*paceVal);
+    rows.push({name:p.name,laps:p.laps,cumKm:p.cumKm,desc:p.desc,
+      cumTime:_fmtCumTime(cum),pace:paceVal>0?_fmtPace(paceVal):'—',mVolta:mVolta});
+    prevKm=p.cumKm; prevMins=cum;
+  }
+  return rows;
+}
+function recalcStrategy(){
+  var ta=_parseMetaTime(document.getElementById('strat-meta-a').value);
+  var tb=_parseMetaTime(document.getElementById('strat-meta-b').value);
+  if(!ta||!tb){alert('Tempo inválido. Use o formato h:mm, ex: 10:30');return;}
+  localStorage.setItem('strat_meta_a',document.getElementById('strat-meta-a').value);
+  localStorage.setItem('strat_meta_b',document.getElementById('strat-meta-b').value);
+  _renderStrategyTable(ta,tb);
+}
+function _renderStrategyTable(ta,tb){
+  var ra=_calcPhaseRows(ta), rb=_calcPhaseRows(tb);
+  var lhA=Math.floor(ta/60)+'h'+(ta%60>0?String(ta%60).padStart(2,'0'):'');
+  var lhB=Math.floor(tb/60)+'h'+(tb%60>0?String(tb%60).padStart(2,'0'):'');
+  var html='<table class="lap-table"><thead><tr>'+
+    '<th>Fase</th><th>Voltas</th><th>Km acum.</th><th>Estratégia</th>'+
+    '<th>Tempo '+lhA+'</th><th>⌚ Pace '+lhA+'</th>'+
+    '<th>Tempo '+lhB+'</th><th>⌚ Pace '+lhB+'</th>'+
+    '</tr></thead><tbody>';
+  for(var i=0;i<ra.length;i++){
+    var a=ra[i],b=rb[i];
+    html+='<tr>'+
+      '<td>'+a.name+'</td><td>'+a.laps+'</td>'+
+      '<td>'+a.cumKm.toFixed(1).replace('.',',')+'&nbsp;km</td>'+
+      '<td>'+a.desc+'</td>'+
+      '<td>'+a.cumTime+'</td>'+
+      '<td class="pace-cell">'+a.pace+'<br><small>'+a.mVolta+'min/volta</small></td>'+
+      '<td>'+b.cumTime+'</td>'+
+      '<td class="pace-cell">'+b.pace+'<br><small>'+b.mVolta+'min/volta</small></td>'+
+    '</tr>';
+  }
+  html+='<tr>'+
+    '<td class="meta">🏆 META</td><td>18–19/20</td><td>~64&nbsp;km</td><td>Garra pura!</td>'+
+    '<td class="meta">~'+lhA+'</td><td class="pace-cell" style="font-size:.75rem;color:#888">Livre</td>'+
+    '<td class="meta">~'+lhB+'</td><td class="pace-cell" style="font-size:.75rem;color:#888">Livre</td>'+
+  '</tr></tbody></table>';
+  document.getElementById('strategy-table-wrap').innerHTML=html;
+}
+function initStrategyTable(){
+  var sa=localStorage.getItem('strat_meta_a')||'10:00';
+  var sb=localStorage.getItem('strat_meta_b')||'12:00';
+  document.getElementById('strat-meta-a').value=sa;
+  document.getElementById('strat-meta-b').value=sb;
+  _renderStrategyTable(_parseMetaTime(sa),_parseMetaTime(sb));
+}
+
 function showWeek(w){
   activeView = w;
   // restore today banner visibility (hidden when participantes was active)
@@ -6692,6 +6790,7 @@ function showWeek(w){
   } else if(w==='race'){
     document.getElementById('btn-race').classList.add('active');
     document.getElementById('section-race').classList.remove('hidden');
+    initStrategyTable();
   } else if(w==='events'){
     document.getElementById('btn-events').classList.add('active');
     document.getElementById('section-events').classList.remove('hidden');
