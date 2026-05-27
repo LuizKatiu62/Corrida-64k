@@ -9305,7 +9305,7 @@ function renderGoalNav(type, plan){
 function showGoalShared(section){
   document.getElementById('section-genplan').style.display = 'none';
   document.querySelectorAll('#week-nav-gen button').forEach(b=>b.classList.remove('active'));
-  ['section-events','section-photos','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
+  ['section-events','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
   document.getElementById('section-'+section)?.classList.remove('hidden');
   if(section==='events') renderEventsSection();
   else if(section==='photos') renderPhotosSection();
@@ -9316,7 +9316,7 @@ function showGoalShared(section){
 
 function showGoalWeek(w){
   // Hide shared sections
-  ['section-events','section-photos','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
+  ['section-events','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
   document.querySelectorAll('#week-nav-gen button').forEach(b=>b.classList.remove('active'));
   const genSection = document.getElementById('section-genplan');
   genSection.style.display = '';
