@@ -9308,7 +9308,6 @@ function showGoalShared(section){
   ['section-events','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
   document.getElementById('section-'+section)?.classList.remove('hidden');
   if(section==='events') renderEventsSection();
-  else if(section==='photos') renderPhotosSection();
   else if(section==='dashboard') renderDashboardSection();
   else if(section==='shopping') renderShoppingSection();
   window.scrollTo({top:0,behavior:'smooth'});
