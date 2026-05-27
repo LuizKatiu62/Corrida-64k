@@ -8105,7 +8105,8 @@ function renderRunReport(){
       '</tr>');
     }
 
-    var totalPlanRnd = Math.round(totalPlan * 10) / 10;
+    // Use full programmed plan km for summary (not cancellation-adjusted)
+    var totalPlanRnd = Math.round(totalPlanFull * 10) / 10;
     var overallPct = totalPlanRnd > 0 ? Math.round((totalReal / totalPlanRnd) * 100) : 0;
     var pctColor   = overallPct >= 90 ? 'var(--verde-esc)' : overallPct >= 70 ? 'var(--laranja)' : 'var(--vermelho)';
     var totalRealRnd = Math.round(totalReal * 10) / 10;
@@ -8117,7 +8118,7 @@ function renderRunReport(){
         '<div class="rpt-sum-card"><span class="rpt-sum-val">' + totalPlanRnd + ' km</span><span class="rpt-sum-lbl">Planejado total</span></div>' +
         '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--verde-esc)">' + totalRealRnd + ' km</span><span class="rpt-sum-lbl">Realizado total</span></div>' +
         '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:' + pctColor + '">' + overallPct + '%</span><span class="rpt-sum-lbl">Conclusão geral</span></div>' +
-        '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--roxo)">' + doneCount + '/' + runDays.length + '</span><span class="rpt-sum-lbl">Treinos feitos</span></div>' +
+        '<div class="rpt-sum-card"><span class="rpt-sum-val" style="color:var(--roxo)">' + doneCount + '/' + pastTrainCount + '</span><span class="rpt-sum-lbl">Treinos feitos</span></div>' +
       '</div>' +
       '<div class="rpt-table-wrap">' +
       '<table class="rpt-table">' +
