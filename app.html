@@ -8018,9 +8018,10 @@ function renderRunReport(){
       var isToday= d.date === today;
       // Is this an "extra run" day (cancelled with GPX, or rest day with GPX)?
       var hasReceiveR = prog.reschedule && prog.reschedule.type === 'receive';
-      var isExtraRun = (prog.runCancelled && !hasReceiveR && !!gData) || (!prog.runCancelled && d.run && d.run.km === 0 && !!gData);
-      var planKm = isExtraRun ? 0 : getEffectivePlanKm(d.date, progress);
-      if(d.type !== 'race' && !isExtraRun) totalPlan += planKm;
+      var isCancelledRow = prog.runCancelled && !hasReceiveR; // cancelled day (may or may not have GPX)
+      var isExtraRun = !isCancelledRow && ((!prog.runCancelled && d.run && d.run.km === 0 && !!gData) || !!prog.extraRun);
+      var planKm = (isExtraRun || isCancelledRow) ? 0 : getEffectivePlanKm(d.date, progress);
+      if(d.type !== 'race' && !isExtraRun && !isCancelledRow) totalPlan += planKm;
 
       // ── real data ──────────────────────────────────────────
       var realKm   = gData ? Math.round((gData.dist||0) * 10) / 10 : null;
@@ -8031,8 +8032,11 @@ function renderRunReport(){
 
       // ── % concluído ────────────────────────────────────────
       var pctHtml;
-      if(isExtraRun){
-        // Extra run: no planned km to compare against — just count the actual km
+      if(isCancelledRow){
+        // Cancelled training — never count km towards totals
+        pctHtml = '<span class="rpt-pct-pill" style="background:#ffeaea;color:#c0392b">Cancelado</span>';
+      } else if(isExtraRun){
+        // Extra run on a rest/non-planned day — count actual km
         if(realKm !== null && realKm > 0){
           totalReal += realKm;
           cumReal   += realKm;
