@@ -7997,13 +7997,14 @@ function renderRunReport(){
       return km > 0;
     });
 
-    // Full programmed plan km — sum all non-race training days as originally planned (ignoring cancellations)
+    // Full planned km — only non-cancelled, non-race training days (getEffectivePlanKm returns 0 for cancelled)
     var totalPlanFull = PLAN.reduce(function(s, d){
-      return d.type !== 'race' && d.run && d.run.km > 0 ? s + d.run.km : s;
+      var km = getEffectivePlanKm(d.date, progress);
+      return d.type !== 'race' && km > 0 ? s + km : s;
     }, 0);
-    // Past+today training days (non-rest, non-race) — denominator for "Treinos feitos"
+    // Past+today non-cancelled training days — denominator for "Treinos feitos"
     var pastTrainCount = PLAN.filter(function(d){
-      return d.type !== 'race' && d.run && d.run.km > 0 && d.date <= today;
+      return d.type !== 'race' && getEffectivePlanKm(d.date, progress) > 0 && d.date <= today;
     }).length;
 
     let totalPlan = 0, totalReal = 0, doneCount = 0, cumReal = 0;
