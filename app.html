@@ -8256,10 +8256,14 @@ function dashStats(days){
   // display: show 1 decimal when GPX data present, else integer
   var doneDisplay=totalGpxKm>0 ? (Math.round(totalDoneKm*10)/10).toFixed(1) : Math.round(totalDoneKm);
   var longestDisplay=longestDone>0 ? (Math.round(longestDone*10)/10).toFixed(1) : '0';
-  // sub-label: indicate GPX source
+  // remaining: future non-cancelled training days not yet done
+  var remainingKm=runDays
+    .filter(function(d){return !d.isPast&&!(d.prog.run||d.gpx);})
+    .reduce(function(s,d){return s+(d.effectiveKm||0);},0);
+  var remainingDisplay=(Math.round(remainingKm*10)/10).toFixed(1);
   var kmSubLabel=totalGpxKm>0
-    ? '/ '+totalPlanned+' km (📡 GPX)'
-    : '/ '+totalPlanned+' km';
+    ? remainingDisplay+' km restantes (📡 GPX)'
+    : remainingDisplay+' km restantes';
   var cards=[
     {icon:'🏃',val:doneDisplay+' km',sub:kmSubLabel,label:'Km Concluídos'},
     {icon:'✅',val:consistPct+'%',sub:doneCount+' de '+pastRun.length+' treinos',label:'Consistência'},
