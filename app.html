@@ -8082,18 +8082,23 @@ function renderRunReport(){
       }
       var tConf = isExtraRun
         ? { bg:'#e8f8f0', color:'#16a085' }
+        : isCancelledRow
+        ? { bg:'#ffeaea', color:'#c0392b' }
         : (TYPE_LABEL[effectiveType] || TYPE_LABEL.easy);
-      var typeLabel = isExtraRun ? 'Extra' : tConf.label;
+      var typeLabel = isExtraRun ? 'Extra' : isCancelledRow ? 'Cancelado' : tConf.label;
       var typeBadge = '<span class="rpt-type-badge" style="background:' + tConf.bg + ';color:' + tConf.color + '">' + typeLabel + '</span>';
-      var rowCls = isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
+      var rowCls = isCancelledRow ? 'rpt-cancelled' : isFut ? 'rpt-future' : isToday ? 'rpt-today' : '';
 
+      var origPlanKm = d.run ? d.run.km : 0;
       var realKmCell = (realKm !== null && realKm > 0)
-        ? '<span class="rpt-km" style="color:' + (isExtraRun?'#16a085':realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)') + '">' + realKm + ' km</span>'
-        : (prog.run ? '<span style="color:#888;font-size:.75rem">✓ manual</span>' : '<span style="color:#ccc">—</span>');
+        ? '<span class="rpt-km" style="color:' + (isExtraRun?'#16a085':isCancelledRow?'#c0392b':realKm>=planKm*0.95?'var(--verde-esc)':realKm>=planKm*0.7?'var(--laranja)':'var(--vermelho)') + '">' + realKm + ' km</span>'
+        : (prog.run && !isCancelledRow ? '<span style="color:#888;font-size:.75rem">✓ manual</span>' : '<span style="color:#ccc">—</span>');
 
       var runTitle = isExtraRun ? (gData && gData.filename ? gData.filename : 'Corrida extra') : effectiveTitle;
       var planCell = isExtraRun
         ? '<span style="color:#ccc">—</span>'
+        : isCancelledRow
+        ? '<span style="color:#ccc;text-decoration:line-through">' + origPlanKm + ' km</span><br><span style="font-size:.68rem;color:#ccc">' + effectiveTitle + '</span>'
         : '<span class="rpt-km" style="color:var(--azul)">' + planKm + ' km</span><br><span style="font-size:.68rem;color:#999">' + runTitle + '</span>';
 
       rowsHtml.push('<tr class="' + rowCls + '">' +
