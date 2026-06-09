@@ -589,15 +589,14 @@ function completeLap(){
 }
 
 // ══════════════════════════════════════
-// QR CODE MODAL
+// QR CODE MODAL + SHARE
 // ══════════════════════════════════════
 let qrBuilt=false;
 function showQR(){
   document.getElementById('mQR').classList.add('on');
-  document.getElementById('qrUrlText').textContent=WATCH_URL;
   if(!qrBuilt){
     new QRCode(document.getElementById('qrCanvas'),{
-      text:WATCH_URL, width:220, height:220,
+      text:WATCH_URL, width:210, height:210,
       colorDark:'#0d1f0f', colorLight:'#ffffff',
       correctLevel:QRCode.CorrectLevel.H
     });
@@ -605,6 +604,86 @@ function showQR(){
   }
 }
 function hideQR(){ document.getElementById('mQR').classList.remove('on'); }
+
+function shareImage(){
+  // Build a branded 1080×1080 share image on canvas
+  const SIZE=1080;
+  const c=document.getElementById('shareCanvas');
+  c.width=SIZE; c.height=SIZE;
+  const ctx=c.getContext('2d');
+
+  // background gradient
+  const grd=ctx.createRadialGradient(SIZE/2,SIZE*0.35,80,SIZE/2,SIZE/2,SIZE*0.7);
+  grd.addColorStop(0,'#1a3a1a'); grd.addColorStop(1,'#0d1f0f');
+  ctx.fillStyle=grd; ctx.fillRect(0,0,SIZE,SIZE);
+
+  // gold top bar
+  ctx.fillStyle='#d4a017'; ctx.fillRect(0,0,SIZE,10);
+
+  // LIVE badge
+  ctx.fillStyle='rgba(200,30,30,0.85)';
+  roundRect(ctx,SIZE/2-70,54,140,44,22); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 22px -apple-system,Arial,sans-serif';
+  ctx.textAlign='center'; ctx.fillText('🔴  LIVE',SIZE/2,84);
+
+  // title
+  ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='bold 28px Arial';
+  ctx.fillText('CHALLENGE',SIZE/2,148);
+  ctx.fillStyle='#fff'; ctx.font='bold 130px Arial';
+  ctx.fillText('64KM',SIZE/2,266);
+
+  // subtitle
+  ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font='italic 30px Georgia,serif';
+  ctx.fillText('Running with gratitude, finishing for His Glory.',SIZE/2,316);
+
+  // QR white card
+  const QSZ=340, QX=(SIZE-QSZ)/2, QY=348;
+  ctx.fillStyle='#ffffff';
+  roundRect(ctx,QX-18,QY-18,QSZ+36,QSZ+36,20); ctx.fill();
+
+  // draw QR from the DOM canvas
+  const qrEl=document.querySelector('#qrCanvas canvas')||document.querySelector('#qrCanvas img');
+  if(qrEl) ctx.drawImage(qrEl, QX, QY, QSZ, QSZ);
+
+  // "Scan to follow live" label
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='bold 28px Arial';
+  ctx.fillText('📱  Scan to follow the race LIVE',SIZE/2,QY+QSZ+58);
+
+  // URL
+  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='22px monospace';
+  ctx.fillText('runwithgratitude.ca/voltas.html?watch',SIZE/2,QY+QSZ+96);
+
+  // gold bottom bar
+  ctx.fillStyle='#d4a017'; ctx.fillRect(0,SIZE-10,SIZE,10);
+
+  // share or download
+  c.toBlob(blob=>{
+    const file=new File([blob],'64km-live-qr.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      navigator.share({
+        title:'64KM Challenge — Live Tracker',
+        text:'Scan to follow the race in real time! 🏃',
+        files:[file]
+      }).catch(()=>{});
+    } else {
+      // fallback: download
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='64km-live-qr.png';
+      a.click();
+    }
+  },'image/png');
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
 
 // ══════════════════════════════════════
 // SETUP
