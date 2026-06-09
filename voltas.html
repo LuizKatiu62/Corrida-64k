@@ -867,7 +867,7 @@ function openAction(i){
   const prev=document.getElementById('actionPreview');
   if(has){ prev.style.backgroundImage=`url('${S.photos[i]}')`;prev.textContent=''; }
   else   { prev.style.backgroundImage='';prev.textContent='📷'; }
-  document.getElementById('actionTitle').textContent=`LAP ${i+1} · ${((i+1)*LAP_KM).toFixed(1)} km`;
+  document.getElementById('actionTitle').textContent=`LAP ${i+1} · ${kmAt(i+1).toFixed(1)} km`;
   document.getElementById('actionAddBtn').style.display=has?'none':'flex';
   document.querySelector('#actionSheet .action-btn:first-of-type').style.display=has?'flex':'none'; // Replace
   document.getElementById('actionDelBtn').style.display=has?'flex':'none';
