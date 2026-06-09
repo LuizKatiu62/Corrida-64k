@@ -232,6 +232,33 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 .action-btn.danger{color:#ff6b6b}
 .action-btn.cancel{color:rgba(255,255,255,.4);font-size:14px;justify-content:center;text-align:center}
 
+/* ── Confirm modal ── */
+#mConfirm{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);
+  display:none;align-items:center;justify-content:center;
+  z-index:90;padding:24px;
+}
+#mConfirm.on{display:flex}
+.confirm-box{
+  background:#1a2e1a;border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;width:100%;max-width:320px;overflow:hidden;
+  text-align:center;padding:28px 24px 20px;
+}
+.confirm-icon{font-size:36px;margin-bottom:8px}
+.confirm-title{font-size:17px;font-weight:900;color:#fff;margin-bottom:4px}
+.confirm-sub{font-size:12px;opacity:.55;margin-bottom:22px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-yes{
+  flex:1;padding:15px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#1a5c33,#1e8449);
+  color:#fff;font-size:16px;font-weight:800;cursor:pointer;
+}
+.confirm-no{
+  flex:1;padding:15px;border:1.5px solid rgba(255,255,255,.2);
+  border-radius:14px;background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.7);font-size:15px;font-weight:700;cursor:pointer;
+}
+
 /* ══════════════════════════════
    SPECTATOR / WATCH VIEW
 ══════════════════════════════ */
