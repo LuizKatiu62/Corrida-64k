@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>64KM Live QR — Share</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,Arial,sans-serif;
+  background:#0d1f0f;color:#fff;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;gap:20px;
+}
+h1{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.5}
+
+/* preview card */
+.card{
+  background:linear-gradient(160deg,#1a3a1a,#0d2b14);
+  border:1px solid rgba(255,255,255,.12);border-radius:22px;
+  width:100%;max-width:340px;overflow:hidden;text-align:center;
+}
+.card-top{padding:22px 22px 18px}
+.live-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(200,30,30,.8);border-radius:20px;
+  padding:4px 14px;font-size:11px;font-weight:700;
+  letter-spacing:1px;margin-bottom:14px;
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#fff;
+  animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.card h2{font-size:11px;font-weight:700;letter-spacing:2px;opacity:.5;margin-bottom:2px}
+.card h3{font-size:28px;font-weight:900;margin-bottom:14px}
+.qr-wrap{
+  background:#fff;border-radius:14px;
+  display:inline-flex;padding:12px;margin-bottom:14px;
+}
+#qr canvas,#qr img{display:block}
+.card-sub{font-size:11px;opacity:.5;line-height:1.6;padding-bottom:18px}
+
+/* buttons */
+.btn-share{
+  width:100%;max-width:340px;padding:17px;border:none;border-radius:16px;
+  font-size:17px;font-weight:800;letter-spacing:.5px;cursor:pointer;
+  background:linear-gradient(135deg,#1e8449,#27ae60);
+  color:#fff;box-shadow:0 4px 24px rgba(30,132,73,.5);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn-share:active{opacity:.85}
+.btn-dl{
+  width:100%;max-width:340px;padding:14px;border-radius:14px;
+  border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);
+  color:rgba(255,255,255,.7);font-size:14px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.hint{font-size:11px;opacity:.35;text-align:center;max-width:300px;line-height:1.6}
+
+/* hidden canvas for generating share image */
+#shareCanvas{display:none}
+</style>
+</head>
+<body>
+
+<h1>Share the Live Tracker</h1>
+
+<div class="card">
+  <div class="card-top">
+    <div class="live-pill"><span class="live-dot"></span> LIVE</div>
+    <div class="card h2">CHALLENGE</div>
+    <div class="card h3">64 KM</div>
+    <div class="qr-wrap"><div id="qr"></div></div>
+    <div class="card-sub">
+      Scan to follow the race in real time<br>
+      runwithgratitude.ca/voltas.html?watch
+    </div>
+  </div>
+</div>
+
+<button class="btn-share" onclick="doShare()">📤 Share on WhatsApp / Instagram</button>
+<button class="btn-dl" onclick="doDownload()">💾 Save Image to Camera Roll</button>
+
+<div class="hint">
+  Tap Share → choose WhatsApp, Instagram, Messages…<br>
+  or Save Image to post on any platform.
+</div>
+
+<canvas id="shareCanvas"></canvas>
+
+<script>
+const WATCH_URL = 'https://runwithgratitude.ca/voltas.html?watch';
+
+// Build QR in preview card
+new QRCode(document.getElementById('qr'), {
+  text: WATCH_URL,
+  width: 200, height: 200,
+  colorDark: '#0d1f0f', colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+// Build 1080×1080 share image
+function buildImage(cb) {
+  const SIZE = 1080;
+  const c = document.getElementById('shareCanvas');
+  c.width = SIZE; c.height = SIZE;
+  const ctx = c.getContext('2d');
+
+  // background
+  const grd = ctx.createRadialGradient(SIZE/2, SIZE*0.38, 60, SIZE/2, SIZE/2, SIZE*0.72);
+  grd.addColorStop(0, '#1e3a1e');
+  grd.addColorStop(1, '#0d1f0f');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, SIZE, SIZE);
+
+  // gold bars top & bottom
+  ctx.fillStyle = '#d4a017';
+  ctx.fillRect(0, 0, SIZE, 12);
+  ctx.fillRect(0, SIZE - 12, SIZE, 12);
+
+  // LIVE pill
+  ctx.fillStyle = 'rgba(190,20,20,0.88)';
+  pill(ctx, SIZE/2 - 80, 46, 160, 48, 24);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 24px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('🔴  LIVE', SIZE/2, 80);
+
+  // CHALLENGE
+  ctx.fillStyle = 'rgba(255,255,255,0.38)';
+  ctx.font = 'bold 36px Arial';
+  ctx.fillText('CHALLENGE', SIZE/2, 148);
+
+  // 64KM
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 148px Arial';
+  ctx.fillText('64 KM', SIZE/2, 292);
+
+  // subtitle
+  ctx.fillStyle = 'rgba(212,160,23,0.85)';
+  ctx.font = 'italic 28px Georgia,serif';
+  ctx.fillText('Running with gratitude, finishing for His Glory.', SIZE/2, 340);
+
+  // white QR card
+  const QSZ = 340, QX = (SIZE - QSZ) / 2, QY = 374;
+  ctx.fillStyle = '#ffffff';
+  pill(ctx, QX - 22, QY - 22, QSZ + 44, QSZ + 44, 24);
+  ctx.fill();
+
+  const qrEl = document.querySelector('#qr canvas') || document.querySelector('#qr img');
+  if (qrEl) ctx.drawImage(qrEl, QX, QY, QSZ, QSZ);
+
+  // "Scan to follow" label
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.font = 'bold 30px Arial';
+  ctx.fillText('📱  Scan to follow the race LIVE', SIZE/2, QY + QSZ + 60);
+
+  // event info
+  ctx.fillStyle = 'rgba(255,255,255,0.38)';
+  ctx.font = '22px Arial';
+  ctx.fillText('📍 Little River Reservoir · Saint John, NB · June 13, 2026', SIZE/2, QY + QSZ + 104);
+
+  // URL
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = '20px monospace';
+  ctx.fillText('runwithgratitude.ca/voltas.html?watch', SIZE/2, QY + QSZ + 138);
+
+  c.toBlob(cb, 'image/png');
+}
+
+function pill(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function doShare() {
+  buildImage(blob => {
+    const file = new File([blob], '64km-live.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({
+        title: '64KM Challenge — Live Tracker',
+        text: 'Scan to follow the race in real time! 🏃‍♂️',
+        files: [file]
+      }).catch(() => doDownload());
+    } else {
+      doDownload();
+    }
+  });
+}
+
+function doDownload() {
+  buildImage(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '64km-live.png';
+    a.click();
+  });
+}
+</script>
+</body>
+</html>
