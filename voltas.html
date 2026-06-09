@@ -377,6 +377,20 @@ body{background:#0d1f0f;color:#fff;user-select:none}
   <button class="btn-over" onclick="resetAll()">Start Over</button>
 </div>
 
+<!-- ══════════════════════════════════════
+     ACTION SHEET (photo management)
+══════════════════════════════════════ -->
+<div id="actionSheet" onclick="if(event.target===this)closeAction()">
+  <div class="action-card">
+    <div class="action-preview" id="actionPreview">📷</div>
+    <div class="action-title" id="actionTitle">LAP 1</div>
+    <button class="action-btn" onclick="actionReplace()"><span>🔄</span> Replace Photo</button>
+    <button class="action-btn" onclick="actionAdd()" id="actionAddBtn" style="display:none"><span>📷</span> Add Photo</button>
+    <button class="action-btn danger" onclick="actionDelete()" id="actionDelBtn"><span>🗑️</span> Delete Photo</button>
+    <button class="action-btn cancel" onclick="closeAction()">Cancel</button>
+  </div>
+</div>
+
 <input type="file" id="filePick" accept="image/*" style="display:none">
 
 <script>
