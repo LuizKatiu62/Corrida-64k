@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0d1f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>64KM — Lap Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,'Montserrat',sans-serif}
+body{background:#0d1f0f;color:#fff;user-select:none}
+
+/* ══ VIEWS ══ */
+.view{display:none;height:100vh;flex-direction:column}
+.view.active{display:flex}
+
+/* ══ TRACKER ══ */
+#vTracker{flex-direction:column}
+
+.photo-area{
+  flex:1;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#1a3a1a,#0d2b1e);
+  min-height:0;
+}
+.photo-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:opacity .6s ease;
+}
+.photo-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.35) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.75) 100%);
+  display:flex;flex-direction:column;justify-content:space-between;padding:18px 18px 20px;
+}
+
+.top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.lap-badge{
+  background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+  border:1.5px solid #1e8449;border-radius:20px;
+  padding:5px 14px;font-size:12px;font-weight:700;letter-spacing:.8px;
+}
+.icon-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(10px);
+  border:none;color:#fff;font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+.lap-center{text-align:center;padding:0 16px}
+.lap-num{font-size:90px;font-weight:900;line-height:.9;text-shadow:0 2px 24px rgba(0,0,0,.8)}
+.lap-num small{display:block;font-size:18px;font-weight:700;opacity:.75;margin-bottom:4px}
+.lap-msg{margin-top:10px;font-size:13px;font-style:italic;opacity:.9;text-shadow:0 1px 8px rgba(0,0,0,.9);line-height:1.5}
+.dist-row{margin-top:6px;font-size:12px;opacity:.75;text-shadow:0 1px 6px rgba(0,0,0,.9)}
+
+/* ══ BOTTOM PANEL ══ */
+.bottom{background:#0d1f0f;padding:10px 14px 18px;flex-shrink:0}
+
+.pbar-wrap{height:5px;background:rgba(255,255,255,.12);border-radius:3px;margin-bottom:10px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,#1e8449,#d4a017);border-radius:3px;transition:width .5s ease}
+
+.dots{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
+.dot{
+  width:26px;height:26px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;
+  border:2px solid transparent;
+}
+.dot.done{background:#1e8449;border-color:#27ae60;font-size:13px}
+.dot.cur {background:#d4a017;border-color:#f0c030;animation:pulse 1.8s infinite}
+.dot.next{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.35)}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.5)}
+  50%{box-shadow:0 0 0 5px rgba(212,160,23,0)}
+}
+
+.big-btn{
+  width:100%;padding:15px;border:none;border-radius:14px;
+  font-size:17px;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(135deg,#1e8449,#27ae60);
+  box-shadow:0 4px 20px rgba(30,132,73,.4);
+  transition:transform .1s,box-shadow .1s;
+}
+.big-btn:active{transform:scale(.97);box-shadow:0 2px 10px rgba(30,132,73,.3)}
+.big-btn.final{background:linear-gradient(135deg,#b8860b,#d4a017);box-shadow:0 4px 20px rgba(212,160,23,.4)}
+
+/* ══ FLASH ══ */
+#flash{
+  position:fixed;inset:0;z-index:200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  pointer-events:none;opacity:0;
+}
+#flash.go{animation:flashAnim 1.3s forwards;pointer-events:all}
+@keyframes flashAnim{
+  0%{opacity:0} 10%{opacity:.97} 80%{opacity:.97} 100%{opacity:0}
+}
+.flash-title{font-size:38px;font-weight:900;text-align:center;line-height:1.2;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+.flash-sub{font-size:14px;opacity:.85}
+
+/* ══ SETUP ══ */
+#vSetup{background:#0d1f0f}
+.setup-hdr{
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;
+}
+.setup-hdr h2{flex:1;font-size:15px;font-weight:700}
+.btn-back{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;line-height:1}
+.btn-reset{
+  background:rgba(200,50,50,.18);border:1px solid rgba(200,50,50,.4);
+  color:#ff7070;font-size:10px;font-weight:700;border-radius:8px;
+  padding:5px 10px;cursor:pointer;letter-spacing:.4px;
+}
+.setup-hint{font-size:10.5px;opacity:.45;line-height:1.6;padding:10px 18px 4px}
+.setup-scroll{flex:1;overflow-y:auto;padding:10px 14px 24px}
+.setup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:10px}
+.s-cell{display:flex;flex-direction:column;align-items:center;gap:4px}
+.s-thumb{
+  width:78px;height:78px;border-radius:10px;
+  background:rgba(255,255,255,.07);border:2px dashed rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;cursor:pointer;overflow:hidden;
+  background-size:cover;background-position:center;
+  transition:border-color .2s;position:relative;
+}
+.s-thumb:hover{border-color:#1e8449}
+.s-thumb.has{border-style:solid;border-color:#1e8449}
+.s-thumb .del{
+  position:absolute;top:2px;right:2px;
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,.7);border:none;color:#fff;
+  font-size:10px;cursor:pointer;display:none;
+  align-items:center;justify-content:center;
+}
+.s-thumb.has:hover .del{display:flex}
+.s-lnum{font-size:9.5px;font-weight:700;opacity:.55;letter-spacing:.4px}
+.s-ldist{font-size:8.5px;opacity:.3}
+
+/* ══ CELEBRATION ══ */
+#vEnd{
+  align-items:center;justify-content:center;text-align:center;
+  gap:18px;padding:36px 32px;
+  background:radial-gradient(ellipse at center,#1e5c2e 0%,#0d1f0f 70%);
+}
+.cel-icon{font-size:72px}
+.cel-h1{font-size:36px;font-weight:900;line-height:1.1}
+.cel-h1 b{color:#d4a017;display:block}
+.cel-sub{font-size:14px;opacity:.8;line-height:1.7;max-width:260px}
+.cel-verse{font-style:italic;font-size:12px;opacity:.6;max-width:240px;line-height:1.6}
+.btn-over{
+  margin-top:6px;background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.25);color:#fff;
+  padding:11px 26px;border-radius:30px;font-size:13px;font-weight:700;cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ TRACKER ══════════════ -->
+<div class="view active" id="vTracker">
+  <div class="photo-area">
+    <div class="photo-bg" id="photoBg"></div>
+    <div class="photo-overlay">
+
+      <div class="top-row">
+        <div class="lap-badge" id="lapBadge">LAP 1 / 19</div>
+        <button class="icon-btn" onclick="showSetup()" title="Setup">⚙️</button>
+      </div>
+
+      <div class="lap-center">
+        <div class="lap-num"><small>LAP</small><span id="lapNum">1</span></div>
+        <div class="lap-msg" id="lapMsg"></div>
+        <div class="dist-row" id="distRow"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="pbar-wrap"><div class="pbar-fill" id="pbar"></div></div>
+    <div class="dots" id="dots"></div>
+    <button class="big-btn" id="mainBtn" onclick="completeLap()">
+      <span id="btnIcon">✓</span><span id="btnText">LAP COMPLETE</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ FLASH ══════════════ -->
+<div id="flash">
+  <div class="flash-title" id="flashTitle"></div>
+  <div class="flash-sub" id="flashSub"></div>
+</div>
+
+<!-- ══════════════ SETUP ══════════════ -->
+<div class="view" id="vSetup">
+  <div class="setup-hdr">
+    <button class="btn-back" onclick="hideSetup()">←</button>
+    <h2>Photos per Lap</h2>
+    <button class="btn-reset" onclick="resetAll()">RESET PROGRESS</button>
+  </div>
+  <div class="setup-hint">Tap a lap to assign a photo from your device. Photos are saved here.</div>
+  <div class="setup-scroll">
+    <div class="setup-grid" id="setupGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════════ CELEBRATION ══════════════ -->
+<div class="view" id="vEnd">
+  <div class="cel-icon">🏆</div>
+  <div class="cel-h1">64 KM<b>COMPLETE!</b></div>
+  <div class="cel-sub">All 19 laps finished.<br>Running with gratitude,<br>finishing for His Glory.</div>
+  <div class="cel-verse">"I can do all things through Christ<br>who strengthens me."<br>— Philippians 4:13</div>
+  <button class="btn-over" onclick="resetAll()">Start Over</button>
+</div>
+
+<input type="file" id="filePick" accept="image/*" style="display:none">
+
+<script>
+// ── Config ──
+const TOTAL  = 19;
+const LAP_KM = 3.3;
+const MSGS = {
+  1:'Let\'s go! The journey begins! 🚀',
+  4:'Settling in — find your rhythm! 💚',
+  5:'¼ done — 16.5 km! Strong! 💪',
+  8:'Almost halfway — dig in! 🔥',
+  10:'HALFWAY — 33 km! You\'re amazing! 🌟',
+  13:'More than halfway — keep going! ⚡',
+  14:'¾ done — 46.2 km! Nearly there! 🏅',
+  17:'Two laps to go — give it all! 🦁',
+  18:'Second to last — almost home! 🎯',
+  19:'FINAL LAP — give it everything! 🏆'
+};
+const msg = n => MSGS[n] || `Lap ${n} — Keep going! You\'ve got this! 💚`;
+
+// ── State ──
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem('lap64v3')||'null');
+    if(s&&s.v===3) return s;
+  }catch(e){}
+  return {v:3, cur:0, photos:Array(TOTAL).fill(null)};
+}
+function save(s){ localStorage.setItem('lap64v3',JSON.stringify(s)); }
+let S = load();
+let editIdx = -1;
+
+// ── Image compress ──
+function compress(file, cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=1000, sc=Math.min(1,MAX/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/jpeg',.72));
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+// ── View helpers ──
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── Render tracker ──
+function render(){
+  const ci=S.cur, cn=ci+1;
+  if(cn>TOTAL){ showView('vEnd'); return; }
+
+  showView('vTracker');
+
+  document.getElementById('lapBadge').textContent=`LAP ${cn} / ${TOTAL}`;
+  document.getElementById('lapNum').textContent=cn;
+  document.getElementById('lapMsg').textContent=msg(cn);
+  document.getElementById('distRow').textContent=
+    `${(ci*LAP_KM).toFixed(1)} km done · ${((TOTAL-ci)*LAP_KM).toFixed(1)} km to go`;
+
+  // Photo
+  const ph=S.photos[ci];
+  const bg=document.getElementById('photoBg');
+  bg.style.backgroundImage=ph?`url('${ph}')`:'';
+
+  // Progress
+  document.getElementById('pbar').style.width=(ci/TOTAL*100)+'%';
+
+  // Dots
+  const dots=document.getElementById('dots');
+  dots.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot '+(i<ci?'done':i===ci?'cur':'next');
+    d.textContent=i<ci?'✓':i===ci?'▶':(i+1);
+    dots.appendChild(d);
+  }
+
+  // Button
+  const isLast=cn===TOTAL;
+  document.getElementById('mainBtn').className='big-btn'+(isLast?' final':'');
+  document.getElementById('btnIcon').textContent=isLast?'🏆':'✓';
+  document.getElementById('btnText').textContent=isLast?'FINISH!':'LAP COMPLETE';
+}
+
+// ── Complete lap ──
+function completeLap(){
+  const ci=S.cur, cn=ci+1;
+  if(cn>TOTAL) return;
+
+  const fl=document.getElementById('flash');
+  const isLast=cn===TOTAL;
+  fl.style.background=isLast?'linear-gradient(135deg,#8B6914,#b8860b)':'linear-gradient(135deg,#1a5c33,#1e8449)';
+  document.getElementById('flashTitle').textContent=isLast?'🏆 64 KM COMPLETE! 🏆':`✓ LAP ${cn} DONE!`;
+  document.getElementById('flashSub').textContent=isLast
+    ?'Finishing for His Glory!'
+    :`${(cn*LAP_KM).toFixed(1)} km — ${TOTAL-cn} laps to go`;
+
+  fl.classList.remove('go');
+  void fl.offsetWidth;
+  fl.classList.add('go');
+
+  S.cur=ci+1;
+  save(S);
+
+  setTimeout(()=>{ fl.classList.remove('go'); render(); }, 1300);
+}
+
+// ── Setup ──
+function showSetup(){
+  showView('vSetup');
+  renderSetup();
+}
+function hideSetup(){ render(); }
+
+function renderSetup(){
+  const grid=document.getElementById('setupGrid');
+  grid.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const cell=document.createElement('div');
+    cell.className='s-cell';
+
+    const thumb=document.createElement('div');
+    const hasPhoto=!!S.photos[i];
+    thumb.className='s-thumb'+(hasPhoto?' has':'');
+    if(hasPhoto){
+      thumb.style.backgroundImage=`url('${S.photos[i]}')`;
+    } else {
+      thumb.textContent='📷';
+    }
+    thumb.addEventListener('click', e=>{
+      if(e.target.classList.contains('del')) return;
+      editIdx=i; document.getElementById('filePick').value=''; document.getElementById('filePick').click();
+    });
+
+    if(hasPhoto){
+      const del=document.createElement('button');
+      del.className='del'; del.textContent='✕';
+      del.addEventListener('click', e=>{
+        e.stopPropagation();
+        if(confirm(`Remove photo from Lap ${i+1}?`)){
+          S.photos[i]=null; save(S); renderSetup();
+        }
+      });
+      thumb.appendChild(del);
+    }
+
+    const lnum=document.createElement('div');
+    lnum.className='s-lnum'; lnum.textContent=`LAP ${i+1}`;
+    const ldist=document.createElement('div');
+    ldist.className='s-ldist'; ldist.textContent=`${((i+1)*LAP_KM).toFixed(1)} km`;
+
+    cell.append(thumb,lnum,ldist);
+    grid.appendChild(cell);
+  }
+}
+
+document.getElementById('filePick').addEventListener('change',e=>{
+  const f=e.target.files[0];
+  if(!f||editIdx<0) return;
+  compress(f,b64=>{ S.photos[editIdx]=b64; save(S); editIdx=-1; renderSetup(); });
+});
+
+// ── Reset ──
+function resetAll(){
+  if(!confirm('Reset lap progress? Photos will be kept.')) return;
+  S.cur=0; save(S); render();
+}
+
+// ── Init ──
+render();
+</script>
+</body>
+</html>
