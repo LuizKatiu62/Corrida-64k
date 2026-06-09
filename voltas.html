@@ -1086,27 +1086,30 @@ function startWatchMode(){
     })();
   }
 
-  // Real-time listener
-  ref.on('value', snap=>applyData(snap.val()),
-    err=>{ console.error('Firebase read error:',err);
-           document.getElementById('wOffline').style.display='block'; });
+  if(ref){
+    // Real-time listener
+    ref.on('value', snap=>applyData(snap.val()),
+      err=>{ document.getElementById('wOffline').style.display='block'; });
 
-  // Polling backup every 5 s (ensures updates even if WebSocket drops)
-  setInterval(()=>{
-    ref.once('value').then(snap=>applyData(snap.val())).catch(()=>{});
-  }, 5000);
+    // Polling backup every 5 s
+    setInterval(()=>{
+      ref.once('value').then(snap=>applyData(snap.val())).catch(()=>{});
+    }, 5000);
 
-  // Refresh "last update" clock every 30 s
-  setInterval(()=>{
-    ref.once('value').then(snap=>{
-      const d=snap.val();
-      if(d&&d.updated){
-        const sec=Math.round((Date.now()-d.updated)/1000);
-        const ago=sec<60?`${sec}s ago`:sec<3600?`${Math.round(sec/60)}m ago`:`${Math.round(sec/3600)}h ago`;
-        document.getElementById('wUpd').textContent=`Updated: ${ago}`;
-      }
-    }).catch(()=>{});
-  }, 30000);
+    // Refresh "last update" clock every 30 s
+    setInterval(()=>{
+      ref.once('value').then(snap=>{
+        const d=snap.val();
+        if(d&&d.updated){
+          const sec=Math.round((Date.now()-d.updated)/1000);
+          const ago=sec<60?`${sec}s ago`:sec<3600?`${Math.round(sec/60)}m ago`:`${Math.round(sec/3600)}h ago`;
+          document.getElementById('wUpd').textContent=`Updated: ${ago}`;
+        }
+      }).catch(()=>{});
+    }, 30000);
+  } else {
+    document.getElementById('wOffline').style.display='block';
+  }
 }
 
 // ══════════════════════════════════════
