@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Desafio 64km — Cartões Azul</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',Arial,sans-serif;background:#e0e0e0}
+
+@media screen{
+  .pbar{
+    position:fixed;top:0;left:0;right:0;height:48px;
+    background:#0d1b6e;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    font-size:13px;font-weight:700;z-index:100;
+    box-shadow:0 2px 12px rgba(0,0,0,.3);
+  }
+  .pbtn{
+    background:#fff;color:#0d1b6e;border:none;border-radius:8px;
+    padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  body{padding-top:56px}
+  .page{width:210mm;margin:16px auto;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+}
+
+.page{width:210mm;display:flex;flex-direction:column;break-after:page}
+
+.card{
+  width:100%;height:99mm;
+  background:#0d1b6e;
+  border:3px solid #fff;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6mm;
+  break-inside:avoid;
+  border-bottom:none;
+}
+.card:last-child{border-bottom:3px solid #fff}
+
+.lap-num{
+  font-size:80pt;font-weight:900;
+  color:#fff;line-height:1;
+}
+.lap-km{
+  font-size:18pt;font-weight:700;
+  color:rgba(255,255,255,0.75);
+  letter-spacing:1px;
+}
+
+/* last card bigger */
+.card.last{height:297mm;border-bottom:3px solid #fff;background:#071050}
+.card.last .lap-num{font-size:130pt}
+.card.last .lap-km{font-size:24pt;color:#fff}
+
+@media print{
+  body{background:#fff;padding:0}
+  .pbar{display:none}
+  .page{margin:0;box-shadow:none;width:210mm}
+  .card{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4 portrait;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="pbar">
+  <span>Desafio 64km — Cartões Azul</span>
+  <button class="pbtn" onclick="window.print()">🖨 Imprimir</button>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="card"><div class="lap-num">1</div><div class="lap-km">3,35 km</div></div>
+  <div class="card"><div class="lap-num">2</div><div class="lap-km">6,70 km</div></div>
+  <div class="card"><div class="lap-num">3</div><div class="lap-km">10,05 km</div></div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+  <div class="card"><div class="lap-num">4</div><div class="lap-km">13,40 km</div></div>
+  <div class="card"><div class="lap-num">5</div><div class="lap-km">16,75 km</div></div>
+  <div class="card"><div class="lap-num">6</div><div class="lap-km">20,10 km</div></div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+  <div class="card"><div class="lap-num">7</div><div class="lap-km">23,45 km</div></div>
+  <div class="card"><div class="lap-num">8</div><div class="lap-km">26,80 km</div></div>
+  <div class="card"><div class="lap-num">9</div><div class="lap-km">30,15 km</div></div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+  <div class="card"><div class="lap-num">10</div><div class="lap-km">33,50 km</div></div>
+  <div class="card"><div class="lap-num">11</div><div class="lap-km">36,85 km</div></div>
+  <div class="card"><div class="lap-num">12</div><div class="lap-km">40,20 km</div></div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page">
+  <div class="card"><div class="lap-num">13</div><div class="lap-km">43,55 km</div></div>
+  <div class="card"><div class="lap-num">14</div><div class="lap-km">46,90 km</div></div>
+  <div class="card"><div class="lap-num">15</div><div class="lap-km">50,25 km</div></div>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page">
+  <div class="card"><div class="lap-num">16</div><div class="lap-km">53,60 km</div></div>
+  <div class="card"><div class="lap-num">17</div><div class="lap-km">56,95 km</div></div>
+  <div class="card"><div class="lap-num">18</div><div class="lap-km">60,30 km</div></div>
+</div>
+
+<!-- PAGE 7 — FINAL -->
+<div class="page">
+  <div class="card last">
+    <div class="lap-num">19</div>
+    <div class="lap-km">64 km 🏆</div>
+  </div>
+</div>
+
+</body>
+</html>
