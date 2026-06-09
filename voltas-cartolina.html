@@ -2,14 +2,13 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Desafio 64km — Cartões das Voltas</title>
+<title>Desafio 64km — Cartões das Voltas 4"×4"</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:ital,wght@0,400;0,700;1,400&display=swap');
 
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Lato',sans-serif;background:#e8e8e8}
 
-/* ── Screen: show print button ── */
 @media screen{
   .pbar{
     position:fixed;top:0;left:0;right:0;height:48px;
@@ -23,87 +22,93 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;
   }
   body{padding-top:56px}
-  .page{
-    width:210mm;margin:16px auto;
-    background:#fff;
-    box-shadow:0 4px 20px rgba(0,0,0,.2);
-  }
+  .page{width:210mm;margin:16px auto;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.2)}
 }
 
-/* ── Page ── */
+/* ── Page: A4, 2×2 grid of 4"×4" cards ── */
 .page{
-  width:210mm;
-  display:flex;
-  flex-direction:column;
+  width:210mm;height:297mm;
+  display:flex;flex-wrap:wrap;
+  justify-content:center;align-content:center;
   break-after:page;
+  gap:0;
 }
 
-/* ── Card ── */
+/* ── Card: exactly 4" × 4" ── */
 .card{
-  width:100%;height:99mm;
-  border:2px solid #111;
+  width:4in;height:4in;
+  border:2px solid #222;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  padding:10mm 14mm;gap:0;
+  text-align:center;
+  padding:5mm 7mm 8mm;
   position:relative;
   break-inside:avoid;
-  border-bottom:none;
+  overflow:hidden;
 }
-.card:last-child{border-bottom:2px solid #111}
 
-/* lap number */
+.corner{
+  position:absolute;top:2.5mm;left:4mm;
+  font-size:7pt;font-weight:700;color:#bbb;letter-spacing:1px;
+}
+
 .lap-num{
   font-family:'Playfair Display',serif;
-  font-size:72pt;font-weight:900;
+  font-size:52pt;font-weight:900;
   line-height:1;color:#111;
-  margin-bottom:3mm;
+  margin-bottom:1.5mm;
 }
 
-/* km */
 .lap-km{
-  font-size:13pt;font-weight:700;
-  color:#555;letter-spacing:.5px;
-  margin-bottom:5mm;
+  font-size:11pt;font-weight:700;
+  color:#666;letter-spacing:.5px;
+  margin-bottom:2.5mm;
 }
 
-/* divider */
 .div{
-  width:60%;height:1.5px;
-  background:linear-gradient(90deg,transparent,#999,transparent);
-  margin-bottom:5mm;
+  width:55%;height:1.5px;
+  background:linear-gradient(90deg,transparent,#888,transparent);
+  margin-bottom:2.5mm;
 }
 
-/* PT verse */
+/* ── Verses — larger for public visibility ── */
 .verse-pt{
-  font-size:11pt;font-weight:700;color:#111;
-  text-align:center;line-height:1.5;margin-bottom:2mm;
-  max-width:150mm;
+  font-size:13pt;font-weight:700;color:#111;
+  text-align:center;line-height:1.35;
+  margin-bottom:2mm;
 }
 
-/* EN verse */
 .verse-en{
-  font-size:9.5pt;font-weight:400;font-style:italic;
-  color:#555;text-align:center;line-height:1.5;
-  max-width:150mm;
+  font-size:10.5pt;font-weight:400;font-style:italic;
+  color:#555;text-align:center;line-height:1.35;
 }
 
-/* reference */
 .ref{
-  position:absolute;bottom:4mm;right:6mm;
-  font-size:8pt;font-weight:700;color:#999;letter-spacing:.5px;
+  position:absolute;bottom:2.5mm;right:4mm;
+  font-size:9pt;font-weight:700;color:#999;letter-spacing:.3px;
 }
 
-/* corner lap (small) */
-.corner{
-  position:absolute;top:3mm;left:5mm;
-  font-size:8pt;font-weight:700;color:#bbb;letter-spacing:1px;
+/* ── Final lap — full page ── */
+.page.last-page{align-content:stretch}
+.card.last{
+  width:210mm;height:297mm;
+  border:none;padding:24mm 20mm;
+  background:#fff;
+  flex-direction:column;
+  align-items:center;justify-content:center;
 }
+.card.last .corner{font-size:10pt;color:#1e8449;letter-spacing:2px}
+.card.last .lap-num{font-size:110pt;color:#1e8449;margin-bottom:3mm}
+.card.last .lap-km{font-size:20pt;color:#1e8449;font-weight:700;margin-bottom:5mm}
+.card.last .div{background:linear-gradient(90deg,transparent,#1e8449,transparent);height:2px;margin-bottom:6mm}
+.card.last .verse-pt{font-size:16pt;max-width:155mm;line-height:1.5}
+.card.last .verse-en{font-size:13pt;max-width:155mm;line-height:1.5;margin-top:5mm}
+.card.last .ref{font-size:11pt;color:#1e8449;bottom:16mm;right:18mm}
 
-/* ── Print ── */
 @media print{
   body{background:#fff;padding:0}
   .pbar{display:none}
-  .page{margin:0;box-shadow:none;width:210mm}
+  .page{margin:0;box-shadow:none}
   @page{size:A4 portrait;margin:0}
 }
 </style>
@@ -111,11 +116,11 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
 <body>
 
 <div class="pbar">
-  <span>Desafio 64km — Cartões para Cartolina</span>
+  <span>Desafio 64km — Cartões 4"×4"</span>
   <button class="pbtn" onclick="window.print()">🖨 Imprimir</button>
 </div>
 
-<!-- ═══════════ PAGE 1 ═══════════ -->
+<!-- ═══ PAGE 1 ═══ -->
 <div class="page">
 
   <div class="card">
@@ -133,7 +138,7 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">2</div>
     <div class="lap-km">6,70 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"O Senhor é a minha força e o meu escudo;<br>nele o meu coração confia."</div>
+    <div class="verse-pt">"O Senhor é a minha força<br>e o meu escudo;<br>nele o meu coração confia."</div>
     <div class="verse-en">"The Lord is my strength and my shield;<br>my heart trusts in him."</div>
     <div class="ref">Sl / Ps 28:7</div>
   </div>
@@ -148,11 +153,6 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="ref">Fp / Ph 4:13</div>
   </div>
 
-</div>
-
-<!-- ═══════════ PAGE 2 ═══════════ -->
-<div class="page">
-
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">4</div>
@@ -163,13 +163,18 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="ref">Sl / Ps 37:5</div>
   </div>
 
+</div>
+
+<!-- ═══ PAGE 2 ═══ -->
+<div class="page">
+
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">5</div>
     <div class="lap-km">16,75 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Seja forte e corajoso! Não se apavore,<br>pois o Senhor, o teu Deus, estará contigo."</div>
-    <div class="verse-en">"Be strong and courageous. Do not be afraid;<br>the Lord your God will be with you."</div>
+    <div class="verse-pt">"Seja forte e corajoso!<br>O Senhor, o teu Deus,<br>estará contigo."</div>
+    <div class="verse-en">"Be strong and courageous.<br>The Lord your God<br>will be with you."</div>
     <div class="ref">Js / Jo 1:9</div>
   </div>
 
@@ -178,23 +183,18 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">6</div>
     <div class="lap-km">20,10 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Os que esperam no Senhor renovam as suas forças.<br>Voam alto como águias."</div>
-    <div class="verse-en">"Those who hope in the Lord will renew their strength.<br>They will soar on wings like eagles."</div>
+    <div class="verse-pt">"Os que esperam no Senhor<br>renovam as suas forças.<br>Voam alto como águias."</div>
+    <div class="verse-en">"Those who hope in the Lord<br>will renew their strength.<br>They will soar like eagles."</div>
     <div class="ref">Is / Is 40:31</div>
   </div>
-
-</div>
-
-<!-- ═══════════ PAGE 3 ═══════════ -->
-<div class="page">
 
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">7</div>
     <div class="lap-km">23,45 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Deus é o nosso refúgio e a nossa força,<br>auxílio sempre presente na hora da angústia."</div>
-    <div class="verse-en">"God is our refuge and strength,<br>an ever-present help in trouble."</div>
+    <div class="verse-pt">"Deus é o nosso refúgio<br>e a nossa força,<br>auxílio na hora da angústia."</div>
+    <div class="verse-en">"God is our refuge and strength,<br>an ever-present help<br>in trouble."</div>
     <div class="ref">Sl / Ps 46:1</div>
   </div>
 
@@ -203,33 +203,33 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">8</div>
     <div class="lap-km">26,80 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Em todas estas coisas somos mais que vencedores<br>por meio daquele que nos amou."</div>
-    <div class="verse-en">"In all these things we are more than conquerors<br>through him who loved us."</div>
+    <div class="verse-pt">"Somos mais que vencedores<br>por meio daquele<br>que nos amou."</div>
+    <div class="verse-en">"We are more than conquerors<br>through him<br>who loved us."</div>
     <div class="ref">Rm / Ro 8:37</div>
   </div>
+
+</div>
+
+<!-- ═══ PAGE 3 ═══ -->
+<div class="page">
 
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">9</div>
     <div class="lap-km">30,15 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"A minha graça é suficiente para você,<br>pois o meu poder se aperfeiçoa na fraqueza."</div>
-    <div class="verse-en">"My grace is sufficient for you,<br>for my power is made perfect in weakness."</div>
+    <div class="verse-pt">"A minha graça é suficiente<br>para você, pois o meu poder<br>se aperfeiçoa na fraqueza."</div>
+    <div class="verse-en">"My grace is sufficient for you,<br>for my power is made perfect<br>in weakness."</div>
     <div class="ref">2Co / 2Co 12:9</div>
   </div>
-
-</div>
-
-<!-- ═══════════ PAGE 4 ═══════════ -->
-<div class="page">
 
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">10</div>
     <div class="lap-km">33,50 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Ainda que eu ande pelo vale da sombra da morte,<br>não temerei mal nenhum, pois tu estás comigo."</div>
-    <div class="verse-en">"Even though I walk through the darkest valley,<br>I will fear no evil, for you are with me."</div>
+    <div class="verse-pt">"Ainda que eu ande pelo vale<br>da sombra da morte,<br>não temerei mal nenhum."</div>
+    <div class="verse-en">"Even though I walk through<br>the darkest valley,<br>I will fear no evil."</div>
     <div class="ref">Sl / Ps 23:4</div>
   </div>
 
@@ -238,8 +238,8 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">11</div>
     <div class="lap-km">36,85 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Sede fortes e corajosos. Não temais,<br>pois o Senhor, teu Deus, vai contigo."</div>
-    <div class="verse-en">"Be strong and courageous. Do not be afraid;<br>the Lord your God goes with you."</div>
+    <div class="verse-pt">"Sede fortes e corajosos.<br>O Senhor, teu Deus,<br>vai contigo."</div>
+    <div class="verse-en">"Be strong and courageous.<br>The Lord your God<br>goes with you."</div>
     <div class="ref">Dt / Dt 31:6</div>
   </div>
 
@@ -248,14 +248,14 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">12</div>
     <div class="lap-km">40,20 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Sede fortalecidos no Senhor<br>e na força do seu poder."</div>
-    <div class="verse-en">"Be strong in the Lord<br>and in his mighty power."</div>
+    <div class="verse-pt">"Sede fortalecidos no Senhor<br>e na força<br>do seu poder."</div>
+    <div class="verse-en">"Be strong in the Lord<br>and in<br>his mighty power."</div>
     <div class="ref">Ef / Ep 6:10</div>
   </div>
 
 </div>
 
-<!-- ═══════════ PAGE 5 ═══════════ -->
+<!-- ═══ PAGE 4 ═══ -->
 <div class="page">
 
   <div class="card">
@@ -263,8 +263,8 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">13</div>
     <div class="lap-km">43,55 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"O Senhor é a minha rocha,<br>a minha fortaleza e o meu libertador."</div>
-    <div class="verse-en">"The Lord is my rock,<br>my fortress and my deliverer."</div>
+    <div class="verse-pt">"O Senhor é a minha rocha,<br>a minha fortaleza<br>e o meu libertador."</div>
+    <div class="verse-en">"The Lord is my rock,<br>my fortress<br>and my deliverer."</div>
     <div class="ref">Sl / Ps 18:2</div>
   </div>
 
@@ -273,8 +273,8 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">14</div>
     <div class="lap-km">46,90 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Não temas, porque eu sou contigo;<br>não te assombres, porque eu sou o teu Deus."</div>
-    <div class="verse-en">"Do not fear, for I am with you;<br>do not be dismayed, for I am your God."</div>
+    <div class="verse-pt">"Não temas, porque<br>eu sou contigo;<br>eu sou o teu Deus."</div>
+    <div class="verse-en">"Do not fear, for I am with you;<br>do not be dismayed,<br>for I am your God."</div>
     <div class="ref">Is / Is 41:10</div>
   </div>
 
@@ -283,33 +283,33 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">15</div>
     <div class="lap-km">50,25 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Corramos com perseverança<br>a corrida que nos está proposta."</div>
-    <div class="verse-en">"Let us run with perseverance<br>the race marked out for us."</div>
+    <div class="verse-pt">"Corramos com perseverança<br>a corrida<br>que nos está proposta."</div>
+    <div class="verse-en">"Let us run with perseverance<br>the race<br>marked out for us."</div>
     <div class="ref">Hb / He 12:1</div>
   </div>
-
-</div>
-
-<!-- ═══════════ PAGE 6 ═══════════ -->
-<div class="page">
 
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">16</div>
     <div class="lap-km">53,60 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"O Senhor dará força ao seu povo;<br>o Senhor abençoará o seu povo com a paz."</div>
-    <div class="verse-en">"The Lord gives strength to his people;<br>the Lord blesses his people with peace."</div>
+    <div class="verse-pt">"O Senhor dará força ao seu povo;<br>o Senhor abençoará<br>o seu povo com a paz."</div>
+    <div class="verse-en">"The Lord gives strength to his people;<br>the Lord blesses his people<br>with peace."</div>
     <div class="ref">Sl / Ps 29:11</div>
   </div>
+
+</div>
+
+<!-- ═══ PAGE 5 ═══ -->
+<div class="page">
 
   <div class="card">
     <div class="corner">VOLTA</div>
     <div class="lap-num">17</div>
     <div class="lap-km">56,95 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"Graças a Deus que nos dá a vitória<br>por meio de nosso Senhor Jesus Cristo."</div>
-    <div class="verse-en">"Thanks be to God! He gives us the victory<br>through our Lord Jesus Christ."</div>
+    <div class="verse-pt">"Graças a Deus que nos dá<br>a vitória por meio de<br>nosso Senhor Jesus Cristo."</div>
+    <div class="verse-en">"Thanks be to God! He gives us<br>the victory through<br>our Lord Jesus Christ."</div>
     <div class="ref">1Co / 1Co 15:57</div>
   </div>
 
@@ -318,26 +318,24 @@ body{font-family:'Lato',sans-serif;background:#e8e8e8}
     <div class="lap-num">18</div>
     <div class="lap-km">60,30 km</div>
     <div class="div"></div>
-    <div class="verse-pt">"No mundo tereis aflições; mas tende bom ânimo,<br>eu venci o mundo."</div>
-    <div class="verse-en">"In this world you will have trouble.<br>But take heart! I have overcome the world."</div>
+    <div class="verse-pt">"Tende bom ânimo,<br>eu venci o mundo."</div>
+    <div class="verse-en">"Take heart!<br>I have overcome the world."</div>
     <div class="ref">Jo / Jn 16:33</div>
   </div>
 
 </div>
 
-<!-- ═══════════ PAGE 7 — LAST LAP ═══════════ -->
-<div class="page">
-
-  <div class="card" style="height:297mm;border-bottom:2px solid #111">
+<!-- ═══ PAGE 6 — VOLTA FINAL ═══ -->
+<div class="page last-page">
+  <div class="card last">
     <div class="corner">VOLTA FINAL</div>
-    <div class="lap-num" style="font-size:110pt;color:#1e8449">19</div>
-    <div class="lap-km" style="font-size:16pt;color:#1e8449;font-weight:700">64 km — FINISH! 🏆</div>
-    <div class="div" style="background:linear-gradient(90deg,transparent,#1e8449,transparent);height:2px"></div>
-    <div class="verse-pt" style="font-size:14pt">"O vencedor herdará estas coisas,<br>e eu serei o seu Deus e ele será o meu filho."</div>
-    <div class="verse-en" style="font-size:11pt;margin-top:4mm">"The one who is victorious will inherit all this,<br>and I will be his God and he will be my son."</div>
-    <div class="ref" style="font-size:10pt;color:#1e8449">Ap / Rv 21:7</div>
+    <div class="lap-num">19</div>
+    <div class="lap-km">64 km — FINISH! 🏆</div>
+    <div class="div"></div>
+    <div class="verse-pt">"O vencedor herdará estas coisas,<br>e eu serei o seu Deus<br>e ele será o meu filho."</div>
+    <div class="verse-en">"The one who is victorious<br>will inherit all this,<br>and I will be his God and he will be my son."</div>
+    <div class="ref">Ap / Rv 21:7</div>
   </div>
-
 </div>
 
 </body>
