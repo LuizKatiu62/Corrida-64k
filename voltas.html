@@ -929,23 +929,36 @@ function startWatchMode(){
     }
 
     // ── Estimated finish time ──
-    if(d.startedAt && d.lap1At && lap >= 2){
-      const timePerLap = d.lap1At - d.startedAt;
+    // Recalculates at checkpoints: lap 1 → lap 10 → lap 16
+    // Each checkpoint uses the average pace of all laps run so far.
+    (function(){
+      let timePerLap, lapsUsed, checkpoint;
+      if(d.startedAt && d.lap16At && lap >= 16){
+        timePerLap = (d.lap16At - d.startedAt) / 15;
+        lapsUsed   = 15; checkpoint = '🔄 Updated at lap 16';
+      } else if(d.startedAt && d.lap10At && lap >= 10){
+        timePerLap = (d.lap10At - d.startedAt) / 9;
+        lapsUsed   = 9;  checkpoint = '🔄 Updated at lap 10';
+      } else if(d.startedAt && d.lap1At && lap >= 2){
+        timePerLap = d.lap1At - d.startedAt;
+        lapsUsed   = 1;  checkpoint = 'Based on lap 1 pace';
+      } else {
+        document.getElementById('wEst').style.display = 'none';
+        return;
+      }
       const estFinishMs = d.startedAt + timePerLap * TOTAL;
       const estDate = new Date(estFinishMs);
       const h = estDate.getHours().toString().padStart(2,'0');
       const m = estDate.getMinutes().toString().padStart(2,'0');
       const totalMins = Math.round(timePerLap * TOTAL / 60000);
-      const hours = Math.floor(totalMins / 60);
-      const mins  = totalMins % 60;
-      const lapMin= Math.round(timePerLap / 60000);
+      const hours  = Math.floor(totalMins / 60);
+      const mins   = totalMins % 60;
+      const lapMin = Math.round(timePerLap / 60000);
       document.getElementById('wEst').style.display = 'block';
       document.getElementById('wEstTime').textContent = `~${h}:${m}`;
       document.getElementById('wEstSub').textContent =
-        `${hours}h ${mins}min total · pace ${lapMin} min/lap`;
-    } else {
-      document.getElementById('wEst').style.display = 'none';
-    }
+        `${hours}h ${mins}min total · ${lapMin} min/lap · ${checkpoint}`;
+    })();
   }
 
   // Real-time listener
