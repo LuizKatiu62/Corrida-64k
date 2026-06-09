@@ -516,15 +516,19 @@ function pushLap(lapNumber){
                : parseFloat((lapsCompleted * LAP_KM).toFixed(2));
   const kmLeft = Math.max(TOTAL_KM - kmDone, 0);
   const pct    = Math.round(kmDone / TOTAL_KM * 100);
+  const now    = Date.now();
+  if(!S.startedAt){ S.startedAt = now; saveState(S); }
   const payload = {
-    lap:     Math.min(lapNumber, TOTAL),
-    total:   TOTAL,
-    kmDone:  kmDone.toFixed(1),
-    kmLeft:  kmLeft.toFixed(1),
-    pct:     pct,
-    msg:     msg(Math.min(lapNumber, TOTAL)),
-    updated: Date.now()
+    lap:       Math.min(lapNumber, TOTAL),
+    total:     TOTAL,
+    kmDone:    kmDone.toFixed(1),
+    kmLeft:    kmLeft.toFixed(1),
+    pct:       pct,
+    msg:       msg(Math.min(lapNumber, TOTAL)),
+    updated:   now,
+    startedAt: S.startedAt
   };
+  if(S.lap1At) payload.lap1At = S.lap1At;
   ref.set(payload)
     .then(()=>{ setSyncStatus('ok'); })
     .catch(e=>{ setSyncStatus('err'); console.error('Firebase write failed:',e); });
