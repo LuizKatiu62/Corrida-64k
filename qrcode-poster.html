@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Desafio 64km — QR Code Poster</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Lora:ital,wght@1,600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Montserrat',sans-serif;
+    background:#1e8449;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px;
+  }
+
+  .poster{
+    background:#fff;
+    width:210mm;
+    min-height:297mm;
+    padding:20mm 18mm;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:0;
+    box-shadow:0 12px 60px rgba(0,0,0,.5);
+  }
+
+  .top-bar{
+    width:100%;height:8px;
+    background:linear-gradient(90deg,#1e8449,#d4a017,#1e8449);
+    border-radius:4px;
+    margin-bottom:18px;
+  }
+
+  .tag{
+    font-size:9pt;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    color:#1e8449;margin-bottom:10px;
+  }
+
+  .title{
+    font-size:44pt;font-weight:900;line-height:1;
+    color:#0d1f0f;margin-bottom:4px;
+  }
+  .title span{color:#1e8449}
+
+  .subtitle{
+    font-family:'Lora',serif;font-style:italic;font-size:13pt;
+    color:#555;margin-bottom:20px;
+  }
+
+  .info-row{
+    display:flex;gap:24px;margin-bottom:22px;
+  }
+  .info-pill{
+    background:#f0faf4;border:2px solid #1e8449;
+    border-radius:30px;padding:7px 20px;
+    font-size:10.5pt;font-weight:700;color:#1e8449;
+  }
+
+  .qr-wrapper{
+    border:4px solid #1e8449;border-radius:16px;
+    padding:18px;margin-bottom:18px;
+    background:#fff;
+  }
+  #qr canvas, #qr img{display:block}
+
+  .scan-label{
+    font-size:14pt;font-weight:900;letter-spacing:1px;
+    color:#0d1f0f;margin-bottom:6px;
+  }
+  .scan-sub{
+    font-size:9.5pt;color:#666;margin-bottom:18px;
+  }
+
+  .url-box{
+    background:#f4f4f4;border-radius:8px;
+    padding:8px 16px;font-size:8pt;
+    color:#444;word-break:break-all;margin-bottom:22px;
+    font-family:monospace;letter-spacing:.3px;
+  }
+
+  .divider{
+    width:60%;height:2px;
+    background:linear-gradient(90deg,transparent,#d4a017,transparent);
+    margin-bottom:18px;
+  }
+
+  .message{
+    font-size:11pt;line-height:1.7;color:#333;
+    max-width:140mm;margin-bottom:20px;
+  }
+  .message strong{color:#1e8449}
+
+  .verse{
+    font-family:'Lora',serif;font-style:italic;
+    font-size:10pt;color:#777;line-height:1.6;
+    max-width:130mm;margin-bottom:20px;
+  }
+
+  .bottom-bar{
+    width:100%;height:6px;
+    background:linear-gradient(90deg,#1e8449,#d4a017,#1e8449);
+    border-radius:4px;margin-top:auto;
+  }
+
+  @media print{
+    body{background:#fff;padding:0;min-height:auto}
+    .poster{box-shadow:none;margin:0 auto}
+    @page{size:A4 portrait;margin:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+  <div class="top-bar"></div>
+
+  <div class="tag">Evento · June 13, 2026 · Saint John NB</div>
+
+  <div class="title">DESAFIO <span>64</span>KM</div>
+  <div class="subtitle">Running with gratitude, finishing for His Glory.</div>
+
+  <div class="info-row">
+    <div class="info-pill">📍 Little River Reservoir</div>
+    <div class="info-pill">🕗 Starts 7:00 AM</div>
+  </div>
+
+  <div class="qr-wrapper">
+    <div id="qr"></div>
+  </div>
+
+  <div class="scan-label">📱 APONTE A CÂMERA AQUI</div>
+  <div class="scan-sub">Veja o convite completo, informações do evento e como participar</div>
+
+  <div class="url-box">luizkatiu62.github.io/Corrida-64k/convite.html</div>
+
+  <div class="divider"></div>
+
+  <div class="message">
+    Venha correr, caminhar ou <strong>torcer</strong>!<br>
+    Loops de 3.3 km ao redor do reservatório.<br>
+    Todas as distâncias são bem-vindas.
+  </div>
+
+  <div class="verse">
+    "I can do all things through Christ who strengthens me."<br>
+    — Philippians 4:13
+  </div>
+
+  <div class="bottom-bar"></div>
+</div>
+
+<script>
+new QRCode(document.getElementById('qr'), {
+  text: 'https://luizkatiu62.github.io/Corrida-64k/convite.html',
+  width: 260,
+  height: 260,
+  colorDark: '#0d1f0f',
+  colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.H
+});
+</script>
+</body>
+</html>
