@@ -238,8 +238,23 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 #vWatch{
   background:radial-gradient(ellipse at 50% 30%,#1a3a1a,#0d1f0f);
   align-items:center;justify-content:center;text-align:center;padding:28px 24px;
-  gap:0;overflow-y:auto;
+  gap:0;overflow-y:auto;position:relative;
 }
+#wPhotoBg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:0;transition:opacity 2s ease;
+  pointer-events:none;z-index:0;
+}
+#vWatch>*:not(#wPhotoBg){position:relative;z-index:1;}
+.watch-est{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(212,160,23,.35);
+  border-radius:14px;padding:12px 28px;margin-bottom:16px;display:none;
+}
+.watch-est .est-lbl{font-size:10px;opacity:.5;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.watch-est .est-val{font-size:24px;font-weight:900;color:#d4a017;line-height:1.1}
+.watch-est .est-sub{font-size:10px;opacity:.4;margin-top:3px}
 .live-badge{
   display:inline-flex;align-items:center;gap:7px;
   background:rgba(200,30,30,.2);border:1.5px solid rgba(220,50,50,.5);
