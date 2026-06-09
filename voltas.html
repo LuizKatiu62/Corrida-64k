@@ -755,7 +755,27 @@ function render(){
 // ══════════════════════════════════════
 // COMPLETE LAP
 // ══════════════════════════════════════
+// Step 1 — show confirmation modal
 function completeLap(){
+  const ci=S.cur, cn=ci+1;
+  if(cn>TOTAL) return;
+  const isLast = cn===TOTAL;
+  document.getElementById('confirmTitle').textContent =
+    isLast ? '🏆 FINISH 64 KM?' : `LAP ${cn} COMPLETE?`;
+  document.getElementById('confirmSub').textContent =
+    isLast
+      ? `Finishing for His Glory! 64 km done!`
+      : `${kmAt(cn).toFixed(1)} km · ${TOTAL-cn} laps to go`;
+  document.getElementById('mConfirm').classList.add('on');
+}
+
+function cancelConfirm(){
+  document.getElementById('mConfirm').classList.remove('on');
+}
+
+// Step 2 — confirmed, execute lap advance
+function confirmLap(){
+  document.getElementById('mConfirm').classList.remove('on');
   const ci=S.cur, cn=ci+1;
   if(cn>TOTAL) return;
 
@@ -776,9 +796,22 @@ function completeLap(){
   if(ci===9  && !S.lap10At) { S.lap10At = now2; }
   if(ci===15 && !S.lap16At) { S.lap16At = now2; }
   S.cur=ci+1; saveState(S);
-  pushLap(S.cur+1); // push the NEXT lap (current after completing)
+  pushLap(S.cur+1);
 
   setTimeout(()=>{ fl.classList.remove('go'); render(); }, 1400);
+}
+
+// Undo last lap (one at a time)
+function undoLap(){
+  if(S.cur===0){ alert('No laps to undo.'); return; }
+  if(!confirm(`Undo lap ${S.cur}? Go back to lap ${S.cur}.`)) return;
+  S.cur = Math.max(0, S.cur - 1);
+  if(S.cur < 1)  S.lap1At  = null;
+  if(S.cur < 9)  S.lap10At = null;
+  if(S.cur < 15) S.lap16At = null;
+  saveState(S);
+  pushLap(S.cur + 1);
+  render();
 }
 
 // ══════════════════════════════════════
