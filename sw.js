@@ -1,4 +1,4 @@
-const CACHE = 'desafio64-v94';
+const CACHE = 'desafio64-v95';
 
 // Core app files — cached on install
 const CORE_ASSETS = [
@@ -9,6 +9,7 @@ const CORE_ASSETS = [
   './convite-pt.html',
   './goodbye.html',
   './goodbye-pt.html',
+  './voltas.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
