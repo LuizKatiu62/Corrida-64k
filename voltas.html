@@ -62,28 +62,28 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 .dist-row{margin-top:6px;font-size:12px;opacity:.7;text-shadow:0 1px 8px rgba(0,0,0,.9)}
 
 /* bottom */
-.bottom{background:#0d1f0f;padding:10px 14px 18px;flex-shrink:0}
-.pbar-wrap{height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:10px;overflow:hidden}
-.pbar-fill{height:100%;background:linear-gradient(90deg,#1e8449,#d4a017);border-radius:3px;transition:width .5s}
-.dots{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:12px}
-.dot{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;
-  justify-content:center;font-size:9px;font-weight:700;border:2px solid transparent}
-.dot.done{background:#1e8449;border-color:#27ae60;font-size:14px}
-.dot.cur{background:#d4a017;border-color:#f0c030;font-size:10px;animation:pulse 1.8s infinite}
+.bottom{background:#0d1f0f;padding:7px 12px 10px;flex-shrink:0}
+.pbar-wrap{height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:7px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,#1e8449,#d4a017);border-radius:2px;transition:width .5s}
+.dots{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-bottom:8px}
+.dot{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:8px;font-weight:700;border:2px solid transparent}
+.dot.done{background:#1e8449;border-color:#27ae60;font-size:12px}
+.dot.cur{background:#d4a017;border-color:#f0c030;font-size:9px;animation:pulse 1.8s infinite}
 .dot.next{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.3)}
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.5)}
-  50%{box-shadow:0 0 0 6px rgba(212,160,23,0)}
+  50%{box-shadow:0 0 0 5px rgba(212,160,23,0)}
 }
 .big-btn{
-  width:100%;padding:15px;border:none;border-radius:14px;
-  font-size:17px;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+  width:100%;padding:13px;border:none;border-radius:12px;
+  font-size:16px;font-weight:900;letter-spacing:2px;text-transform:uppercase;
   color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
   background:linear-gradient(135deg,#1e8449,#27ae60);
-  box-shadow:0 4px 20px rgba(30,132,73,.4);transition:transform .1s,box-shadow .1s;
+  box-shadow:0 4px 16px rgba(30,132,73,.4);transition:transform .1s,box-shadow .1s;
 }
-.big-btn:active{transform:scale(.97);box-shadow:0 2px 10px rgba(30,132,73,.3)}
-.big-btn.final{background:linear-gradient(135deg,#b8860b,#d4a017);box-shadow:0 4px 20px rgba(212,160,23,.4)}
+.big-btn:active{transform:scale(.97);box-shadow:0 2px 8px rgba(30,132,73,.3)}
+.big-btn.final{background:linear-gradient(135deg,#b8860b,#d4a017);box-shadow:0 4px 16px rgba(212,160,23,.4)}
 
 /* ══════════════════════════════
    FLASH
