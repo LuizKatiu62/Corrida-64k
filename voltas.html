@@ -1123,31 +1123,43 @@ function resetAll(){
 }
 
 // ══════════════════════════════════════
-// INIT
+// INIT — Firebase loads async; wait up to 3s then start without it
 // ══════════════════════════════════════
-if(new URLSearchParams(window.location.search).has('watch')){
-  startWatchMode();
-} else {
-  render();
-  syncPhotosFromCloud();
-  // Real-time listener: if Firebase advances beyond local state (another device
-  // pressed LAP COMPLETE), sync and re-render automatically.
-  ref.on('value', snap=>{
-    const d     = snap.val();
-    const fbLap = d ? (d.lap || 1) : 0;
-    if(fbLap > S.cur + 1){
-      S.cur = fbLap - 1;
-      if(d.startedAt) S.startedAt = d.startedAt;
-      if(d.lap1At)    S.lap1At    = d.lap1At;
-      if(d.lap10At)   S.lap10At   = d.lap10At;
-      if(d.lap16At)   S.lap16At   = d.lap16At;
-      saveState(S);
-      render();
-      syncPhotosFromCloud();
-    } else if(fbLap === 0 || fbLap === 1 && S.cur === 0){
-      pushLap(S.cur + 1);
+function startApp(){
+  initFirebase();
+  if(new URLSearchParams(window.location.search).has('watch')){
+    startWatchMode();
+  } else {
+    render();
+    syncPhotosFromCloud();
+    // Real-time listener: if Firebase advances beyond local state (another device
+    // pressed LAP COMPLETE), sync and re-render automatically.
+    if(ref){
+      ref.on('value', snap=>{
+        const d     = snap.val();
+        const fbLap = d ? (d.lap || 1) : 0;
+        if(fbLap > S.cur + 1){
+          S.cur = fbLap - 1;
+          if(d.startedAt) S.startedAt = d.startedAt;
+          if(d.lap1At)    S.lap1At    = d.lap1At;
+          if(d.lap10At)   S.lap10At   = d.lap10At;
+          if(d.lap16At)   S.lap16At   = d.lap16At;
+          saveState(S);
+          render();
+          syncPhotosFromCloud();
+        } else if(fbLap === 0 || (fbLap === 1 && S.cur === 0)){
+          pushLap(S.cur + 1);
+        }
+      }, ()=>{ pushLap(S.cur + 1); });
     }
-  }, ()=>{ pushLap(S.cur + 1); });
+  }
+}
+
+// Give Firebase scripts up to 3 s to load (they're async); start regardless
+if(typeof firebase !== 'undefined'){
+  startApp();
+} else {
+  setTimeout(startApp, 3000);
 }
 </script>
 </body>
