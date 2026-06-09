@@ -1001,8 +1001,14 @@ if(new URLSearchParams(window.location.search).has('watch')){
   startWatchMode();
 } else {
   render();
-  pushLap(S.cur+1);
-  syncPhotosFromCloud(); // pull any photos saved on other devices
+  syncPhotosFromCloud();
+  // Only push to Firebase if this device is ahead of or matches Firebase.
+  // Prevents a secondary device (Mac, spare phone) from overwriting the runner's progress.
+  ref.once('value').then(snap=>{
+    const d      = snap.val();
+    const fbLap  = d ? (d.lap || 1) : 0;
+    if(fbLap <= S.cur + 1) pushLap(S.cur + 1);
+  }).catch(()=>{ pushLap(S.cur + 1); });
 }
 </script>
 </body>
