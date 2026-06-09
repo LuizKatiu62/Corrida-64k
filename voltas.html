@@ -620,14 +620,15 @@ function setSyncStatus(state){
 // PHOTO CLOUD SYNC
 // ══════════════════════════════════════
 function pushPhotoToCloud(idx, b64){
-  photosRef.child(String(idx)).set(b64).catch(()=>{});
+  if(photosRef) photosRef.child(String(idx)).set(b64).catch(()=>{});
 }
 
 function deletePhotoFromCloud(idx){
-  photosRef.child(String(idx)).remove().catch(()=>{});
+  if(photosRef) photosRef.child(String(idx)).remove().catch(()=>{});
 }
 
 function syncPhotosFromCloud(){
+  if(!photosRef) return;
   photosRef.once('value').then(snap=>{
     const fb = snap.val();
     if(!fb) return;
