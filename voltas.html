@@ -560,18 +560,25 @@ const msg = n => MSGS[n] || `Lap ${n} — Keep going! You've got this! 💚`;
 // ══════════════════════════════════════
 // FIREBASE
 // ══════════════════════════════════════
-firebase.initializeApp({
-  apiKey:            'AIzaSyBuS3afVcx3W-zfgZfDYIutNltuEfP8Fhc',
-  authDomain:        'source-atlantic-sr.firebaseapp.com',
-  databaseURL:       'https://source-atlantic-sr-default-rtdb.firebaseio.com',
-  projectId:         'source-atlantic-sr',
-  storageBucket:     'source-atlantic-sr.firebasestorage.app',
-  messagingSenderId: '953329380095',
-  appId:             '1:953329380095:web:f7865dda88a33ff9457aca'
-});
-const db        = firebase.database();
-const ref       = db.ref('desafio64km/status');
-const photosRef = db.ref('desafio64km/photos');
+// Firebase is optional — app works fully offline with localStorage alone
+let db = null, ref = null, photosRef = null;
+function initFirebase(){
+  try {
+    if(typeof firebase === 'undefined') return;
+    firebase.initializeApp({
+      apiKey:            'AIzaSyBuS3afVcx3W-zfgZfDYIutNltuEfP8Fhc',
+      authDomain:        'source-atlantic-sr.firebaseapp.com',
+      databaseURL:       'https://source-atlantic-sr-default-rtdb.firebaseio.com',
+      projectId:         'source-atlantic-sr',
+      storageBucket:     'source-atlantic-sr.firebasestorage.app',
+      messagingSenderId: '953329380095',
+      appId:             '1:953329380095:web:f7865dda88a33ff9457aca'
+    });
+    db        = firebase.database();
+    ref       = db.ref('desafio64km/status');
+    photosRef = db.ref('desafio64km/photos');
+  } catch(e){ db = null; ref = null; photosRef = null; }
+}
 
 const TOTAL_KM = 64;
 
