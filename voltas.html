@@ -478,14 +478,21 @@ firebase.initializeApp({
 const db   = firebase.database();
 const ref  = db.ref('desafio64km');
 
+const TOTAL_KM = 64;
+
 function pushLap(lapNumber){
+  const lapsCompleted = lapNumber - 1;
+  const kmDone = lapsCompleted >= TOTAL ? TOTAL_KM
+               : parseFloat((lapsCompleted * LAP_KM).toFixed(2));
+  const kmLeft = Math.max(TOTAL_KM - kmDone, 0);
+  const pct    = Math.round(kmDone / TOTAL_KM * 100);
   const payload = {
-    lap:     lapNumber,
+    lap:     Math.min(lapNumber, TOTAL),
     total:   TOTAL,
-    kmDone:  ((lapNumber-1)*LAP_KM).toFixed(1),
-    kmLeft:  ((TOTAL-(lapNumber-1))*LAP_KM).toFixed(1),
-    pct:     Math.round((lapNumber-1)/TOTAL*100),
-    msg:     msg(lapNumber),
+    kmDone:  kmDone.toFixed(1),
+    kmLeft:  kmLeft.toFixed(1),
+    pct:     pct,
+    msg:     msg(Math.min(lapNumber, TOTAL)),
     updated: Date.now()
   };
   ref.set(payload)
