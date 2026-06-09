@@ -510,6 +510,33 @@ function setSyncStatus(state){
 }
 
 // ══════════════════════════════════════
+// PHOTO CLOUD SYNC
+// ══════════════════════════════════════
+function pushPhotoToCloud(idx, b64){
+  photosRef.child(String(idx)).set(b64).catch(()=>{});
+}
+
+function deletePhotoFromCloud(idx){
+  photosRef.child(String(idx)).remove().catch(()=>{});
+}
+
+function syncPhotosFromCloud(){
+  photosRef.once('value').then(snap=>{
+    const fb = snap.val();
+    if(!fb) return;
+    let changed = false;
+    Object.keys(fb).forEach(k=>{
+      const i = parseInt(k);
+      if(i >= 0 && i < TOTAL && !S.photos[i] && fb[k]){
+        S.photos[i] = fb[k];
+        changed = true;
+      }
+    });
+    if(changed){ saveState(S); render(); renderSetup && renderSetup(); }
+  }).catch(()=>{});
+}
+
+// ══════════════════════════════════════
 // LOCAL STATE
 // ══════════════════════════════════════
 function loadState(){
