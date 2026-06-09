@@ -497,6 +497,8 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 // ══════════════════════════════════════
 const TOTAL  = 19;
 const LAP_KM = 3.35;
+// Cumulative km at end of a given lap — lap 19 rounds to exactly 64 km
+const kmAt = n => n >= TOTAL ? TOTAL_KM : parseFloat((n * LAP_KM).toFixed(2));
 const WATCH_URL = 'https://runwithgratitude.ca/voltas.html?watch';
 
 const MSGS = {
