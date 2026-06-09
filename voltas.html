@@ -528,7 +528,9 @@ function pushLap(lapNumber){
     updated:   now,
     startedAt: S.startedAt
   };
-  if(S.lap1At) payload.lap1At = S.lap1At;
+  if(S.lap1At)  payload.lap1At  = S.lap1At;
+  if(S.lap10At) payload.lap10At = S.lap10At;
+  if(S.lap16At) payload.lap16At = S.lap16At;
   ref.set(payload)
     .then(()=>{ setSyncStatus('ok'); })
     .catch(e=>{ setSyncStatus('err'); console.error('Firebase write failed:',e); });
