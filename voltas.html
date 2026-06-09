@@ -725,7 +725,7 @@ function completeLap(){
   document.getElementById('flashTitle').textContent=isLast?'🏆 64 KM COMPLETE! 🏆':`✓ LAP ${cn} DONE!`;
   document.getElementById('flashSub').textContent=isLast
     ?'Finishing for His Glory!'
-    :`${(cn*LAP_KM).toFixed(1)} km — ${TOTAL-cn} laps to go`;
+    :`${kmAt(cn).toFixed(1)} km — ${TOTAL-cn} laps to go`;
 
   fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
 
