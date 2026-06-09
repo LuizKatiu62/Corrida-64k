@@ -372,6 +372,14 @@ body{background:#0d1f0f;color:#fff;user-select:none}
     <h2>Photos per Lap</h2>
     <button class="btn-reset" onclick="resetAll()">RESET LAPS</button>
   </div>
+  <button id="btnUploadAll" onclick="uploadAllPhotos()" style="
+    margin:10px 16px 0;padding:13px;border:none;border-radius:12px;
+    background:linear-gradient(135deg,#1a5ca8,#2196F3);color:#fff;
+    font-size:14px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;">
+    ☁️ Upload All Photos to Cloud
+  </button>
+  <div id="uploadStatus" style="text-align:center;font-size:11px;opacity:.6;padding:6px 16px 0;display:none"></div>
   <div class="how-box">
     <h4>📷 HOW TO ADD YOUR PHOTOS</h4>
     <ol>
