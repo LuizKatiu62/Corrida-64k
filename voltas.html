@@ -917,8 +917,8 @@ function startWatchMode(){
     document.getElementById('wOffline').style.display='none';
 
     const lap    = Math.min(d.lap||1, TOTAL);
-    const done   = lap - 1;
-    const kmDone = done >= TOTAL ? TOTAL_KM : parseFloat((done * LAP_KM).toFixed(2));
+    // Lap 19 is the finish — show 64 km done / 0 to go immediately
+    const kmDone = lap >= TOTAL ? TOTAL_KM : parseFloat(((lap - 1) * LAP_KM).toFixed(2));
     const kmLeft = parseFloat(Math.max(TOTAL_KM - kmDone, 0).toFixed(1));
     const pct    = Math.round(kmDone / TOTAL_KM * 100);
     document.getElementById('wLap').textContent=lap;
