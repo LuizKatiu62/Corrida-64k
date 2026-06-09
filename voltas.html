@@ -872,7 +872,8 @@ if(new URLSearchParams(window.location.search).has('watch')){
   startWatchMode();
 } else {
   render();
-  pushLap(S.cur+1); // sync current state on load
+  pushLap(S.cur+1);
+  syncPhotosFromCloud(); // pull any photos saved on other devices
 }
 </script>
 </body>
