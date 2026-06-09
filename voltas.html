@@ -400,6 +400,21 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 </div>
 
 <!-- ══════════════════════════════════════
+     CONFIRM LAP MODAL
+══════════════════════════════════════ -->
+<div id="mConfirm">
+  <div class="confirm-box">
+    <div class="confirm-icon">✓</div>
+    <div class="confirm-title" id="confirmTitle">LAP COMPLETE?</div>
+    <div class="confirm-sub" id="confirmSub"></div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" onclick="confirmLap()">YES, DONE!</button>
+      <button class="confirm-no" onclick="cancelConfirm()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      QR MODAL
 ══════════════════════════════════════ -->
 <div id="mQR" onclick="if(event.target===this)hideQR()">
