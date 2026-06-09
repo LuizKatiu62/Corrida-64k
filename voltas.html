@@ -576,31 +576,44 @@ function renderSetup(){
     thumb.className='s-thumb'+(has?' has':'');
     if(has) thumb.style.backgroundImage=`url('${S.photos[i]}')`;
     else thumb.textContent='📷';
-    thumb.addEventListener('click',e=>{
-      if(e.target.classList.contains('s-del')) return;
-      editIdx=i; document.getElementById('filePick').value=''; document.getElementById('filePick').click();
-    });
-    if(has){
-      const del=document.createElement('button');
-      del.className='s-del'; del.textContent='✕';
-      del.addEventListener('click',e=>{
-        e.stopPropagation();
-        if(confirm(`Remove photo from Lap ${i+1}?`)){
-          S.photos[i]=null; saveState(S); renderSetup();
-        }
-      });
-      thumb.appendChild(del);
-    }
+    // single tap → action sheet (always, whether has photo or not)
+    thumb.addEventListener('click', ()=> openAction(i));
     const lnum=document.createElement('div'); lnum.className='s-lnum'; lnum.textContent=`LAP ${i+1}`;
     const ldist=document.createElement('div'); ldist.className='s-ldist'; ldist.textContent=`${((i+1)*LAP_KM).toFixed(1)} km`;
     cell.append(thumb,lnum,ldist); grid.appendChild(cell);
   }
 }
 
+// ── Action sheet ──
+function openAction(i){
+  editIdx=i;
+  const has=!!S.photos[i];
+  const prev=document.getElementById('actionPreview');
+  if(has){ prev.style.backgroundImage=`url('${S.photos[i]}')`;prev.textContent=''; }
+  else   { prev.style.backgroundImage='';prev.textContent='📷'; }
+  document.getElementById('actionTitle').textContent=`LAP ${i+1} · ${((i+1)*LAP_KM).toFixed(1)} km`;
+  document.getElementById('actionAddBtn').style.display=has?'none':'flex';
+  document.querySelector('#actionSheet .action-btn:first-of-type').style.display=has?'flex':'none'; // Replace
+  document.getElementById('actionDelBtn').style.display=has?'flex':'none';
+  document.getElementById('actionSheet').classList.add('on');
+}
+function closeAction(){ document.getElementById('actionSheet').classList.remove('on'); editIdx=-1; }
+function actionReplace(){ closeAction(); pickFile(); }
+function actionAdd()    { closeAction(); pickFile(); }
+function actionDelete(){
+  if(editIdx<0) return;
+  S.photos[editIdx]=null; saveState(S);
+  closeAction(); renderSetup();
+}
+function pickFile(){
+  document.getElementById('filePick').value='';
+  document.getElementById('filePick').click();
+}
+
 document.getElementById('filePick').addEventListener('change',e=>{
   const f=e.target.files[0];
   if(!f||editIdx<0) return;
-  compress(f,b64=>{ S.photos[editIdx]=b64; saveState(S); editIdx=-1; renderSetup(); });
+  compress(f,b64=>{ S.photos[editIdx]=b64; saveState(S); renderSetup(); editIdx=-1; });
 });
 
 // ══════════════════════════════════════
