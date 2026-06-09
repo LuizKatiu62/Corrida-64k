@@ -778,10 +778,11 @@ function startWatchMode(){
     if(!d){ document.getElementById('wOffline').style.display='block'; return; }
     document.getElementById('wOffline').style.display='none';
 
-    const lap  = Math.min(d.lap||1, TOTAL);
-    const kmDone = parseFloat(d.kmDone||0);
-    const kmLeft = parseFloat(d.kmLeft||TOTAL_KM);
-    const pct    = d.pct || Math.round(kmDone/TOTAL_KM*100);
+    const lap    = Math.min(d.lap||1, TOTAL);
+    const done   = lap - 1;
+    const kmDone = done >= TOTAL ? TOTAL_KM : parseFloat((done * LAP_KM).toFixed(2));
+    const kmLeft = parseFloat(Math.max(TOTAL_KM - kmDone, 0).toFixed(1));
+    const pct    = Math.round(kmDone / TOTAL_KM * 100);
     document.getElementById('wLap').textContent=lap;
     document.getElementById('wOf').textContent=`of ${TOTAL} laps · 64 km`;
     document.getElementById('wPbar').style.width=pct+'%';
