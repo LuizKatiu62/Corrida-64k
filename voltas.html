@@ -477,7 +477,7 @@ const db   = firebase.database();
 const ref  = db.ref('desafio64km');
 
 function pushLap(lapNumber){
-  ref.set({
+  const payload = {
     lap:     lapNumber,
     total:   TOTAL,
     kmDone:  ((lapNumber-1)*LAP_KM).toFixed(1),
@@ -485,7 +485,18 @@ function pushLap(lapNumber){
     pct:     Math.round((lapNumber-1)/TOTAL*100),
     msg:     msg(lapNumber),
     updated: Date.now()
-  }).catch(()=>{});
+  };
+  ref.set(payload)
+    .then(()=>{ setSyncStatus('ok'); })
+    .catch(e=>{ setSyncStatus('err'); console.error('Firebase write failed:',e); });
+}
+
+function setSyncStatus(state){
+  const el = document.getElementById('syncDot');
+  if(!el) return;
+  el.title = state==='ok' ? 'Synced ✓' : 'Sync error — check Firebase rules';
+  el.style.background = state==='ok' ? '#27ae60' : '#e53935';
+  if(state==='ok') setTimeout(()=>{ el.style.background='rgba(255,255,255,0.25)'; }, 3000);
 }
 
 // ══════════════════════════════════════
