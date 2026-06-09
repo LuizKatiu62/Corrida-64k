@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Desafio 64km — Cartões das Voltas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:ital,wght@0,400;0,700;1,400&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Lato',sans-serif;background:#e8e8e8}
+
+/* ── Screen: show print button ── */
+@media screen{
+  .pbar{
+    position:fixed;top:0;left:0;right:0;height:48px;
+    background:#1e3a1e;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    font-size:13px;font-weight:700;z-index:100;
+    box-shadow:0 2px 12px rgba(0,0,0,.3);
+  }
+  .pbtn{
+    background:#fff;color:#1e3a1e;border:none;border-radius:8px;
+    padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  body{padding-top:56px}
+  .page{
+    width:210mm;margin:16px auto;
+    background:#fff;
+    box-shadow:0 4px 20px rgba(0,0,0,.2);
+  }
+}
+
+/* ── Page ── */
+.page{
+  width:210mm;
+  display:flex;
+  flex-direction:column;
+  break-after:page;
+}
+
+/* ── Card ── */
+.card{
+  width:100%;height:99mm;
+  border:2px solid #111;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:10mm 14mm;gap:0;
+  position:relative;
+  break-inside:avoid;
+  border-bottom:none;
+}
+.card:last-child{border-bottom:2px solid #111}
+
+/* lap number */
+.lap-num{
+  font-family:'Playfair Display',serif;
+  font-size:72pt;font-weight:900;
+  line-height:1;color:#111;
+  margin-bottom:3mm;
+}
+
+/* km */
+.lap-km{
+  font-size:13pt;font-weight:700;
+  color:#555;letter-spacing:.5px;
+  margin-bottom:5mm;
+}
+
+/* divider */
+.div{
+  width:60%;height:1.5px;
+  background:linear-gradient(90deg,transparent,#999,transparent);
+  margin-bottom:5mm;
+}
+
+/* PT verse */
+.verse-pt{
+  font-size:11pt;font-weight:700;color:#111;
+  text-align:center;line-height:1.5;margin-bottom:2mm;
+  max-width:150mm;
+}
+
+/* EN verse */
+.verse-en{
+  font-size:9.5pt;font-weight:400;font-style:italic;
+  color:#555;text-align:center;line-height:1.5;
+  max-width:150mm;
+}
+
+/* reference */
+.ref{
+  position:absolute;bottom:4mm;right:6mm;
+  font-size:8pt;font-weight:700;color:#999;letter-spacing:.5px;
+}
+
+/* corner lap (small) */
+.corner{
+  position:absolute;top:3mm;left:5mm;
+  font-size:8pt;font-weight:700;color:#bbb;letter-spacing:1px;
+}
+
+/* ── Print ── */
+@media print{
+  body{background:#fff;padding:0}
+  .pbar{display:none}
+  .page{margin:0;box-shadow:none;width:210mm}
+  @page{size:A4 portrait;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="pbar">
+  <span>Desafio 64km — Cartões para Cartolina</span>
+  <button class="pbtn" onclick="window.print()">🖨 Imprimir</button>
+</div>
+
+<!-- ═══════════ PAGE 1 ═══════════ -->
+<div class="page">
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">1</div>
+    <div class="lap-km">3,30 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"O meu socorro vem do Senhor,<br>que fez o céu e a terra."</div>
+    <div class="verse-en">"My help comes from the Lord,<br>the Maker of heaven and earth."</div>
+    <div class="ref">Sl / Ps 121:2</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">2</div>
+    <div class="lap-km">6,60 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"O Senhor é a minha força e o meu escudo;<br>nele o meu coração confia."</div>
+    <div class="verse-en">"The Lord is my strength and my shield;<br>my heart trusts in him."</div>
+    <div class="ref">Sl / Ps 28:7</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">3</div>
+    <div class="lap-km">9,90 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Tudo posso naquele<br>que me fortalece."</div>
+    <div class="verse-en">"I can do all things through<br>Christ who strengthens me."</div>
+    <div class="ref">Fp / Ph 4:13</div>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 2 ═══════════ -->
+<div class="page">
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">4</div>
+    <div class="lap-km">13,20 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Entrega o teu caminho ao Senhor;<br>confia nele, e ele tudo fará."</div>
+    <div class="verse-en">"Commit your way to the Lord;<br>trust in him and he will do this."</div>
+    <div class="ref">Sl / Ps 37:5</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">5</div>
+    <div class="lap-km">16,50 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Seja forte e corajoso! Não se apavore,<br>pois o Senhor, o teu Deus, estará contigo."</div>
+    <div class="verse-en">"Be strong and courageous. Do not be afraid;<br>the Lord your God will be with you."</div>
+    <div class="ref">Js / Jo 1:9</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">6</div>
+    <div class="lap-km">19,80 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Os que esperam no Senhor renovam as suas forças.<br>Voam alto como águias."</div>
+    <div class="verse-en">"Those who hope in the Lord will renew their strength.<br>They will soar on wings like eagles."</div>
+    <div class="ref">Is / Is 40:31</div>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 3 ═══════════ -->
+<div class="page">
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">7</div>
+    <div class="lap-km">23,10 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Deus é o nosso refúgio e a nossa força,<br>auxílio sempre presente na hora da angústia."</div>
+    <div class="verse-en">"God is our refuge and strength,<br>an ever-present help in trouble."</div>
+    <div class="ref">Sl / Ps 46:1</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">8</div>
+    <div class="lap-km">26,40 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Em todas estas coisas somos mais que vencedores<br>por meio daquele que nos amou."</div>
+    <div class="verse-en">"In all these things we are more than conquerors<br>through him who loved us."</div>
+    <div class="ref">Rm / Ro 8:37</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">9</div>
+    <div class="lap-km">29,70 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"A minha graça é suficiente para você,<br>pois o meu poder se aperfeiçoa na fraqueza."</div>
+    <div class="verse-en">"My grace is sufficient for you,<br>for my power is made perfect in weakness."</div>
+    <div class="ref">2Co / 2Co 12:9</div>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 4 ═══════════ -->
+<div class="page">
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">10</div>
+    <div class="lap-km">33,00 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Ainda que eu ande pelo vale da sombra da morte,<br>não temerei mal nenhum, pois tu estás comigo."</div>
+    <div class="verse-en">"Even though I walk through the darkest valley,<br>I will fear no evil, for you are with me."</div>
+    <div class="ref">Sl / Ps 23:4</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">11</div>
+    <div class="lap-km">36,30 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Sede fortes e corajosos. Não temais,<br>pois o Senhor, teu Deus, vai contigo."</div>
+    <div class="verse-en">"Be strong and courageous. Do not be afraid;<br>the Lord your God goes with you."</div>
+    <div class="ref">Dt / Dt 31:6</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">12</div>
+    <div class="lap-km">39,60 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Sede fortalecidos no Senhor<br>e na força do seu poder."</div>
+    <div class="verse-en">"Be strong in the Lord<br>and in his mighty power."</div>
+    <div class="ref">Ef / Ep 6:10</div>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 5 ═══════════ -->
+<div class="page">
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">13</div>
+    <div class="lap-km">42,90 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"O Senhor é a minha rocha,<br>a minha fortaleza e o meu libertador."</div>
+    <div class="verse-en">"The Lord is my rock,<br>my fortress and my deliverer."</div>
+    <div class="ref">Sl / Ps 18:2</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">14</div>
+    <div class="lap-km">46,20 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Não temas, porque eu sou contigo;<br>não te assombres, porque eu sou o teu Deus."</div>
+    <div class="verse-en">"Do not fear, for I am with you;<br>do not be dismayed, for I am your God."</div>
+    <div class="ref">Is / Is 41:10</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">15</div>
+    <div class="lap-km">49,50 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Corramos com perseverança<br>a corrida que nos está proposta."</div>
+    <div class="verse-en">"Let us run with perseverance<br>the race marked out for us."</div>
+    <div class="ref">Hb / He 12:1</div>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 6 ═══════════ -->
+<div class="page">
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">16</div>
+    <div class="lap-km">52,80 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"O Senhor dará força ao seu povo;<br>o Senhor abençoará o seu povo com a paz."</div>
+    <div class="verse-en">"The Lord gives strength to his people;<br>the Lord blesses his people with peace."</div>
+    <div class="ref">Sl / Ps 29:11</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">17</div>
+    <div class="lap-km">56,10 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"Graças a Deus que nos dá a vitória<br>por meio de nosso Senhor Jesus Cristo."</div>
+    <div class="verse-en">"Thanks be to God! He gives us the victory<br>through our Lord Jesus Christ."</div>
+    <div class="ref">1Co / 1Co 15:57</div>
+  </div>
+
+  <div class="card">
+    <div class="corner">VOLTA</div>
+    <div class="lap-num">18</div>
+    <div class="lap-km">59,40 km</div>
+    <div class="div"></div>
+    <div class="verse-pt">"No mundo tereis aflições; mas tende bom ânimo,<br>eu venci o mundo."</div>
+    <div class="verse-en">"In this world you will have trouble.<br>But take heart! I have overcome the world."</div>
+    <div class="ref">Jo / Jn 16:33</div>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 7 — LAST LAP ═══════════ -->
+<div class="page">
+
+  <div class="card" style="height:297mm;border-bottom:2px solid #111">
+    <div class="corner">VOLTA FINAL</div>
+    <div class="lap-num" style="font-size:110pt;color:#1e8449">19</div>
+    <div class="lap-km" style="font-size:16pt;color:#1e8449;font-weight:700">62,70 km — FINISH! 🏆</div>
+    <div class="div" style="background:linear-gradient(90deg,transparent,#1e8449,transparent);height:2px"></div>
+    <div class="verse-pt" style="font-size:14pt">"O vencedor herdará estas coisas,<br>e eu serei o seu Deus e ele será o meu filho."</div>
+    <div class="verse-en" style="font-size:11pt;margin-top:4mm">"The one who is victorious will inherit all this,<br>and I will be his God and he will be my son."</div>
+    <div class="ref" style="font-size:10pt;color:#1e8449">Ap / Rv 21:7</div>
+  </div>
+
+</div>
+
+</body>
+</html>
