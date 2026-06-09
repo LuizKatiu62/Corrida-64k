@@ -166,6 +166,43 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 .s-lnum{font-size:9.5px;font-weight:700;opacity:.55;letter-spacing:.4px}
 .s-ldist{font-size:8.5px;opacity:.3}
 
+/* ── QR modal ── */
+#mQR{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+#mQR.on{display:flex}
+.qr-card{
+  background:#0d1f0f;border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;width:100%;max-width:340px;overflow:hidden;
+  text-align:center;
+}
+.qr-card-top{
+  background:linear-gradient(135deg,#1a3a1a,#0d2b14);
+  padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.qr-card-top h3{font-size:11px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#4caf7d;margin-bottom:4px}
+.qr-card-top h2{font-size:22px;font-weight:900;color:#fff;margin-bottom:2px}
+.qr-card-top p{font-size:10px;opacity:.5;margin-bottom:14px}
+#qrCanvas{display:flex;justify-content:center;margin-bottom:0}
+#qrCanvas canvas,#qrCanvas img{border-radius:10px}
+.qr-card-bottom{padding:14px 18px 18px}
+.qr-url{background:rgba(255,255,255,.06);border-radius:8px;
+  padding:7px 12px;font-size:9px;font-family:monospace;
+  color:rgba(255,255,255,.45);word-break:break-all;margin-bottom:14px}
+.qr-share-row{display:flex;gap:8px}
+.btn-share{
+  flex:1;padding:13px 10px;border:none;border-radius:12px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn-share.primary{background:#1e8449;color:#fff}
+.btn-share.secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15)}
+/* ── hidden share canvas ── */
+#shareCanvas{display:none}
+
 /* ── Action sheet (mobile photo menu) ── */
 #actionSheet{
   position:fixed;inset:0;z-index:500;
