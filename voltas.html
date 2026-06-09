@@ -544,6 +544,47 @@ function syncPhotosFromCloud(){
   }).catch(()=>{});
 }
 
+function uploadAllPhotos(){
+  const photos = S.photos.map((p,i)=>({p,i})).filter(o=>o.p);
+  if(!photos.length){
+    const st = document.getElementById('uploadStatus');
+    st.textContent = 'No photos found in this device.';
+    st.style.display = 'block';
+    return;
+  }
+  const btn = document.getElementById('btnUploadAll');
+  const st  = document.getElementById('uploadStatus');
+  btn.disabled = true;
+  btn.textContent = 'Uploading…';
+  st.style.display = 'block';
+
+  let done = 0;
+  const total = photos.length;
+
+  function next(){
+    if(done >= total){
+      btn.textContent = '✅ All photos uploaded!';
+      st.textContent = total + ' photo' + (total>1?'s':'') + ' synced to cloud.';
+      setSyncStatus('ok');
+      setTimeout(()=>{
+        btn.disabled = false;
+        btn.textContent = '☁️ Upload All Photos to Cloud';
+        st.style.display = 'none';
+      }, 3000);
+      return;
+    }
+    const {p, i} = photos[done];
+    st.textContent = 'Uploading ' + (done+1) + ' / ' + total + '…';
+    photosRef.child(String(i)).set(p)
+      .then(()=>{ done++; next(); })
+      .catch(err=>{
+        console.error(err);
+        done++; next();
+      });
+  }
+  next();
+}
+
 // ══════════════════════════════════════
 // LOCAL STATE
 // ══════════════════════════════════════
