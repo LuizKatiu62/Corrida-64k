@@ -1002,14 +1002,12 @@ if(new URLSearchParams(window.location.search).has('watch')){
 } else {
   render();
   syncPhotosFromCloud();
-  // Sync local state with Firebase before deciding to push.
-  // If Firebase is ahead (another device started the race), update local state
-  // so LAP COMPLETE works correctly on this device too.
-  ref.once('value').then(snap=>{
+  // Real-time listener: if Firebase advances beyond local state (another device
+  // pressed LAP COMPLETE), sync and re-render automatically.
+  ref.on('value', snap=>{
     const d     = snap.val();
     const fbLap = d ? (d.lap || 1) : 0;
     if(fbLap > S.cur + 1){
-      // Firebase is ahead — sync local state to match
       S.cur = fbLap - 1;
       if(d.startedAt) S.startedAt = d.startedAt;
       if(d.lap1At)    S.lap1At    = d.lap1At;
@@ -1017,10 +1015,11 @@ if(new URLSearchParams(window.location.search).has('watch')){
       if(d.lap16At)   S.lap16At   = d.lap16At;
       saveState(S);
       render();
-    } else {
+      syncPhotosFromCloud();
+    } else if(fbLap === 0 || fbLap === 1 && S.cur === 0){
       pushLap(S.cur + 1);
     }
-  }).catch(()=>{ pushLap(S.cur + 1); });
+  }, ()=>{ pushLap(S.cur + 1); });
 }
 </script>
 </body>
