@@ -344,13 +344,22 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 ══════════════════════════════════════ -->
 <div id="mQR" onclick="if(event.target===this)hideQR()">
   <div class="qr-card">
-    <h3>📡 LIVE — Share with Supporters</h3>
-    <p>Anyone who scans this sees the current lap in real time on their phone.</p>
-    <div id="qrCanvas"></div>
-    <div class="qr-url" id="qrUrlText"></div>
-    <button class="btn-close-qr" onclick="hideQR()">Close</button>
+    <div class="qr-card-top">
+      <h3>🔴 Live Tracker</h3>
+      <h2>CHALLENGE 64 KM</h2>
+      <p>Scan to follow the race in real time on your phone</p>
+      <div id="qrCanvas"></div>
+    </div>
+    <div class="qr-card-bottom">
+      <div class="qr-url">runwithgratitude.ca/voltas.html?watch</div>
+      <div class="qr-share-row">
+        <button class="btn-share primary" onclick="shareImage()">📤 Share</button>
+        <button class="btn-share secondary" onclick="hideQR()">Close</button>
+      </div>
+    </div>
   </div>
 </div>
+<canvas id="shareCanvas"></canvas>
 
 <!-- ══════════════════════════════════════
      SETUP
