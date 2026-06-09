@@ -782,6 +782,7 @@ function actionReplace(){ hideActionSheet(); pickFile(); }
 function actionAdd()    { hideActionSheet(); pickFile(); }
 function actionDelete(){
   if(editIdx<0) return;
+  deletePhotoFromCloud(editIdx);
   S.photos[editIdx]=null; saveState(S);
   closeAction(); renderSetup();
 }
