@@ -706,7 +706,10 @@ function completeLap(){
 
   fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
 
-  if(ci===0 && !S.lap1At){ S.lap1At = Date.now(); }
+  const now2 = Date.now();
+  if(ci===0  && !S.lap1At)  { S.lap1At  = now2; }
+  if(ci===9  && !S.lap10At) { S.lap10At = now2; }
+  if(ci===15 && !S.lap16At) { S.lap16At = now2; }
   S.cur=ci+1; saveState(S);
   pushLap(S.cur+1); // push the NEXT lap (current after completing)
 
