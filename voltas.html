@@ -475,8 +475,9 @@ firebase.initializeApp({
   messagingSenderId: '953329380095',
   appId:             '1:953329380095:web:f7865dda88a33ff9457aca'
 });
-const db   = firebase.database();
-const ref  = db.ref('desafio64km');
+const db        = firebase.database();
+const ref       = db.ref('desafio64km/status');
+const photosRef = db.ref('desafio64km/photos');
 
 const TOTAL_KM = 64;
 
