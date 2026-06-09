@@ -722,9 +722,16 @@ function openAction(i){
   document.getElementById('actionDelBtn').style.display=has?'flex':'none';
   document.getElementById('actionSheet').classList.add('on');
 }
-function closeAction(){ document.getElementById('actionSheet').classList.remove('on'); editIdx=-1; }
-function actionReplace(){ closeAction(); pickFile(); }
-function actionAdd()    { closeAction(); pickFile(); }
+function closeAction(){
+  document.getElementById('actionSheet').classList.remove('on');
+  editIdx=-1;
+}
+function hideActionSheet(){
+  // hide sheet but KEEP editIdx so file handler knows which lap
+  document.getElementById('actionSheet').classList.remove('on');
+}
+function actionReplace(){ hideActionSheet(); pickFile(); }
+function actionAdd()    { hideActionSheet(); pickFile(); }
 function actionDelete(){
   if(editIdx<0) return;
   S.photos[editIdx]=null; saveState(S);
