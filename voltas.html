@@ -793,7 +793,12 @@ function pickFile(){
 document.getElementById('filePick').addEventListener('change',e=>{
   const f=e.target.files[0];
   if(!f||editIdx<0) return;
-  compress(f,b64=>{ S.photos[editIdx]=b64; saveState(S); renderSetup(); editIdx=-1; });
+  const idx=editIdx;
+  compress(f,b64=>{
+    S.photos[idx]=b64; saveState(S);
+    pushPhotoToCloud(idx, b64);
+    renderSetup(); editIdx=-1;
+  });
 });
 
 // ══════════════════════════════════════
