@@ -855,7 +855,7 @@ function renderSetup(){
     // single tap → action sheet (always, whether has photo or not)
     thumb.addEventListener('click', ()=> openAction(i));
     const lnum=document.createElement('div'); lnum.className='s-lnum'; lnum.textContent=`LAP ${i+1}`;
-    const ldist=document.createElement('div'); ldist.className='s-ldist'; ldist.textContent=`${((i+1)*LAP_KM).toFixed(1)} km`;
+    const ldist=document.createElement('div'); ldist.className='s-ldist'; ldist.textContent=`${kmAt(i+1).toFixed(1)} km`;
     cell.append(thumb,lnum,ldist); grid.appendChild(cell);
   }
 }
