@@ -704,6 +704,7 @@ function completeLap(){
 
   fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
 
+  if(ci===0 && !S.lap1At){ S.lap1At = Date.now(); }
   S.cur=ci+1; saveState(S);
   pushLap(S.cur+1); // push the NEXT lap (current after completing)
 
