@@ -778,15 +778,17 @@ function startWatchMode(){
     if(!d){ document.getElementById('wOffline').style.display='block'; return; }
     document.getElementById('wOffline').style.display='none';
 
-    const lap=Math.min(d.lap||1, TOTAL);
-    const ci=lap-1;
+    const lap  = Math.min(d.lap||1, TOTAL);
+    const kmDone = parseFloat(d.kmDone||0);
+    const kmLeft = parseFloat(d.kmLeft||TOTAL_KM);
+    const pct    = d.pct || Math.round(kmDone/TOTAL_KM*100);
     document.getElementById('wLap').textContent=lap;
-    document.getElementById('wOf').textContent=`of ${TOTAL} laps`;
-    document.getElementById('wPbar').style.width=(ci/TOTAL*100)+'%';
-    document.getElementById('wPct').textContent=Math.round(ci/TOTAL*100)+'% complete';
-    document.getElementById('wKmDone').textContent=(ci*LAP_KM).toFixed(1);
-    document.getElementById('wKmLeft').textContent=((TOTAL-ci)*LAP_KM).toFixed(1);
-    document.getElementById('wMsg').textContent=msg(lap);
+    document.getElementById('wOf').textContent=`of ${TOTAL} laps · 64 km`;
+    document.getElementById('wPbar').style.width=pct+'%';
+    document.getElementById('wPct').textContent=pct+'% of 64 km';
+    document.getElementById('wKmDone').textContent=kmDone.toFixed(1);
+    document.getElementById('wKmLeft').textContent=kmLeft.toFixed(1);
+    document.getElementById('wMsg').textContent=d.msg||msg(lap);
 
     if(d.updated){
       const sec=Math.round((Date.now()-d.updated)/1000);
