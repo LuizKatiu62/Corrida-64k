@@ -942,7 +942,7 @@ function startWatchMode(){
     const stopEl  = document.getElementById('wStop');
     if(STOP_AFTER[prevLap]){
       const stopNum  = STOP_AFTER[prevLap];
-      const stopKm   = (prevLap * LAP_KM).toFixed(2).replace('.',',');
+      const stopKm   = kmAt(prevLap).toFixed(2).replace('.',',');
       stopEl.style.display = 'block';
       document.getElementById('wStopTitle').textContent =
         `⏸ STRATEGIC STOP ${stopNum} of 5`;
