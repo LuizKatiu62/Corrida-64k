@@ -112,10 +112,6 @@ def make_cartolina_pdf(path):
 
             c.setFont("Helvetica-Bold", 96)
             c.setFillColor(colors.white)
-            c.drawCentredString(cx, mid + 60)
-
-            c.setFont("Helvetica-Bold", 96)
-            c.setFillColor(colors.white)
             c.drawCentredString(cx, mid + 45*mm, "19")
 
             c.setFont("Helvetica-Bold", 20)
