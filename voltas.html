@@ -413,6 +413,7 @@ body{background:#0d1f0f;color:#fff;user-select:none}
      SPECTATOR / WATCH  (?watch in URL)
 ══════════════════════════════════════ -->
 <div class="view" id="vWatch">
+  <div id="wPhotoBg"></div>
   <div class="live-badge"><span class="live-dot"></span> LIVE</div>
   <div class="watch-title">CHALLENGE 64 KM</div>
   <div class="watch-lap" id="wLap">—</div>
@@ -425,9 +426,14 @@ body{background:#0d1f0f;color:#fff;user-select:none}
       <div class="km-lbl">KM DONE</div>
     </div>
     <div class="watch-km-box">
-      <div class="km-val" id="wKmLeft">62.7</div>
+      <div class="km-val" id="wKmLeft">64.0</div>
       <div class="km-lbl">KM TO GO</div>
     </div>
+  </div>
+  <div class="watch-est" id="wEst">
+    <div class="est-lbl">⏱ Estimated Finish</div>
+    <div class="est-val" id="wEstTime">—</div>
+    <div class="est-sub" id="wEstSub"></div>
   </div>
   <div class="watch-msg" id="wMsg"></div>
   <div class="watch-event">📍 Little River Reservoir · Saint John NB · June 13, 2026</div>
