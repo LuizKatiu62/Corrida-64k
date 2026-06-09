@@ -687,7 +687,7 @@ function render(){
   document.getElementById('lapNum').textContent=cn;
   document.getElementById('lapMsg').textContent=msg(cn);
   document.getElementById('distRow').textContent=
-    `${(ci*LAP_KM).toFixed(1)} km done · ${((TOTAL-ci)*LAP_KM).toFixed(1)} km to go`;
+    `${kmAt(ci).toFixed(1)} km done · ${(TOTAL_KM - kmAt(ci)).toFixed(1)} km to go`;
 
   const ph=S.photos[ci];
   const bg=document.getElementById('photoBg');
