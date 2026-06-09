@@ -618,7 +618,7 @@ function loadState(){
     const s=JSON.parse(localStorage.getItem('lap64v3')||'null');
     if(s&&s.v===3) return s;
   }catch(e){}
-  return {v:3, cur:0, photos:Array(TOTAL).fill(null), startedAt:null, lap1At:null};
+  return {v:3, cur:0, photos:Array(TOTAL).fill(null), startedAt:null, lap1At:null, lap10At:null, lap16At:null};
 }
 function saveState(s){ localStorage.setItem('lap64v3',JSON.stringify(s)); }
 let S=loadState(), editIdx=-1;
