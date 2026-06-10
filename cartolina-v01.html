@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Desafio 64km — Cartolina v01</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Lora:ital,wght@1,600&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',sans-serif;background:#888}
+
+@media screen{
+  .pbar{
+    position:fixed;top:0;left:0;right:0;height:48px;
+    background:#0d3d1f;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    font-size:13px;font-weight:700;z-index:100;
+    box-shadow:0 2px 12px rgba(0,0,0,.4);
+  }
+  .pbtn{
+    background:#d4a017;color:#0d1f0f;border:none;border-radius:8px;
+    padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  body{padding-top:56px}
+  .poster{margin:20px auto;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+}
+
+/* ── Poster: 22" × 28" portrait (Staples Canada standard poster) ── */
+.poster{
+  width:22in;height:28in;
+  background:#fff;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(160deg,#0d3d1f 0%,#1e8449 60%,#0d3d1f 100%);
+  padding:0.45in 0.6in 0.3in;
+  display:flex;flex-direction:column;
+  align-items:center;text-align:center;
+  flex-shrink:0;
+  position:relative;
+}
+.header-bar{
+  width:100%;height:10px;
+  background:linear-gradient(90deg,transparent,#d4a017,transparent);
+  border-radius:4px;margin-bottom:0.18in;
+}
+.event-tag{
+  font-size:16pt;font-weight:700;letter-spacing:5px;
+  color:#d4a017;text-transform:uppercase;margin-bottom:0.08in;
+}
+.main-title{
+  font-size:80pt;font-weight:900;line-height:1;
+  color:#fff;margin-bottom:0.05in;
+  letter-spacing:-2px;
+}
+.main-title span{color:#d4a017}
+.subtitle{
+  font-family:'Lora',serif;font-style:italic;font-size:18pt;
+  color:rgba(255,255,255,.8);margin-bottom:0.14in;
+}
+.info-pills{
+  display:flex;gap:20px;margin-bottom:0.14in;
+}
+.pill{
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);
+  border-radius:30px;padding:7px 24px;
+  font-size:13pt;font-weight:700;color:#fff;
+}
+.cancer-line{
+  font-size:12pt;color:rgba(255,255,255,.7);line-height:1.6;
+  max-width:16in;
+}
+.cancer-line strong{color:#fff}
+.header-bar-bottom{
+  width:100%;height:8px;margin-top:0.18in;
+  background:linear-gradient(90deg,transparent,#d4a017,transparent);
+  border-radius:4px;
+}
+
+/* ── GRID AREA ── */
+.grid-area{
+  flex:1;
+  padding:0.2in 0.35in 0.15in;
+  display:flex;flex-direction:column;
+  gap:0;
+}
+.grid-label{
+  font-size:10pt;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:#1e8449;margin-bottom:0.12in;text-align:center;
+}
+/* 5 cols × 4 rows → portrait cells on a 22"×28" poster */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  grid-template-rows:repeat(4,1fr);
+  gap:0.14in;
+  flex:1;
+}
+
+/* ── Cell: WHITE background, BLUE number ── */
+.cell{
+  border:3px solid #1a3a6e;
+  border-radius:12px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;
+  background:#fff;
+}
+.cell-num{
+  font-size:90pt;font-weight:900;
+  color:#1a3a6e;
+  line-height:1;
+  letter-spacing:-2px;
+}
+.cell-num.big2{font-size:70pt}
+.cell-km{
+  font-size:9pt;color:rgba(26,58,110,.4);font-weight:700;
+  position:absolute;bottom:8px;right:10px;
+}
+.sticker-hint{
+  font-size:7pt;color:rgba(26,58,110,.2);font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;text-align:center;
+  margin-top:5px;
+}
+
+/* ── Cell 19: final lap, gold border, blue number ── */
+.cell-19{
+  border-color:#d4a017;border-width:4px;border-style:solid;
+  background:#fffbf0;
+}
+.cell-19 .cell-num{color:#d4a017;font-size:70pt}
+.cell-19 .cell-km{color:rgba(212,160,23,.6)}
+.cell-19 .sticker-hint{color:rgba(212,160,23,.4)}
+
+/* ── Participants cell (col 5, row 4) ── */
+.participants-cell{
+  grid-column:5;grid-row:4;
+  border:3px solid #1e8449;border-radius:12px;
+  background:#0d3d1f;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:0.1in 0.09in 0.08in;
+  overflow:hidden;
+}
+.part-title{
+  font-size:8pt;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+  color:#d4a017;margin-bottom:3px;text-align:center;
+}
+.part-count{
+  font-size:22pt;font-weight:900;color:#fff;line-height:1;margin-bottom:4px;
+}
+.part-names{
+  font-size:6.5pt;color:rgba(255,255,255,.85);line-height:1.5;
+  text-align:left;width:100%;padding:0 4px;
+}
+.part-names span{display:block}
+.part-names .km64{color:#d4a017;font-weight:700}
+
+/* ── FOOTER ── */
+.footer{
+  background:linear-gradient(160deg,#0d3d1f,#1a4a28);
+  padding:0.18in 0.6in;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+  gap:0.3in;
+}
+.footer-verse{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:13pt;color:rgba(255,255,255,.8);line-height:1.6;
+  flex:1;
+}
+.footer-verse strong{
+  font-style:normal;font-weight:900;color:#d4a017;
+}
+.footer-fundraiser{
+  text-align:right;flex-shrink:0;
+}
+.footer-fundraiser .ft{
+  font-size:9pt;font-weight:700;letter-spacing:2px;
+  color:#d4a017;text-transform:uppercase;margin-bottom:4px;
+}
+.footer-fundraiser .fn{
+  font-size:12pt;font-weight:900;color:#fff;line-height:1.3;margin-bottom:3px;
+}
+.footer-fundraiser .fu{
+  font-size:9pt;color:rgba(255,255,255,.5);font-family:monospace;
+}
+
+@media print{
+  body{background:#fff;padding:0}
+  .pbar{display:none}
+  .poster{margin:0;box-shadow:none}
+  @page{size:22in 28in portrait;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="pbar">
+  <span>Desafio 64km — Cartolina v01 22"×28"</span>
+  <button class="pbtn" onclick="window.print()">🖨 Imprimir na Staples</button>
+</div>
+
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-bar"></div>
+    <div class="event-tag">June 13, 2026 · Saint John, NB</div>
+    <div class="main-title">CHALLENGE <span>64</span> KM</div>
+    <div class="subtitle">Running with gratitude, finishing for His Glory.</div>
+    <div class="info-pills">
+      <div class="pill">📍 Little River Reservoir</div>
+      <div class="pill">🔁 19 loops · 3.35 km each</div>
+      <div class="pill">🎂 64 years of life</div>
+    </div>
+    <div class="cancer-line">
+      In 2025, Luiz was diagnosed with <strong>prostate cancer</strong>. By God's grace, he fought and <strong>won</strong>.<br>
+      Today — one year after surgery — Luiz and his friends are running 64 km as an act of gratitude for every kilometre of life.
+    </div>
+    <div class="header-bar-bottom"></div>
+  </div>
+
+  <!-- GRID: 5 cols × 4 rows -->
+  <div class="grid-area">
+    <div class="grid-label">▸ Remove each number card as the lap is completed to reveal the verse ◂</div>
+    <div class="grid">
+
+      <!-- Row 1: 1–5 -->
+      <div class="cell"><div class="cell-num">1</div><div class="sticker-hint">verse sticker</div><div class="cell-km">3.35 km</div></div>
+      <div class="cell"><div class="cell-num">2</div><div class="sticker-hint">verse sticker</div><div class="cell-km">6.70 km</div></div>
+      <div class="cell"><div class="cell-num">3</div><div class="sticker-hint">verse sticker</div><div class="cell-km">10.05 km</div></div>
+      <div class="cell"><div class="cell-num">4</div><div class="sticker-hint">verse sticker</div><div class="cell-km">13.40 km</div></div>
+      <div class="cell"><div class="cell-num">5</div><div class="sticker-hint">verse sticker</div><div class="cell-km">16.75 km</div></div>
+
+      <!-- Row 2: 6–10 -->
+      <div class="cell"><div class="cell-num">6</div><div class="sticker-hint">verse sticker</div><div class="cell-km">20.10 km</div></div>
+      <div class="cell"><div class="cell-num">7</div><div class="sticker-hint">verse sticker</div><div class="cell-km">23.45 km</div></div>
+      <div class="cell"><div class="cell-num">8</div><div class="sticker-hint">verse sticker</div><div class="cell-km">26.80 km</div></div>
+      <div class="cell"><div class="cell-num">9</div><div class="sticker-hint">verse sticker</div><div class="cell-km">30.15 km</div></div>
+      <div class="cell"><div class="cell-num big2">10</div><div class="sticker-hint">verse sticker</div><div class="cell-km">33.50 km</div></div>
+
+      <!-- Row 3: 11–15 -->
+      <div class="cell"><div class="cell-num big2">11</div><div class="sticker-hint">verse sticker</div><div class="cell-km">36.85 km</div></div>
+      <div class="cell"><div class="cell-num big2">12</div><div class="sticker-hint">verse sticker</div><div class="cell-km">40.20 km</div></div>
+      <div class="cell"><div class="cell-num big2">13</div><div class="sticker-hint">verse sticker</div><div class="cell-km">43.55 km</div></div>
+      <div class="cell"><div class="cell-num big2">14</div><div class="sticker-hint">verse sticker</div><div class="cell-km">46.90 km</div></div>
+      <div class="cell"><div class="cell-num big2">15</div><div class="sticker-hint">verse sticker</div><div class="cell-km">50.25 km</div></div>
+
+      <!-- Row 4: 16–18 auto-placed cols 1–3; cell 19 col 4; participants col 5 -->
+      <div class="cell"><div class="cell-num big2">16</div><div class="sticker-hint">verse sticker</div><div class="cell-km">53.60 km</div></div>
+      <div class="cell"><div class="cell-num big2">17</div><div class="sticker-hint">verse sticker</div><div class="cell-km">56.95 km</div></div>
+      <div class="cell"><div class="cell-num big2">18</div><div class="sticker-hint">verse sticker</div><div class="cell-km">60.30 km</div></div>
+      <div class="cell cell-19"><div class="cell-num">19</div><div class="sticker-hint">🏆 FINAL — verse sticker</div><div class="cell-km">64 km · FINISH!</div></div>
+
+      <!-- Participants list — col 5, row 4 -->
+      <div class="participants-cell">
+        <div class="part-title">🏅 Confirmed</div>
+        <div class="part-count">28</div>
+        <div class="part-names">
+          <span>1. Katiuscia Silva</span>
+          <span>2. Daniele</span>
+          <span>3. Gui Melfi</span>
+          <span>4. Eduardo</span>
+          <span class="km64">5. Fred — 64 km</span>
+          <span>6. Wellinson</span>
+          <span>7. Carla Fortezza</span>
+          <span>8. Leandro Garcia</span>
+          <span class="km64">9. Camiel — 64 km</span>
+          <span>10. Isabella</span>
+          <span>11. Damaris</span>
+          <span>12. Giovani</span>
+          <span>13. Anderson Hoff</span>
+          <span>14. Bruno Portilho</span>
+          <span>15. Carla Fortezza</span>
+          <span>16. Cleidi Zandonai</span>
+          <span>17. Thaís Santos</span>
+          <span>18. Taimon</span>
+          <span>19. Beatriz</span>
+          <span>20. Fernando</span>
+          <span class="km64">21. Cesar Costa — 64 km</span>
+          <span class="km64">22. Roberto Melfi — 64 km</span>
+          <span>23. Nete Melfi</span>
+          <span>24. Eduardo Melfi</span>
+          <span>25. Tainá Mori</span>
+          <span>26. Bella</span>
+          <span>27. Juliana</span>
+          <span>28. Jean</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-verse">
+      <strong>"I can do all things through Christ who strengthens me."</strong><br>
+      — Philippians 4:13
+    </div>
+    <div class="footer-fundraiser">
+      <div class="ft">💛 Support the Cause</div>
+      <div class="fn">Urology Wellness<br>St. Joseph's Hospital Foundation</div>
+      <div class="fu">gofundme.com/f/urology-wellness-st-josephs-hospital-foundation</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
