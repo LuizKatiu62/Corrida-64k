@@ -95,12 +95,18 @@ h1{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;op
 const WATCH_URL = 'https://runwithgratitude.ca/voltas.html?watch';
 
 // Build QR in preview card
-new QRCode(document.getElementById('qr'), {
-  text: WATCH_URL,
-  width: 200, height: 200,
-  colorDark: '#0d1f0f', colorLight: '#ffffff',
-  correctLevel: QRCode.CorrectLevel.H
-});
+try {
+  if(typeof QRCode !== 'undefined') {
+    new QRCode(document.getElementById('qr'), {
+      text: WATCH_URL,
+      width: 200, height: 200,
+      colorDark: '#0d1f0f', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  } else {
+    document.getElementById('qr').innerHTML = '<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#666;text-align:center;padding:10px">QR code unavailable offline</div>';
+  }
+} catch(e) {}
 
 // Build 1080×1080 share image
 function buildImage(cb) {
