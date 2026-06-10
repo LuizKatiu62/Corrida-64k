@@ -78,12 +78,15 @@ h1{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;op
   </div>
 </div>
 
-<button class="btn-share" onclick="doShare()">📤 Share on WhatsApp / Instagram</button>
+<a class="btn-share" id="btn-whatsapp" href="https://wa.me/?text=Follow%20the%2064KM%20Challenge%20LIVE%20%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%0Ahttps%3A%2F%2Frunwithgratitude.ca%2Fvoltas.html%3Fwatch" target="_blank">
+  <span>💬 Share Link on WhatsApp</span>
+</a>
+<button class="btn-share" onclick="doShare()" style="background:linear-gradient(135deg,#555,#333)">📤 Share Image (WhatsApp / Instagram)</button>
 <button class="btn-dl" onclick="doDownload()">💾 Save Image to Camera Roll</button>
 
 <div class="hint">
-  Tap Share → choose WhatsApp, Instagram, Messages…<br>
-  or Save Image to post on any platform.
+  "Share Link" sends the live tracker link directly.<br>
+  "Share Image" generates a 1080×1080 image to post.
 </div>
 
 <canvas id="shareCanvas"></canvas>
