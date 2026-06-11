@@ -371,7 +371,7 @@ async function fetchBoard(date){
   return r.json();
 }
 async function fetchStandings(){
-  const r = await fetch(`${BASE}/standings`);
+  const r = await fetch(`${BASE2}/standings`);
   if(!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
