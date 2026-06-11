@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Desafio 64km — Cartolina 4×A4</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Lora:ital,wght@1,600&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ─────────────────────────────────────────
+   POSTER: 16.5" × 21"  (22"×28" × 0.75)
+   Split: 8.25" wide × 10.5" tall per quadrant
+   A4 page: 8.27" × 11.69"  → 0.02" spare right, 1.19" spare bottom
+   ───────────────────────────────────────── */
+
+/* Screen chrome */
+@media screen{
+  body{font-family:'Montserrat',sans-serif;background:#444;padding-top:60px}
+  .pbar{
+    position:fixed;top:0;left:0;right:0;height:48px;
+    background:#0d3d1f;color:#fff;
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    font-size:13px;font-weight:700;z-index:100;
+    box-shadow:0 2px 12px rgba(0,0,0,.4);
+  }
+  .pbtn{background:#d4a017;color:#0d1f0f;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer}
+  .page{margin:16px auto;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+  .qlabel{
+    position:absolute;top:6px;left:50%;transform:translateX(-50%);
+    background:rgba(0,0,0,.6);color:#fff;
+    font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+    letter-spacing:2px;padding:3px 12px;border-radius:20px;z-index:10;pointer-events:none;
+  }
+}
+
+/* A4 page wrapper — clips to one quadrant */
+.page{
+  width:8.27in;
+  height:11.69in;
+  overflow:hidden;
+  position:relative;
+  break-after:page;
+  background:#fff;
+}
+
+/* The full poster sits absolute inside each wrapper.
+   Offset it so the correct quadrant is visible.         */
+.poster{
+  position:absolute;
+  width:16.5in;
+  height:21in;
+  display:flex;flex-direction:column;
+  background:#fff;
+  overflow:hidden;
+}
+
+/* Quadrant offsets  (half-width=8.25in, half-height=10.5in) */
+.q1 .poster{top:0;     left:0}
+.q2 .poster{top:0;     left:-8.25in}
+.q3 .poster{top:-10.5in;left:0}
+.q4 .poster{top:-10.5in;left:-8.25in}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(160deg,#0d3d1f 0%,#1e8449 60%,#0d3d1f 100%);
+  padding:0.14in 0.45in 0.11in;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  flex-shrink:0;
+}
+.hbar{width:100%;height:6px;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:3px;margin-bottom:0.08in}
+.event-tag{font-size:10pt;font-weight:700;letter-spacing:4px;color:#d4a017;text-transform:uppercase;margin-bottom:0.05in}
+.main-title{font-size:47pt;font-weight:900;line-height:1;color:#fff;margin-bottom:0.03in;letter-spacing:-2px}
+.main-title span{color:#d4a017}
+.subtitle{font-family:'Lora',serif;font-style:italic;font-size:11pt;color:rgba(255,255,255,.8);margin-bottom:0.05in}
+.cancer-line{font-size:8pt;color:rgba(255,255,255,.7);line-height:1.5;max-width:14in}
+.cancer-line strong{color:#fff}
+.hbar-b{width:100%;height:5px;margin-top:0.08in;background:linear-gradient(90deg,transparent,#d4a017,transparent);border-radius:3px}
+
+/* ── GRID AREA ── */
+.grid-area{flex:1;padding:0.08in 0 0.06in;display:flex;flex-direction:column;align-items:center}
+.grid-label{font-size:7pt;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1e8449;margin-bottom:0.08in;text-align:center}
+
+/* 5 cols × 4 rows, cells 3"×4.5" (= 4"×6" × 0.75) */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(5,3in);
+  grid-template-rows:repeat(4,4.5in);
+  gap:0.075in;
+}
+
+/* ── Cell ── */
+.cell{
+  border:2px solid #0a2e10;border-radius:8px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;background:#0d3d1f;
+  width:3in;height:4.5in;
+}
+.cell-num{font-size:90pt;font-weight:900;color:#fff;line-height:1;letter-spacing:-2px}
+.cell-num.big2{font-size:72pt}
+.cell-km{font-size:7.5pt;color:rgba(255,255,255,.4);font-weight:700;position:absolute;bottom:8px;right:9px}
+.sticker-hint{font-size:6pt;color:rgba(255,255,255,.18);font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:center;margin-top:4px}
+.cell-19{border-color:#d4a017;border-width:3px;background:#0d3d1f}
+.cell-19 .cell-num{color:#d4a017;font-size:72pt}
+.cell-19 .cell-km{color:rgba(212,160,23,.5)}
+.cell-19 .sticker-hint{color:rgba(212,160,23,.35)}
+
+/* ── Participants panel ── */
+.participants-cell{
+  grid-column:5;grid-row:4;
+  border:2px solid #1e8449;border-radius:8px;
+  background:#0d3d1f;
+  display:flex;flex-direction:column;align-items:center;
+  padding:0.09in 0.08in 0.08in;overflow:hidden;
+  width:3in;height:4.5in;
+}
+.part-title{font-size:7pt;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#d4a017;margin-bottom:3px;text-align:center}
+.part-count{font-size:20pt;font-weight:900;color:#fff;line-height:1;margin-bottom:4px}
+.part-names{font-size:5.5pt;color:rgba(255,255,255,.85);line-height:1.5;text-align:left;width:100%;padding:0 3px}
+.part-names span{display:block}
+.part-names .km64{color:#d4a017;font-weight:700}
+
+/* ── FOOTER ── */
+.footer{
+  background:linear-gradient(160deg,#0d3d1f,#1a4a28);
+  padding:0.11in 0.45in;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;gap:0.2in;
+}
+.footer-verse{font-family:'Lora',serif;font-style:italic;font-size:9pt;color:rgba(255,255,255,.8);line-height:1.5;flex:1}
+.footer-verse strong{font-style:normal;font-weight:900;color:#d4a017}
+.footer-fundraiser{text-align:right;flex-shrink:0}
+.footer-fundraiser .ft{font-size:6pt;font-weight:700;letter-spacing:2px;color:#d4a017;text-transform:uppercase;margin-bottom:2px}
+.footer-fundraiser .fn{font-size:8.5pt;font-weight:900;color:#fff;line-height:1.3;margin-bottom:2px}
+.footer-fundraiser .fu{font-size:6pt;color:rgba(255,255,255,.5);font-family:monospace}
+
+/* ── Print ── */
+@media print{
+  body{background:#fff;padding:0}
+  .pbar,.qlabel{display:none}
+  .page{margin:0;box-shadow:none}
+  @page{size:A4 portrait;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="pbar">
+  <span>Cartolina — 4 folhas A4 para colar na cartolina</span>
+  <button class="pbtn" onclick="window.print()">🖨 Imprimir (4×A4)</button>
+</div>
+
+<template id="tpl">
+  <div class="header">
+    <div class="hbar"></div>
+    <div class="event-tag">June 13, 2026 · Saint John, NB</div>
+    <div class="main-title">CHALLENGE <span>64</span> KM</div>
+    <div class="subtitle">Running with gratitude, finishing for His Glory.</div>
+    <div class="cancer-line">
+      In 2025, Luiz was diagnosed with <strong>prostate cancer</strong>. By God's grace, he fought and <strong>won</strong>.
+      Today — one year after surgery — Luiz and his friends are running <strong>64 km</strong> as an act of gratitude for every kilometre of life.
+    </div>
+    <div class="hbar-b"></div>
+  </div>
+  <div class="grid-area">
+    <div class="grid-label">▸ Remove each number card as the lap is completed to reveal the verse ◂</div>
+    <div class="grid">
+      <div class="cell"><div class="cell-num">1</div><div class="sticker-hint">verse sticker</div><div class="cell-km">3.35 km</div></div>
+      <div class="cell"><div class="cell-num">2</div><div class="sticker-hint">verse sticker</div><div class="cell-km">6.70 km</div></div>
+      <div class="cell"><div class="cell-num">3</div><div class="sticker-hint">verse sticker</div><div class="cell-km">10.05 km</div></div>
+      <div class="cell"><div class="cell-num">4</div><div class="sticker-hint">verse sticker</div><div class="cell-km">13.40 km</div></div>
+      <div class="cell"><div class="cell-num">5</div><div class="sticker-hint">verse sticker</div><div class="cell-km">16.75 km</div></div>
+      <div class="cell"><div class="cell-num">6</div><div class="sticker-hint">verse sticker</div><div class="cell-km">20.10 km</div></div>
+      <div class="cell"><div class="cell-num">7</div><div class="sticker-hint">verse sticker</div><div class="cell-km">23.45 km</div></div>
+      <div class="cell"><div class="cell-num">8</div><div class="sticker-hint">verse sticker</div><div class="cell-km">26.80 km</div></div>
+      <div class="cell"><div class="cell-num">9</div><div class="sticker-hint">verse sticker</div><div class="cell-km">30.15 km</div></div>
+      <div class="cell"><div class="cell-num big2">10</div><div class="sticker-hint">verse sticker</div><div class="cell-km">33.50 km</div></div>
+      <div class="cell"><div class="cell-num big2">11</div><div class="sticker-hint">verse sticker</div><div class="cell-km">36.85 km</div></div>
+      <div class="cell"><div class="cell-num big2">12</div><div class="sticker-hint">verse sticker</div><div class="cell-km">40.20 km</div></div>
+      <div class="cell"><div class="cell-num big2">13</div><div class="sticker-hint">verse sticker</div><div class="cell-km">43.55 km</div></div>
+      <div class="cell"><div class="cell-num big2">14</div><div class="sticker-hint">verse sticker</div><div class="cell-km">46.90 km</div></div>
+      <div class="cell"><div class="cell-num big2">15</div><div class="sticker-hint">verse sticker</div><div class="cell-km">50.25 km</div></div>
+      <div class="cell"><div class="cell-num big2">16</div><div class="sticker-hint">verse sticker</div><div class="cell-km">53.60 km</div></div>
+      <div class="cell"><div class="cell-num big2">17</div><div class="sticker-hint">verse sticker</div><div class="cell-km">56.95 km</div></div>
+      <div class="cell"><div class="cell-num big2">18</div><div class="sticker-hint">verse sticker</div><div class="cell-km">60.30 km</div></div>
+      <div class="cell cell-19"><div class="cell-num">19</div><div class="sticker-hint">🏆 FINAL — verse sticker</div><div class="cell-km">64 km · FINISH!</div></div>
+      <div class="participants-cell">
+        <div class="part-title">🏅 Confirmed</div>
+        <div class="part-count">28</div>
+        <div class="part-names">
+          <span>1. Katiuscia Silva</span><span>2. Daniele</span><span>3. Gui Melfi</span>
+          <span>4. Eduardo</span><span class="km64">5. Fred — 64 km</span><span>6. Wellinson</span>
+          <span>7. Carla Fortezza</span><span>8. Leandro Garcia</span><span class="km64">9. Camiel — 64 km</span>
+          <span>10. Isabella</span><span>11. Damaris</span><span>12. Giovani</span>
+          <span>13. Anderson Hoff</span><span>14. Bruno Portilho</span><span>15. Carla Fortezza</span>
+          <span>16. Cleidi Zandonai</span><span>17. Thaís Santos</span><span>18. Taimon</span>
+          <span>19. Beatriz</span><span>20. Fernando</span><span class="km64">21. Cesar Costa — 64 km</span>
+          <span class="km64">22. Roberto Melfi — 64 km</span><span>23. Nete Melfi</span>
+          <span>24. Eduardo Melfi</span><span>25. Tainá Mori</span><span>26. Bella</span>
+          <span>27. Juliana</span><span>28. Jean</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-verse"><strong>"I can do all things through Christ who strengthens me."</strong><br>— Philippians 4:13</div>
+    <div class="footer-fundraiser">
+      <div class="ft">💛 Support the Cause</div>
+      <div class="fn">Urology Wellness<br>St. Joseph's Hospital Foundation</div>
+      <div class="fu">gofundme.com/f/urology-wellness-st-josephs-hospital-foundation</div>
+    </div>
+  </div>
+</template>
+
+<div class="page q1"><div class="qlabel">1/4 — TOPO ESQUERDO</div><div class="poster"></div></div>
+<div class="page q2"><div class="qlabel">2/4 — TOPO DIREITO</div><div class="poster"></div></div>
+<div class="page q3"><div class="qlabel">3/4 — BAIXO ESQUERDO</div><div class="poster"></div></div>
+<div class="page q4"><div class="qlabel">4/4 — BAIXO DIREITO</div><div class="poster"></div></div>
+
+<script>
+  const tpl = document.getElementById('tpl');
+  document.querySelectorAll('.poster').forEach(p => {
+    p.appendChild(tpl.content.cloneNode(true));
+  });
+</script>
+</body>
+</html>
