@@ -411,9 +411,10 @@ async function loadGrupos(){
   if(groupsLoaded) return;
   try {
     const data = await fetchStandings();
-    const groups = data.standings?.groups
-      || data.children?.map(c=>({header:c.name||c.season?.displayName, standings:{entries:c.standings?.entries||c.entries||[]}}))
-      || [];
+    const groups = (data.children||[]).map(c=>({
+      header: c.name || c.abbreviation || 'Grupo',
+      standings: { entries: c.standings?.entries || [] }
+    }));
 
     document.getElementById('ub-grupos').textContent = `Atualizado às ${ts()}`;
 
