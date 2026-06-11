@@ -522,7 +522,7 @@ function go(tab, el){
   el.classList.add('on');
   document.getElementById('sec-'+tab).classList.add('on');
   if(tab==='hoje')   loadHoje();
-  if(tab==='grupos') loadGrupos();
+  if(tab==='grupos'){ groupsLoaded=false; loadGrupos(); }
   if(tab==='agenda') loadAgenda();
 }
 
