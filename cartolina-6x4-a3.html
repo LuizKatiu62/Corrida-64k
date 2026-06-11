@@ -36,19 +36,18 @@
 
 /* ── Poster inside each wrapper ── */
 .a3-wrap .poster{
-  position:absolute;top:0;left:0;
+  position:absolute;
   width:22in;height:28in;
-  transform-origin:top left;
   background:#fff;
   display:flex;flex-direction:column;
   overflow:hidden;
 }
 
-/* scale(1.063): 22"→23.38" fills 2×A3 cols perfectly */
-.q1 .poster{transform:scale(1.063) translate(   0,     0)}
-.q2 .poster{transform:scale(1.063) translate(-11in,    0)}
-.q3 .poster{transform:scale(1.063) translate(   0, -14in)}
-.q4 .poster{transform:scale(1.063) translate(-11in, -14in)}
+/* Quadrant offsets — no CSS transform, just position */
+.q1 .poster{top:0;     left:0}
+.q2 .poster{top:0;     left:-11in}
+.q3 .poster{top:-14in; left:0}
+.q4 .poster{top:-14in; left:-11in}
 
 /* ── HEADER ── */
 .header{
