@@ -448,17 +448,21 @@ async function loadGrupos(){
         (e.stats||[]).forEach(s=>{ S[s.name]=s.displayValue??s.value??'–'; });
         const adv  = i<2;
         const maybe= i===2;
-        const diff = parseInt(S.pointsDifference??S.goalDifference??0);
-        const dc   = diff>0?'diff-pos':diff<0?'diff-neg':'';
-        const ds   = diff>0?`+${diff}`:String(diff);
-        html += `<tr class="${adv?'adv':maybe?'maybe':''}">
+        const rawDiff = S.pointDifferential ?? S.pointsDifference ?? S.goalDifference ?? '0';
+        const diff    = parseInt(rawDiff)||0;
+        const dc      = diff>0?'diff-pos':diff<0?'diff-neg':'';
+        const ds      = diff>0?`+${diff}`:String(diff);
+        const rank    = parseInt(S.rank??i+1);
+        const advRow  = rank<=2;
+        const maybeRow= rank===3;
+        html += `<tr class="${advRow?'adv':maybeRow?'maybe':''}">
           <td><div class="tcell"><span class="tflag-sm">${flag(t.abbreviation)}</span>${t.displayName||t.name||''}</div></td>
           <td>${S.gamesPlayed??'0'}</td>
           <td>${S.wins??'0'}</td>
           <td>${S.ties??S.draws??'0'}</td>
           <td>${S.losses??'0'}</td>
-          <td>${S.pointsFor??S.goalsFor??'0'}</td>
-          <td>${S.pointsAgainst??S.goalsAgainst??'0'}</td>
+          <td>${S.pointsFor??'0'}</td>
+          <td>${S.pointsAgainst??'0'}</td>
           <td><span class="${dc}">${ds}</span></td>
           <td class="pts-col">${S.points??'0'}</td>
         </tr>`;
