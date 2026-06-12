@@ -385,6 +385,7 @@ function renderList(games){ return games.map(g=>{ try{return cardHTML(g);}catch(
 
 // ── LOAD TODAY ────────────────────────────────────────────────────────────────
 async function loadHoje(){
+  document.getElementById('list-hoje').innerHTML = '<div class="loading"><div class="spin"></div><br>Carregando…</div>';
   try {
     const now = new Date();
     const yesterday = new Date(now); yesterday.setDate(yesterday.getDate()-1);
