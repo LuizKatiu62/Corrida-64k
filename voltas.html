@@ -16,6 +16,10 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://runwithgratitude.ca/og-watch.png">
 
+<!-- Detect ?watch IMMEDIATELY — before any other script runs, so the watch view
+     shows right away without waiting for Firebase to load               -->
+<script>if(location.search.indexOf('watch')!==-1)document.documentElement.dataset.mode='watch';</script>
+
 <!-- Firebase — optional, loaded async; app works fully offline without it -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" async onerror="window._fbFailed=true"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" async onerror="window._fbFailed=true"></script>
