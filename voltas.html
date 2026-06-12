@@ -741,11 +741,11 @@ function showView(id){
 // ══════════════════════════════════════
 function render(){
   const ci=S.cur, cn=ci+1;
-  if(cn>TOTAL){ showView('vEnd'); pushLap(TOTAL+1); return; }
+  if(cn>TOTAL){ showView('vEnd'); pushLap(TOTAL); return; }
 
   showView('vTracker');
-  document.getElementById('lapBadge').textContent=`LAP ${cn} / ${TOTAL}`;
-  document.getElementById('lapNum').textContent=cn;
+  document.getElementById('lapBadge').textContent=`VOLTA ${S.cur} / ${TOTAL}`;
+  document.getElementById('lapNum').textContent=S.cur;
   document.getElementById('lapMsg').textContent=msg(cn);
   document.getElementById('distRow').textContent=
     `${kmAt(ci).toFixed(1)} km done · ${(TOTAL_KM - kmAt(ci)).toFixed(1)} km to go`;
