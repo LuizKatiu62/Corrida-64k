@@ -828,7 +828,7 @@ function undoLap(){
   if(S.cur < 9)  S.lap10At = null;
   if(S.cur < 15) S.lap16At = null;
   saveState(S);
-  pushLap(S.cur + 1);
+  pushLap(S.cur);
   render();
 }
 
