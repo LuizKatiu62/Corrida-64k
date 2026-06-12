@@ -1169,11 +1169,18 @@ function startApp(){
   }
 }
 
-// Give Firebase scripts up to 3 s to load (they're async); start regardless
+// Start as soon as Firebase loads; poll every 100 ms, give up after 3 s
 if(typeof firebase !== 'undefined'){
   startApp();
 } else {
-  setTimeout(startApp, 3000);
+  let _waited = 0;
+  const _iv = setInterval(()=>{
+    _waited += 100;
+    if(typeof firebase !== 'undefined' || _waited >= 3000){
+      clearInterval(_iv);
+      startApp();
+    }
+  }, 100);
 }
 </script>
 </body>
