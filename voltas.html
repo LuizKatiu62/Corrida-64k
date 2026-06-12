@@ -34,6 +34,8 @@ body{background:#0d1f0f;color:#fff;user-select:none}
 /* ── Views ── */
 .view{display:none;height:100vh;height:100dvh;flex-direction:column}
 .view.on{display:flex}
+/* Show watch view immediately when ?watch is detected before any JS runs */
+html[data-mode="watch"] #vWatch{display:flex}
 
 /* ══════════════════════════════
    TRACKER (runner's phone)
