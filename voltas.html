@@ -1145,9 +1145,9 @@ function startApp(){
     if(ref){
       ref.on('value', snap=>{
         const d     = snap.val();
-        const fbLap = d ? (d.lap || 1) : 0;
-        if(fbLap > S.cur + 1){
-          S.cur = fbLap - 1;
+        const fbLap = d ? (d.lap ?? 0) : 0;  // completed laps
+        if(fbLap > S.cur){
+          S.cur = fbLap;
           if(d.startedAt) S.startedAt = d.startedAt;
           if(d.lap1At)    S.lap1At    = d.lap1At;
           if(d.lap10At)   S.lap10At   = d.lap10At;
@@ -1155,8 +1155,8 @@ function startApp(){
           saveState(S);
           render();
           syncPhotosFromCloud();
-        } else if(fbLap === 0 || (fbLap === 1 && S.cur === 0)){
-          pushLap(S.cur + 1);
+        } else if(fbLap === 0 && S.cur === 0){
+          pushLap(0);
         }
       }, ()=>{ pushLap(S.cur + 1); });
     }
