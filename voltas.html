@@ -814,7 +814,7 @@ function confirmLap(){
   if(ci===9  && !S.lap10At) { S.lap10At = now2; }
   if(ci===15 && !S.lap16At) { S.lap16At = now2; }
   S.cur=ci+1; saveState(S);
-  pushLap(S.cur+1);
+  pushLap(S.cur);
 
   setTimeout(()=>{ fl.classList.remove('go'); render(); }, 1400);
 }
