@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0d1f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>64KM Challenge — Follow LIVE 🏃</title>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://runwithgratitude.ca/watch.html">
+<meta property="og:title" content="64KM Challenge — Follow LIVE 🏃">
+<meta property="og:description" content="Luiz e amigos correndo 64km em gratidão. Acompanhe cada volta em tempo real!">
+<meta property="og:image" content="https://runwithgratitude.ca/og-watch.png">
+<meta property="og:image:width" content="1080">
+<meta property="og:image:height" content="1080">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://runwithgratitude.ca/og-watch.png">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" async></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" async></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,'Segoe UI',sans-serif}
+body{
+  background:radial-gradient(ellipse at 50% 30%,#1a3a1a,#0d1f0f);
+  color:#fff;user-select:none;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:28px 24px;
+  gap:0;overflow-y:auto;position:relative;
+  min-height:100vh;min-height:100dvh;
+}
+
+#wPhotoBg{
+  position:fixed;inset:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:0;transition:opacity 2s ease;
+  pointer-events:none;z-index:0;
+}
+body>*:not(#wPhotoBg){position:relative;z-index:1;}
+
+.live-badge{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,230,118,.15);border:1px solid rgba(0,230,118,.4);
+  border-radius:20px;padding:5px 14px;
+  font-size:11px;font-weight:800;letter-spacing:2px;color:#00e676;
+  margin-bottom:18px;
+}
+.live-dot{
+  width:7px;height:7px;background:#00e676;border-radius:50%;
+  animation:blink 1.2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.watch-title{
+  font-size:14px;font-weight:700;letter-spacing:2px;
+  opacity:.5;text-transform:uppercase;margin-bottom:8px;
+}
+.watch-lap{
+  font-size:100px;font-weight:900;line-height:.9;color:#fff;
+  text-shadow:0 0 60px rgba(212,160,23,.4);margin-bottom:6px;
+}
+.watch-of{font-size:20px;font-weight:700;opacity:.5;margin-bottom:16px}
+
+.watch-pbar-wrap{
+  width:100%;max-width:300px;height:8px;
+  background:rgba(255,255,255,.1);border-radius:4px;margin-bottom:8px;overflow:hidden;
+}
+.watch-pbar-fill{height:100%;background:linear-gradient(90deg,#1e8449,#d4a017);border-radius:4px;transition:width .8s ease}
+.watch-pct{font-size:13px;font-weight:700;color:#d4a017;margin-bottom:18px}
+
+.watch-km-row{display:flex;gap:20px;justify-content:center;margin-bottom:18px}
+.watch-km-box{background:rgba(255,255,255,.07);border-radius:12px;padding:10px 18px}
+.watch-km-box .km-val{font-size:22px;font-weight:900;line-height:1}
+.watch-km-box .km-lbl{font-size:10px;opacity:.5;margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+
+.watch-est{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(212,160,23,.35);
+  border-radius:14px;padding:12px 28px;margin-bottom:16px;display:none;
+}
+.watch-est .est-lbl{font-size:10px;opacity:.5;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.watch-est .est-val{font-size:24px;font-weight:900;color:#d4a017;line-height:1.1}
+.watch-est .est-sub{font-size:10px;opacity:.4;margin-top:3px}
+
+.watch-stop{
+  background:rgba(255,213,79,.08);border:1.5px solid rgba(255,213,79,.35);
+  border-radius:14px;padding:14px 24px;margin-bottom:16px;
+  display:none;
+  animation:stopPulse 2s ease-in-out infinite;
+}
+@keyframes stopPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,213,79,.15)}50%{box-shadow:0 0 0 8px rgba(255,213,79,0)}}
+.watch-stop .stop-icon{font-size:22px;margin-bottom:4px}
+.watch-stop .stop-title{font-size:13px;font-weight:900;color:#ffd54f;letter-spacing:.5px;margin-bottom:2px}
+.watch-stop .stop-sub{font-size:11px;color:rgba(255,220,100,.7)}
+
+.watch-msg{
+  font-size:13px;font-style:italic;opacity:.7;line-height:1.6;
+  max-width:280px;margin-bottom:14px;
+}
+.watch-event{font-size:11px;opacity:.35;letter-spacing:.4px;margin-bottom:6px}
+.watch-upd{font-size:10px;opacity:.3;margin-bottom:20px}
+
+.watch-offline{
+  background:rgba(255,100,100,.1);border:1px solid rgba(255,100,100,.3);
+  border-radius:10px;padding:10px 18px;
+  font-size:12px;color:rgba(255,160,160,.8);
+  max-width:260px;display:none;margin-top:8px;
+}
+</style>
+</head>
+<body>
+
+<div id="wPhotoBg"></div>
+
+<div class="live-badge"><span class="live-dot"></span> LIVE</div>
+<div class="watch-title">CHALLENGE 64 KM</div>
+<div class="watch-lap" id="wLap">—</div>
+<div class="watch-of" id="wOf">of 19 laps</div>
+<div class="watch-pbar-wrap"><div class="watch-pbar-fill" id="wPbar" style="width:0"></div></div>
+<div class="watch-pct" id="wPct">0%</div>
+<div class="watch-km-row">
+  <div class="watch-km-box">
+    <div class="km-val" id="wKmDone">0.0</div>
+    <div class="km-lbl">KM DONE</div>
+  </div>
+  <div class="watch-km-box">
+    <div class="km-val" id="wKmLeft">64.0</div>
+    <div class="km-lbl">KM TO GO</div>
+  </div>
+</div>
+<div class="watch-est" id="wEst">
+  <div class="est-lbl">⏱ Estimated Finish</div>
+  <div class="est-val" id="wEstTime">—</div>
+  <div class="est-sub" id="wEstSub"></div>
+</div>
+<div class="watch-stop" id="wStop">
+  <div class="stop-icon">⏸</div>
+  <div class="stop-title" id="wStopTitle">STRATEGIC STOP</div>
+  <div class="stop-sub" id="wStopSub"></div>
+</div>
+<div class="watch-msg" id="wMsg"></div>
+<div class="watch-event">📍 Little River Reservoir · Saint John NB · June 13, 2026</div>
+<div class="watch-upd" id="wUpd">Waiting for data…</div>
+<div class="watch-offline" id="wOffline">
+  ⚠️ No data yet. The runner may not have started or is offline.
+</div>
+
+<script>
+const TOTAL    = 19;
+const LAP_KM   = 3.35;
+const TOTAL_KM = 64;
+const kmAt = n => n >= TOTAL ? TOTAL_KM : parseFloat((n * LAP_KM).toFixed(2));
+
+const MSGS = {
+  1:"Let's go! The journey begins! 🚀",
+  4:'Settling in — find your rhythm! 💚',
+  5:'¼ done — 16.5 km! Strong! 💪',
+  8:'Almost halfway — dig in! 🔥',
+  10:'HALFWAY — 33 km! You\'re amazing! 🌟',
+  13:'More done than left — keep going! ⚡',
+  14:'¾ done — 46.2 km! Nearly there! 🏅',
+  17:'Two laps to go — give it all! 🦁',
+  18:'Second to last — almost home! 🎯',
+  19:'FINAL LAP — give it everything! 🏆'
+};
+const msg = n => MSGS[n] || `Lap ${n} — Keep going! You've got this! 💚`;
+
+let db = null, ref = null, photosRef = null;
+let lastPhotoLap = -1;
+
+function initFirebase(){
+  try {
+    if(typeof firebase === 'undefined') return;
+    firebase.initializeApp({
+      apiKey:            'AIzaSyBuS3afVcx3W-zfgZfDYIutNltuEfP8Fhc',
+      authDomain:        'source-atlantic-sr.firebaseapp.com',
+      databaseURL:       'https://source-atlantic-sr-default-rtdb.firebaseio.com',
+      projectId:         'source-atlantic-sr',
+      storageBucket:     'source-atlantic-sr.firebasestorage.app',
+      messagingSenderId: '953329380095',
+      appId:             '1:953329380095:web:f7865dda88a33ff9457aca'
+    });
+    db        = firebase.database();
+    ref       = db.ref('desafio64km/status');
+    photosRef = db.ref('desafio64km/photos');
+  } catch(e){ db=null; ref=null; photosRef=null; }
+}
+
+function applyData(d){
+  if(!d){ document.getElementById('wOffline').style.display='block'; return; }
+  document.getElementById('wOffline').style.display='none';
+
+  const lap    = d.lap ?? 0;
+  const kmDone = lap >= TOTAL ? TOTAL_KM : parseFloat((lap * LAP_KM).toFixed(2));
+  const kmLeft = parseFloat(Math.max(TOTAL_KM - kmDone, 0).toFixed(1));
+  const pct    = Math.round(kmDone / TOTAL_KM * 100);
+
+  document.getElementById('wLap').textContent = lap;
+  document.getElementById('wOf').textContent  = `of ${TOTAL} laps · 64 km`;
+  document.getElementById('wPbar').style.width = pct + '%';
+  document.getElementById('wPct').textContent  = pct + '% of 64 km';
+  document.getElementById('wKmDone').textContent = kmDone.toFixed(1);
+  document.getElementById('wKmLeft').textContent = kmLeft.toFixed(1);
+  document.getElementById('wMsg').textContent    = d.msg || msg(lap);
+
+  if(d.updated){
+    const sec = Math.round((Date.now() - d.updated) / 1000);
+    const ago = sec < 60 ? `${sec}s ago` : sec < 3600 ? `${Math.round(sec/60)}m ago` : `${Math.round(sec/3600)}h ago`;
+    document.getElementById('wUpd').textContent = `Updated: ${ago}`;
+  }
+
+  // Strategic stop
+  const STOP_AT = {4:1, 8:2, 11:3, 14:4, 16:5};
+  const stopEl  = document.getElementById('wStop');
+  if(STOP_AT[lap]){
+    stopEl.style.display = 'block';
+    document.getElementById('wStopTitle').textContent = `⏸ PARADA ESTRATÉGICA ${STOP_AT[lap]} de 5`;
+    document.getElementById('wStopSub').textContent   = `Após volta ${lap} · ${kmAt(lap).toFixed(2).replace('.',',')} km concluídos`;
+  } else {
+    stopEl.style.display = 'none';
+  }
+
+  // Photo background
+  if(photosRef){
+    const photoIdx = lap - 1;
+    if(photoIdx !== lastPhotoLap){
+      lastPhotoLap = photoIdx;
+      const bg = document.getElementById('wPhotoBg');
+      photosRef.child(String(photoIdx)).once('value').then(snap=>{
+        const b64 = snap.val();
+        if(b64){ bg.style.backgroundImage=`url(${b64})`; bg.style.opacity='0.18'; }
+        else    { bg.style.opacity='0'; }
+      }).catch(()=>{ document.getElementById('wPhotoBg').style.opacity='0'; });
+    }
+  }
+
+  // Estimated finish
+  (function(){
+    let timePerLap, lapsUsed, checkpoint;
+    if(d.startedAt && d.lap16At && lap >= 16){
+      timePerLap=( d.lap16At - d.startedAt)/15; lapsUsed=15; checkpoint='🔄 Updated at lap 16';
+    } else if(d.startedAt && d.lap10At && lap >= 10){
+      timePerLap=(d.lap10At - d.startedAt)/9;   lapsUsed=9;  checkpoint='🔄 Updated at lap 10';
+    } else if(d.startedAt && d.lap1At && lap >= 2){
+      timePerLap=d.lap1At - d.startedAt;        lapsUsed=1;  checkpoint='Based on lap 1 pace';
+    } else {
+      document.getElementById('wEst').style.display='none'; return;
+    }
+    const estDate  = new Date(d.startedAt + timePerLap * TOTAL);
+    const h = estDate.getHours().toString().padStart(2,'0');
+    const m = estDate.getMinutes().toString().padStart(2,'0');
+    const totalMins = Math.round(timePerLap * TOTAL / 60000);
+    document.getElementById('wEst').style.display='block';
+    document.getElementById('wEstTime').textContent = `~${h}:${m}`;
+    document.getElementById('wEstSub').textContent  =
+      `${Math.floor(totalMins/60)}h ${totalMins%60}min total · ${Math.round(timePerLap/60000)} min/lap · ${checkpoint}`;
+  })();
+}
+
+function startListening(){
+  if(!ref){ document.getElementById('wOffline').style.display='block'; return; }
+  ref.on('value', snap=>applyData(snap.val()),
+    ()=>{ document.getElementById('wOffline').style.display='block'; });
+  setInterval(()=>{ ref.once('value').then(snap=>applyData(snap.val())).catch(()=>{}); }, 5000);
+  setInterval(()=>{
+    ref.once('value').then(snap=>{
+      const d=snap.val();
+      if(d&&d.updated){
+        const sec=Math.round((Date.now()-d.updated)/1000);
+        const ago=sec<60?`${sec}s ago`:sec<3600?`${Math.round(sec/60)}m ago`:`${Math.round(sec/3600)}h ago`;
+        document.getElementById('wUpd').textContent=`Updated: ${ago}`;
+      }
+    }).catch(()=>{});
+  }, 30000);
+}
+
+function start(){
+  initFirebase();
+  startListening();
+}
+
+// Start as soon as Firebase loads; poll every 100ms, give up after 3s
+if(typeof firebase !== 'undefined'){
+  start();
+} else {
+  let _w = 0;
+  const _iv = setInterval(()=>{
+    _w += 100;
+    if(typeof firebase !== 'undefined' || _w >= 3000){ clearInterval(_iv); start(); }
+  }, 100);
+}
+</script>
+</body>
+</html>
