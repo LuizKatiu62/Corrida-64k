@@ -593,21 +593,20 @@ function initFirebase(){
 
 const TOTAL_KM = 64;
 
-function pushLap(lapNumber){
-  const lapsCompleted = lapNumber - 1;
+function pushLap(lapsCompleted){
   const kmDone = lapsCompleted >= TOTAL ? TOTAL_KM
                : parseFloat((lapsCompleted * LAP_KM).toFixed(2));
   const kmLeft = Math.max(TOTAL_KM - kmDone, 0);
   const pct    = Math.round(kmDone / TOTAL_KM * 100);
   const now    = Date.now();
-  if(!S.startedAt){ S.startedAt = now; saveState(S); }
+  if(lapsCompleted > 0 && !S.startedAt){ S.startedAt = now; saveState(S); }
   const payload = {
-    lap:       Math.min(lapNumber, TOTAL),
+    lap:       Math.min(lapsCompleted, TOTAL),
     total:     TOTAL,
     kmDone:    kmDone.toFixed(1),
     kmLeft:    kmLeft.toFixed(1),
     pct:       pct,
-    msg:       msg(Math.min(lapNumber, TOTAL)),
+    msg:       msg(Math.min(lapsCompleted + 1, TOTAL)),
     updated:   now,
     startedAt: S.startedAt
   };
