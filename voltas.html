@@ -1030,18 +1030,17 @@ function startWatchMode(){
     }
 
     // ── Strategic stop alert ──
-    // Shows right after laps 4, 8, 11, 14, 16 are completed (lap just changed to 5,9,12,15,17)
-    const STOP_AFTER = {4:1, 8:2, 11:3, 14:4, 16:5};
-    const prevLap = lap - 1;
+    // Shows when exactly 4, 8, 11, 14 or 16 laps are completed
+    const STOP_AT = {4:1, 8:2, 11:3, 14:4, 16:5};
     const stopEl  = document.getElementById('wStop');
-    if(STOP_AFTER[prevLap]){
-      const stopNum  = STOP_AFTER[prevLap];
-      const stopKm   = kmAt(prevLap).toFixed(2).replace('.',',');
+    if(STOP_AT[lap]){
+      const stopNum = STOP_AT[lap];
+      const stopKm  = kmAt(lap).toFixed(2).replace('.',',');
       stopEl.style.display = 'block';
       document.getElementById('wStopTitle').textContent =
-        `⏸ STRATEGIC STOP ${stopNum} of 5`;
+        `⏸ PARADA ESTRATÉGICA ${stopNum} de 5`;
       document.getElementById('wStopSub').textContent =
-        `After lap ${prevLap} · ${stopKm} km completed`;
+        `Após volta ${lap} · ${stopKm} km concluídos`;
     } else {
       stopEl.style.display = 'none';
     }
