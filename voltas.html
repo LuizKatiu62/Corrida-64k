@@ -1128,7 +1128,7 @@ function startWatchMode(){
 function resetAll(){
   if(!confirm('Reset lap progress? Photos will be kept.')) return;
   S.cur=0; saveState(S);
-  pushLap(1);
+  pushLap(0);
   render();
 }
 
