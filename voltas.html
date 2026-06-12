@@ -1011,6 +1011,7 @@ document.getElementById('filePick').addEventListener('change',e=>{
 // SPECTATOR MODE
 // ══════════════════════════════════════
 function startWatchMode(){
+  document.documentElement.removeAttribute('data-mode'); // hand off to JS/showView
   showView('vWatch');
   let lastPhotoLap = -1;
 
