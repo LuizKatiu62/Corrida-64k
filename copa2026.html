@@ -379,27 +379,49 @@ async function fetchStandings(){
 // ── LOAD TODAY ────────────────────────────────────────────────────────────────
 async function loadHoje(){
   try {
-    const data  = await fetchBoard(new Date());
+    const now   = new Date();
+    const data  = await fetchBoard(now);
     const games = (data.events||[]).map(parseEvent);
     const hasLive = games.some(g=>g.isLive);
 
     document.getElementById('livePill').classList.toggle('on', hasLive);
     document.getElementById('ub-hoje').textContent = `Atualizado às ${ts()}`;
 
-    if(!games.length){
-      // Try to find next game day message
+    // No games today yet — also fetch yesterday's results
+    const todayHasActivity = games.some(g=>g.isLive||g.isDone);
+    let html = '';
+
+    if(!todayHasActivity){
+      // Show yesterday's completed results
+      const yesterday = new Date(now); yesterday.setDate(yesterday.getDate()-1);
+      try {
+        const yData  = await fetchBoard(yesterday);
+        const yGames = (yData.events||[]).map(parseEvent).filter(g=>g.isDone);
+        if(yGames.length){
+          html += `<div class="phase-sep"><span class="phase-sep-line"></span>
+            <span class="phase-sep-label">Resultados de ontem · ${yesterday.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}</span>
+            <span class="phase-sep-line"></span></div>`;
+          html += yGames.map(cardHTML).join('');
+        }
+      } catch(e){}
+    }
+
+    if(games.length){
+      if(html) html += `<div class="phase-sep"><span class="phase-sep-line"></span>
+        <span class="phase-sep-label">Hoje · ${now.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}</span>
+        <span class="phase-sep-line"></span></div>`;
+      html += games.map(cardHTML).join('');
+    }
+
+    if(!html){
       const today = new Date();
       let nextMsg = '';
       if(today < WC_START) nextMsg = `Copa começa em ${WC_START.toLocaleDateString('pt-BR',{day:'numeric',month:'long'})}!`;
       else if(today > WC_END) nextMsg = 'Copa encerrada. Até 2030! 🏆';
-      document.getElementById('list-hoje').innerHTML = `
-        <div class="empty">
-          <span class="empty-ico">😴</span>
-          Sem jogos hoje.<br>${nextMsg||'Confira a <strong>Agenda</strong> para os próximos jogos.'}
-        </div>`;
-    } else {
-      document.getElementById('list-hoje').innerHTML = games.map(cardHTML).join('');
+      html = `<div class="empty"><span class="empty-ico">😴</span>Sem jogos hoje.<br>${nextMsg||'Confira a <strong>Agenda</strong> para os próximos jogos.'}</div>`;
     }
+
+    document.getElementById('list-hoje').innerHTML = html;
     sched(hasLive);
   } catch(e) {
     document.getElementById('list-hoje').innerHTML = `<div class="err">⚠️ Erro ao carregar: ${e.message}</div>`;
