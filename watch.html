@@ -185,6 +185,13 @@ function initFirebase(){
     db        = firebase.database();
     ref       = db.ref('desafio64km/status');
     photosRef = db.ref('desafio64km/photos');
+    // Register presence — auto-removed when browser closes
+    db.ref('.info/connected').on('value', snap => {
+      if(!snap.val()) return;
+      const myRef = db.ref('desafio64km/viewers').push();
+      myRef.onDisconnect().remove();
+      myRef.set({t: Date.now()});
+    });
   } catch(e){ db=null; ref=null; photosRef=null; }
 }
 
