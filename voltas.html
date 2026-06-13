@@ -599,6 +599,14 @@ function initFirebase(){
     db        = firebase.database();
     ref       = db.ref('desafio64km/status');
     photosRef = db.ref('desafio64km/photos');
+    // Live viewer count
+    db.ref('desafio64km/viewers').on('value', snap => {
+      const n = snap.numChildren();
+      const pill = document.getElementById('viewerPill');
+      if(pill){ pill.style.display = n > 0 ? 'flex' : 'none'; }
+      const el = document.getElementById('viewerCount');
+      if(el) el.textContent = n;
+    });
   } catch(e){ db = null; ref = null; photosRef = null; }
 }
 
