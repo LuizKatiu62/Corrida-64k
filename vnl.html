@@ -786,9 +786,10 @@ function buildBrasil(){
   loadScores(games);
 }
 
-// ── AGENDA ──
+// ── AGENDA (todos os jogos) ──
 function buildAgenda(){
   agendaBuilt = true;
+  const now   = new Date();
   const games = parseGames(ALL_WOMEN).sort((a,b)=>a.date-b.date);
 
   const weeks = [
@@ -800,12 +801,23 @@ function buildAgenda(){
 
   let html = '';
   for(const wk of weeks){
-    const wFrom = new Date(wk.from), wTo = new Date(wk.to);
+    const wFrom  = new Date(wk.from), wTo = new Date(wk.to);
     const wGames = games.filter(g=>g.date>=wFrom && g.date<wTo);
     if(!wGames.length) continue;
 
-    const done = wGames.filter(g=>getStatus(g.date)==='fin').length;
-    html += `<div class="week-hdr">${wk.label} <span class="week-badge">${done}/${wGames.length}</span></div>`;
+    const done    = wGames.filter(g=>getStatus(g.date)==='fin').length;
+    const isPast  = wTo  < now;            // entire week already done → collapse
+    const wkId    = 'wk-' + wk.from.slice(0,7);
+
+    html += `
+<div class="week-hdr acc-hdr" onclick="toggleWeek('${wkId}')">
+  <span>${wk.label}</span>
+  <span style="display:flex;align-items:center;gap:.5rem">
+    <span class="week-badge">${done}/${wGames.length}</span>
+    <span class="acc-arrow" id="arrow-${wkId}">${isPast?'▶':'▼'}</span>
+  </span>
+</div>
+<div id="${wkId}" style="display:${isPast?'none':'block'}">`;
 
     // Group by day
     const byDay = {};
@@ -815,9 +827,10 @@ function buildAgenda(){
       byDay[k].games.push(g);
     }
     for(const {date:d, games:dg} of Object.values(byDay)){
-      html += `<div class="date-hdr" style="font-size:.85rem;color:rgba(255,255,255,.4)">── ${fmtDate(d)}</div>`;
-      html += dg.map(g=>cardHtml(g)).join('');
+      html += `<div class="date-hdr" style="font-size:.82rem;color:rgba(255,255,255,.38)">── ${fmtDate(d)}</div>`;
+      html += dg.map(g=>cardHtml(g, true)).join('');
     }
+    html += '</div>';
   }
 
   document.getElementById('agendaContent').innerHTML =
