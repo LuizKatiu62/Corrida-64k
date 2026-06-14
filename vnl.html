@@ -717,18 +717,33 @@ function buildAgenda(){
   agendaBuilt = true;
   const games = parseGames(ALL_WOMEN).sort((a,b)=>a.date-b.date);
 
-  // Group by date
-  const byDate = {};
-  for(const g of games){
-    const key = g.date.toDateString();
-    if(!byDate[key]) byDate[key] = {date:g.date, games:[]};
-    byDate[key].games.push(g);
-  }
+  const weeks = [
+    {label:'Semana 1 · Jun 3–7 · Brasília 🇧🇷', from:'2026-06-03', to:'2026-06-08'},
+    {label:'Semana 2 · Jun 17–21 · Ancara 🇹🇷', from:'2026-06-17', to:'2026-06-22'},
+    {label:'Semana 3 · Jul 8–12 · Osaka 🇯🇵',   from:'2026-07-08', to:'2026-07-13'},
+    {label:'Finals · Jul 22–26',                 from:'2026-07-22', to:'2026-07-27'},
+  ];
 
   let html = '';
-  for(const {date, games: dg} of Object.values(byDate)){
-    html += `<div class="date-hdr">📅 ${fmtDate(date)}</div>`;
-    html += dg.map(cardHtml).join('');
+  for(const wk of weeks){
+    const wFrom = new Date(wk.from), wTo = new Date(wk.to);
+    const wGames = games.filter(g=>g.date>=wFrom && g.date<wTo);
+    if(!wGames.length) continue;
+
+    const done = wGames.filter(g=>getStatus(g.date)==='fin').length;
+    html += `<div class="week-hdr">${wk.label} <span class="week-badge">${done}/${wGames.length}</span></div>`;
+
+    // Group by day
+    const byDay = {};
+    for(const g of wGames){
+      const k = g.date.toDateString();
+      if(!byDay[k]) byDay[k] = {date:g.date, games:[]};
+      byDay[k].games.push(g);
+    }
+    for(const {date:d, games:dg} of Object.values(byDay)){
+      html += `<div class="date-hdr" style="font-size:.85rem;color:rgba(255,255,255,.4)">── ${fmtDate(d)}</div>`;
+      html += dg.map(g=>cardHtml(g)).join('');
+    }
   }
 
   document.getElementById('agendaContent').innerHTML =
