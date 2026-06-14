@@ -838,6 +838,84 @@ function buildAgenda(){
   loadScores(games);
 }
 
+// ── CLASSIFICAÇÃO ──
+async function buildStandings(){
+  standingsBuilt = true;
+  const el = document.getElementById('standingsContent');
+  try {
+    const r    = await fetch('https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/');
+    const html = await r.text();
+    const teams = parseStandingsHtml(html);
+    if(!teams.length) throw new Error('empty');
+    el.innerHTML = renderStandings(teams);
+  } catch(e){
+    el.innerHTML = `<div class="empty"><div class="em-icon">📊</div>Não foi possível carregar. Tente de novo.<br><br>
+      <span onclick="standingsBuilt=false;buildStandings()" style="color:var(--orange);cursor:pointer;font-weight:700">↻ Tentar novamente</span></div>`;
+    standingsBuilt = false;
+  }
+}
+
+function parseStandingsHtml(html){
+  const idx   = html.indexOf('vbw-o-table__body');
+  const chunk = html.slice(idx, idx+40000);
+  const rows  = chunk.split('<tr class="vbw-o-table__row').slice(1);
+  const teams = [];
+  for(const row of rows){
+    const pos  = row.match(/position[^>]*>(\d+)/);
+    const team = row.match(/alt=([A-Z]+)>([^<]+)<\/a>/);
+    const mw   = row.match(/matcheswon[^>]+>(\d+)/);
+    const ml   = row.match(/matcheslost[^>]+>(\d+)/);
+    const sw   = row.match(/setswon[^>]+>(\d+)/);
+    const sl   = row.match(/setslost[^>]+>(\d+)/);
+    const pts  = row.match(/matchpoints[^>]+>(\d+)/);
+    const sr   = row.match(/setsratio[^>]+>([0-9.]+)/);
+    if(pos && team && pts){
+      teams.push({
+        rank: +pos[1], code: team[1], name: team[2],
+        mw:+(mw?.[1]||0), ml:+(ml?.[1]||0),
+        sw:+(sw?.[1]||0), sl:+(sl?.[1]||0),
+        pts:+pts[1], sr:sr?.[1]||'0'
+      });
+    }
+  }
+  return teams.sort((a,b)=>a.rank-b.rank);
+}
+
+function renderStandings(teams){
+  const now = new Date().toLocaleString('pt-BR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'});
+  let html = `
+<div class="st-wrap">
+<table class="st-tbl">
+<thead><tr>
+  <th class="tl" style="width:24px">#</th>
+  <th class="tl">Seleção</th>
+  <th title="Jogos">J</th>
+  <th title="Vitórias">V</th>
+  <th title="Derrotas">D</th>
+  <th title="Sets">Sets</th>
+  <th title="Pontos">Pts</th>
+</tr></thead>
+<tbody>`;
+  for(const t of teams){
+    const isBra = t.code === 'BRA';
+    const posClass = t.rank<=3 ? 'top3' : t.rank<=8 ? 'q8' : '';
+    const rowClass = isBra ? ' class="st-bra"' : '';
+    html += `<tr${rowClass}>
+  <td class="st-pos ${posClass} tl">${t.rank}</td>
+  <td class="tl"><div class="st-team-cell">${f(t.name)}<span>${t.name}</span></div></td>
+  <td>${t.mw+t.ml}</td>
+  <td><strong>${t.mw}</strong></td>
+  <td style="color:var(--muted)">${t.ml}</td>
+  <td style="font-size:.75rem">${t.sw}/${t.sl}</td>
+  <td class="st-pts">${t.pts}</td>
+</tr>`;
+  }
+  html += `</tbody></table>
+<div class="st-note">Top 8 avançam para as Finals · Atualizado ${now}</div>
+</div>`;
+  return html;
+}
+
 // ── INIT ──
 buildHoje();
 </script>
