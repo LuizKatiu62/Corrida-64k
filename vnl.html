@@ -812,6 +812,7 @@ function buildAgenda(){
 
   document.getElementById('agendaContent').innerHTML =
     html || `<div class="empty"><div class="em-icon">📋</div>Nenhum jogo encontrado.</div>`;
+  loadScores(games);
 }
 
 // ── INIT ──
