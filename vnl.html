@@ -579,7 +579,7 @@ function updateScoreDom(id, sc) {
     if (sc) {
       el.textContent = sc.homeSets + '–' + sc.awaySets;
     } else {
-      el.innerHTML = `<a href="${BASE_URL}${id}/" target="_blank" style="font-size:.75rem;color:var(--orange2);text-decoration:none">resultado ↗</a>`;
+      el.textContent = '—';
     }
   });
   if (sc && sc.sets.length) {
