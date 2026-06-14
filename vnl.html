@@ -400,48 +400,150 @@ const BRAZIL_MATCHES = [
   {id:26650, home:'USA', away:'Brazil', iso:'2026-07-12T03:00:00+09:00', city:'Osaka'},
 ];
 
-// All Women's VNL 2026 matches (sample for today/agenda tabs)
-// Using the known Week 1 Brasília data and extending
+// All Women's VNL 2026 matches — complete schedule
+// Times: ISO 8601 with venue timezone. Non-Brazil games use noon local time (approx).
+const T = (d,h,tz) => `${d}T${h}:00:00${tz}`;
+const BRA = '+03:00';  // Actually Brasília = -03:00
+const TRK = '+03:00';
+const OSK = '+09:00';
+const BSB = '-03:00';  // Brasília
+
 const ALL_WOMEN = [
-  // WEEK 1 — Brasília, Brazil
-  {id:26550, home:'Belgium', away:'Poland', iso:'2026-06-03T21:00:00-03:00', city:'Brasília'},
-  {id:26551, home:'Thailand', away:'Serbia', iso:'2026-06-03T18:00:00-03:00', city:'Brasília'},
-  {id:26552, home:'China', away:'Czechia', iso:'2026-06-03T15:00:00-03:00', city:'Brasília'},
-  {id:26553, home:'Ukraine', away:'USA', iso:'2026-06-03T13:00:00-03:00', city:'Brasília'},
-  {id:26554, home:'Dominican Republic', away:'Türkiye', iso:'2026-06-03T10:00:00-03:00', city:'Brasília'},
-  {id:26555, home:'Italy', away:'Bulgaria', iso:'2026-06-03T08:00:00-03:00', city:'Brasília'},
-  {id:26556, home:'France', away:'Japan', iso:'2026-06-03T20:00:00-03:00', city:'Brasília'},
+  // ── WEEK 1 · June 3-7 · Brasília, Brazil ──
+  {id:26554, home:'Dominican Republic', away:'Türkiye', iso:T('2026-06-03','10:00',BSB), city:'Brasília'},
+  {id:26555, home:'Italy', away:'Bulgaria', iso:T('2026-06-03','11:30',BSB), city:'Brasília'},
+  {id:26552, home:'China', away:'Czechia', iso:T('2026-06-03','14:00',BSB), city:'Brasília'},
+  {id:26553, home:'Ukraine', away:'USA', iso:T('2026-06-03','15:30',BSB), city:'Brasília'},
+  {id:26556, home:'France', away:'Japan', iso:T('2026-06-03','18:00',BSB), city:'Brasília'},
+  {id:26551, home:'Thailand', away:'Serbia', iso:T('2026-06-03','19:30',BSB), city:'Brasília'},
+  {id:26550, home:'Belgium', away:'Poland', iso:T('2026-06-03','21:00',BSB), city:'Brasília'},
   {id:26557, home:'Brazil', away:'Netherlands', iso:'2026-06-03T23:00:00-03:00', city:'Brasília', bra:true},
-  {id:26558, home:'Canada', away:'Germany', iso:'2026-06-04T22:00:00-03:00', city:'Brasília'},
-  {id:26559, home:'Czechia', away:'Poland', iso:'2026-06-04T20:00:00-03:00', city:'Brasília'},
-  {id:26560, home:'China', away:'Thailand', iso:'2026-06-04T15:00:00-03:00', city:'Brasília'},
-  {id:26561, home:'Türkiye', away:'Netherlands', iso:'2026-06-04T13:00:00-03:00', city:'Brasília'},
-  {id:26562, home:'Ukraine', away:'Germany', iso:'2026-06-04T18:00:00-03:00', city:'Brasília'},
+
+  {id:26558, home:'Canada', away:'Germany', iso:T('2026-06-04','10:00',BSB), city:'Brasília'},
+  {id:26561, home:'Türkiye', away:'Netherlands', iso:T('2026-06-04','11:30',BSB), city:'Brasília'},
+  {id:26560, home:'China', away:'Thailand', iso:T('2026-06-04','14:00',BSB), city:'Brasília'},
+  {id:26562, home:'Ukraine', away:'Germany', iso:T('2026-06-04','15:30',BSB), city:'Brasília'},
   {id:26563, home:'Brazil', away:'Dominican Republic', iso:'2026-06-04T23:00:00-03:00', city:'Brasília', bra:true},
-  {id:26564, home:'Canada', away:'USA', iso:'2026-06-05T22:00:00-03:00', city:'Brasília'},
-  {id:26565, home:'Belgium', away:'Czechia', iso:'2026-06-05T20:00:00-03:00', city:'Brasília'},
-  {id:26566, home:'Serbia', away:'Poland', iso:'2026-06-05T15:00:00-03:00', city:'Brasília'},
-  {id:26567, home:'Dominican Republic', away:'Bulgaria', iso:'2026-06-05T13:00:00-03:00', city:'Brasília'},
-  {id:26568, home:'Ukraine', away:'Japan', iso:'2026-06-05T18:00:00-03:00', city:'Brasília'},
-  {id:26569, home:'Netherlands', away:'Italy', iso:'2026-06-05T10:00:00-03:00', city:'Brasília'},
-  {id:26570, home:'France', away:'USA', iso:'2026-06-06T13:00:00-03:00', city:'Brasília'},
-  {id:26571, home:'Thailand', away:'Belgium', iso:'2026-06-06T11:00:00-03:00', city:'Brasília'},
-  {id:26572, home:'Serbia', away:'Czechia', iso:'2026-06-06T16:00:00-03:00', city:'Brasília'},
+  {id:26559, home:'Czechia', away:'Poland', iso:T('2026-06-04','19:00',BSB), city:'Brasília'},
+
+  {id:26569, home:'Netherlands', away:'Italy', iso:T('2026-06-05','10:00',BSB), city:'Brasília'},
+  {id:26567, home:'Dominican Republic', away:'Bulgaria', iso:T('2026-06-05','11:30',BSB), city:'Brasília'},
+  {id:26566, home:'Serbia', away:'Poland', iso:T('2026-06-05','14:00',BSB), city:'Brasília'},
+  {id:26568, home:'Ukraine', away:'Japan', iso:T('2026-06-05','15:30',BSB), city:'Brasília'},
+  {id:26565, home:'Belgium', away:'Czechia', iso:T('2026-06-05','18:00',BSB), city:'Brasília'},
+  {id:26564, home:'Canada', away:'USA', iso:T('2026-06-05','21:00',BSB), city:'Brasília'},
+
+  {id:26571, home:'Thailand', away:'Belgium', iso:T('2026-06-06','10:00',BSB), city:'Brasília'},
+  {id:26570, home:'France', away:'USA', iso:T('2026-06-06','11:30',BSB), city:'Brasília'},
   {id:26573, home:'Brazil', away:'Bulgaria', iso:'2026-06-06T14:00:00-03:00', city:'Brasília', bra:true},
-  {id:26574, home:'Germany', away:'Canada', iso:'2026-06-06T19:00:00-03:00', city:'Brasília'},
-  {id:26575, home:'Japan', away:'Ukraine', iso:'2026-06-06T21:00:00-03:00', city:'Brasília'},
-  {id:26576, home:'Italy', away:'Türkiye', iso:'2026-06-06T23:00:00-03:00', city:'Brasília'},
+  {id:26572, home:'Serbia', away:'Czechia', iso:T('2026-06-06','15:30',BSB), city:'Brasília'},
+  {id:26574, home:'Germany', away:'Canada', iso:T('2026-06-06','18:00',BSB), city:'Brasília'},
+  {id:26575, home:'Japan', away:'Ukraine', iso:T('2026-06-06','19:30',BSB), city:'Brasília'},
+  {id:26576, home:'Italy', away:'Türkiye', iso:T('2026-06-06','21:00',BSB), city:'Brasília'},
+
+  {id:26580, home:'Dominican Republic', away:'Netherlands', iso:T('2026-06-07','10:00',BSB), city:'Brasília'},
+  {id:26577, home:'Thailand', away:'Czechia', iso:T('2026-06-07','11:30',BSB), city:'Brasília'},
+  {id:26578, home:'Belgium', away:'Serbia', iso:T('2026-06-07','13:00',BSB), city:'Brasília'},
   {id:26582, home:'Brazil', away:'Italy', iso:'2026-06-07T17:30:00-03:00', city:'Brasília', bra:true},
-  // WEEK 2 — Ankara, Turkey
+  {id:26579, home:'China', away:'Poland', iso:T('2026-06-07','16:00',BSB), city:'Brasília'},
+  {id:26581, home:'Ukraine', away:'France', iso:T('2026-06-07','19:00',BSB), city:'Brasília'},
+  {id:26583, home:'USA', away:'Germany', iso:T('2026-06-07','21:00',BSB), city:'Brasília'},
+  {id:26584, home:'Bulgaria', away:'Türkiye', iso:T('2026-06-07','22:30',BSB), city:'Brasília'},
+  {id:26585, home:'Canada', away:'Japan', iso:T('2026-06-07','23:00',BSB), city:'Brasília'},
+
+  // ── WEEK 2 · June 17-21 · Ankara, Turkey ──
+  {id:26586, home:'Dominican Republic', away:'USA', iso:T('2026-06-17','10:00',TRK), city:'Ankara'},
+  {id:26587, home:'Canada', away:'Netherlands', iso:T('2026-06-17','10:00',TRK), city:'Ankara'},
+  {id:26588, home:'Czechia', away:'Italy', iso:T('2026-06-17','12:00',TRK), city:'Ankara'},
+  {id:26589, home:'Germany', away:'China', iso:T('2026-06-17','12:00',TRK), city:'Ankara'},
+  {id:26590, home:'Bulgaria', away:'Poland', iso:T('2026-06-17','14:00',TRK), city:'Ankara'},
+  {id:26591, home:'Japan', away:'Serbia', iso:T('2026-06-17','14:00',TRK), city:'Ankara'},
   {id:26592, home:'France', away:'Brazil', iso:'2026-06-17T13:00:00+03:00', city:'Ankara', bra:true},
+  {id:26593, home:'Thailand', away:'Ukraine', iso:T('2026-06-17','16:00',TRK), city:'Ankara'},
+  {id:26594, home:'Türkiye', away:'Belgium', iso:T('2026-06-17','18:00',TRK), city:'Ankara'},
+
+  {id:26595, home:'Czechia', away:'USA', iso:T('2026-06-18','10:00',TRK), city:'Ankara'},
+  {id:26596, home:'Ukraine', away:'Poland', iso:T('2026-06-18','10:00',TRK), city:'Ankara'},
+  {id:26597, home:'Serbia', away:'Italy', iso:T('2026-06-18','12:00',TRK), city:'Ankara'},
   {id:26598, home:'Belgium', away:'Brazil', iso:'2026-06-18T13:00:00+03:00', city:'Ankara', bra:true},
+  {id:26599, home:'Thailand', away:'Bulgaria', iso:T('2026-06-18','14:00',TRK), city:'Ankara'},
+  {id:26600, home:'Türkiye', away:'France', iso:T('2026-06-18','16:00',TRK), city:'Ankara'},
+
+  {id:26601, home:'Dominican Republic', away:'Serbia', iso:T('2026-06-19','10:00',TRK), city:'Ankara'},
+  {id:26602, home:'Ukraine', away:'Netherlands', iso:T('2026-06-19','10:00',TRK), city:'Ankara'},
+  {id:26603, home:'Japan', away:'Czechia', iso:T('2026-06-19','12:00',TRK), city:'Ankara'},
+  {id:26604, home:'France', away:'China', iso:T('2026-06-19','12:00',TRK), city:'Ankara'},
+  {id:26605, home:'Bulgaria', away:'Canada', iso:T('2026-06-19','14:00',TRK), city:'Ankara'},
+  {id:26606, home:'Belgium', away:'Germany', iso:T('2026-06-19','16:00',TRK), city:'Ankara'},
+
+  {id:26607, home:'USA', away:'Italy', iso:T('2026-06-20','10:00',TRK), city:'Ankara'},
+  {id:26608, home:'Netherlands', away:'Poland', iso:T('2026-06-20','10:00',TRK), city:'Ankara'},
+  {id:26609, home:'Japan', away:'Dominican Republic', iso:T('2026-06-20','12:00',TRK), city:'Ankara'},
   {id:26610, home:'China', away:'Brazil', iso:'2026-06-20T13:00:00+03:00', city:'Ankara', bra:true},
+  {id:26611, home:'Thailand', away:'Canada', iso:T('2026-06-20','14:00',TRK), city:'Ankara'},
+  {id:26612, home:'Türkiye', away:'Germany', iso:T('2026-06-20','16:00',TRK), city:'Ankara'},
+
+  {id:26613, home:'Serbia', away:'USA', iso:T('2026-06-21','10:00',TRK), city:'Ankara'},
+  {id:26614, home:'Bulgaria', away:'Ukraine', iso:T('2026-06-21','10:00',TRK), city:'Ankara'},
+  {id:26615, home:'Czechia', away:'Dominican Republic', iso:T('2026-06-21','12:00',TRK), city:'Ankara'},
+  {id:26616, home:'Belgium', away:'France', iso:T('2026-06-21','12:00',TRK), city:'Ankara'},
+  {id:26617, home:'Canada', away:'Poland', iso:T('2026-06-21','14:00',TRK), city:'Ankara'},
+  {id:26618, home:'Japan', away:'Italy', iso:T('2026-06-21','14:00',TRK), city:'Ankara'},
   {id:26619, home:'Germany', away:'Brazil', iso:'2026-06-21T13:00:00+03:00', city:'Ankara', bra:true},
-  // WEEK 3 — Osaka, Japan
+  {id:26620, home:'Thailand', away:'Netherlands', iso:T('2026-06-21','16:00',TRK), city:'Ankara'},
+  {id:26621, home:'Türkiye', away:'China', iso:T('2026-06-21','18:00',TRK), city:'Ankara'},
+
+  // ── WEEK 3 · July 8-12 · Osaka, Japan ──
+  {id:26622, home:'Türkiye', away:'Poland', iso:T('2026-07-08','10:00',OSK), city:'Osaka'},
+  {id:26623, home:'Belgium', away:'Dominican Republic', iso:T('2026-07-08','10:00',OSK), city:'Osaka'},
+  {id:26624, home:'Thailand', away:'USA', iso:T('2026-07-08','12:00',OSK), city:'Osaka'},
+  {id:26625, home:'Ukraine', away:'Italy', iso:T('2026-07-08','12:00',OSK), city:'Osaka'},
   {id:26626, home:'Japan', away:'Brazil', iso:'2026-07-08T10:20:00+09:00', city:'Osaka', bra:true},
+  {id:26627, home:'France', away:'Netherlands', iso:T('2026-07-08','14:00',OSK), city:'Osaka'},
+  {id:26628, home:'China', away:'Canada', iso:T('2026-07-08','14:00',OSK), city:'Osaka'},
+  {id:26629, home:'Czechia', away:'Germany', iso:T('2026-07-08','16:00',OSK), city:'Osaka'},
+  {id:26630, home:'Serbia', away:'Bulgaria', iso:T('2026-07-08','18:00',OSK), city:'Osaka'},
+
+  {id:26631, home:'USA', away:'Poland', iso:T('2026-07-09','10:00',OSK), city:'Osaka'},
+  {id:26632, home:'Belgium', away:'Canada', iso:T('2026-07-09','10:00',OSK), city:'Osaka'},
+  {id:26633, home:'Japan', away:'Thailand', iso:T('2026-07-09','12:00',OSK), city:'Osaka'},
+  {id:26634, home:'China', away:'Ukraine', iso:T('2026-07-09','12:00',OSK), city:'Osaka'},
+  {id:26635, home:'Czechia', away:'Netherlands', iso:T('2026-07-09','14:00',OSK), city:'Osaka'},
+  {id:26636, home:'Serbia', away:'France', iso:T('2026-07-09','16:00',OSK), city:'Osaka'},
+
+  {id:26637, home:'USA', away:'Türkiye', iso:T('2026-07-10','10:00',OSK), city:'Osaka'},
+  {id:26638, home:'Ukraine', away:'Dominican Republic', iso:T('2026-07-10','10:00',OSK), city:'Osaka'},
   {id:26639, home:'Poland', away:'Brazil', iso:'2026-07-10T10:20:00+09:00', city:'Osaka', bra:true},
+  {id:26640, home:'Belgium', away:'Italy', iso:T('2026-07-10','12:00',OSK), city:'Osaka'},
+  {id:26641, home:'Bulgaria', away:'Czechia', iso:T('2026-07-10','14:00',OSK), city:'Osaka'},
+  {id:26642, home:'Germany', away:'Netherlands', iso:T('2026-07-10','16:00',OSK), city:'Osaka'},
+
   {id:26643, home:'Thailand', away:'Brazil', iso:'2026-07-11T06:30:00+09:00', city:'Osaka', bra:true},
+  {id:26644, home:'Canada', away:'Italy', iso:T('2026-07-11','10:00',OSK), city:'Osaka'},
+  {id:26645, home:'Japan', away:'Türkiye', iso:T('2026-07-11','10:00',OSK), city:'Osaka'},
+  {id:26646, home:'China', away:'Dominican Republic', iso:T('2026-07-11','12:00',OSK), city:'Osaka'},
+  {id:26647, home:'Bulgaria', away:'France', iso:T('2026-07-11','12:00',OSK), city:'Osaka'},
+  {id:26648, home:'Serbia', away:'Germany', iso:T('2026-07-11','14:00',OSK), city:'Osaka'},
+
+  {id:26649, home:'Belgium', away:'Ukraine', iso:T('2026-07-12','10:00',OSK), city:'Osaka'},
   {id:26650, home:'USA', away:'Brazil', iso:'2026-07-12T03:00:00+09:00', city:'Osaka', bra:true},
+  {id:26651, home:'Thailand', away:'Türkiye', iso:T('2026-07-12','10:00',OSK), city:'Osaka'},
+  {id:26652, home:'Canada', away:'Dominican Republic', iso:T('2026-07-12','12:00',OSK), city:'Osaka'},
+  {id:26653, home:'Japan', away:'Poland', iso:T('2026-07-12','12:00',OSK), city:'Osaka'},
+  {id:26654, home:'France', away:'Czechia', iso:T('2026-07-12','14:00',OSK), city:'Osaka'},
+  {id:26655, home:'China', away:'Italy', iso:T('2026-07-12','14:00',OSK), city:'Osaka'},
+  {id:26656, home:'Bulgaria', away:'Germany', iso:T('2026-07-12','16:00',OSK), city:'Osaka'},
+  {id:26657, home:'Serbia', away:'Netherlands', iso:T('2026-07-12','18:00',OSK), city:'Osaka'},
+
+  // ── FINALS · July 22-26 · TBD ──
+  {id:26658, home:'TBD', away:'TBD', iso:T('2026-07-22','12:00','+00:00'), city:'Final'},
+  {id:26659, home:'TBD', away:'TBD', iso:T('2026-07-22','15:00','+00:00'), city:'Final'},
+  {id:26660, home:'TBD', away:'TBD', iso:T('2026-07-23','12:00','+00:00'), city:'Final'},
+  {id:26661, home:'TBD', away:'TBD', iso:T('2026-07-23','15:00','+00:00'), city:'Final'},
+  {id:26662, home:'TBD', away:'TBD', iso:T('2026-07-25','12:00','+00:00'), city:'Final'},
+  {id:26663, home:'TBD', away:'TBD', iso:T('2026-07-25','15:00','+00:00'), city:'Final'},
+  {id:26664, home:'TBD', away:'TBD', iso:T('2026-07-26','12:00','+00:00'), city:'Final'},
+  {id:26665, home:'TBD', away:'TBD', iso:T('2026-07-26','15:00','+00:00'), city:'Final'},
 ];
 
 const BASE_URL = 'https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/schedule/';
