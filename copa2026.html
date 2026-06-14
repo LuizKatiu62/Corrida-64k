@@ -133,11 +133,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 
 .gmeta{
   display:flex;justify-content:space-between;align-items:center;
-  padding:.35rem .8rem;background:var(--surf);border-bottom:1px solid var(--border);
-  font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:.3rem .8rem;background:var(--surf);border-bottom:1px solid var(--border);
+  font-size:.62rem;font-weight:700;letter-spacing:.5px;
 }
-.gmeta .grp{color:var(--gold)}
-.gmeta .venue{color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.gmeta .gdate{color:rgba(255,255,255,.75);white-space:nowrap;text-transform:lowercase}
+.gmeta .venue{color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%;font-size:.6rem}
+.gmeta-grp{
+  padding:.18rem .8rem;background:var(--surf);
+  font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+}
+.gmeta-grp .grp{color:var(--gold)}
 
 .gbody{
   display:grid;grid-template-columns:1fr 100px 1fr;
