@@ -387,10 +387,16 @@ function cardHTML(g){
     scoreBlock = `<div class="stime">${fmtTime(g.date)}</div>
                   <div class="sstatus">${g.status||'—'}</div>`;
   }
-  const grpTag = g.group ? `<span class="grp">${g.group.toUpperCase()}</span>` : '<span></span>';
+  const grpTag  = g.group ? `<span class="grp">${g.group.toUpperCase()}</span>` : '';
+  const dateStr = `${fmtDateShort(g.date)} · ${fmtTime(g.date)}`;
+  const venueStr= g.venue ? `📍 ${g.venue}` : '';
   return `
   <div class="gcard${g.isLive?' live-card':''}">
-    <div class="gmeta">${grpTag}<span class="venue">📍 ${g.venue}</span></div>
+    <div class="gmeta">
+      <span class="gdate">${dateStr}</span>
+      <span class="venue">${venueStr}</span>
+    </div>
+    ${grpTag ? `<div class="gmeta-grp">${grpTag}</div>` : ''}
     <div class="gbody">
       <div class="team home">
         <div class="tflag">${flag(g.home.abbr)}</div>
