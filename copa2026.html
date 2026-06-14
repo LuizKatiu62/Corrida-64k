@@ -555,7 +555,7 @@ async function loadAgenda(){
     if(!games.length){
       document.getElementById('list-agenda').innerHTML = `<div class="empty"><span class="empty-ico">📅</span>Sem jogos neste dia.</div>`;
     } else {
-      document.getElementById('list-agenda').innerHTML = games.map(cardHTML).join('');
+      document.getElementById('list-agenda').innerHTML = renderList(games);
     }
   } catch(e) {
     document.getElementById('list-agenda').innerHTML = `<div class="err">⚠️ Erro: ${e.message}</div>`;
