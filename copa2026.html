@@ -290,22 +290,11 @@ const BASE2 = 'https://site.api.espn.com/apis/v2/sports/soccer/fifa.world';
 const WC_START = new Date('2026-06-11T00:00:00');
 const WC_END   = new Date('2026-07-19T23:59:59');
 
-let curTab      = 'hoje';
-let agDate      = today0();
-let timer       = null;
+let curTab       = 'hoje';
+let agDate       = today0();
+let timer        = null;
 let groupsLoaded = false;
-let brazilOnly  = false;
-
-function toggleBrazil(){
-  brazilOnly = !brazilOnly;
-  const btn = document.getElementById('brazilBtn');
-  btn.style.borderColor    = brazilOnly ? '#009c3b' : 'transparent';
-  btn.style.background     = brazilOnly ? 'rgba(0,156,59,.18)' : 'none';
-  btn.style.boxShadow      = brazilOnly ? '0 0 0 3px rgba(0,156,59,.25)' : 'none';
-  // Reload whichever tab is active
-  if(curTab==='hoje')        loadHoje();
-  else if(curTab==='agenda') loadAgenda();
-}
+let braLoaded    = false;
 
 function isBrazilGame(g){
   return g.home.abbr.toUpperCase()==='BRA' || g.away.abbr.toUpperCase()==='BRA';
