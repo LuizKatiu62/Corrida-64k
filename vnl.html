@@ -656,16 +656,18 @@ function cardHtml(g, showDate=false){
   const venueStr = g.city && g.city !== 'Final' ? `📍 ${g.city}` : (g.city==='Final'?'🏆 Final':' ');
 
   const scoreHtml = isFin
-    ? `<span class="gscore fin">RESULTADO</span>`
+    ? `<span class="gscore fin score-el" data-id="${g.id}">···</span>`
     : isLive
-    ? `<span class="gscore live">AO VIVO</span>`
-    : `<span class="gscore">${fmtTime(g.date)}</span>`;
+    ? `<span class="gscore live score-el" data-id="${g.id}">AO VIVO</span>`
+    : `<span class="gscore score-el" data-id="${g.id}">${fmtTime(g.date)}</span>`;
 
   const statusHtml = isFin
-    ? `<span class="gstatus fin">Encerrado · <a href="${matchLink(g.id)}" target="_blank" style="color:var(--orange2);text-decoration:none">ver resultado ↗</a></span>`
+    ? `<span class="gstatus fin">Encerrado</span>`
     : isLive
     ? `<span class="gstatus live"><span class="ldot"></span> Ao Vivo</span>`
     : '';
+
+  const setsRow = isFin ? `<div class="sets-row sets-el" data-id="${g.id}"></div>` : '';
 
   const liveBtn = isLive
     ? `<a class="live-btn" href="${matchLink(g.id)}" target="_blank"><span class="live-dot" style="flex-shrink:0"></span>AO VIVO</a>`
