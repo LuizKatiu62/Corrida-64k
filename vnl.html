@@ -706,15 +706,24 @@ function parseGames(arr){
 }
 
 // ── Tab routing ──
-let braBuilt = false, agendaBuilt = false;
+let braBuilt = false, agendaBuilt = false, standingsBuilt = false;
 
 function go(tab, el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('sec-'+tab).classList.add('on');
-  if(tab==='brasil' && !braBuilt){ buildBrasil(); }
-  if(tab==='agenda' && !agendaBuilt){ buildAgenda(); }
+  if(tab==='brasil'  && !braBuilt)      { buildBrasil(); }
+  if(tab==='agenda'  && !agendaBuilt)   { buildAgenda(); }
+  if(tab==='class'   && !standingsBuilt){ buildStandings(); }
+}
+
+function toggleWeek(id){
+  const body  = document.getElementById(id);
+  const arrow = document.getElementById('arrow-'+id);
+  const open  = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.textContent  = open ? '▶' : '▼';
 }
 
 // ── HOJE ──
