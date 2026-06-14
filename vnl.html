@@ -219,22 +219,32 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 }
 .empty .em-icon{font-size:2.5rem;margin-bottom:.75rem}
 
-/* ── STANDINGS IFRAME ── */
-.standings-wrap{
-  background:var(--surf);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  overflow:hidden;min-height:600px;
+/* ── ACCORDION ── */
+.acc-hdr{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between}
+.acc-hdr:active{opacity:.75}
+.acc-arrow{font-size:.8rem;color:var(--muted);flex-shrink:0}
+
+/* ── STANDINGS TABLE ── */
+.st-wrap{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.st-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.st-tbl th{
+  padding:.5rem .4rem;text-align:center;
+  color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;border-bottom:2px solid var(--border);
+  white-space:nowrap;background:var(--surf);
 }
-.standings-frame{
-  width:100%;height:700px;border:none;
-  background:#fff;
-}
-.standings-note{
-  font-size:.72rem;color:var(--muted);
-  text-align:center;padding:.6rem;
-  border-top:1px solid var(--border);
-}
+.st-tbl th.tl{text-align:left;padding-left:.75rem}
+.st-tbl td{padding:.6rem .4rem;border-bottom:1px solid rgba(255,255,255,.04);text-align:center;vertical-align:middle}
+.st-tbl td.tl{text-align:left;padding-left:.75rem}
+.st-tbl tr:hover td{background:rgba(255,255,255,.03)}
+.st-pos{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--muted);width:24px;padding-right:.5rem!important}
+.st-pos.top3{color:var(--orange)}
+.st-pos.q8{color:#f4e642}
+.st-team-cell{display:flex;align-items:center;gap:.45rem;font-weight:700;font-size:.83rem;white-space:nowrap}
+.st-pts{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--orange2)}
+.st-bra td{background:rgba(0,156,59,.08)!important}
+.st-bra td:first-child{border-left:3px solid #009c3b}
+.st-note{font-size:.68rem;color:var(--muted);text-align:center;padding:.6rem;border-top:1px solid var(--border)}
 
 /* ── SECTION HEADER ── */
 .sec-header{
