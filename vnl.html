@@ -565,11 +565,11 @@ async function fetchScore(id) {
 }
 
 function parseScoreHtml(html) {
-  const hm = html.match(/score--home[^"]*">\s*(\d+)/);
-  const am = html.match(/score--away[^"]*">\s*(\d+)/);
+  const hm = html.match(/score--home[^>]*>(\d+)/);
+  const am = html.match(/score--away[^>]*>(\d+)/);
   if (!hm || !am) return null;
-  const pA = [...html.matchAll(/pointA[^"]*">\s*(\d+)/g)].map(m=>+m[1]);
-  const pB = [...html.matchAll(/pointB[^"]*">\s*(\d+)/g)].map(m=>+m[1]);
+  const pA = [...html.matchAll(/pointA[^>]*>(\d+)/g)].map(m=>+m[1]);
+  const pB = [...html.matchAll(/pointB[^>]*>(\d+)/g)].map(m=>+m[1]);
   const sets = Array.from({length:Math.min(pA.length,pB.length,5)},(_,i)=>({a:pA[i],b:pB[i]}));
   return { homeSets:+hm[1], awaySets:+am[1], sets };
 }
