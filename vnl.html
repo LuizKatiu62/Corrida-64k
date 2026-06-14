@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏐 VNL Feminina 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101e;
+  --surf:#0d1a30;
+  --card:#112040;
+  --card2:#162850;
+  --orange:#f46f00;
+  --orange2:#ffb347;
+  --live:#00e676;
+  --white:#fff;
+  --muted:rgba(255,255,255,.5);
+  --border:rgba(255,255,255,.07);
+  --r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{
+  background:linear-gradient(160deg,#04091a 0%,#0c1d40 50%,#04091a 100%);
+  border-bottom:2px solid var(--orange);
+  box-shadow:0 4px 32px rgba(0,0,0,.7);
+  position:sticky;top:0;z-index:100;
+}
+.hdr-inner{
+  max-width:920px;margin:0 auto;
+  padding:.9rem 1rem .3rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.brand{display:flex;align-items:center;gap:.7rem}
+.brand-icon{font-size:2.2rem;line-height:1;filter:drop-shadow(0 2px 8px rgba(244,111,0,.4))}
+.brand-text .t1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.6rem;letter-spacing:3px;line-height:1;
+}
+.brand-text .t1 span{color:var(--orange)}
+.brand-text .t2{font-size:.62rem;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:1px}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,230,118,.12);border:1px solid var(--live);
+  border-radius:20px;padding:4px 10px;
+  font-size:.68rem;font-weight:700;color:var(--live);
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.live-pill.on{opacity:1}
+.live-dot{width:6px;height:6px;background:var(--live);border-radius:50%;animation:blink 1.1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── TABS ── */
+.tabs{max-width:920px;margin:0 auto;display:flex;padding:0 .25rem}
+.tab{
+  flex:1;padding:.55rem .25rem .45rem;text-align:center;
+  font-size:.78rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;
+  transition:all .2s;user-select:none;
+}
+.tab:hover{color:var(--white)}
+.tab.on{color:var(--orange);border-bottom-color:var(--orange)}
+
+/* ── BRASIL TAB ── */
+.tab-bra{font-size:.82rem}
+.tab-bra.on{color:#f4e642;border-bottom-color:#009c3b;background:rgba(0,156,59,.1)}
+
+/* ── CONTENT ── */
+.wrap{max-width:920px;margin:0 auto;padding:1rem}
+.sec{display:none}.sec.on{display:block}
+
+/* ── BRASIL HERO ── */
+.bra-hero{
+  display:flex;align-items:center;gap:1rem;
+  background:linear-gradient(135deg,#003d1a 0%,#005723 50%,#003d1a 100%);
+  border:1px solid rgba(0,156,59,.4);border-radius:var(--r);
+  padding:1rem 1.2rem;margin-bottom:1rem;
+}
+.bra-flag{font-size:3.2rem;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.bra-info .bra-title{
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;
+  letter-spacing:2px;color:#f4e642;line-height:1;
+}
+.bra-info .bra-sub{font-size:.75rem;color:rgba(255,255,255,.6);margin-top:3px}
+.bra-ranking{
+  margin-left:auto;text-align:center;
+  background:rgba(244,230,66,.1);border:1px solid rgba(244,230,66,.3);
+  border-radius:10px;padding:.5rem .8rem;
+}
+.bra-ranking .rk-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#f4e642;line-height:1}
+.bra-ranking .rk-lbl{font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:1px}
+
+/* ── GAME CARD ── */
+.gcard{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:.85rem 1rem;
+  margin-bottom:.6rem;
+  transition:border-color .2s;
+}
+.gcard:hover{border-color:rgba(244,111,0,.3)}
+.gcard.live-card{
+  border-color:var(--live);
+  background:linear-gradient(135deg,var(--card),rgba(0,230,118,.06));
+  animation:cardPulse 2.5s ease-in-out infinite;
+}
+@keyframes cardPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.15)}
+  50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}
+}
+.gmeta{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.gdate{font-size:.7rem;color:var(--muted);font-weight:600}
+.venue{font-size:.7rem;color:var(--muted);flex:1;text-align:right}
+.grp{
+  font-size:.62rem;font-weight:800;letter-spacing:1px;
+  background:rgba(244,111,0,.15);border:1px solid rgba(244,111,0,.35);
+  color:var(--orange);border-radius:6px;padding:2px 7px;
+}
+.gteams{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.gteam{
+  flex:1;display:flex;align-items:center;gap:.45rem;
+  font-size:.9rem;font-weight:700;
+}
+.gteam.right{flex-direction:row-reverse;text-align:right}
+.gteam .flag{font-size:1.3rem;line-height:1}
+.gscore{
+  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;
+  letter-spacing:2px;color:var(--white);
+  min-width:80px;text-align:center;
+}
+.gscore.live{color:var(--live)}
+.gscore.fin{color:var(--orange2)}
+.gstatus{
+  font-size:.68rem;font-weight:800;letter-spacing:1.5px;
+  text-transform:uppercase;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:.3rem;
+}
+.gstatus.live{color:var(--live)}
+.gstatus.fin{color:var(--muted)}
+.gstatus.sched{color:rgba(255,255,255,.35)}
+.gstatus .ldot{
+  width:5px;height:5px;border-radius:50%;background:var(--live);
+  animation:blink 1s infinite;
+}
+
+/* ── SETS ── */
+.sets-row{
+  display:flex;gap:.3rem;justify-content:center;
+  margin-top:.35rem;
+  font-size:.7rem;font-weight:700;color:var(--muted);
+}
+.set-num{
+  background:rgba(255,255,255,.08);border-radius:5px;
+  padding:2px 7px;
+}
+.set-num.won{background:rgba(244,111,0,.2);color:var(--orange2)}
+
+/* ── DATE HEADER ── */
+.date-hdr{
+  font-family:'Bebas Neue',sans-serif;letter-spacing:2px;
+  font-size:1rem;color:var(--muted);
+  padding:.5rem 0 .3rem;margin-top:.4rem;
+  border-bottom:1px solid var(--border);margin-bottom:.5rem;
+}
+.week-hdr{
+  font-family:'Bebas Neue',sans-serif;letter-spacing:3px;
+  font-size:1.1rem;color:var(--orange);
+  padding:.8rem 0 .3rem;margin-top:.6rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.week-badge{
+  font-size:.65rem;font-weight:800;letter-spacing:1px;
+  background:rgba(244,111,0,.15);border:1px solid rgba(244,111,0,.3);
+  color:var(--orange);border-radius:6px;padding:3px 8px;
+  text-transform:uppercase;font-family:'Inter',sans-serif;
+}
+
+/* ── LIVE LINK BUTTON ── */
+.live-btn{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.4);
+  color:var(--live);border-radius:8px;padding:4px 10px;
+  font-size:.68rem;font-weight:800;letter-spacing:.5px;
+  text-decoration:none;cursor:pointer;transition:all .2s;
+  text-transform:uppercase;
+}
+.live-btn:hover{background:rgba(0,230,118,.2)}
+.result-btn{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:rgba(244,111,0,.1);border:1px solid rgba(244,111,0,.3);
+  color:var(--orange2);border-radius:8px;padding:4px 10px;
+  font-size:.68rem;font-weight:800;letter-spacing:.5px;
+  text-decoration:none;cursor:pointer;transition:all .2s;
+}
+.result-btn:hover{background:rgba(244,111,0,.2)}
+
+/* ── LOADING / SPINNER ── */
+.spinner{
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:.75rem;padding:3rem 0;
+  color:var(--muted);font-size:.8rem;font-weight:600;letter-spacing:1px;
+}
+.spin{
+  width:32px;height:32px;border:3px solid rgba(244,111,0,.2);
+  border-top-color:var(--orange);border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── EMPTY ── */
+.empty{
+  text-align:center;padding:3rem 1rem;
+  color:var(--muted);font-size:.85rem;
+}
+.empty .em-icon{font-size:2.5rem;margin-bottom:.75rem}
+
+/* ── STANDINGS IFRAME ── */
+.standings-wrap{
+  background:var(--surf);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;min-height:600px;
+}
+.standings-frame{
+  width:100%;height:700px;border:none;
+  background:#fff;
+}
+.standings-note{
+  font-size:.72rem;color:var(--muted);
+  text-align:center;padding:.6rem;
+  border-top:1px solid var(--border);
+}
+
+/* ── SECTION HEADER ── */
+.sec-header{
+  display:flex;align-items:center;gap:.5rem;
+  margin-bottom:.75rem;
+}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.15rem;letter-spacing:2px;color:var(--orange);
+}
+.today-badge{
+  font-size:.65rem;font-weight:800;letter-spacing:1px;
+  background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.35);
+  color:var(--live);border-radius:6px;padding:3px 8px;
+  text-transform:uppercase;
+}
+
+/* ── VNL CTA ── */
+.vnl-cta{
+  background:linear-gradient(135deg,rgba(244,111,0,.12),rgba(244,111,0,.06));
+  border:1px solid rgba(244,111,0,.25);
+  border-radius:var(--r);padding:.85rem 1rem;
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.vnl-cta .cta-icon{font-size:1.8rem}
+.vnl-cta .cta-text .ct1{font-weight:800;font-size:.85rem;margin-bottom:2px}
+.vnl-cta .cta-text .ct2{font-size:.72rem;color:var(--muted)}
+.vnl-cta .cta-link{
+  margin-left:auto;display:inline-flex;align-items:center;gap:.35rem;
+  background:var(--orange);color:#fff;
+  border-radius:8px;padding:7px 14px;
+  font-size:.72rem;font-weight:800;letter-spacing:.5px;
+  text-decoration:none;white-space:nowrap;flex-shrink:0;
+}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .gteam{font-size:.8rem}
+  .gscore{font-size:1.35rem;min-width:64px}
+  .vnl-cta{flex-wrap:wrap}
+  .vnl-cta .cta-link{margin-left:0}
+  .bra-ranking{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="brand">
+      <div class="brand-icon">🏐</div>
+      <div class="brand-text">
+        <div class="t1">VNL <span>FEMININA</span></div>
+        <div class="t2">Volleyball Nations League · 2026</div>
+      </div>
+    </div>
+    <div class="live-pill" id="livePill"><span class="live-dot"></span> AO VIVO</div>
+  </div>
+  <nav class="tabs">
+    <div class="tab on" data-tab="hoje" onclick="go('hoje',this)">Hoje</div>
+    <div class="tab" data-tab="agenda" onclick="go('agenda',this)">Agenda</div>
+    <div class="tab tab-bra" data-tab="brasil" onclick="go('brasil',this)">🇧🇷 Brasil</div>
+    <div class="tab" data-tab="class" onclick="go('class',this)">Classif.</div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- HOJE -->
+  <section class="sec on" id="sec-hoje">
+    <div class="sec-header">
+      <div class="sec-title" id="hojeTitle">JOGOS DE HOJE</div>
+      <div class="today-badge" id="todayBadge"></div>
+    </div>
+    <div id="hojeContent"><div class="spinner"><div class="spin"></div>Carregando…</div></div>
+  </section>
+
+  <!-- AGENDA -->
+  <section class="sec" id="sec-agenda">
+    <div class="vnl-cta">
+      <div class="cta-icon">🌐</div>
+      <div class="cta-text">
+        <div class="ct1">Agenda completa com placares ao vivo</div>
+        <div class="ct2">Todos os jogos femininos na volleyball.world</div>
+      </div>
+      <a class="cta-link" href="https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/schedule/" target="_blank">Ver tudo ↗</a>
+    </div>
+    <div id="agendaContent"><div class="spinner"><div class="spin"></div>Carregando…</div></div>
+  </section>
+
+  <!-- BRASIL -->
+  <section class="sec" id="sec-brasil">
+    <div class="bra-hero">
+      <div class="bra-flag">🇧🇷</div>
+      <div class="bra-info">
+        <div class="bra-title">BRASIL — VNL 2026</div>
+        <div class="bra-sub">Todos os jogos da seleção feminina</div>
+      </div>
+      <div class="bra-ranking">
+        <div class="rk-num">#1</div>
+        <div class="rk-lbl">Ranking</div>
+      </div>
+    </div>
+    <div id="brasilContent"></div>
+  </section>
+
+  <!-- CLASSIFICAÇÃO -->
+  <section class="sec" id="sec-class">
+    <div class="vnl-cta">
+      <div class="cta-icon">📊</div>
+      <div class="cta-text">
+        <div class="ct1">Classificação atualizada em tempo real</div>
+        <div class="ct2">Standings feminino · VNL 2026</div>
+      </div>
+      <a class="cta-link" href="https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/" target="_blank">Ver ranking ↗</a>
+    </div>
+    <div class="standings-wrap">
+      <iframe class="standings-frame"
+        src="https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/"
+        title="VNL 2026 Women Standings"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
+      </iframe>
+      <div class="standings-note">⚠️ Se a tabela não carregar, toque em "Ver ranking ↗" acima.</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ──────────────────────────────────────────────
+// DATA — All Brazil Women's VNL 2026 matches
+// Times in ISO format with venue timezone offset
+// ──────────────────────────────────────────────
+
+const FLAGS = {
+  Brazil:'🇧🇷', Netherlands:'🇳🇱', 'Dominican Republic':'🇩🇴', Bulgaria:'🇧🇬',
+  Italy:'🇮🇹', France:'🇫🇷', Belgium:'🇧🇪', China:'🇨🇳', Germany:'🇩🇪',
+  Japan:'🇯🇵', Poland:'🇵🇱', Thailand:'🇹🇭', USA:'🇺🇸', Serbia:'🇷🇸',
+  Türkiye:'🇹🇷', Turkey:'🇹🇷', Ukraine:'🇺🇦', Canada:'🇨🇦', Czechia:'🇨🇿',
+  'Czechia':'🇨🇿'
+};
+const f = t => FLAGS[t] || '🏐';
+
+// Brazil Women matches — match IDs for volleyball.world links
+// Times: ISO 8601 with timezone
+const BRAZIL_MATCHES = [
+  // WEEK 1 — Brasília, Brazil (BRT = UTC-3)
+  {id:26557, home:'Brazil', away:'Netherlands', iso:'2026-06-03T23:00:00-03:00', city:'Brasília'},
+  {id:26563, home:'Brazil', away:'Dominican Republic', iso:'2026-06-04T23:00:00-03:00', city:'Brasília'},
+  {id:26573, home:'Brazil', away:'Bulgaria', iso:'2026-06-06T14:00:00-03:00', city:'Brasília'},
+  {id:26582, home:'Brazil', away:'Italy', iso:'2026-06-07T17:30:00-03:00', city:'Brasília'},
+  // WEEK 2 — Ankara, Turkey (TRT = UTC+3)
+  {id:26592, home:'France', away:'Brazil', iso:'2026-06-17T13:00:00+03:00', city:'Ankara'},
+  {id:26598, home:'Belgium', away:'Brazil', iso:'2026-06-18T13:00:00+03:00', city:'Ankara'},
+  {id:26610, home:'China', away:'Brazil', iso:'2026-06-20T13:00:00+03:00', city:'Ankara'},
+  {id:26619, home:'Germany', away:'Brazil', iso:'2026-06-21T13:00:00+03:00', city:'Ankara'},
+  // WEEK 3 — Osaka, Japan (JST = UTC+9)
+  {id:26626, home:'Japan', away:'Brazil', iso:'2026-07-08T10:20:00+09:00', city:'Osaka'},
+  {id:26639, home:'Poland', away:'Brazil', iso:'2026-07-10T10:20:00+09:00', city:'Osaka'},
+  {id:26643, home:'Thailand', away:'Brazil', iso:'2026-07-11T06:30:00+09:00', city:'Osaka'},
+  {id:26650, home:'USA', away:'Brazil', iso:'2026-07-12T03:00:00+09:00', city:'Osaka'},
+];
+
+// All Women's VNL 2026 matches (sample for today/agenda tabs)
+// Using the known Week 1 Brasília data and extending
+const ALL_WOMEN = [
+  // WEEK 1 — Brasília, Brazil
+  {id:26550, home:'Belgium', away:'Poland', iso:'2026-06-03T21:00:00-03:00', city:'Brasília'},
+  {id:26551, home:'Thailand', away:'Serbia', iso:'2026-06-03T18:00:00-03:00', city:'Brasília'},
+  {id:26552, home:'China', away:'Czechia', iso:'2026-06-03T15:00:00-03:00', city:'Brasília'},
+  {id:26553, home:'Ukraine', away:'USA', iso:'2026-06-03T13:00:00-03:00', city:'Brasília'},
+  {id:26554, home:'Dominican Republic', away:'Türkiye', iso:'2026-06-03T10:00:00-03:00', city:'Brasília'},
+  {id:26555, home:'Italy', away:'Bulgaria', iso:'2026-06-03T08:00:00-03:00', city:'Brasília'},
+  {id:26556, home:'France', away:'Japan', iso:'2026-06-03T20:00:00-03:00', city:'Brasília'},
+  {id:26557, home:'Brazil', away:'Netherlands', iso:'2026-06-03T23:00:00-03:00', city:'Brasília', bra:true},
+  {id:26558, home:'Canada', away:'Germany', iso:'2026-06-04T22:00:00-03:00', city:'Brasília'},
+  {id:26559, home:'Czechia', away:'Poland', iso:'2026-06-04T20:00:00-03:00', city:'Brasília'},
+  {id:26560, home:'China', away:'Thailand', iso:'2026-06-04T15:00:00-03:00', city:'Brasília'},
+  {id:26561, home:'Türkiye', away:'Netherlands', iso:'2026-06-04T13:00:00-03:00', city:'Brasília'},
+  {id:26562, home:'Ukraine', away:'Germany', iso:'2026-06-04T18:00:00-03:00', city:'Brasília'},
+  {id:26563, home:'Brazil', away:'Dominican Republic', iso:'2026-06-04T23:00:00-03:00', city:'Brasília', bra:true},
+  {id:26564, home:'Canada', away:'USA', iso:'2026-06-05T22:00:00-03:00', city:'Brasília'},
+  {id:26565, home:'Belgium', away:'Czechia', iso:'2026-06-05T20:00:00-03:00', city:'Brasília'},
+  {id:26566, home:'Serbia', away:'Poland', iso:'2026-06-05T15:00:00-03:00', city:'Brasília'},
+  {id:26567, home:'Dominican Republic', away:'Bulgaria', iso:'2026-06-05T13:00:00-03:00', city:'Brasília'},
+  {id:26568, home:'Ukraine', away:'Japan', iso:'2026-06-05T18:00:00-03:00', city:'Brasília'},
+  {id:26569, home:'Netherlands', away:'Italy', iso:'2026-06-05T10:00:00-03:00', city:'Brasília'},
+  {id:26570, home:'France', away:'USA', iso:'2026-06-06T13:00:00-03:00', city:'Brasília'},
+  {id:26571, home:'Thailand', away:'Belgium', iso:'2026-06-06T11:00:00-03:00', city:'Brasília'},
+  {id:26572, home:'Serbia', away:'Czechia', iso:'2026-06-06T16:00:00-03:00', city:'Brasília'},
+  {id:26573, home:'Brazil', away:'Bulgaria', iso:'2026-06-06T14:00:00-03:00', city:'Brasília', bra:true},
+  {id:26574, home:'Germany', away:'Canada', iso:'2026-06-06T19:00:00-03:00', city:'Brasília'},
+  {id:26575, home:'Japan', away:'Ukraine', iso:'2026-06-06T21:00:00-03:00', city:'Brasília'},
+  {id:26576, home:'Italy', away:'Türkiye', iso:'2026-06-06T23:00:00-03:00', city:'Brasília'},
+  {id:26582, home:'Brazil', away:'Italy', iso:'2026-06-07T17:30:00-03:00', city:'Brasília', bra:true},
+  // WEEK 2 — Ankara, Turkey
+  {id:26592, home:'France', away:'Brazil', iso:'2026-06-17T13:00:00+03:00', city:'Ankara', bra:true},
+  {id:26598, home:'Belgium', away:'Brazil', iso:'2026-06-18T13:00:00+03:00', city:'Ankara', bra:true},
+  {id:26610, home:'China', away:'Brazil', iso:'2026-06-20T13:00:00+03:00', city:'Ankara', bra:true},
+  {id:26619, home:'Germany', away:'Brazil', iso:'2026-06-21T13:00:00+03:00', city:'Ankara', bra:true},
+  // WEEK 3 — Osaka, Japan
+  {id:26626, home:'Japan', away:'Brazil', iso:'2026-07-08T10:20:00+09:00', city:'Osaka', bra:true},
+  {id:26639, home:'Poland', away:'Brazil', iso:'2026-07-10T10:20:00+09:00', city:'Osaka', bra:true},
+  {id:26643, home:'Thailand', away:'Brazil', iso:'2026-07-11T06:30:00+09:00', city:'Osaka', bra:true},
+  {id:26650, home:'USA', away:'Brazil', iso:'2026-07-12T03:00:00+09:00', city:'Osaka', bra:true},
+];
+
+const BASE_URL = 'https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/schedule/';
+
+// ── Helpers ──
+const WD  = ['dom','seg','ter','qua','qui','sex','sáb'];
+const MON = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+function fmtDate(d){
+  return `${WD[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}`;
+}
+function fmtTime(d){
+  return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function isSameDay(a,b){
+  return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+}
+
+function getStatus(d){
+  const now = Date.now();
+  const ms  = d.getTime();
+  if(ms > now) return 'sched';
+  // Assume ~2h game duration
+  if(ms > now - 2*3600*1000) return 'live';
+  return 'fin';
+}
+
+function matchLink(id){
+  return `${BASE_URL}${id}/`;
+}
+
+function btnHtml(g){
+  const status = getStatus(g.date);
+  if(status === 'live'){
+    return `<a class="live-btn" href="${matchLink(g.id)}" target="_blank"><span class="live-dot" style="flex-shrink:0"></span>AO VIVO</a>`;
+  } else if(status === 'fin'){
+    return `<a class="result-btn" href="${matchLink(g.id)}" target="_blank">📊 Resultado</a>`;
+  }
+  return '';
+}
+
+function cardHtml(g){
+  const status = getStatus(g.date);
+  const isLive = status === 'live';
+  const isFin  = status === 'fin';
+  const isBra  = g.bra || g.home === 'Brazil' || g.away === 'Brazil';
+
+  const dateStr  = `${fmtDate(g.date)} · ${fmtTime(g.date)}`;
+  const venueStr = g.city ? `📍 ${g.city}` : '';
+
+  const scoreHtml = isFin
+    ? `<span class="gscore fin">— — —</span>`
+    : isLive
+    ? `<span class="gscore live">AO VIVO</span>`
+    : `<span class="gscore">${fmtTime(g.date)}</span>`;
+
+  const statusHtml = isFin
+    ? `<span class="gstatus fin">Encerrado</span>`
+    : isLive
+    ? `<span class="gstatus live"><span class="ldot"></span> Ao Vivo</span>`
+    : '';
+
+  const btn = btnHtml(g);
+
+  return `
+<div class="gcard${isLive?' live-card':''}">
+  <div class="gmeta">
+    <span class="gdate">${dateStr}</span>
+    <span class="venue">${venueStr}</span>
+  </div>
+  <div class="gteams">
+    <div class="gteam">
+      <span class="flag">${f(g.home)}</span>
+      <span>${g.home}</span>
+    </div>
+    <div>
+      ${scoreHtml}
+      ${statusHtml}
+    </div>
+    <div class="gteam right">
+      <span class="flag">${f(g.away)}</span>
+      <span>${g.away}</span>
+    </div>
+  </div>
+  ${btn ? `<div style="text-align:center;margin-top:.3rem">${btn}</div>` : ''}
+</div>`;
+}
+
+// ── Parse dates ──
+function parseGames(arr){
+  return arr.map(g => ({...g, date: new Date(g.iso)}));
+}
+
+// ── Tab routing ──
+let braBuilt = false, agendaBuilt = false;
+
+function go(tab, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('sec-'+tab).classList.add('on');
+  if(tab==='brasil' && !braBuilt){ buildBrasil(); }
+  if(tab==='agenda' && !agendaBuilt){ buildAgenda(); }
+}
+
+// ── HOJE ──
+function buildHoje(){
+  const today = new Date();
+  const games = parseGames(ALL_WOMEN).filter(g => isSameDay(g.date, today));
+  const el = document.getElementById('hojeContent');
+  const badge = document.getElementById('todayBadge');
+  const title = document.getElementById('hojeTitle');
+
+  badge.textContent = fmtDate(today);
+
+  // Check for live games
+  const hasLive = games.some(g => getStatus(g.date)==='live');
+  document.getElementById('livePill').classList.toggle('on', hasLive);
+
+  if(games.length === 0){
+    // Show next game day instead
+    const upcoming = parseGames(ALL_WOMEN).filter(g=>g.date>today).sort((a,b)=>a.date-b.date);
+    if(upcoming.length > 0){
+      const nextDay = upcoming[0].date;
+      const nextGames = upcoming.filter(g=>isSameDay(g.date,nextDay));
+      title.textContent = 'PRÓXIMOS JOGOS';
+      badge.textContent = fmtDate(nextDay);
+      el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos hoje.<br><span style="color:var(--orange);font-weight:700">Próximos jogos: ${fmtDate(nextDay)}</span></div>` +
+        nextGames.map(cardHtml).join('');
+    } else {
+      title.textContent = 'JOGOS DE HOJE';
+      el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos agendados para hoje.</div>`;
+    }
+    return;
+  }
+
+  el.innerHTML = games.map(cardHtml).join('');
+}
+
+// ── BRASIL ──
+function buildBrasil(){
+  braBuilt = true;
+  const games = parseGames(BRAZIL_MATCHES);
+
+  // Group by week
+  const weeks = {
+    'Semana 1 — Brasília, Brasil 🇧🇷': games.filter(g=>g.city==='Brasília'),
+    'Semana 2 — Ancara, Turquia 🇹🇷': games.filter(g=>g.city==='Ankara'),
+    'Semana 3 — Osaka, Japão 🇯🇵': games.filter(g=>g.city==='Osaka'),
+  };
+
+  let html = '';
+  for(const [label, wgames] of Object.entries(weeks)){
+    if(!wgames.length) continue;
+    const done = wgames.filter(g=>getStatus(g.date)==='fin').length;
+    html += `<div class="week-hdr">${label} <span class="week-badge">${done}/${wgames.length} jogos</span></div>`;
+    html += wgames.map(g => cardHtml({...g, bra:true})).join('');
+  }
+
+  document.getElementById('brasilContent').innerHTML = html;
+}
+
+// ── AGENDA ──
+function buildAgenda(){
+  agendaBuilt = true;
+  const games = parseGames(ALL_WOMEN).sort((a,b)=>a.date-b.date);
+
+  // Group by date
+  const byDate = {};
+  for(const g of games){
+    const key = g.date.toDateString();
+    if(!byDate[key]) byDate[key] = {date:g.date, games:[]};
+    byDate[key].games.push(g);
+  }
+
+  let html = '';
+  for(const {date, games: dg} of Object.values(byDate)){
+    html += `<div class="date-hdr">📅 ${fmtDate(date)}</div>`;
+    html += dg.map(cardHtml).join('');
+  }
+
+  document.getElementById('agendaContent').innerHTML =
+    html || `<div class="empty"><div class="em-icon">📋</div>Nenhum jogo encontrado.</div>`;
+}
+
+// ── INIT ──
+buildHoje();
+</script>
+
+</body>
+</html>
