@@ -361,8 +361,9 @@ function parseEvent(ev){
   const s     = statusPT(st);
   const note  = c.notes?.[0]?.text || '';
   const grp   = note.match(/group\s+[A-L0-9]+/i)?.[0] || note.split(' ').slice(0,3).join(' ') || '';
-  const city  = c.venue?.address?.city || c.venue?.address?.state || '';
-  const venue = city || c.venue?.fullName || '';
+  const city    = c.venue?.address?.city || c.venue?.address?.state || '';
+  const stadium = c.venue?.fullName || '';
+  const venue   = [city, stadium].filter(Boolean).join(' · ');
   return {
     id:ev.id, date:new Date(ev.date||c.date),
     group:grp, venue,
