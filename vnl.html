@@ -741,6 +741,7 @@ function buildHoje(){
       badge.textContent = fmtDate(nextDay);
       el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos hoje.<br><span style="color:var(--orange);font-weight:700">Próximos jogos: ${fmtDate(nextDay)}</span></div>` +
         nextGames.map(cardHtml).join('');
+      loadScores(nextGames);
     } else {
       title.textContent = 'JOGOS DE HOJE';
       el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos agendados para hoje.</div>`;
