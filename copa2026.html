@@ -405,7 +405,11 @@ async function fetchStandings(){
 }
 
 // ── RENDER LIST — renders each card individually so one bad card never kills the rest
-function renderList(games){ return games.map(g=>{ try{return cardHTML(g);}catch(e){return '';} }).join(''); }
+function renderList(games){
+  const filtered = brazilOnly ? games.filter(isBrazilGame) : games;
+  if(brazilOnly && !filtered.length) return '<div class="empty"><span class="empty-ico">🇧🇷</span>Nenhum jogo do Brasil neste dia.</div>';
+  return filtered.map(g=>{ try{return cardHTML(g);}catch(e){return '';} }).join('');
+}
 
 // ── LOAD TODAY ────────────────────────────────────────────────────────────────
 async function loadHoje(){
