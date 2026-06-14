@@ -212,7 +212,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
         <div class="t2">🇺🇸 EUA &nbsp;·&nbsp; 🇨🇦 Canadá &nbsp;·&nbsp; 🇲🇽 México</div>
       </div>
     </div>
-    <div class="live-pill" id="livePill"><span class="live-dot"></span>AO VIVO</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="brazilBtn" onclick="toggleBrazil()" title="Filtrar jogos do Brasil"
+        style="background:none;border:2px solid transparent;border-radius:50%;
+               width:36px;height:36px;font-size:1.4rem;cursor:pointer;
+               display:flex;align-items:center;justify-content:center;
+               transition:all .2s;flex-shrink:0">🇧🇷</button>
+      <div class="live-pill" id="livePill"><span class="live-dot"></span>AO VIVO</div>
+    </div>
   </div>
   <div class="tabs">
     <div class="tab on"  data-tab="hoje"   onclick="go('hoje',this)">⚽ Hoje</div>
