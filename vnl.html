@@ -354,22 +354,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 
   <!-- CLASSIFICAÇÃO -->
   <section class="sec" id="sec-class">
-    <div class="vnl-cta">
-      <div class="cta-icon">📊</div>
-      <div class="cta-text">
-        <div class="ct1">Classificação atualizada em tempo real</div>
-        <div class="ct2">Standings feminino · VNL 2026</div>
-      </div>
-      <a class="cta-link" href="https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/" target="_blank">Ver ranking ↗</a>
+    <div class="sec-header">
+      <div class="sec-title">CLASSIFICAÇÃO</div>
+      <div class="today-badge" id="standingsBadge">VNL 2026</div>
     </div>
-    <div class="standings-wrap">
-      <iframe class="standings-frame"
-        src="https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/"
-        title="VNL 2026 Women Standings"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
-      </iframe>
-      <div class="standings-note">⚠️ Se a tabela não carregar, toque em "Ver ranking ↗" acima.</div>
+    <div id="standingsContent">
+      <div class="spinner"><div class="spin"></div>Carregando…</div>
     </div>
   </section>
 
