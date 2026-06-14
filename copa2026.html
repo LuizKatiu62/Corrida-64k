@@ -586,6 +586,40 @@ function shift(d){
   agDate=nd; loadAgenda();
 }
 
+// ── BRASIL ────────────────────────────────────────────────────────────────────
+async function loadBrasil(){
+  if(braLoaded) return;
+  const el = document.getElementById('list-brasil');
+  el.innerHTML = '<div class="loading"><div class="spin"></div><br>Carregando jogos do Brasil…</div>';
+  try {
+    // Fetch group stage week by week and collect Brazil games
+    const batches = [
+      ['2026-06-11','2026-06-17'],
+      ['2026-06-18','2026-06-24'],
+      ['2026-06-25','2026-07-01'],
+    ];
+    const braGames = [];
+    for(const [from, to] of batches){
+      const start = new Date(from), end = new Date(to), days = [];
+      for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) days.push(new Date(d));
+      const results = await Promise.allSettled(days.map(d => fetchBoard(d)));
+      for(const r of results){
+        if(r.status==='fulfilled'){
+          (r.value.events||[]).map(parseEvent).filter(isBrazilGame).forEach(g => braGames.push(g));
+        }
+      }
+    }
+    braGames.sort((a,b) => a.date - b.date);
+    document.getElementById('ub-brasil').textContent = `Atualizado às ${ts()}`;
+    el.innerHTML = braGames.length
+      ? braGames.map(g=>{ try{return cardHTML(g);}catch(e){return '';} }).join('')
+      : '<div class="empty"><span class="empty-ico">🇧🇷</span>Jogos do Brasil ainda não divulgados.</div>';
+    braLoaded = true;
+  } catch(e) {
+    el.innerHTML = `<div class="err">⚠️ Erro: ${e.message}<br><button onclick="braLoaded=false;loadBrasil()" style="margin-top:.5rem;background:var(--gold);color:#000;border:none;border-radius:6px;padding:.3rem .8rem;font-weight:700;cursor:pointer">Tentar novamente</button></div>`;
+  }
+}
+
 // ── TAB ───────────────────────────────────────────────────────────────────────
 function go(tab, el){
   curTab=tab;
@@ -596,6 +630,7 @@ function go(tab, el){
   if(tab==='hoje')   loadHoje();
   if(tab==='grupos'){ groupsLoaded=false; loadGrupos(); }
   if(tab==='agenda') loadAgenda();
+  if(tab==='brasil') loadBrasil();
 }
 
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
