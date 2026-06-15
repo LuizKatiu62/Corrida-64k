@@ -447,7 +447,22 @@ async function fetchStandings(){
 // ── RENDER LIST — renders each card individually so one bad card never kills the rest
 function renderList(games){ return games.map(g=>{ try{return cardHTML(g);}catch(e){return '';} }).join(''); }
 
-// ── RESULTADOS (todos os jogos encerrados desde o início da Copa) ─────────────
+// ── RESULTADOS NAV ────────────────────────────────────────────────────────────
+function updateResNav(){
+  document.getElementById('res-label').textContent = fmtDate(resDate);
+  const isToday = resDate.toDateString() === today0().toDateString();
+  document.getElementById('res-sub').textContent = isToday ? '🗓️ Hoje' : '';
+  document.getElementById('res-prev').disabled = resDate <= WC_START;
+  document.getElementById('res-next').disabled = isToday;
+}
+
+function shiftRes(d){
+  const nd = new Date(resDate); nd.setDate(nd.getDate()+d);
+  if(nd < WC_START || nd > today0()) return;
+  resDate = nd; loadHoje();
+}
+
+// ── RESULTADOS (jogos encerrados do dia selecionado) ──────────────────────────
 async function loadHoje(){
   document.getElementById('list-hoje').innerHTML = '<div class="loading"><div class="spin"></div><br>Carregando resultados…</div>';
   try {
