@@ -424,6 +424,7 @@ function cardHTML(g){
       <span class="venue">${venueStr}</span>
     </div>
     ${grpTag ? `<div class="gmeta-grp">${grpTag}</div>` : ''}
+    ${g.channels ? `<div class="gmeta-tv"><span class="tv-ico">📺</span>${g.channels}</div>` : ''}
     <div class="gbody">
       <div class="team home">
         <div class="tflag">${flag(g.home.abbr)}</div>
