@@ -249,10 +249,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 
 <div class="wrap">
 
-  <!-- ── HOJE ── -->
+  <!-- ── RESULTADOS ── -->
   <div class="sec on" id="sec-hoje">
+    <div class="dnav">
+      <button class="dbtn" id="res-prev" onclick="shiftRes(-1)">◀</button>
+      <div class="dinfo">
+        <div class="dlabel" id="res-label">—</div>
+        <div class="dsub"   id="res-sub"></div>
+      </div>
+      <button class="dbtn" id="res-next" onclick="shiftRes(+1)">▶</button>
+    </div>
     <div class="ubar" id="ub-hoje"></div>
-    <div id="list-hoje"><div class="loading"><div class="spin"></div><br>Carregando jogos de hoje…</div></div>
+    <div id="list-hoje"><div class="loading"><div class="spin"></div><br>Carregando resultados…</div></div>
   </div>
 
   <!-- ── GRUPOS ── -->
