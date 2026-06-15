@@ -464,39 +464,19 @@ function shiftRes(d){
 
 // ── RESULTADOS (jogos encerrados do dia selecionado) ──────────────────────────
 async function loadHoje(){
+  updateResNav();
   document.getElementById('list-hoje').innerHTML = '<div class="loading"><div class="spin"></div><br>Carregando resultados…</div>';
   try {
-    const now = new Date();
+    const data  = await fetchBoard(resDate);
+    const games = (data.events||[]).map(parseEvent).filter(g => g.isDone || g.isLive);
 
-    // Build list of all days from Copa start up to today
-    const days = [];
-    for(let d = new Date(WC_START); d <= now; d.setDate(d.getDate()+1))
-      days.push(new Date(d));
-
-    const results = await Promise.allSettled(days.map(d => fetchBoard(d)));
-
-    // Group finished/live games by day, most recent first
-    const byDay = [];
-    for(let i = 0; i < days.length; i++){
-      if(results[i].status !== 'fulfilled') continue;
-      const games = (results[i].value.events||[]).map(parseEvent)
-        .filter(g => g.isDone || g.isLive);
-      if(games.length) byDay.push({date: days[i], games});
-    }
-    byDay.reverse();
-
-    const hasLive = byDay.some(d => d.games.some(g => g.isLive));
+    const hasLive = games.some(g => g.isLive);
     document.getElementById('livePill').classList.toggle('on', hasLive);
     document.getElementById('ub-hoje').textContent = `Atualizado às ${ts()}`;
 
-    let html = '';
-    for(const {date, games} of byDay){
-      html += sep(date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
-      html += renderList(games);
-    }
-
-    if(!html)
-      html = `<div class="empty"><span class="empty-ico">⚽</span>Sem resultados ainda.</div>`;
+    const html = games.length
+      ? renderList(games)
+      : `<div class="empty"><span class="empty-ico">⚽</span>Sem resultados neste dia.</div>`;
 
     document.getElementById('list-hoje').innerHTML = html;
     sched(hasLive);
