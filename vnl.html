@@ -790,19 +790,18 @@ function buildAgenda(){
     const wGames = games.filter(g=>g.date>=wFrom && g.date<wTo);
     if(!wGames.length) continue;
 
-    const done    = wGames.filter(g=>getStatus(g.date)==='fin').length;
-    const isPast  = wTo  < now;            // entire week already done → collapse
-    const wkId    = 'wk-' + wk.from.slice(0,7);
+    const done = wGames.filter(g=>getStatus(g.date)==='fin').length;
+    const wkId = 'wk-' + wk.from.slice(0,7);
 
     html += `
 <div class="week-hdr acc-hdr" onclick="toggleWeek('${wkId}')">
   <span>${wk.label}</span>
   <span style="display:flex;align-items:center;gap:.5rem">
     <span class="week-badge">${done}/${wGames.length}</span>
-    <span class="acc-arrow" id="arrow-${wkId}">${isPast?'▶':'▼'}</span>
+    <span class="acc-arrow" id="arrow-${wkId}">▼</span>
   </span>
 </div>
-<div id="${wkId}" style="display:${isPast?'none':'block'}">`;
+<div id="${wkId}">`;
 
     // Group by day
     const byDay = {};
