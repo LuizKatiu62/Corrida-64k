@@ -451,8 +451,8 @@ function renderList(games){ return games.map(g=>{ try{return cardHTML(g);}catch(
 // ── RESULTADOS NAV ────────────────────────────────────────────────────────────
 function updateResNav(){
   document.getElementById('res-label').textContent = fmtDate(resDate);
-  const isToday = resDate.toDateString() === today0().toDateString();
-  document.getElementById('res-sub').textContent = isToday ? '🗓️ Hoje' : '';
+  const isYest = resDate.toDateString() === yesterday0().toDateString();
+  document.getElementById('res-sub').textContent = isYest ? '🗓️ Ontem' : '';
   document.getElementById('res-prev').disabled = resDate <= WC_START;
   document.getElementById('res-next').disabled = resDate >= yesterday0();
 }
