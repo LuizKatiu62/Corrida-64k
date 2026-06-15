@@ -719,16 +719,28 @@ async function toggleGoals(btn, id){
     const r = await fetch(`${BASE}/summary?event=${id}`, {cache:'no-store'});
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    const details = data.competitions?.[0]?.details || [];
+
+    // ESPN puts details under header.competitions in the summary endpoint
+    const details =
+      data.header?.competitions?.[0]?.details ||
+      data.competitions?.[0]?.details ||
+      [];
+
     const goals = details
-      .filter(d => d.scoringPlay || (d.type?.text||'').toLowerCase().includes('goal'))
+      .filter(d => {
+        if(d.scoringPlay) return true;
+        const txt = (d.type?.text || d.type?.description || '').toLowerCase();
+        return txt.includes('goal');
+      })
       .map(d => ({
-        time:   d.clock?.displayValue || '?',
-        player: d.athletesInvolved?.[0]?.displayName || '?',
+        time:   d.clock?.displayValue || (d.clock?.value ? d.clock.value+"'" : '?'),
+        player: d.athletesInvolved?.[0]?.displayName ||
+                d.athletes?.[0]?.displayName || '?',
         team:   d.team?.abbreviation || '',
-        own:    (d.type?.text||'').toLowerCase().includes('own'),
-        pen:    (d.type?.text||'').toLowerCase().includes('penalty'),
+        own:    (d.type?.text || d.type?.description || '').toLowerCase().includes('own'),
+        pen:    (d.type?.text || d.type?.description || '').toLowerCase().includes('penalty'),
       }));
+
     goalsCache[id] = goals;
     panel.innerHTML = renderGoals(goals);
   } catch(e){
