@@ -431,14 +431,21 @@ function cardHTML(g){
     scoreBlock = `<div class="stime">${fmtTime(g.date)}</div>
                   <div class="sstatus">${g.status||'—'}</div>`;
   }
-  const grpTag  = g.group ? `<span class="grp">${g.group.toUpperCase()}</span>` : '';
-  const dateStr = `${fmtDateShort(g.date)} · ${fmtTime(g.date)}`;
-  const venueStr= g.venue ? `📍 ${g.venue}` : '';
+  const grpTag   = g.group ? `<span class="grp">${g.group.toUpperCase()}</span>` : '';
+  const dateStr  = `${fmtDateShort(g.date)} · ${fmtTime(g.date)}`;
+  const venueStr = g.venue ? `📍 ${g.venue}` : '';
+  const goalsBtn = (g.isDone || g.isLive)
+    ? `<button class="goals-btn" onclick="toggleGoals(this,'${g.id}')">⚽ Gols</button>`
+    : '';
+  const goalsPanel = (g.isDone || g.isLive)
+    ? `<div class="goals-panel"></div>`
+    : '';
   return `
   <div class="gcard${g.isLive?' live-card':''}">
     <div class="gmeta">
       <span class="gdate">${dateStr}</span>
       <span class="venue">${venueStr}</span>
+      ${goalsBtn}
     </div>
     ${grpTag ? `<div class="gmeta-grp">${grpTag}</div>` : ''}
     <div class="gbody">
@@ -452,6 +459,7 @@ function cardHTML(g){
         <div class="tname">${g.away.name}</div>
       </div>
     </div>
+    ${goalsPanel}
   </div>`;
 }
 
