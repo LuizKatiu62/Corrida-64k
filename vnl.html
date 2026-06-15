@@ -305,8 +305,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
     <div class="live-pill" id="livePill"><span class="live-dot"></span> AO VIVO</div>
   </div>
   <nav class="tabs">
-    <div class="tab on" data-tab="hoje" onclick="go('hoje',this)">Hoje</div>
-    <div class="tab" data-tab="agenda" onclick="go('agenda',this)">Todos</div>
+    <div class="tab on" data-tab="agenda" onclick="go('agenda',this)">Todos</div>
+    <div class="tab" data-tab="hoje" onclick="go('hoje',this)">Hoje</div>
     <div class="tab tab-bra" data-tab="brasil" onclick="go('brasil',this)">🇧🇷 Brasil</div>
     <div class="tab" data-tab="class" onclick="go('class',this)">Classif.</div>
   </nav>
@@ -314,22 +314,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 
 <main class="wrap">
 
+  <!-- AGENDA — default visible section -->
+  <section class="sec on" id="sec-agenda">
+    <div class="sec-header">
+      <div class="sec-title">TODOS OS JOGOS · VNL 2026</div>
+      <div class="today-badge">18 seleções</div>
+    </div>
+    <div id="agendaContent"><div class="spinner"><div class="spin"></div>Carregando…</div></div>
+  </section>
+
   <!-- HOJE -->
-  <section class="sec on" id="sec-hoje">
+  <section class="sec" id="sec-hoje">
     <div class="sec-header">
       <div class="sec-title" id="hojeTitle">JOGOS DE HOJE</div>
       <div class="today-badge" id="todayBadge"></div>
     </div>
     <div id="hojeContent"><div class="spinner"><div class="spin"></div>Carregando…</div></div>
-  </section>
-
-  <!-- AGENDA -->
-  <section class="sec" id="sec-agenda">
-    <div class="sec-header">
-      <div class="sec-title">TODOS OS JOGOS</div>
-      <div class="today-badge">VNL 2026 · 18 seleções</div>
-    </div>
-    <div id="agendaContent"><div class="spinner"><div class="spin"></div>Carregando…</div></div>
   </section>
 
   <!-- BRASIL -->
