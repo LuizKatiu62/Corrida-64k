@@ -659,14 +659,19 @@ function go(tab, el){
 }
 
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
-function sched(){} // mantido para não quebrar chamadas existentes
+function sched(){}
 
-// setInterval fixo — não depende da cadeia anterior completar
-setInterval(()=>{ if(curTab==='hoje') loadHoje(); }, 30000);
+function refreshActive(){
+  if(curTab==='hoje')   loadHoje();
+  if(curTab==='agenda') loadAgenda();
+}
+
+// Atualiza a tab ativa a cada 30s
+setInterval(refreshActive, 30000);
 
 // Recarrega quando o iPhone volta do background/tela bloqueada
 document.addEventListener('visibilitychange', ()=>{
-  if(!document.hidden && curTab==='hoje') loadHoje();
+  if(!document.hidden) refreshActive();
 });
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
