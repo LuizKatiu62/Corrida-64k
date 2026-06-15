@@ -726,20 +726,31 @@ function buildHoje(){
   document.getElementById('livePill').classList.toggle('on', hasLive);
 
   if(games.length === 0){
-    // Show next game day instead
-    const upcoming = parseGames(ALL_WOMEN).filter(g=>g.date>today).sort((a,b)=>a.date-b.date);
-    if(upcoming.length > 0){
-      const nextDay = upcoming[0].date;
-      const nextGames = upcoming.filter(g=>isSameDay(g.date,nextDay));
-      title.textContent = 'PRÓXIMOS JOGOS';
-      badge.textContent = fmtDate(nextDay);
-      el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos hoje.<br><span style="color:var(--orange);font-weight:700">Próximos jogos: ${fmtDate(nextDay)}</span></div>` +
-        nextGames.map(cardHtml).join('');
-      loadScores(nextGames);
-    } else {
-      title.textContent = 'JOGOS DE HOJE';
-      el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos agendados para hoje.</div>`;
+    title.textContent = 'VNL 2026';
+    badge.textContent = fmtDate(today);
+    const allGames  = parseGames(ALL_WOMEN);
+    const finished  = allGames.filter(g=>getStatus(g.date)==='fin').sort((a,b)=>b.date-a.date);
+    const upcoming  = allGames.filter(g=>g.date>today).sort((a,b)=>a.date-b.date);
+    let html = '';
+
+    // Most recent game day (all teams)
+    if(finished.length>0){
+      const lastDay   = finished[0].date;
+      const lastGames = finished.filter(g=>isSameDay(g.date,lastDay)).reverse();
+      html += `<div class="week-hdr" style="margin-top:0">Últimos resultados · ${fmtDate(lastDay)}</div>`;
+      html += lastGames.map(g=>cardHtml(g)).join('');
+      loadScores(lastGames);
     }
+
+    // Next game day (all teams)
+    if(upcoming.length>0){
+      const nextDay   = upcoming[0].date;
+      const nextGames = upcoming.filter(g=>isSameDay(g.date,nextDay));
+      html += `<div class="week-hdr">Próximos jogos · ${fmtDate(nextDay)}</div>`;
+      html += nextGames.map(g=>cardHtml(g)).join('');
+    }
+
+    el.innerHTML = html || `<div class="empty"><div class="em-icon">🏐</div>Sem jogos agendados.</div>`;
     return;
   }
 
