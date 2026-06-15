@@ -701,6 +701,58 @@ function sched(live){
   timer = setTimeout(()=>{ if(curTab==='hoje') loadHoje(); }, live?30000:300000);
 }
 
+// ── GOALS ─────────────────────────────────────────────────────────────────────
+const goalsCache = {};
+
+async function toggleGoals(btn, id){
+  const panel = btn.closest('.gcard').querySelector('.goals-panel');
+  const isOpen = panel.style.display === 'block';
+  if(isOpen){ panel.style.display='none'; btn.classList.remove('open'); return; }
+
+  panel.style.display = 'block';
+  btn.classList.add('open');
+
+  if(id in goalsCache){ panel.innerHTML = renderGoals(goalsCache[id]); return; }
+
+  panel.innerHTML = '<div class="goals-empty">⚽ Carregando…</div>';
+  try{
+    const r = await fetch(`${BASE}/summary?event=${id}`, {cache:'no-store'});
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    const details = data.competitions?.[0]?.details || [];
+    const goals = details
+      .filter(d => d.scoringPlay || (d.type?.text||'').toLowerCase().includes('goal'))
+      .map(d => ({
+        time:   d.clock?.displayValue || '?',
+        player: d.athletesInvolved?.[0]?.displayName || '?',
+        team:   d.team?.abbreviation || '',
+        own:    (d.type?.text||'').toLowerCase().includes('own'),
+        pen:    (d.type?.text||'').toLowerCase().includes('penalty'),
+      }));
+    goalsCache[id] = goals;
+    panel.innerHTML = renderGoals(goals);
+  } catch(e){
+    panel.innerHTML = '<div class="goals-empty">Não foi possível carregar os gols.</div>';
+    delete goalsCache[id];
+  }
+}
+
+function renderGoals(goals){
+  if(!goals || !goals.length)
+    return '<div class="goals-empty">Sem gols registrados.</div>';
+  return goals.map(g => {
+    const icon = g.own ? '🔴' : '⚽';
+    const note = g.own ? ' <span style="opacity:.5;font-size:.65rem">(g.c.)</span>'
+                : g.pen ? ' <span style="opacity:.5;font-size:.65rem">(pen.)</span>' : '';
+    return `<div class="goal-item">
+      <span class="goal-time">${g.time}'</span>
+      <span>${icon}</span>
+      <span>${g.player}${note}</span>
+      ${g.team ? `<span class="goal-team-tag">${g.team}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
 // ── INIT ─────────────────────────────────────────────────────────────────────
 loadHoje();
 </script>
