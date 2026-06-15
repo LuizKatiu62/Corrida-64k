@@ -495,7 +495,7 @@ async function loadHoje(){
   } catch(e) {
     document.getElementById('list-hoje').innerHTML =
       `<div class="err">⚠️ Erro ao carregar: ${e.message}<br><button onclick="loadHoje()" style="margin-top:.5rem;background:var(--gold);color:#000;border:none;border-radius:6px;padding:.3rem .8rem;font-weight:700;cursor:pointer">Tentar novamente</button></div>`;
-    sched(false);
+    sched();
   }
 }
 
