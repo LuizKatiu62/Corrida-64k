@@ -824,6 +824,8 @@ function buildAgenda(){
     html += '</div>';
   }
 
+  const badge = document.querySelector('#sec-agenda .today-badge');
+  if(badge) badge.textContent = `${games.length} jogos · 18 seleções`;
   document.getElementById('agendaContent').innerHTML =
     html || `<div class="empty"><div class="em-icon">📋</div>Nenhum jogo encontrado.</div>`;
   loadScores(games);
