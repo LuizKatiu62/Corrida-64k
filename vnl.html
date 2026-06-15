@@ -665,9 +665,7 @@ function cardHtml(g, showDate=false){
 
   const setsRow = isFin ? `<div class="sets-row sets-el" data-id="${g.id}"></div>` : '';
 
-  const liveBtn = isLive
-    ? `<a class="live-btn" href="${matchLink(g.id)}" target="_blank"><span class="live-dot" style="flex-shrink:0"></span>AO VIVO</a>`
-    : '';
+  const liveBtn = '';
 
   const braHighlight = isBra ? 'border-color:rgba(0,156,59,.5);background:linear-gradient(135deg,var(--card),rgba(0,156,59,.05));' : '';
 
