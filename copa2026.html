@@ -397,12 +397,6 @@ function cardHTML(g){
   const grpTag   = g.group ? `<span class="grp">${g.group.toUpperCase()}</span>` : '';
   const dateStr  = `${fmtDateShort(g.date)} · ${fmtTime(g.date)}`;
   const venueStr = g.venue ? `📍 ${g.venue}` : '';
-  const goalsBtn = (g.isDone || g.isLive)
-    ? `<button class="goals-btn" onclick="toggleGoals(this,'${g.id}')">▶ Gols</button>`
-    : '';
-  const goalsPanel = (g.isDone || g.isLive)
-    ? `<div class="goals-panel"></div>`
-    : '';
   return `
   <div class="gcard${g.isLive?' live-card':''}">
     <div class="gmeta">
