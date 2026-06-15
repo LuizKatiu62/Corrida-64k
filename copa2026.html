@@ -451,35 +451,30 @@ async function loadHoje(){
       fetchBoard(yesterday)
     ]);
 
-    const todayGames = todayRes.status==='fulfilled'
-      ? (todayRes.value.events||[]).map(parseEvent) : [];
-    const yestGames  = yestRes.status==='fulfilled'
+    const todayDone = todayRes.status==='fulfilled'
+      ? (todayRes.value.events||[]).map(parseEvent).filter(g=>g.isDone||g.isLive) : [];
+    const yestDone  = yestRes.status==='fulfilled'
       ? (yestRes.value.events||[]).map(parseEvent).filter(g=>g.isDone) : [];
 
-    const hasLive    = todayGames.some(g=>g.isLive);
-    const todayActive= todayGames.some(g=>g.isLive||g.isDone);
+    const hasLive = todayDone.some(g=>g.isLive);
 
     document.getElementById('livePill').classList.toggle('on', hasLive);
     document.getElementById('ub-hoje').textContent = `Atualizado às ${ts()}`;
 
     let html = '';
 
-    // Yesterday's results — show when today hasn't started/finished yet
-    if(!todayActive && yestGames.length){
-      html += sep(`Resultados de ontem · ${yesterday.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}`);
-      html += renderList(yestGames);
+    if(todayDone.length){
+      html += sep(`${now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}`);
+      html += renderList(todayDone);
     }
 
-    if(todayGames.length){
-      if(html) html += sep(`Resultados de hoje · ${now.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}`);
-      html += renderList(todayGames);
+    if(yestDone.length){
+      html += sep(`${yesterday.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}`);
+      html += renderList(yestDone);
     }
 
     if(!html){
-      let nextMsg = '';
-      if(now < WC_START) nextMsg = `Copa começa em ${WC_START.toLocaleDateString('pt-BR',{day:'numeric',month:'long'})}!`;
-      else if(now > WC_END) nextMsg = 'Copa encerrada. Até 2030! 🏆';
-      html = `<div class="empty"><span class="empty-ico">😴</span>Sem jogos hoje.<br>${nextMsg||'Confira a <strong>Agenda</strong> para os próximos jogos.'}</div>`;
+      html = `<div class="empty"><span class="empty-ico">⚽</span>Sem resultados disponíveis ainda.</div>`;
     }
 
     document.getElementById('list-hoje').innerHTML = html;
