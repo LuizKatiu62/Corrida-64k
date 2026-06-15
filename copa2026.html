@@ -659,11 +659,15 @@ function go(tab, el){
 }
 
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
-function sched(live){
+function sched(){
   clearTimeout(timer);
   timer = setTimeout(()=>{ if(curTab==='hoje') loadHoje(); }, 30000);
 }
 
+// Recarrega quando o iPhone volta do background/tela bloqueada
+document.addEventListener('visibilitychange', ()=>{
+  if(!document.hidden && curTab==='hoje') loadHoje();
+});
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 updateResNav();
