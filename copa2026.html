@@ -471,7 +471,7 @@ async function loadHoje(){
     }
 
     if(todayGames.length){
-      if(html) html += sep(`Hoje · ${now.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}`);
+      if(html) html += sep(`Resultados de hoje · ${now.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}`);
       html += renderList(todayGames);
     }
 
