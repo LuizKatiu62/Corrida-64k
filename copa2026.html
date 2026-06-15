@@ -454,7 +454,7 @@ function updateResNav(){
   const isToday = resDate.toDateString() === today0().toDateString();
   document.getElementById('res-sub').textContent = isToday ? '🗓️ Hoje' : '';
   document.getElementById('res-prev').disabled = resDate <= WC_START;
-  document.getElementById('res-next').disabled = isToday;
+  document.getElementById('res-next').disabled = resDate >= yesterday0();
 }
 
 function shiftRes(d){
