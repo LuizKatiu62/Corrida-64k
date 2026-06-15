@@ -659,10 +659,10 @@ function go(tab, el){
 }
 
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
-function sched(){
-  clearTimeout(timer);
-  timer = setTimeout(()=>{ if(curTab==='hoje') loadHoje(); }, 30000);
-}
+function sched(){} // mantido para não quebrar chamadas existentes
+
+// setInterval fixo — não depende da cadeia anterior completar
+setInterval(()=>{ if(curTab==='hoje') loadHoje(); }, 30000);
 
 // Recarrega quando o iPhone volta do background/tela bloqueada
 document.addEventListener('visibilitychange', ()=>{
