@@ -59,10 +59,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 /* ── TABS ── */
 .tabs{max-width:920px;margin:0 auto;display:flex;padding:0 .25rem}
 .tab{
-  flex:1;padding:.55rem .25rem .45rem;text-align:center;
-  font-size:.78rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  flex:1;padding:.55rem .05rem .45rem;text-align:center;
+  font-size:.78rem;font-weight:700;letter-spacing:0;text-transform:uppercase;
   cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;
-  transition:all .2s;user-select:none;
+  transition:all .2s;user-select:none;white-space:nowrap;overflow:hidden;
 }
 .tab:hover{color:var(--white)}
 .tab.on{color:var(--gold);border-bottom-color:var(--gold)}
