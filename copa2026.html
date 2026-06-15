@@ -716,55 +716,32 @@ async function toggleGoals(btn, id){
 
     const allVideos = data.videos || data.gamepackageJSON?.videos || [];
 
-    // Prefer clips that mention goal/gol; fall back to any highlights
     const goalClips = allVideos.filter(v => {
       const txt = (v.headline || v.description || v.title || '').toLowerCase();
       return txt.includes('goal') || txt.includes('gol') || txt.includes('score') || txt.includes('marca');
     });
-    const clips = goalClips.length ? goalClips : allVideos.slice(0, 5);
+    const clips = goalClips.length ? goalClips : allVideos.slice(0, 6);
 
     goalsCache[id] = clips;
     panel.innerHTML = renderGoals(clips);
   } catch(e){
-    panel.innerHTML = '<div class="goals-empty">Não foi possível carregar os vídeos.</div>';
+    panel.innerHTML = '<div class="goals-empty">Sem imagens disponíveis.</div>';
     delete goalsCache[id];
   }
 }
 
 function renderGoals(clips){
   if(!clips || !clips.length)
-    return '<div class="goals-empty">Sem vídeos disponíveis para este jogo.</div>';
+    return '<div class="goals-empty">Sem imagens disponíveis.</div>';
 
-  return clips.map(v => {
-    const title   = v.headline || v.description || v.title || 'Highlights';
-    const thumb   = v.thumbnail || v.posterImages?.default?.href || v.images?.[0]?.url || '';
-    const srcUrl  = v.links?.source?.href || v.links?.HD?.href || v.links?.HLS?.href || '';
-    const dur     = v.duration
-      ? `${Math.floor(v.duration/60)}:${String(v.duration%60).padStart(2,'0')}`
-      : '';
+  const imgs = clips.map(v => {
+    const thumb = v.thumbnail || v.posterImages?.default?.href || v.images?.[0]?.url || '';
+    return thumb ? `<img src="${thumb}" class="goal-img" loading="lazy" alt="">` : '';
+  }).filter(Boolean).join('');
 
-    const thumbImg = thumb
-      ? `<img src="${thumb}" alt="${title}" loading="lazy">`
-      : `<div style="height:90px;background:#1a2a50;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2rem">🎬</div>`;
-
-    return `<div class="clip-item">
-      <div class="clip-thumb" onclick="playClip(this,'${encodeURIComponent(srcUrl)}','${encodeURIComponent(thumb)}')">
-        ${thumbImg}
-        <div class="clip-play">▶</div>
-        ${dur ? `<span class="clip-dur">${dur}</span>` : ''}
-      </div>
-      <div class="clip-title">${title}</div>
-    </div>`;
-  }).join('');
-}
-
-function playClip(container, encUrl, encThumb){
-  const url   = decodeURIComponent(encUrl);
-  const thumb = decodeURIComponent(encThumb);
-  if(!url){ return; }
-  container.innerHTML = `<video src="${url}" controls autoplay playsinline
-    poster="${thumb}"
-    style="width:100%;border-radius:8px;display:block;background:#000"></video>`;
+  return imgs
+    ? `<div class="goal-imgs">${imgs}</div>`
+    : '<div class="goals-empty">Sem imagens disponíveis.</div>';
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
