@@ -788,7 +788,10 @@ function buildAgenda(){
     {label:'Finals · Jul 22–26',                 from:'2026-07-22', to:'2026-07-27'},
   ];
 
-  let html = '';
+  let html = `<div style="background:rgba(244,111,0,.1);border:1px solid rgba(244,111,0,.3);border-radius:10px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.82rem;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+  🏐 <strong style="color:var(--orange)">${games.length} jogos</strong> &nbsp;·&nbsp; 18 seleções &nbsp;·&nbsp; Brasil, Turquia, Japão e Finals &nbsp;·&nbsp; Jun–Jul 2026
+</div>`;
+
   for(const wk of weeks){
     const wFrom  = new Date(wk.from), wTo = new Date(wk.to);
     const wGames = games.filter(g=>g.date>=wFrom && g.date<wTo);
