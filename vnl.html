@@ -803,7 +803,7 @@ function buildAgenda(){
     if(!wGames.length) continue;
 
     const done = wGames.filter(g=>getStatus(g.date)==='fin').length;
-    const wkId = 'wk-' + wk.from.slice(0,7);
+    const wkId = 'wk-' + wk.from;
 
     html += `
 <div class="week-hdr acc-hdr" onclick="toggleWeek('${wkId}')">
