@@ -656,54 +656,6 @@ function sched(live){
   timer = setTimeout(()=>{ if(curTab==='hoje') loadHoje(); }, live?30000:300000);
 }
 
-// ── GOAL VIDEOS ───────────────────────────────────────────────────────────────
-const goalsCache = {};
-
-async function toggleGoals(btn, id){
-  const panel = btn.closest('.gcard').querySelector('.goals-panel');
-  const isOpen = panel.style.display === 'block';
-  if(isOpen){ panel.style.display='none'; btn.classList.remove('open'); return; }
-
-  panel.style.display = 'block';
-  btn.classList.add('open');
-
-  if(id in goalsCache){ panel.innerHTML = renderGoals(goalsCache[id]); return; }
-
-  panel.innerHTML = '<div class="goals-empty">🎬 Carregando vídeos…</div>';
-  try{
-    const r = await fetch(`${BASE}/summary?event=${id}`, {cache:'no-store'});
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
-
-    const allVideos = data.videos || data.gamepackageJSON?.videos || [];
-
-    const goalClips = allVideos.filter(v => {
-      const txt = (v.headline || v.description || v.title || '').toLowerCase();
-      return txt.includes('goal') || txt.includes('gol') || txt.includes('score') || txt.includes('marca');
-    });
-    const clips = goalClips.length ? goalClips : allVideos.slice(0, 6);
-
-    goalsCache[id] = clips;
-    panel.innerHTML = renderGoals(clips);
-  } catch(e){
-    panel.innerHTML = '<div class="goals-empty">Sem imagens disponíveis.</div>';
-    delete goalsCache[id];
-  }
-}
-
-function renderGoals(clips){
-  if(!clips || !clips.length)
-    return '<div class="goals-empty">Sem imagens disponíveis.</div>';
-
-  const imgs = clips.map(v => {
-    const thumb = v.thumbnail || v.posterImages?.default?.href || v.images?.[0]?.url || '';
-    return thumb ? `<img src="${thumb}" class="goal-img" loading="lazy" alt="">` : '';
-  }).filter(Boolean).join('');
-
-  return imgs
-    ? `<div class="goal-imgs">${imgs}</div>`
-    : '<div class="goals-empty">Sem imagens disponíveis.</div>';
-}
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 loadHoje();
