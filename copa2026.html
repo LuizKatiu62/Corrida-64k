@@ -381,9 +381,11 @@ function parseEvent(ev){
   const city    = c.venue?.address?.city || c.venue?.address?.state || '';
   const stadium = c.venue?.fullName || '';
   const venue   = [city, stadium].filter(Boolean).join(' · ');
+  const channels = (c.broadcasts||[]).flatMap(b=>b.names||[])
+    .map(n => n==='Tele'?'Telemundo':n).join(' · ');
   return {
     id:ev.id, date:new Date(ev.date||c.date),
-    group:grp, venue,
+    group:grp, venue, channels,
     home:{name:home.team?.displayName||'', abbr:home.team?.abbreviation||'', score:home.score||''},
     away:{name:away.team?.displayName||'', abbr:away.team?.abbreviation||'', score:away.score||''},
     status:s.txt, isLive:s.live, isDone:s.done,
