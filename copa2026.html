@@ -449,7 +449,7 @@ function cardHTML(g){
   const dateStr  = `${fmtDateShort(g.date)} · ${fmtTime(g.date)}`;
   const venueStr = g.venue ? `📍 ${g.venue}` : '';
   const goalsBtn = (g.isDone || g.isLive)
-    ? `<button class="goals-btn" onclick="toggleGoals(this,'${g.id}')">⚽ Gols</button>`
+    ? `<button class="goals-btn" onclick="toggleGoals(this,'${g.id}')">▶ Gols</button>`
     : '';
   const goalsPanel = (g.isDone || g.isLive)
     ? `<div class="goals-panel"></div>`
