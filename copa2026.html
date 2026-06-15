@@ -459,7 +459,7 @@ function updateResNav(){
 
 function shiftRes(d){
   const nd = new Date(resDate); nd.setDate(nd.getDate()+d);
-  if(nd < WC_START || nd > today0()) return;
+  if(nd < WC_START || nd > yesterday0()) return;
   resDate = nd; loadHoje();
 }
 
