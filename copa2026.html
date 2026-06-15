@@ -586,12 +586,12 @@ function updateDNav(){
   document.getElementById('d-label').textContent = fmtDate(agDate);
   const isToday = agDate.toDateString()===today0().toDateString();
   document.getElementById('d-sub').textContent = isToday?'🗓️ Hoje':'';
-  document.getElementById('btn-prev').disabled = agDate<=WC_START;
+  document.getElementById('btn-prev').disabled = agDate<=today0();
   document.getElementById('btn-next').disabled = agDate>=WC_END;
 }
 function shift(d){
   const nd = new Date(agDate); nd.setDate(nd.getDate()+d);
-  if(nd<WC_START||nd>WC_END) return;
+  if(nd<today0()||nd>WC_END) return;
   agDate=nd; loadAgenda();
 }
 
