@@ -630,15 +630,6 @@ function matchLink(id){
   return `${BASE_URL}${id}/`;
 }
 
-function btnHtml(g){
-  const status = getStatus(g.date);
-  if(status === 'live'){
-    return `<a class="live-btn" href="${matchLink(g.id)}" target="_blank"><span class="live-dot" style="flex-shrink:0"></span>AO VIVO</a>`;
-  } else if(status === 'fin'){
-    return `<a class="result-btn" href="${matchLink(g.id)}" target="_blank">📊 Resultado</a>`;
-  }
-  return '';
-}
 
 function cardHtml(g, showDate=false){
   const status = getStatus(g.date);
