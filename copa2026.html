@@ -653,7 +653,7 @@ function go(tab, el){
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
 function sched(live){
   clearTimeout(timer);
-  timer = setTimeout(()=>{ if(curTab==='hoje') loadHoje(); }, live?30000:300000);
+  timer = setTimeout(()=>{ if(curTab==='hoje') loadHoje(); }, live?15000:300000);
 }
 
 
