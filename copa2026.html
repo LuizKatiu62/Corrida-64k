@@ -524,7 +524,10 @@ async function loadGrupos(){
     let html = '';
     groups.forEach(grp => {
       const name    = grp.header || 'Grupo';
-      const entries = grp.standings?.entries || [];
+      const entries = (grp.standings?.entries || []).slice().sort((a,b)=>{
+        const rank = e => parseInt((e.stats||[]).find(s=>s.name==='rank')?.value ?? 99);
+        return rank(a) - rank(b);
+      });
       html += `<div class="gblock"><div class="ghdr">${name}</div>
         <table class="stand-table">
           <thead><tr>
