@@ -599,17 +599,27 @@ function updateScoreDom(id, sc) {
 }
 
 function loadScores(games) {
+  // Encerrados
   const fin = games.filter(g => getStatus(g.date) === 'fin');
-  if (!fin.length) return;
-  const q = [...fin];
-  const worker = async () => {
-    let g;
-    while ((g = q.shift())) {
-      const sc = await fetchScore(g.id);
-      updateScoreDom(g.id, sc);
+  if (fin.length) {
+    const q = [...fin];
+    const worker = async () => { let g; while ((g = q.shift())) updateScoreDom(g.id, await fetchScore(g.id)); };
+    Promise.all([worker(), worker(), worker()]);
+  }
+
+  // Ao vivo — busca imediata + refresh a cada 30s
+  const live = games.filter(g => getStatus(g.date) === 'live');
+  if (!live.length) return;
+  const refreshLive = async () => {
+    for (const g of live) {
+      if (getStatus(g.date) === 'live') updateScoreDom(g.id, await fetchLiveScore(g.id), true);
     }
   };
-  Promise.all([worker(), worker(), worker()]);
+  refreshLive();
+  const iv = setInterval(() => {
+    if (!live.some(g => getStatus(g.date) === 'live')) { clearInterval(iv); return; }
+    refreshLive();
+  }, 30000);
 }
 
 // ── Helpers ──
