@@ -633,6 +633,14 @@ function fmtDate(d){
 function fmtTime(d){
   return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
+// Extrai hora do local do jogo diretamente da string ISO (ex: "2026-06-17T14:00:00+03:00" → "14:00")
+function isoVt(iso){ return (iso.match(/T(\d{2}:\d{2})/)||[])[1]||''; }
+// Extrai data do local do jogo diretamente da string ISO (ex: "2026-06-17T14:00:00+03:00" → "qua, 17 jun")
+function isoVday(iso){
+  const [y,m,d]=iso.slice(0,10).split('-').map(Number);
+  const dt=new Date(y,m-1,d);
+  return `${WD[dt.getDay()]}, ${d} ${MON[m-1]}`;
+}
 function isSameDay(a,b){
   return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
 }
