@@ -551,7 +551,7 @@ async function fetchScore(id) {
   if (id in scoreCache) return scoreCache[id];
   scoreCache[id] = null;
   try {
-    const r = await fetch(BASE_URL + id + '/', { headers: { 'Range': 'bytes=100000-165000' } });
+    const r = await fetch(BASE_URL + id + '/');
     const html = await r.text();
     scoreCache[id] = parseScoreHtml(html, false);
   } catch(e) { scoreCache[id] = null; }
@@ -560,7 +560,7 @@ async function fetchScore(id) {
 
 async function fetchLiveScore(id) {
   try {
-    const r = await fetch(BASE_URL + id + '/', { headers: { 'Range': 'bytes=100000-165000' } });
+    const r = await fetch(BASE_URL + id + '/');
     const html = await r.text();
     return parseScoreHtml(html, true);
   } catch(e) { return null; }
