@@ -551,22 +551,28 @@ async function fetchScore(id) {
   if (id in scoreCache) return scoreCache[id];
   scoreCache[id] = null;
   try {
-    const r = await fetch(BASE_URL + id + '/', {
-      headers: { 'Range': 'bytes=100000-165000' }
-    });
+    const r = await fetch(BASE_URL + id + '/', { headers: { 'Range': 'bytes=100000-165000' } });
     const html = await r.text();
-    scoreCache[id] = parseScoreHtml(html);
+    scoreCache[id] = parseScoreHtml(html, false);
   } catch(e) { scoreCache[id] = null; }
   return scoreCache[id];
 }
 
-function parseScoreHtml(html) {
+async function fetchLiveScore(id) {
+  try {
+    const r = await fetch(BASE_URL + id + '/', { headers: { 'Range': 'bytes=100000-165000' } });
+    const html = await r.text();
+    return parseScoreHtml(html, true);
+  } catch(e) { return null; }
+}
+
+function parseScoreHtml(html, isLive=false) {
   const hm = html.match(/score--home[^>]*>(\d+)/);
   const am = html.match(/score--away[^>]*>(\d+)/);
   if (!hm || !am) return null;
   const homeSets = +hm[1], awaySets = +am[1];
-  // placar válido no vôlei: um time DEVE ter 3 sets (3-0, 3-1, 3-2)
-  if (Math.max(homeSets, awaySets) !== 3) return null;
+  // para jogos encerrados: um time DEVE ter 3 sets (3-0, 3-1, 3-2)
+  if (!isLive && Math.max(homeSets, awaySets) !== 3) return null;
   const pA = [...html.matchAll(/pointA[^>]*>(\d+)/g)].map(m=>+m[1]);
   const pB = [...html.matchAll(/pointB[^>]*>(\d+)/g)].map(m=>+m[1]);
   const sets = Array.from({length:Math.min(pA.length,pB.length,5)},(_,i)=>({a:pA[i],b:pB[i]}));
