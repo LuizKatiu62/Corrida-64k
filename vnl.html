@@ -600,16 +600,16 @@ function updateScoreDom(id, sc, isLive=false) {
 }
 
 function loadScores(games) {
-  // Encerrados
-  const fin = games.filter(g => getStatus(g.date) === 'fin');
+  // Só busca placar para jogos do Brasil (IDs confirmados)
+  const fin = games.filter(g => getStatus(g.date) === 'fin' && g.bra);
   if (fin.length) {
     const q = [...fin];
     const worker = async () => { let g; while ((g = q.shift())) updateScoreDom(g.id, await fetchScore(g.id)); };
     Promise.all([worker(), worker(), worker()]);
   }
 
-  // Ao vivo — busca imediata + refresh a cada 30s
-  const live = games.filter(g => getStatus(g.date) === 'live');
+  // Ao vivo — só Brasil
+  const live = games.filter(g => getStatus(g.date) === 'live' && g.bra);
   if (!live.length) return;
   const refreshLive = async () => {
     for (const g of live) {
