@@ -673,10 +673,10 @@ function cardHtml(g, showDate=false){
   const scoreHtml = isFin
     ? (g.bra
         ? `<span class="gscore fin score-el" data-id="${g.id}">···</span>`
-        : `<a href="https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/schedule/" target="_blank" style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.3);text-decoration:none;letter-spacing:.5px;white-space:nowrap">RESULTADO ↗</a>`)
+        : `<span class="gscore" style="font-size:.72rem;color:rgba(255,255,255,.25);letter-spacing:.5px">—</span>`)
     : isLive
     ? `<span class="gscore live score-el" data-id="${g.id}">·–·</span>`
-    : `<span class="gscore score-el" data-id="${g.id}">${g.vt}</span>`;
+    : `<span class="gscore score-el" data-id="${g.id}" style="font-size:1.1rem;color:rgba(255,255,255,.45)">${localT}</span>`;
 
   const statusHtml = isFin
     ? `<span class="gstatus fin">Encerrado</span>`
