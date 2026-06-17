@@ -566,17 +566,48 @@ async function fetchLiveScore(id) {
   } catch(e) { return null; }
 }
 
+function findScoreInObj(obj, depth=0) {
+  if (depth > 10 || !obj || typeof obj !== 'object') return null;
+  if (typeof obj.homeTeamScore === 'number' && typeof obj.awayTeamScore === 'number') {
+    const rawSets = obj.sets || obj.matchSets || obj.setResults || [];
+    const sets = rawSets.map(s => ({
+      a: s.homeTeamScore ?? s.homeScore ?? s.pointsA ?? 0,
+      b: s.awayTeamScore ?? s.awayScore ?? s.pointsB ?? 0
+    }));
+    return { homeSets: obj.homeTeamScore, awaySets: obj.awayTeamScore, sets };
+  }
+  for (const v of Object.values(obj)) {
+    const r = findScoreInObj(v, depth+1);
+    if (r) return r;
+  }
+  return null;
+}
+
 function parseScoreHtml(html, isLive=false) {
-  const hm = html.match(/score--home[^>]*>(\d+)/);
-  const am = html.match(/score--away[^>]*>(\d+)/);
-  if (!hm || !am) return null;
-  const homeSets = +hm[1], awaySets = +am[1];
-  // para jogos encerrados: um time DEVE ter 3 sets (3-0, 3-1, 3-2)
-  if (!isLive && Math.max(homeSets, awaySets) !== 3) return null;
-  const pA = [...html.matchAll(/pointA[^>]*>(\d+)/g)].map(m=>+m[1]);
-  const pB = [...html.matchAll(/pointB[^>]*>(\d+)/g)].map(m=>+m[1]);
-  const sets = Array.from({length:Math.min(pA.length,pB.length,5)},(_,i)=>({a:pA[i],b:pB[i]}));
-  return { homeSets, awaySets, sets };
+  // Método 1: regex em elementos HTML
+  const hm = html.match(/score--home[^>]*>(\d+)/) || html.match(/score__home[^>]*>(\d+)/);
+  const am = html.match(/score--away[^>]*>(\d+)/) || html.match(/score__away[^>]*>(\d+)/);
+  if (hm && am) {
+    const homeSets = +hm[1], awaySets = +am[1];
+    if (!isLive && Math.max(homeSets, awaySets) !== 3) return null;
+    const pA = [...html.matchAll(/pointA[^>]*>(\d+)/g)].map(m=>+m[1]);
+    const pB = [...html.matchAll(/pointB[^>]*>(\d+)/g)].map(m=>+m[1]);
+    const sets = Array.from({length:Math.min(pA.length,pB.length,5)},(_,i)=>({a:pA[i],b:pB[i]}));
+    return { homeSets, awaySets, sets };
+  }
+  // Método 2: JSON embutido do Next.js
+  try {
+    const nm = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]+?)<\/script>/);
+    if (nm) {
+      const nd = JSON.parse(nm[1]);
+      const score = findScoreInObj(nd);
+      if (score) {
+        if (!isLive && Math.max(score.homeSets, score.awaySets) !== 3) return null;
+        return score;
+      }
+    }
+  } catch(e) {}
+  return null;
 }
 
 function updateScoreDom(id, sc, isLive=false) {
