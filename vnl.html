@@ -837,15 +837,15 @@ function buildAgenda(){
 </div>
 <div id="${wkId}">`;
 
-    // Group by day
+    // Group by venue date
     const byDay = {};
     for(const g of wGames){
-      const k = g.date.toDateString();
-      if(!byDay[k]) byDay[k] = {date:g.date, games:[]};
+      const k = g.vd;
+      if(!byDay[k]) byDay[k] = {vday:g.vday, games:[]};
       byDay[k].games.push(g);
     }
-    for(const {date:d, games:dg} of Object.values(byDay)){
-      html += `<div class="date-hdr" style="font-size:.82rem;color:rgba(255,255,255,.38)">── ${fmtDate(d)}</div>`;
+    for(const {vday, games:dg} of Object.values(byDay)){
+      html += `<div class="date-hdr" style="font-size:.82rem;color:rgba(255,255,255,.38)">── ${vday}</div>`;
       html += dg.map(g=>cardHtml(g, true)).join('');
     }
     html += '</div>';
