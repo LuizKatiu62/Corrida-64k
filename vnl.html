@@ -608,8 +608,8 @@ function loadScores(games) {
     Promise.all([worker(), worker(), worker()]);
   }
 
-  // Ao vivo — só Brasil
-  const live = games.filter(g => getStatus(g.date) === 'live' && g.bra);
+  // Ao vivo — todos os jogos
+  const live = games.filter(g => getStatus(g.date) === 'live');
   if (!live.length) return;
   const refreshLive = async () => {
     for (const g of live) {
