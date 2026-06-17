@@ -664,9 +664,10 @@ function cardHtml(g, showDate=false){
   const isFin  = status === 'fin';
   const isBra  = g.bra || g.home === 'Brazil' || g.away === 'Brazil';
 
+  const localT   = fmtTime(g.date);
   const dateStr  = showDate
-    ? `${g.vday} · ${g.vt}`
-    : g.vt;
+    ? `${g.vday} · ${g.vt} (Ancara)`
+    : `${g.vt} (Ancara)`;
   const venueStr = g.city && g.city !== 'Final' ? `📍 ${g.city}` : (g.city==='Final'?'🏆 Final':' ');
 
   const scoreHtml = isFin
