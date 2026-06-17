@@ -714,7 +714,7 @@ function cardHtml(g, showDate=false){
 
 // ── Parse dates ──
 function parseGames(arr){
-  return arr.map(g => ({...g, date: new Date(g.iso)}));
+  return arr.map(g => ({...g, date: new Date(g.iso), vt: isoVt(g.iso), vday: isoVday(g.iso), vd: g.iso.slice(0,10)}));
 }
 
 // ── Tab routing ──
