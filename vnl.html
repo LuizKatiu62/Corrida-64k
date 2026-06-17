@@ -673,10 +673,10 @@ function cardHtml(g, showDate=false){
   const scoreHtml = isFin
     ? (g.bra
         ? `<span class="gscore fin score-el" data-id="${g.id}">···</span>`
-        : `<span class="gscore" style="font-size:.72rem;color:rgba(255,255,255,.25);letter-spacing:.5px">—</span>`)
+        : `<span class="gscore" style="font-size:.88rem;color:rgba(255,255,255,.32);font-weight:600">${localT}</span>`)
     : isLive
     ? `<span class="gscore live score-el" data-id="${g.id}">·–·</span>`
-    : `<span class="gscore score-el" data-id="${g.id}" style="font-size:1.1rem;color:rgba(255,255,255,.45)">${localT}</span>`;
+    : `<span class="gscore score-el" data-id="${g.id}" style="font-size:1.1rem;color:rgba(255,255,255,.55)">${localT}</span>`;
 
   const statusHtml = isFin
     ? (g.bra ? `<span class="gstatus fin">Encerrado</span>` : '')
