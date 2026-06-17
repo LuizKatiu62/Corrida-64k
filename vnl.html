@@ -579,11 +579,12 @@ function parseScoreHtml(html, isLive=false) {
   return { homeSets, awaySets, sets };
 }
 
-function updateScoreDom(id, sc) {
+function updateScoreDom(id, sc, isLive=false) {
   document.querySelectorAll(`.score-el[data-id="${id}"]`).forEach(el => {
     if (sc) {
       el.textContent = sc.homeSets + '–' + sc.awaySets;
-    } else {
+      if (isLive) { el.classList.add('live'); el.classList.remove('fin'); }
+    } else if (!isLive) {
       el.textContent = '—';
     }
   });
