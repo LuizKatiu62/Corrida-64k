@@ -674,7 +674,7 @@ function cardHtml(g, showDate=false){
     ? `<span class="gstatus live"><span class="ldot"></span> Ao Vivo</span>`
     : '';
 
-  const setsRow = isFin ? `<div class="sets-row sets-el" data-id="${g.id}"></div>` : '';
+  const setsRow = (isFin || isLive) ? `<div class="sets-row sets-el" data-id="${g.id}"></div>` : '';
 
   const liveBtn = '';
 
