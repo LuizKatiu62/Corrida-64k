@@ -641,8 +641,7 @@ function getStatus(d){
   const now = Date.now();
   const ms  = d.getTime();
   if(ms > now) return 'sched';
-  // Assume ~2h game duration
-  if(ms > now - 2*3600*1000) return 'live';
+  if(ms > now - 3*3600*1000) return 'live';
   return 'fin';
 }
 
