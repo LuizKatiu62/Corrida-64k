@@ -708,14 +708,15 @@ function loadScores(games) {
   if (live.length) {
     const refreshLive = async () => {
       for (const g of live) {
+        if (_forceFin.has(g.id)) continue;
         if (getStatus(g.date) === 'live') updateScoreDom(g.id, await fetchLiveScore(g.id), true);
       }
     };
     refreshLive();
     const iv = setInterval(() => {
-      if (!live.some(g => getStatus(g.date) === 'live')) { clearInterval(iv); return; }
+      if (!live.some(g => getStatus(g.date) === 'live' && !_forceFin.has(g.id))) { clearInterval(iv); return; }
       refreshLive();
-    }, 30000);
+    }, 20000);
   }
 
   watchStatuses(games);
