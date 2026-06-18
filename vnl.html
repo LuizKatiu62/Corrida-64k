@@ -666,6 +666,7 @@ function parseScoreHtml(html, isLive=false) {
 }
 
 const _forceFin = new Set();
+const _liveManaged = new Set(); // games being refreshed by live API — watchStatuses won't touch them
 
 function flipTofin(id) {
   _forceFin.add(id);
