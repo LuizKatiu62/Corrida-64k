@@ -747,9 +747,9 @@ function watchStatuses(games) {
         if (scoreEl)  { scoreEl.className='gscore live score-el'; scoreEl.removeAttribute('style'); scoreEl.textContent='·–·'; }
         if (statusEl) { statusEl.className='gstatus live'; statusEl.innerHTML='<span class="ldot"></span> Ao Vivo'; }
         if (setsEl)   setsEl.style.display='';
-        const doFetch = async () => { if(getStatus(g.date)==='live') updateScoreDom(g.id,await fetchLiveScore(g.id),true); };
+        const doFetch = async () => { if(!_forceFin.has(g.id)&&getStatus(g.date)==='live') updateScoreDom(g.id,await fetchLiveScore(g.id),true); };
         doFetch();
-        const lv = setInterval(()=>{ if(getStatus(g.date)!=='live'){clearInterval(lv);return;} doFetch(); },30000);
+        const lv = setInterval(()=>{ if(_forceFin.has(g.id)||getStatus(g.date)!=='live'){clearInterval(lv);return;} doFetch(); },20000);
       } else if (now === 'fin') {
         if (scoreEl)  { scoreEl.className='gscore fin score-el'; scoreEl.removeAttribute('style'); if(scoreEl.textContent==='·–·') scoreEl.textContent='···'; }
         if (statusEl) { statusEl.className='gstatus fin'; statusEl.textContent='Encerrado'; }
