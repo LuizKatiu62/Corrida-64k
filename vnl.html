@@ -739,6 +739,7 @@ function watchStatuses(games) {
   setInterval(() => {
     fresh.forEach(g => {
       if (_forceFin.has(g.id)) return;
+
       const card = document.querySelector(`.gcard[data-id="${g.id}"]`);
       if (!card) return;
       const was = card.dataset.status;
