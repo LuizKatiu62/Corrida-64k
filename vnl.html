@@ -707,7 +707,7 @@ function cardHtml(g, showDate=false){
     : `<span class="gscore score-el" data-id="${g.id}" style="font-size:1.1rem;color:rgba(255,255,255,.55)">${localT}</span>`;
 
   const statusHtml = isFin
-    ? (g.bra ? `<span class="gstatus fin">Encerrado</span>` : '')
+    ? `<span class="gstatus fin">Encerrado</span>`
     : isLive
     ? `<span class="gstatus live"><span class="ldot"></span> Ao Vivo</span>`
     : '';
