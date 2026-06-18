@@ -834,7 +834,7 @@ function matchLink(id){
 
 
 function cardHtml(g, showDate=false){
-  const status = getStatus(g.date);
+  const status = (_forceFin.has(g.id) || getStatus(g.date) === 'fin') ? 'fin' : getStatus(g.date);
   const isLive = status === 'live';
   const isFin  = status === 'fin';
   const isBra  = g.bra || g.home === 'Brazil' || g.away === 'Brazil';
