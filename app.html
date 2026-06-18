@@ -6814,6 +6814,8 @@ function showWeek(w){
     document.getElementById('section-bike').classList.remove('hidden');
     renderBikeSection();
   } else if(w==='objetivo'){
+    document.getElementById('desafio-header').style.display = 'none';
+    document.getElementById('week-nav').style.display = 'none';
     document.getElementById('btn-objetivo')?.classList.add('active');
     document.getElementById('section-objetivo').classList.remove('hidden');
     renderObjetivoSection();
