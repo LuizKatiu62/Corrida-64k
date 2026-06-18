@@ -679,8 +679,8 @@ function flipTofin(id) {
 }
 
 function updateScoreDom(id, sc, isLive=false) {
-  // If live fetch returned a completed score (one team won 3 sets) → match is over
-  if (isLive && sc && Math.max(sc.homeSets || 0, sc.awaySets || 0) === 3) {
+  // If live fetch returned a completed score → match is over
+  if (isLive && sc && (sc.done || Math.max(sc.homeSets || 0, sc.awaySets || 0) === 3)) {
     flipTofin(id);
     isLive = false;
   }
