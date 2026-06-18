@@ -9106,6 +9106,40 @@ function selectGoalType(type){
   openGoalSetupForm(type);
 }
 
+function renderObjetivoSection(){
+  const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const cards = Object.entries(GOAL_META).map(([type, meta])=>{
+    const gd = type !== '64k' ? loadGoalData(type) : null;
+    const isSelected = type === activeGoal;
+    const pills = (meta.pills||[]).map(p=>`<span class="goal-card-pill">${p}</span>`).join('');
+    let extra = '';
+    if(type === '64k'){
+      extra = `<div class="goal-card-event">✅ Concluído · 13 Jun 2026 · Saint John, NB</div>`;
+    } else if(gd && gd.eventDate){
+      const d = new Date(gd.eventDate+'T12:00:00');
+      const lines = [`📅 ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`];
+      if(gd.city) lines.push(`📍 ${gd.city}${gd.province?', '+gd.province:''}`);
+      if(gd.targetTime) lines.push(`🎯 ${gd.targetTime}`);
+      lines.push(gd.registered ? '✅ Inscrito' : '⚠️ Pendente');
+      extra = `<div class="goal-card-event">${lines.join(' · ')}</div>`;
+    } else if(type !== '64k'){
+      extra = `<div class="goal-card-setup">+ Toque para definir o evento</div>`;
+    }
+    return `<div class="goal-card${isSelected?' selected':''}" onclick="selectGoalType('${type}')" style="background:${meta.grad||meta.color}">
+      <span class="goal-card-icon">${meta.icon}</span>
+      <div class="goal-card-name">${meta.label}</div>
+      <div class="goal-card-pills">${pills}</div>
+      ${extra}
+    </div>`;
+  }).join('');
+  document.getElementById('objetivo-content').innerHTML = `
+    <div style="padding:1.5rem 0 .5rem">
+      <h2 style="color:#fff;font-size:1.2rem;font-weight:900;margin-bottom:.3rem">🎯 Meu Objetivo de Corrida</h2>
+      <p style="font-size:.8rem;color:#aaa;margin-bottom:1.25rem">Selecione seu próximo objetivo. O Desafio 64km foi concluído com sucesso! 🎉</p>
+      ${cards}
+    </div>`;
+}
+
 // Cidades canadenses com corridas — Atlântico, QC, ON
 const RACE_CITIES_CA = [
   // ── New Brunswick ──────────────────────────────
