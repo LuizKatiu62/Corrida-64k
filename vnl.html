@@ -570,46 +570,68 @@ async function fetchLiveScore(id) {
 
 function findScoreInObj(obj, depth=0) {
   if (depth > 10 || !obj || typeof obj !== 'object') return null;
+  // If object has score AND sets array → ideal match-level object, return immediately
   if (typeof obj.homeTeamScore === 'number' && typeof obj.awayTeamScore === 'number') {
     const rawSets = obj.sets || obj.matchSets || obj.setResults || [];
     const sets = rawSets.map(s => ({
       a: s.homeTeamScore ?? s.homeScore ?? s.pointsA ?? 0,
       b: s.awayTeamScore ?? s.awayScore ?? s.pointsB ?? 0
     }));
-    return { homeSets: obj.homeTeamScore, awaySets: obj.awayTeamScore, sets };
+    if (sets.length > 0) return { homeSets: obj.homeTeamScore, awaySets: obj.awayTeamScore, sets };
   }
+  // Search children, prefer any result that has a sets array
+  let fallback = null;
   for (const v of Object.values(obj)) {
     const r = findScoreInObj(v, depth+1);
-    if (r) return r;
+    if (r) {
+      if (r.sets && r.sets.length > 0) return r;
+      if (!fallback) fallback = r;
+    }
+  }
+  if (fallback) return fallback;
+  // Last resort: score without sets
+  if (typeof obj.homeTeamScore === 'number' && typeof obj.awayTeamScore === 'number') {
+    return { homeSets: obj.homeTeamScore, awaySets: obj.awayTeamScore, sets: [] };
   }
   return null;
 }
 
+function recomputeSets(score) {
+  if (!score || !score.sets || !score.sets.length) return;
+  let h = score.sets.filter(s => s.a > s.b && s.a >= 25).length;
+  let a = score.sets.filter(s => s.b > s.a && s.b >= 25).length;
+  // 5th set tiebreak (played to 15)
+  if (score.sets.length >= 5) {
+    const s5 = score.sets[4];
+    if (s5.a > s5.b && s5.a >= 15 && s5.a - s5.b >= 2) h++;
+    else if (s5.b > s5.a && s5.b >= 15 && s5.b - s5.a >= 2) a++;
+  }
+  if (h + a > 0) { score.homeSets = h; score.awaySets = a; }
+}
+
 function parseScoreHtml(html, isLive=false) {
+  let score = null;
   // Método 1: regex em elementos HTML
   const hm = html.match(/score--home[^>]*>(\d+)/) || html.match(/score__home[^>]*>(\d+)/);
   const am = html.match(/score--away[^>]*>(\d+)/) || html.match(/score__away[^>]*>(\d+)/);
   if (hm && am) {
-    const homeSets = +hm[1], awaySets = +am[1];
-    if (!isLive && Math.max(homeSets, awaySets) !== 3) return null;
     const pA = [...html.matchAll(/pointA[^>]*>(\d+)/g)].map(m=>+m[1]);
     const pB = [...html.matchAll(/pointB[^>]*>(\d+)/g)].map(m=>+m[1]);
     const sets = Array.from({length:Math.min(pA.length,pB.length,5)},(_,i)=>({a:pA[i],b:pB[i]}));
-    return { homeSets, awaySets, sets };
+    score = { homeSets: +hm[1], awaySets: +am[1], sets };
   }
   // Método 2: JSON embutido do Next.js
-  try {
-    const nm = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]+?)<\/script>/);
-    if (nm) {
-      const nd = JSON.parse(nm[1]);
-      const score = findScoreInObj(nd);
-      if (score) {
-        if (!isLive && Math.max(score.homeSets, score.awaySets) !== 3) return null;
-        return score;
-      }
-    }
-  } catch(e) {}
-  return null;
+  if (!score) {
+    try {
+      const nm = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]+?)<\/script>/);
+      if (nm) score = findScoreInObj(JSON.parse(nm[1]));
+    } catch(e) {}
+  }
+  if (!score) return null;
+  // Recompute set wins from individual set scores (corrects stale/wrong match-level fields)
+  recomputeSets(score);
+  if (!isLive && Math.max(score.homeSets, score.awaySets) !== 3) return null;
+  return score;
 }
 
 function updateScoreDom(id, sc, isLive=false) {
