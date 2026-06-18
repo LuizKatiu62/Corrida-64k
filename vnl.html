@@ -709,7 +709,15 @@ function loadScores(games) {
     const refreshLive = async () => {
       for (const g of live) {
         if (_forceFin.has(g.id)) continue;
-        if (getStatus(g.date) === 'live') updateScoreDom(g.id, await fetchLiveScore(g.id), true);
+        const st = getStatus(g.date);
+        if (st === 'live') {
+          updateScoreDom(g.id, await fetchLiveScore(g.id), true);
+        } else if (st === 'fin') {
+          // Transitioned to fin since page loaded — fetch final score and flip badge
+          const sc = await fetchScore(g.id);
+          flipTofin(g.id);
+          if (sc) updateScoreDom(g.id, sc, false);
+        }
       }
     };
     refreshLive();
