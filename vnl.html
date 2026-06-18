@@ -631,8 +631,7 @@ function updateScoreDom(id, sc, isLive=false) {
 }
 
 function loadScores(games) {
-  // Só busca placar para jogos do Brasil (IDs confirmados)
-  const fin = games.filter(g => getStatus(g.date) === 'fin' && g.bra);
+  const fin = games.filter(g => getStatus(g.date) === 'fin');
   if (fin.length) {
     const q = [...fin];
     const worker = async () => { let g; while ((g = q.shift())) updateScoreDom(g.id, await fetchScore(g.id)); };
