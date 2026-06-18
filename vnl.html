@@ -733,19 +733,19 @@ function cardHtml(g, showDate=false){
     : `<span class="gscore score-el" data-id="${g.id}" style="font-size:1.1rem;color:rgba(255,255,255,.55)">${localT}</span>`;
 
   const statusHtml = isFin
-    ? `<span class="gstatus fin">Encerrado</span>`
+    ? `<span class="gstatus fin" data-id="${g.id}">Encerrado</span>`
     : isLive
-    ? `<span class="gstatus live"><span class="ldot"></span> Ao Vivo</span>`
-    : '';
+    ? `<span class="gstatus live" data-id="${g.id}"><span class="ldot"></span> Ao Vivo</span>`
+    : `<span class="gstatus" data-id="${g.id}"></span>`;
 
-  const setsRow = (isFin || isLive) ? `<div class="sets-row sets-el" data-id="${g.id}"></div>` : '';
+  const setsRow = `<div class="sets-row sets-el" data-id="${g.id}"${!(isFin||isLive)?' style="display:none"':''}></div>`;
 
   const liveBtn = '';
 
   const braHighlight = isBra ? 'border-color:rgba(0,156,59,.5);background:linear-gradient(135deg,var(--card),rgba(0,156,59,.05));' : '';
 
   return `
-<div class="gcard${isLive?' live-card':''}" style="${braHighlight}">
+<div class="gcard${isLive?' live-card':''}" data-id="${g.id}" data-status="${status}" style="${braHighlight}">
   <div class="gmeta">
     <span class="gdate">${dateStr}</span>
     <span class="venue">${venueStr}</span>
