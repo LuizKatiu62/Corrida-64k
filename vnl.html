@@ -766,7 +766,7 @@ function watchStatuses(games) {
         fetchScore(g.id).then(sc => { if(sc) updateScoreDom(g.id,sc,false); });
       }
     });
-  }, 60000);
+  }, 20000);
 }
 
 // ── Helpers ──
