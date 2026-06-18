@@ -735,6 +735,12 @@ function loadScores(games) {
   }
 
   if (live.length) {
+    // Re-apply fin state to any NEW DOM elements for games already confirmed done
+    live.filter(g => _forceFin.has(g.id)).forEach(g => {
+      flipTofin(g.id);
+      fetchScore(g.id).then(sc => { if (sc) updateScoreDom(g.id, sc, false); });
+    });
+
     const refreshLive = async () => {
       for (const g of live) {
         if (_forceFin.has(g.id)) continue;
