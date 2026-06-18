@@ -701,9 +701,7 @@ function cardHtml(g, showDate=false){
   const venueStr = g.city && g.city !== 'Final' ? `📍 ${g.city}` : (g.city==='Final'?'🏆 Final':' ');
 
   const scoreHtml = isFin
-    ? (g.bra
-        ? `<span class="gscore fin score-el" data-id="${g.id}">···</span>`
-        : `<span class="gscore" style="font-size:.88rem;color:rgba(255,255,255,.32);font-weight:600">${localT}</span>`)
+    ? `<span class="gscore fin score-el" data-id="${g.id}">···</span>`
     : isLive
     ? `<span class="gscore live score-el" data-id="${g.id}">·–·</span>`
     : `<span class="gscore score-el" data-id="${g.id}" style="font-size:1.1rem;color:rgba(255,255,255,.55)">${localT}</span>`;
