@@ -697,9 +697,11 @@ function cardHtml(g, showDate=false){
   const isBra  = g.bra || g.home === 'Brazil' || g.away === 'Brazil';
 
   const localT   = fmtTime(g.date);
+  const CITY_PT  = {Ankara:'Ancara', Bangkok:'Bangkok', 'Pasig City':'Manila', Osaka:'Osaka', Brasília:'Brasília'};
+  const cityLabel = CITY_PT[g.city] || g.city || '';
   const dateStr  = showDate
-    ? `${g.vday} · ${g.vt} (Ancara)`
-    : `${g.vt} (Ancara)`;
+    ? `${g.vday} · ${g.vt}${cityLabel ? ' ('+cityLabel+')' : ''}`
+    : `${g.vt}${cityLabel ? ' ('+cityLabel+')' : ''}`;
   const venueStr = g.city && g.city !== 'Final' ? `📍 ${g.city}` : (g.city==='Final'?'🏆 Final':' ');
 
   const scoreHtml = isFin
