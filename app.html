@@ -6809,6 +6809,10 @@ function showWeek(w){
     document.getElementById('btn-bike').classList.add('active');
     document.getElementById('section-bike').classList.remove('hidden');
     renderBikeSection();
+  } else if(w==='objetivo'){
+    document.getElementById('btn-objetivo')?.classList.add('active');
+    document.getElementById('section-objetivo').classList.remove('hidden');
+    renderObjetivoSection();
   } else {
     document.getElementById(`btn-w${w}`).classList.add('active');
     document.getElementById(`section-w${w}`).classList.remove('hidden');
