@@ -9387,6 +9387,7 @@ function showGoalShared(section){
 
 function showGoalWeek(w){
   // Hide shared sections
+  document.getElementById('section-objetivo')?.classList.add('hidden');
   ['section-events','section-dashboard','section-shopping'].forEach(id=>{ document.getElementById(id)?.classList.add('hidden'); });
   document.querySelectorAll('#week-nav-gen button').forEach(b=>b.classList.remove('active'));
   const genSection = document.getElementById('section-genplan');
