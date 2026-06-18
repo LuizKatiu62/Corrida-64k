@@ -6758,6 +6758,9 @@ function initStrategyTable(){
 
 function showWeek(w){
   activeView = w;
+  // restore desafio header (hidden when objetivo is active)
+  document.getElementById('desafio-header').style.display = '';
+  if(activeGoal === '64k') document.getElementById('week-nav').style.display = '';
   // restore today banner visibility (hidden when participantes was active)
   var _tb = document.getElementById('today-banner'); if(_tb) _tb.style.display='';
   // hide all
