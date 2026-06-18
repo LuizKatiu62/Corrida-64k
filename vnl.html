@@ -741,8 +741,10 @@ function loadScores(games) {
       }
     };
     refreshLive();
+    // Track which game IDs are under live-API management so watchStatuses leaves them alone
+    live.forEach(g => _liveManaged.add(g.id));
     const iv = setInterval(() => {
-      if (!live.some(g => getStatus(g.date) === 'live' && !_forceFin.has(g.id))) { clearInterval(iv); return; }
+      if (live.every(g => _forceFin.has(g.id))) { clearInterval(iv); return; }
       refreshLive();
     }, 20000);
   }
