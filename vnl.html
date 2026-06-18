@@ -637,7 +637,26 @@ function parseScoreHtml(html, isLive=false) {
   return score;
 }
 
+const _forceFin = new Set();
+
+function flipTofin(id) {
+  _forceFin.add(id);
+  const card = document.querySelector(`.gcard[data-id="${id}"]`);
+  if (card) { card.dataset.status = 'fin'; card.classList.remove('live-card'); }
+  const statusEl = document.querySelector(`.gstatus[data-id="${id}"]`);
+  if (statusEl) { statusEl.className = 'gstatus fin'; statusEl.textContent = 'Encerrado'; }
+  document.querySelectorAll(`.score-el[data-id="${id}"]`).forEach(el => {
+    el.classList.remove('live'); el.classList.add('fin');
+  });
+}
+
 function updateScoreDom(id, sc, isLive=false) {
+  // If live fetch returned a completed score (one team won 3 sets) → match is over
+  if (isLive && sc && Math.max(sc.homeSets || 0, sc.awaySets || 0) === 3) {
+    flipTofin(id);
+    isLive = false;
+  }
+
   document.querySelectorAll(`.score-el[data-id="${id}"]`).forEach(el => {
     if (sc) {
       el.textContent = sc.homeSets + '–' + sc.awaySets;
@@ -646,18 +665,32 @@ function updateScoreDom(id, sc, isLive=false) {
       el.textContent = '—';
     }
   });
+
   if (sc && sc.sets.length) {
+    let curLabel = '';
     const setsHtml = sc.sets.map((s, i) => {
-      const isFifth = i === 4;
-      const needed  = isFifth ? 15 : 25;
-      const done    = (s.a >= needed || s.b >= needed) && Math.abs(s.a - s.b) >= 2;
-      const isCur   = isLive && i === sc.sets.length - 1 && !done && (s.a > 0 || s.b > 0);
-      if (isCur) return `<span class="set-num cur">${s.a}·${s.b}</span>`;
-      const hw = done && s.a > s.b;
-      return `<span class="set-num${hw?' won':''}">${s.a}-${s.b}</span>`;
+      const needed = i === 4 ? 15 : 25;
+      const done   = (s.a >= needed || s.b >= needed) && Math.abs(s.a - s.b) >= 2;
+      const isLast = isLive && i === sc.sets.length - 1;
+      if (isLast && !done) {
+        if (s.a > 0 || s.b > 0) return `<span class="set-num cur">${s.a}·${s.b}</span>`;
+        curLabel = `<span class="set-num cur">SET ${i + 1}</span>`;
+        return '';
+      }
+      return `<span class="set-num${done && s.a > s.b ? ' won' : ''}">${s.a}-${s.b}</span>`;
     }).join('');
+
+    // All sets in array are done but game is live → next set just started (API not updated yet)
+    if (isLive && !curLabel && sc.sets.length < 5) {
+      const allDone = sc.sets.every((s, i) => {
+        const needed = i === 4 ? 15 : 25;
+        return (s.a >= needed || s.b >= needed) && Math.abs(s.a - s.b) >= 2;
+      });
+      if (allDone) curLabel = `<span class="set-num cur">SET ${sc.sets.length + 1}</span>`;
+    }
+
     document.querySelectorAll(`.sets-el[data-id="${id}"]`).forEach(se => {
-      se.innerHTML = setsHtml;
+      se.innerHTML = setsHtml + curLabel;
     });
   }
 }
