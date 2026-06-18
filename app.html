@@ -10457,25 +10457,25 @@ function mfMergeIntoNutri(list, day){
 handleStravaCallback();
 
 // showWeek must run AFTER GOAL_META is defined
-showWeek('dashboard');
+showWeek('objetivo');
 
-// Ao fechar/sair, marca que próxima abertura deve ir ao dashboard
+// Ao fechar/sair, marca que próxima abertura deve ir ao objetivo
 window.addEventListener('beforeunload', function(){
-  localStorage.setItem('d64_open_at', 'dashboard');
+  localStorage.setItem('d64_open_at', 'objetivo');
 });
 window.addEventListener('pagehide', function(){
-  localStorage.setItem('d64_open_at', 'dashboard');
+  localStorage.setItem('d64_open_at', 'objetivo');
 });
 
-// Ao reabrir (inclusive BFCache do iOS), sempre vai para o dashboard
+// Ao reabrir (inclusive BFCache do iOS), sempre vai para meu objetivo
 window.addEventListener('pageshow', function(e){
-  showWeek('dashboard');
+  showWeek('objetivo');
   // BFCache restore — verificar versão novamente para mostrar banner se houver atualização
   if(e.persisted) _checkVersionNow();
 });
 document.addEventListener('visibilitychange', function(){
   if(document.visibilityState === 'visible'){
-    showWeek('dashboard');
+    showWeek('objetivo');
     _checkVersionNow();
   }
 });
