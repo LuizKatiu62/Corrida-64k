@@ -655,26 +655,66 @@ function updateScoreDom(id, sc, isLive=false) {
 }
 
 function loadScores(games) {
-  const fin = games.filter(g => getStatus(g.date) === 'fin');
+  const fin  = games.filter(g => getStatus(g.date) === 'fin');
+  const live = games.filter(g => getStatus(g.date) === 'live');
+
   if (fin.length) {
     const q = [...fin];
     const worker = async () => { let g; while ((g = q.shift())) updateScoreDom(g.id, await fetchScore(g.id)); };
     Promise.all([worker(), worker(), worker()]);
   }
 
-  // Ao vivo — todos os jogos
-  const live = games.filter(g => getStatus(g.date) === 'live');
-  if (!live.length) return;
-  const refreshLive = async () => {
-    for (const g of live) {
-      if (getStatus(g.date) === 'live') updateScoreDom(g.id, await fetchLiveScore(g.id), true);
-    }
-  };
-  refreshLive();
-  const iv = setInterval(() => {
-    if (!live.some(g => getStatus(g.date) === 'live')) { clearInterval(iv); return; }
+  if (live.length) {
+    const refreshLive = async () => {
+      for (const g of live) {
+        if (getStatus(g.date) === 'live') updateScoreDom(g.id, await fetchLiveScore(g.id), true);
+      }
+    };
     refreshLive();
-  }, 30000);
+    const iv = setInterval(() => {
+      if (!live.some(g => getStatus(g.date) === 'live')) { clearInterval(iv); return; }
+      refreshLive();
+    }, 30000);
+  }
+
+  watchStatuses(games);
+}
+
+const _watching = new Set();
+function watchStatuses(games) {
+  const fresh = games.filter(g => !_watching.has(g.id));
+  if (!fresh.length) return;
+  fresh.forEach(g => _watching.add(g.id));
+
+  setInterval(() => {
+    fresh.forEach(g => {
+      const card = document.querySelector(`.gcard[data-id="${g.id}"]`);
+      if (!card) return;
+      const was = card.dataset.status;
+      const now = getStatus(g.date);
+      if (was === now) return;
+      card.dataset.status = now;
+      card.classList.toggle('live-card', now === 'live');
+
+      const scoreEl  = document.querySelector(`.score-el[data-id="${g.id}"]`);
+      const statusEl = document.querySelector(`.gstatus[data-id="${g.id}"]`);
+      const setsEl   = document.querySelector(`.sets-el[data-id="${g.id}"]`);
+
+      if (now === 'live') {
+        if (scoreEl)  { scoreEl.className='gscore live score-el'; scoreEl.removeAttribute('style'); scoreEl.textContent='·–·'; }
+        if (statusEl) { statusEl.className='gstatus live'; statusEl.innerHTML='<span class="ldot"></span> Ao Vivo'; }
+        if (setsEl)   setsEl.style.display='';
+        const doFetch = async () => { if(getStatus(g.date)==='live') updateScoreDom(g.id,await fetchLiveScore(g.id),true); };
+        doFetch();
+        const lv = setInterval(()=>{ if(getStatus(g.date)!=='live'){clearInterval(lv);return;} doFetch(); },30000);
+      } else if (now === 'fin') {
+        if (scoreEl)  { scoreEl.className='gscore fin score-el'; scoreEl.removeAttribute('style'); if(scoreEl.textContent==='·–·') scoreEl.textContent='···'; }
+        if (statusEl) { statusEl.className='gstatus fin'; statusEl.textContent='Encerrado'; }
+        if (setsEl)   setsEl.style.display='';
+        fetchScore(g.id).then(sc => { if(sc) updateScoreDom(g.id,sc,false); });
+      }
+    });
+  }, 60000);
 }
 
 // ── Helpers ──
