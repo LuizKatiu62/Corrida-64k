@@ -563,11 +563,39 @@ async function fetchScore(id) {
   return scoreCache[id];
 }
 
+// ── VNL Real-time API (used for live games) ──
+let _liveToken = null, _liveTokenExpMs = 0;
+
+async function getLiveToken() {
+  if (_liveToken && Date.now() < _liveTokenExpMs - 120000) return _liveToken;
+  try {
+    const r = await fetch('https://auth-api.volleyballworld.com/api/gameday/anonymous-token', {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}'
+    });
+    const d = await r.json();
+    _liveToken = d.token;
+    try {
+      const payload = JSON.parse(atob(_liveToken.split('.')[1]));
+      _liveTokenExpMs = payload.exp * 1000;
+    } catch(e) { _liveTokenExpMs = Date.now() + 23 * 3600 * 1000; }
+    return _liveToken;
+  } catch(e) { return null; }
+}
+
 async function fetchLiveScore(id) {
   try {
-    const r = await fetch(BASE_URL + id + '/');
-    const html = await r.text();
-    return parseScoreHtml(html, true);
+    const token = await getLiveToken();
+    const r = await fetch(`https://en-live.volleyballworld.com/api/v1/live/matches/${id}`,
+      token ? {headers: {'Authorization': `Bearer ${token}`}} : {});
+    if (!r.ok) return null;
+    const d = await r.json();
+    const sets = (d.sets || []).filter(s => s.no > 0).map(s => ({a: s.pointsTeamA, b: s.pointsTeamB}));
+    return {
+      homeSets: d.matchPointsA || 0,
+      awaySets: d.matchPointsB || 0,
+      sets,
+      done: d.statusLabel !== 'Live'
+    };
   } catch(e) { return null; }
 }
 
