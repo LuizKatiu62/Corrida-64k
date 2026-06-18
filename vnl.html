@@ -647,8 +647,13 @@ function updateScoreDom(id, sc, isLive=false) {
     }
   });
   if (sc && sc.sets.length) {
-    const setsHtml = sc.sets.map(s => {
-      const hw = s.a > s.b;
+    const setsHtml = sc.sets.map((s, i) => {
+      const isFifth = i === 4;
+      const needed  = isFifth ? 15 : 25;
+      const done    = (s.a >= needed || s.b >= needed) && Math.abs(s.a - s.b) >= 2;
+      const isCur   = isLive && i === sc.sets.length - 1 && !done && (s.a > 0 || s.b > 0);
+      if (isCur) return `<span class="set-num cur">${s.a}·${s.b}</span>`;
+      const hw = done && s.a > s.b;
       return `<span class="set-num${hw?' won':''}">${s.a}-${s.b}</span>`;
     }).join('');
     document.querySelectorAll(`.sets-el[data-id="${id}"]`).forEach(se => {
