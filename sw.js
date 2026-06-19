@@ -92,6 +92,12 @@ self.addEventListener('fetch', e => {
     return;
   }
 
+  // VNL live scores & standings — always network, never cache (dados ao vivo)
+  if(url.includes('volleyballworld.com')){
+    e.respondWith(fetch(e.request, {cache:'no-store'}).catch(() => new Response('', {status:503})));
+    return;
+  }
+
   // Weather API — always network, never cache (forecast changes daily)
   if(url.includes('open-meteo.com')){
     e.respondWith(fetch(e.request, {cache:'no-store'}).catch(() => new Response('{}', {status:200})));
