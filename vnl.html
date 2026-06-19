@@ -779,7 +779,8 @@ function watchStatuses(games) {
   if (!fresh.length) return;
   fresh.forEach(g => _watching.add(g.id));
 
-  setInterval(() => {
+  const wIv = setInterval(() => {
+    if (fresh.every(g => _forceFin.has(g.id) || getStatus(g.date) === 'fin')) { clearInterval(wIv); return; }
     fresh.forEach(g => {
       if (_forceFin.has(g.id)) return;
       // Live-managed games: let the live-refresh loop handle them, UNLESS the time window has now expired
