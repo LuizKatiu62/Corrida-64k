@@ -707,7 +707,7 @@ function updateScoreDom(id, sc, isLive=false) {
         curLabel = `<span class="set-num cur">SET ${i + 1}</span>`;
         return '';
       }
-      return `<span class="set-num${done && s.a > s.b ? ' won' : ''}">${s.a}-${s.b}</span>`;
+      return `<span class="set-num${done ? (s.a > s.b ? ' won' : ' won-away') : ''}">${s.a}-${s.b}</span>`;
     }).join('');
 
     // All sets in array are done but game is live → next set just started (API not updated yet)
