@@ -744,6 +744,12 @@ function loadScores(games) {
     const refreshLive = async () => {
       for (const g of live) {
         if (_forceFin.has(g.id)) continue;
+        // Time window expired while we were polling — game is definitely over
+        if (getStatus(g.date) === 'fin') {
+          flipTofin(g.id);
+          fetchScore(g.id).then(sc => { if (sc) updateScoreDom(g.id, sc, false); });
+          continue;
+        }
         updateScoreDom(g.id, await fetchLiveScore(g.id), true);
       }
     };
