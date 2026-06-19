@@ -681,6 +681,8 @@ function flipTofin(id) {
   document.querySelectorAll(`.score-el[data-id="${id}"]`).forEach(el => {
     el.classList.remove('live'); el.classList.add('fin');
   });
+  // Atualiza badges de semana (Brasil e Agenda)
+  refreshWeekBadges();
   // Atualiza o livePill se não houver mais nenhum jogo ao vivo
   const pill = document.getElementById('livePill');
   if (pill && pill.classList.contains('on')) {
