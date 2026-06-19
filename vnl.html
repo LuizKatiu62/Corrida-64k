@@ -894,7 +894,7 @@ function cardHtml(g, showDate=false){
   const dateStr  = showDate
     ? `${g.vday} · ${g.vt}${cityLabel ? ' ('+cityLabel+')' : ''}`
     : `${g.vt}${cityLabel ? ' ('+cityLabel+')' : ''}`;
-  const venueStr = g.city && g.city !== 'Final' ? `📍 ${g.city}` : (g.city==='Final'?'🏆 Final':' ');
+  const venueStr = g.city && g.city !== 'Final' ? `📍 ${cityLabel}` : (g.city==='Final'?'🏆 Final':' ');
 
   const scoreHtml = isFin
     ? `<span class="gscore fin score-el" data-id="${g.id}">···</span>`
