@@ -1045,7 +1045,7 @@ function buildAgenda(){
 <div class="week-hdr acc-hdr" onclick="toggleWeek('${wkId}')">
   <span>${wk.label}</span>
   <span style="display:flex;align-items:center;gap:.5rem">
-    <span class="week-badge">${done}/${wGames.length}</span>
+    <span class="week-badge" data-ids="${wGames.map(g=>g.id).join(',')}" data-total="${wGames.length}">${done}/${wGames.length}</span>
     <span class="acc-arrow" id="arrow-${wkId}">▼</span>
   </span>
 </div>
