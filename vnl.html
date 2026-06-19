@@ -630,8 +630,8 @@ function findScoreInObj(obj, depth=0) {
 
 function recomputeSets(score) {
   if (!score || !score.sets || !score.sets.length) return;
-  let h = score.sets.filter(s => s.a > s.b && s.a >= 25).length;
-  let a = score.sets.filter(s => s.b > s.a && s.b >= 25).length;
+  let h = score.sets.filter(s => s.a > s.b && s.a >= 25 && s.a - s.b >= 2).length;
+  let a = score.sets.filter(s => s.b > s.a && s.b >= 25 && s.b - s.a >= 2).length;
   // 5th set tiebreak (played to 15)
   if (score.sets.length >= 5) {
     const s5 = score.sets[4];
