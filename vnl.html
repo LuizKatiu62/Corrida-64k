@@ -750,7 +750,13 @@ function loadScores(games) {
           fetchScore(g.id).then(sc => { if (sc) updateScoreDom(g.id, sc, false); });
           continue;
         }
-        updateScoreDom(g.id, await fetchLiveScore(g.id), true);
+        let sc = await fetchLiveScore(g.id);
+        if (!sc) {
+          // API live falhou — tenta scraping HTML; se tiver 3-X encerra imediatamente
+          const scHtml = await fetchScore(g.id);
+          if (scHtml) { flipTofin(g.id); updateScoreDom(g.id, scHtml, false); continue; }
+        }
+        updateScoreDom(g.id, sc, true);
       }
     };
     refreshLive();
