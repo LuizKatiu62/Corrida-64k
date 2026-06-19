@@ -595,7 +595,7 @@ async function fetchLiveScore(id) {
       homeSets: d.matchPointsA || 0,
       awaySets: d.matchPointsB || 0,
       sets,
-      done: d.statusLabel !== 'Live'
+      done: !!d.statusLabel && d.statusLabel !== 'Live'
     };
   } catch(e) { return null; }
 }
