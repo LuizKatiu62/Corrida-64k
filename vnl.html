@@ -773,7 +773,14 @@ function watchStatuses(games) {
 
   setInterval(() => {
     fresh.forEach(g => {
-      if (_forceFin.has(g.id) || _liveManaged.has(g.id)) return;
+      if (_forceFin.has(g.id)) return;
+      // Live-managed games: let the live-refresh loop handle them, UNLESS the time window has now expired
+      if (_liveManaged.has(g.id)) {
+        if (getStatus(g.date) !== 'fin') return;
+        flipTofin(g.id);
+        fetchScore(g.id).then(sc => { if (sc) updateScoreDom(g.id, sc, false); });
+        return;
+      }
 
       const card = document.querySelector(`.gcard[data-id="${g.id}"]`);
       if (!card) return;
