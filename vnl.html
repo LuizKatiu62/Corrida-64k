@@ -681,6 +681,12 @@ function flipTofin(id) {
   document.querySelectorAll(`.score-el[data-id="${id}"]`).forEach(el => {
     el.classList.remove('live'); el.classList.add('fin');
   });
+  // Atualiza o livePill se não houver mais nenhum jogo ao vivo
+  const pill = document.getElementById('livePill');
+  if (pill && pill.classList.contains('on')) {
+    const anyLive = document.querySelector('.gcard.live-card');
+    if (!anyLive) pill.classList.remove('on');
+  }
 }
 
 function updateScoreDom(id, sc, isLive=false) {
