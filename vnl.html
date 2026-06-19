@@ -1108,6 +1108,7 @@ async function buildStandings(){
 
 function parseStandingsHtml(html){
   const idx   = html.indexOf('vbw-o-table__body');
+  if (idx === -1) return [];
   const chunk = html.slice(idx, idx+40000);
   const rows  = chunk.split('<tr class="vbw-o-table__row').slice(1);
   const teams = [];
