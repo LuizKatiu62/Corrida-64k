@@ -1008,7 +1008,7 @@ function buildBrasil(){
   for(const [label, wgames] of Object.entries(weeks)){
     if(!wgames.length) continue;
     const done = wgames.filter(g=>_forceFin.has(g.id)||getStatus(g.date)==='fin').length;
-    html += `<div class="week-hdr">${label} <span class="week-badge">${done}/${wgames.length} jogos</span></div>`;
+    html += `<div class="week-hdr">${label} <span class="week-badge" data-ids="${wgames.map(g=>g.id).join(',')}" data-total="${wgames.length}">${done}/${wgames.length} jogos</span></div>`;
     html += wgames.map(g => cardHtml({...g, bra:true})).join('');
   }
 
