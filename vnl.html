@@ -824,7 +824,7 @@ function getStatus(d){
   const now = Date.now();
   const ms  = d.getTime();
   if(ms > now) return 'sched';
-  if(ms > now - 5*3600*1000) return 'live';
+  if(ms > now - 2.5*3600*1000) return 'live';
   return 'fin';
 }
 
