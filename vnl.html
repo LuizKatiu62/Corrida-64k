@@ -669,6 +669,19 @@ function parseScoreHtml(html, isLive=false) {
 }
 
 const _forceFin = new Set(JSON.parse(sessionStorage.getItem('vnl_fin') || '[]'));
+
+function refreshWeekBadges() {
+  document.querySelectorAll('.week-badge[data-ids]').forEach(el => {
+    const ids = el.dataset.ids.split(',');
+    const total = +el.dataset.total;
+    const done = ids.filter(id => {
+      const card = document.querySelector(`.gcard[data-id="${id}"]`);
+      return card && card.dataset.status === 'fin';
+    }).length;
+    const sep = el.textContent.includes('jogos') ? ' jogos' : '';
+    el.textContent = `${done}/${total}${sep}`;
+  });
+}
 const _liveManaged = new Set(); // games being refreshed by live API — watchStatuses won't touch them
 
 function flipTofin(id) {
