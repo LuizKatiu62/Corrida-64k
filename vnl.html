@@ -848,8 +848,9 @@ function watchStatuses(games) {
 }
 
 // ── Helpers ──
-const WD  = ['dom','seg','ter','qua','qui','sex','sáb'];
-const MON = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const WD     = ['dom','seg','ter','qua','qui','sex','sáb'];
+const MON    = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const CITY_PT = {Ankara:'Ancara', Bangkok:'Bangkok', 'Pasig City':'Manila', Osaka:'Osaka', Brasília:'Brasília'};
 
 function fmtDate(d){
   return `${WD[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}`;
