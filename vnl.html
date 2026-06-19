@@ -665,11 +665,12 @@ function parseScoreHtml(html, isLive=false) {
   return score;
 }
 
-const _forceFin = new Set();
+const _forceFin = new Set(JSON.parse(sessionStorage.getItem('vnl_fin') || '[]'));
 const _liveManaged = new Set(); // games being refreshed by live API — watchStatuses won't touch them
 
 function flipTofin(id) {
   _forceFin.add(id);
+  try { sessionStorage.setItem('vnl_fin', JSON.stringify([..._forceFin])); } catch(e) {}
   const card = document.querySelector(`.gcard[data-id="${id}"]`);
   if (card) { card.dataset.status = 'fin'; card.classList.remove('live-card'); }
   const statusEl = document.querySelector(`.gstatus[data-id="${id}"]`);
