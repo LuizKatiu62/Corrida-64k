@@ -578,7 +578,7 @@ async function getLiveToken() {
       _liveTokenExpMs = payload.exp * 1000;
     } catch(e) { _liveTokenExpMs = Date.now() + 23 * 3600 * 1000; }
     return _liveToken;
-  } catch(e) { return null; }
+  } catch(e) { _liveTokenExpMs = Date.now() + 60000; return null; } // backoff 60s em falha
 }
 
 async function fetchLiveScore(id) {
