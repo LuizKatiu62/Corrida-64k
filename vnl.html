@@ -554,14 +554,14 @@ const BASE_URL = 'https://en.volleyballworld.com/volleyball/competitions/volleyb
 const scoreCache = {};
 
 async function fetchScore(id) {
-  if (id in scoreCache) return scoreCache[id];
-  scoreCache[id] = null;
+  if (scoreCache[id]) return scoreCache[id]; // só retorna cache se tiver resultado válido
   try {
     const r = await fetch(BASE_URL + id + '/');
     const html = await r.text();
-    scoreCache[id] = parseScoreHtml(html, false);
-  } catch(e) { scoreCache[id] = null; }
-  return scoreCache[id];
+    const sc = parseScoreHtml(html, false);
+    if (sc) scoreCache[id] = sc; // só armazena sucesso; falhas são retentadas
+    return sc;
+  } catch(e) { return null; }
 }
 
 // ── VNL Real-time API (used for live games) ──
