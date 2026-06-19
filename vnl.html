@@ -591,12 +591,14 @@ async function fetchLiveScore(id) {
     if (!r.ok) return null;
     const d = await r.json();
     const sets = (d.sets || []).filter(s => s.no > 0).map(s => ({a: s.pointsTeamA, b: s.pointsTeamB}));
-    return {
+    const sc = {
       homeSets: d.matchPointsA || 0,
       awaySets: d.matchPointsB || 0,
       sets,
       done: !!d.statusLabel && d.statusLabel !== 'Live'
     };
+    recomputeSets(sc); // recalcula a partir dos sets individuais, corrige matchPoints desatualizados
+    return sc;
   } catch(e) { return null; }
 }
 
