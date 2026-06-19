@@ -963,7 +963,7 @@ function buildHoje(){
   badge.textContent = fmtDate(today);
 
   // Check for live games
-  const hasLive = games.some(g => getStatus(g.date)==='live');
+  const hasLive = games.some(g => !_forceFin.has(g.id) && getStatus(g.date)==='live');
   document.getElementById('livePill').classList.toggle('on', hasLive);
 
   if(games.length === 0){
