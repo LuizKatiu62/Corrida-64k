@@ -815,6 +815,7 @@ function watchStatuses(games) {
         if (scoreEl)  { scoreEl.className='gscore live score-el'; scoreEl.removeAttribute('style'); scoreEl.textContent='·–·'; }
         if (statusEl) { statusEl.className='gstatus live'; statusEl.innerHTML='<span class="ldot"></span> Ao Vivo'; }
         if (setsEl)   setsEl.style.display='';
+        const pill = document.getElementById('livePill'); if (pill) pill.classList.add('on');
         const doFetch = async () => {
           if (_forceFin.has(g.id) || getStatus(g.date) !== 'live') return;
           let sc = await fetchLiveScore(g.id);
