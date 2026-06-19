@@ -998,6 +998,10 @@ function buildHoje(){
     }
 
     el.innerHTML = html;
+    if (upcoming.length > 0) {
+      const nextDay = upcoming[0].date;
+      loadScores(upcoming.filter(g => isSameDay(g.date, nextDay)));
+    }
     return;
   }
 
