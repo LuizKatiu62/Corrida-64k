@@ -1169,6 +1169,13 @@ function renderStandings(teams){
 
 // ── INIT ──
 buildAgenda();
+
+// Ativa livePill se houver jogos ao vivo no carregamento
+(function() {
+  const allGames = parseGames(ALL_WOMEN);
+  const hasLive = allGames.some(g => !_forceFin.has(g.id) && getStatus(g.date) === 'live');
+  if (hasLive) document.getElementById('livePill').classList.add('on');
+})();
 </script>
 
 </body>
