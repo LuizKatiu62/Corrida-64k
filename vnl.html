@@ -1155,17 +1155,23 @@ function buildAgenda(){
 async function buildStandings(){
   standingsBuilt = true;
   const el = document.getElementById('standingsContent');
-  try {
-    const r    = await fetch('https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/');
-    const html = await r.text();
-    const teams = parseStandingsHtml(html);
-    if(!teams.length) throw new Error('empty');
-    el.innerHTML = renderStandings(teams);
-  } catch(e){
-    el.innerHTML = `<div class="empty"><div class="em-icon">📊</div>Não foi possível carregar. Tente de novo.<br><br>
-      <span onclick="standingsBuilt=false;buildStandings()" style="color:var(--orange);cursor:pointer;font-weight:700">↻ Tentar novamente</span></div>`;
-    standingsBuilt = false;
+  const url = 'https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/standings/women/';
+  const proxies = [
+    'https://corsproxy.io/?' + encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+  ];
+  for (const fetchUrl of proxies) {
+    try {
+      const r = await fetch(fetchUrl, {signal: AbortSignal.timeout(12000)});
+      if (!r.ok) continue;
+      const html = await r.text();
+      const teams = parseStandingsHtml(html);
+      if (teams.length) { el.innerHTML = renderStandings(teams); return; }
+    } catch(e) {}
   }
+  el.innerHTML = `<div class="empty"><div class="em-icon">📊</div>Classificação indisponível. Verifique a conexão.<br><br>
+    <span onclick="standingsBuilt=false;buildStandings()" style="color:var(--orange);cursor:pointer;font-weight:700">↻ Tentar novamente</span></div>`;
+  standingsBuilt = false;
 }
 
 function parseStandingsHtml(html){
