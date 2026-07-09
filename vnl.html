@@ -552,37 +552,48 @@ const ALL_WOMEN = [
 
 const BASE_URL = 'https://en.volleyballworld.com/volleyball/competitions/volleyball-nations-league/schedule/';
 
-// ── SCORE FETCHING ──
+// ── SCORE CACHE (persiste entre aberturas do app via localStorage) ──
+const SCORE_LS = 'vnl2026_sc_v3';
 const scoreCache = {};
+const _fetching = new Set(); // evita requests duplicados para o mesmo jogo
 
+try { Object.assign(scoreCache, JSON.parse(localStorage.getItem(SCORE_LS) || '{}')); } catch(e) {}
+
+function persistScore(id, sc) {
+  scoreCache[id] = sc;
+  try { localStorage.setItem(SCORE_LS, JSON.stringify(scoreCache)); } catch(e) {}
+}
+
+// ── SCORE FETCHING ──
 async function fetchScore(id) {
   if (scoreCache[id]) return scoreCache[id];
-
-  // 1ª tentativa: API live (CORS ok, funciona para jogos encerrados recentes)
+  if (_fetching.has(id)) return null;
+  _fetching.add(id);
   try {
-    const sc = await fetchLiveScore(id);
-    if (sc && (sc.homeSets + sc.awaySets) > 0) {
-      scoreCache[id] = sc;
-      return sc;
-    }
-  } catch(e) {}
-
-  // 2ª tentativa: HTML via CORS proxy (jogos encerrados horas atrás)
-  const matchUrl = BASE_URL + id + '/';
-  for (const proxy of [
-    'https://corsproxy.io/?' + encodeURIComponent(matchUrl),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(matchUrl),
-  ]) {
+    // 1ª tentativa: API live (CORS ok, funciona para jogos encerrados recentes)
     try {
-      const r = await fetch(proxy, {signal: AbortSignal.timeout(8000)});
-      if (!r.ok) continue;
-      const html = await r.text();
-      const sc = parseScoreHtml(html, false);
-      if (sc) { scoreCache[id] = sc; return sc; }
+      const sc = await fetchLiveScore(id);
+      if (sc && (sc.homeSets + sc.awaySets) > 0) { persistScore(id, sc); return sc; }
     } catch(e) {}
-  }
 
-  return null;
+    // 2ª tentativa: HTML via CORS proxy (jogos encerrados horas atrás)
+    const matchUrl = BASE_URL + id + '/';
+    for (const proxy of [
+      'https://corsproxy.io/?' + encodeURIComponent(matchUrl),
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(matchUrl),
+    ]) {
+      try {
+        const r = await fetch(proxy, {signal: AbortSignal.timeout(10000)});
+        if (!r.ok) continue;
+        const html = await r.text();
+        const sc = parseScoreHtml(html, false);
+        if (sc) { persistScore(id, sc); return sc; }
+      } catch(e) {}
+    }
+    return null;
+  } finally {
+    _fetching.delete(id);
+  }
 }
 
 // ── VNL Real-time API (used for live games) ──
