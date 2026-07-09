@@ -554,7 +554,7 @@ const scoreCache = {};
 async function fetchScore(id) {
   if (scoreCache[id]) return scoreCache[id];
 
-  // 1ª tentativa: API live (CORS ok, funciona para jogos encerrados também)
+  // 1ª tentativa: API live (CORS ok, funciona para jogos encerrados recentes)
   try {
     const sc = await fetchLiveScore(id);
     if (sc && (sc.homeSets + sc.awaySets) > 0) {
@@ -563,14 +563,22 @@ async function fetchScore(id) {
     }
   } catch(e) {}
 
-  // 2ª tentativa: scraping HTML (pode falhar por CORS)
-  try {
-    const r = await fetch(BASE_URL + id + '/');
-    const html = await r.text();
-    const sc = parseScoreHtml(html, false);
-    if (sc) scoreCache[id] = sc;
-    return sc;
-  } catch(e) { return null; }
+  // 2ª tentativa: HTML via CORS proxy (jogos encerrados horas atrás)
+  const matchUrl = BASE_URL + id + '/';
+  for (const proxy of [
+    'https://corsproxy.io/?' + encodeURIComponent(matchUrl),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(matchUrl),
+  ]) {
+    try {
+      const r = await fetch(proxy, {signal: AbortSignal.timeout(8000)});
+      if (!r.ok) continue;
+      const html = await r.text();
+      const sc = parseScoreHtml(html, false);
+      if (sc) { scoreCache[id] = sc; return sc; }
+    } catch(e) {}
+  }
+
+  return null;
 }
 
 // ── VNL Real-time API (used for live games) ──
