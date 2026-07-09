@@ -331,7 +331,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
   <section class="sec" id="sec-hoje">
     <div class="sec-header">
       <div class="sec-title" id="hojeTitle">JOGOS DE HOJE</div>
-      <div class="today-badge" id="todayBadge"></div>
+      <div style="display:flex;align-items:center;gap:.4rem">
+        <div class="today-badge" id="todayBadge"></div>
+        <button id="hojeRefreshBtn" onclick="hojeForceRefresh()" title="Recarregar placares"
+          style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);border-radius:6px;padding:2px 8px;font-size:.85rem;cursor:pointer;line-height:1.4">↻</button>
+      </div>
     </div>
     <div id="hojeContent"><div class="spinner"><div class="spin"></div>Carregando…</div></div>
   </section>
