@@ -924,11 +924,16 @@ function isSameDay(a,b){
   return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
 }
 
+function getTodayStr() {
+  const d = new Date();
+  return [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
+}
+
 function getStatus(d){
   const now = Date.now();
   const ms  = d.getTime();
   if(ms > now) return 'sched';
-  if(ms > now - 5*3600*1000) return 'live'; // janela ampla; placar 3-X encerra antes via _forceFin
+  if(ms > now - 3.5*3600*1000) return 'live'; // janela 3h30 — suficiente para o jogo mais longo
   return 'fin';
 }
 
