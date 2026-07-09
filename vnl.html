@@ -781,25 +781,39 @@ function updateScoreDom(id, sc, isLive=false) {
   }
 }
 
+const MS_7D = 7 * 24 * 3600 * 1000;
+
 function loadScores(games) {
+  const now  = Date.now();
   const fin  = games.filter(g => getStatus(g.date) === 'fin');
   const live = games.filter(g => getStatus(g.date) === 'live');
 
   if (fin.length) {
-    // Sequential (1 game at a time) to avoid rate-limiting on CORS proxies
-    (async () => {
-      for (const g of fin) {
-        updateScoreDom(g.id, await fetchScore(g.id));
-        if (fin.length > 1) await new Promise(r => setTimeout(r, 700));
+    // Aplica cache instantaneamente; só busca via proxy o que falta E é recente (< 7 dias)
+    const toFetch = [];
+    for (const g of fin) {
+      if (scoreCache[g.id]) {
+        updateScoreDom(g.id, scoreCache[g.id]);
+      } else if (now - g.date.getTime() < MS_7D && !_fetching.has(g.id)) {
+        toFetch.push(g);
       }
-    })();
+    }
+    if (toFetch.length) {
+      (async () => {
+        for (const g of toFetch) {
+          updateScoreDom(g.id, await fetchScore(g.id));
+          if (toFetch.length > 1) await new Promise(r => setTimeout(r, 900));
+        }
+      })();
+    }
   }
 
   if (live.length) {
     // Re-apply fin state to any NEW DOM elements for games already confirmed done
     live.filter(g => _forceFin.has(g.id)).forEach(g => {
       flipTofin(g.id);
-      fetchScore(g.id).then(sc => { if (sc) updateScoreDom(g.id, sc, false); });
+      if (scoreCache[g.id]) updateScoreDom(g.id, scoreCache[g.id], false);
+      else fetchScore(g.id).then(sc => { if (sc) updateScoreDom(g.id, sc, false); });
     });
 
     const refreshLive = async () => {
