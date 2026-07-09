@@ -1004,14 +1004,17 @@ function parseGames(arr){
 }
 
 // ── Tab routing ──
-let hojeBuilt = false, braBuilt = false, agendaBuilt = false, standingsBuilt = false;
+let hojeBuilt = false, hojeBuiltDate = '', braBuilt = false, agendaBuilt = false, standingsBuilt = false;
 
 function go(tab, el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('sec-'+tab).classList.add('on');
-  if(tab==='hoje'    && !hojeBuilt)     { buildHoje();      hojeBuilt=true; }
+  if(tab==='hoje'){
+    const td = getTodayStr();
+    if(!hojeBuilt || hojeBuiltDate !== td) { buildHoje(); hojeBuilt=true; hojeBuiltDate=td; }
+  }
   if(tab==='brasil'  && !braBuilt)      { buildBrasil(); }
   if(tab==='agenda'  && !agendaBuilt)   { buildAgenda(); }
   if(tab==='class'   && !standingsBuilt){ buildStandings(); }
