@@ -1027,44 +1027,47 @@ function toggleWeek(id){
 
 // ── HOJE ──
 function buildHoje(){
-  const today = new Date();
-  const games = parseGames(ALL_WOMEN).filter(g => isSameDay(g.date, today));
+  const todayStr = getTodayStr();
+  const allParsed = parseGames(ALL_WOMEN);
+  const games = allParsed.filter(g => g.vd === todayStr);
   const el = document.getElementById('hojeContent');
   const badge = document.getElementById('todayBadge');
   const title = document.getElementById('hojeTitle');
 
-  badge.textContent = fmtDate(today);
+  badge.textContent = fmtDate(new Date());
 
   // Check for live games
   const hasLive = games.some(g => !_forceFin.has(g.id) && getStatus(g.date)==='live');
   document.getElementById('livePill').classList.toggle('on', hasLive);
 
   if(games.length === 0){
-    const allGames = parseGames(ALL_WOMEN);
-    const upcoming = allGames.filter(g=>g.date>today).sort((a,b)=>a.date-b.date);
-    let html = '';
-
-    if(upcoming.length>0){
-      const nextDay   = upcoming[0].date;
-      const nextGames = upcoming.filter(g=>isSameDay(g.date,nextDay));
+    // Sem jogos no calendário do local do jogo para hoje → mostra próximos
+    const upcoming = allParsed.filter(g => g.vd > todayStr).sort((a,b) => a.vd < b.vd ? -1 : 1);
+    if(upcoming.length > 0){
+      const nextVd    = upcoming[0].vd;
+      const nextGames = upcoming.filter(g => g.vd === nextVd);
+      const nextDate  = nextGames[0].date;
       title.textContent = 'PRÓXIMOS JOGOS';
-      badge.textContent = fmtDate(nextDay);
-      html += nextGames.map(g=>cardHtml(g)).join('');
+      badge.textContent = fmtDate(nextDate);
+      el.innerHTML = nextGames.map(g=>cardHtml(g)).join('');
+      loadScores(nextGames);
     } else {
       title.textContent = 'VNL 2026';
-      badge.textContent = fmtDate(today);
-      html = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos agendados.</div>`;
-    }
-
-    el.innerHTML = html;
-    if (upcoming.length > 0) {
-      const nextDay = upcoming[0].date;
-      loadScores(upcoming.filter(g => isSameDay(g.date, nextDay)));
+      el.innerHTML = `<div class="empty"><div class="em-icon">🏐</div>Sem jogos agendados.</div>`;
     }
     return;
   }
 
   el.innerHTML = games.map(cardHtml).join('');
+  loadScores(games);
+}
+
+function hojeForceRefresh() {
+  const todayStr = getTodayStr();
+  const games = parseGames(ALL_WOMEN).filter(g => g.vd === todayStr);
+  // limpa cache e flags de fetch para hoje
+  games.forEach(g => { delete scoreCache[g.id]; _fetching.delete(g.id); });
+  try { localStorage.setItem(SCORE_LS, JSON.stringify(scoreCache)); } catch(e) {}
   loadScores(games);
 }
 
