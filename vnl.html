@@ -771,9 +771,13 @@ function loadScores(games) {
   const live = games.filter(g => getStatus(g.date) === 'live');
 
   if (fin.length) {
-    const q = [...fin];
-    const worker = async () => { let g; while ((g = q.shift())) updateScoreDom(g.id, await fetchScore(g.id)); };
-    Promise.all([worker(), worker(), worker()]);
+    // Sequential (1 game at a time) to avoid rate-limiting on CORS proxies
+    (async () => {
+      for (const g of fin) {
+        updateScoreDom(g.id, await fetchScore(g.id));
+        if (fin.length > 1) await new Promise(r => setTimeout(r, 700));
+      }
+    })();
   }
 
   if (live.length) {
@@ -793,10 +797,12 @@ function loadScores(games) {
           continue;
         }
         let sc = await fetchLiveScore(g.id);
-        if (!sc) {
-          // API live falhou — tenta scraping HTML; se tiver 3-X encerra imediatamente
-          const scHtml = await fetchScore(g.id);
-          if (scHtml) { flipTofin(g.id); updateScoreDom(g.id, scHtml, false); continue; }
+        // If live API returned 0-0 (match ended but data purged), fall through to CORS proxy
+        if (!sc || (sc.homeSets + sc.awaySets === 0 && sc.done)) {
+          const scProxy = await fetchScore(g.id);
+          if (scProxy) { flipTofin(g.id); updateScoreDom(g.id, scProxy, false); continue; }
+          if (sc) updateScoreDom(g.id, sc, true);
+          continue;
         }
         updateScoreDom(g.id, sc, true);
       }
