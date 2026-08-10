@@ -51,6 +51,15 @@ label{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:upperca
 .tag.off{background:var(--bg3);color:var(--tx3)}
 .aviso{font-size:12.5px;color:var(--tx3);margin-top:8px;line-height:1.5}
 .ok{color:var(--ok)}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px;margin-top:9px}
+.fotos figure{margin:0;position:relative;border-radius:9px;overflow:hidden;background:var(--bg3);
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.fotos img{width:100%;height:100%;object-fit:cover;display:block}
+.fotos button{position:absolute;top:5px;right:5px;background:rgba(10,12,10,.82);color:#fff;
+  width:24px;height:24px;border-radius:12px;font-size:14px;line-height:1;padding:0}
+.solta{border:1px dashed var(--linha);border-radius:11px;padding:20px;text-align:center;
+  color:var(--tx3);font-size:13.5px;cursor:pointer;margin-top:9px}
+.solta.sobre{border-color:var(--acc);color:var(--acc)}
 </style>
 </head>
 <body>
@@ -98,6 +107,18 @@ label{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:upperca
     </div>
   </div>
 
+  <label>Vídeo (opcional)</label>
+  <input id="fVideo" placeholder="cole o link do YouTube ou do Vimeo">
+  <div class="aviso">Suba o vídeo no YouTube como <b>não listado</b> e cole o link aqui.
+    Não listado não aparece em buscas nem no seu canal — só quem tem o link vê.
+    Vídeo é pesado demais para guardar no Firebase.</div>
+
+  <label>Fotos (opcional)</label>
+  <div class="solta" id="solta">Clique aqui ou arraste as fotos</div>
+  <input id="fArq" type="file" accept="image/*" multiple hidden>
+  <div class="fotos" id="grade"></div>
+  <div class="aviso" id="peso"></div>
+
   <label>Publicação</label>
   <div style="display:flex;gap:10px;align-items:center">
     <button id="btPub" class="bt" style="margin:0;width:auto;padding:11px 18px">Publicar</button>
@@ -114,7 +135,7 @@ const KEY = 'AIzaSyB0hO4m0XPRqmrYegHtkV4KawJA2py1glU';
 const DB  = 'https://gastos-casa-7f431-default-rtdb.firebaseio.com';
 const K_RT = 'rwg.rt', K_MAIL = 'rwg.mail';
 
-let token = null, expira = 0, atual = null, POSTS = {};
+let token = null, expira = 0, atual = null, POSTS = {}, FOTOS = [];
 const q = s => document.querySelector(s);
 const g = k => { try{ return localStorage.getItem(k) }catch(e){ return null } };
 const s_ = (k,v) => { try{ localStorage.setItem(k,v) }catch(e){} };
@@ -175,6 +196,68 @@ q('#fLogin').onsubmit = async function(e){
   }
 };
 
+/* As fotos vão para o Firebase, então precisam caber lá. Reduzo no
+   próprio navegador para 1200 px e JPEG 72% — uma foto de celular de
+   4 MB vira uns 150 KB, sem diferença visível na tela. Sem isso, meia
+   dúzia de posts com foto estouram a conta gratuita.               */
+function reduzir(file){
+  return new Promise(function(ok, falha){
+    const fr = new FileReader();
+    fr.onerror = function(){ falha(new Error('não consegui ler o arquivo')) };
+    fr.onload = function(){
+      const im = new Image();
+      im.onerror = function(){ falha(new Error('arquivo não é imagem')) };
+      im.onload = function(){
+        const MAX = 1200;
+        let w = im.width, h = im.height;
+        if(w > MAX || h > MAX){ const f = MAX / Math.max(w, h); w = Math.round(w*f); h = Math.round(h*f) }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(im, 0, 0, w, h);
+        ok(c.toDataURL('image/jpeg', 0.72));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+function pintarFotos(){
+  const g = q('#grade');
+  g.innerHTML = FOTOS.map(function(src, i){
+    return '<figure><img src="' + src + '" alt=""><button data-rm="' + i + '">×</button></figure>';
+  }).join('');
+  g.querySelectorAll('[data-rm]').forEach(function(b){
+    b.onclick = function(){ FOTOS.splice(+b.dataset.rm, 1); pintarFotos() };
+  });
+  const kb = Math.round(FOTOS.join('').length * 0.75 / 1024);
+  q('#peso').textContent = FOTOS.length
+    ? FOTOS.length + (FOTOS.length === 1 ? ' foto · ' : ' fotos · ') + kb + ' KB no total'
+      + (kb > 1400 ? ' — está ficando pesado, considere tirar alguma.' : '')
+    : '';
+}
+
+async function receber(arquivos){
+  const lista = [].slice.call(arquivos).filter(function(f){ return /^image\//.test(f.type) });
+  if(!lista.length) return;
+  estado('Reduzindo ' + lista.length + (lista.length === 1 ? ' foto…' : ' fotos…'));
+  for(const f of lista){
+    try{ FOTOS.push(await reduzir(f)) }catch(e){ estado('Pulei ' + f.name + ': ' + e.message) }
+  }
+  pintarFotos();
+  estado('Pronto. As fotos entram quando você salvar.', true);
+}
+
+q('#solta').onclick = function(){ q('#fArq').click() };
+q('#fArq').onchange = function(e){ receber(e.target.files); e.target.value = '' };
+['dragenter','dragover'].forEach(function(ev){
+  q('#solta').addEventListener(ev, function(e){ e.preventDefault(); q('#solta').classList.add('sobre') });
+});
+['dragleave','drop'].forEach(function(ev){
+  q('#solta').addEventListener(ev, function(e){ e.preventDefault(); q('#solta').classList.remove('sobre') });
+});
+q('#solta').addEventListener('drop', function(e){ receber(e.dataTransfer.files) });
+
 async function carregar(){
   const t = await tok(); if(!t) return;
   const r = await fetch(DB + '/blog/posts.json?auth=' + t);
@@ -202,15 +285,27 @@ async function carregar(){
       if(!confirm('Apagar "' + (p.t_pt || p.t_en || 'sem título') + '"?\n\nNão tem como desfazer.')) return;
       const t = await tok(); if(!t) return;
       await fetch(DB + '/blog/posts/' + b.dataset.rm + '.json?auth=' + t, {method:'DELETE'});
+      await fetch(DB + '/blog/midia/' + b.dataset.rm + '.json?auth=' + t, {method:'DELETE'});
       if(atual === b.dataset.rm) novo();
       estado('Apagado.'); carregar();
     };
   });
 }
 
-function editar(id){
+async function editar(id){
   const p = POSTS[id]; if(!p) return;
   atual = id;
+  q('#fVideo').value = p.video || '';
+  FOTOS = []; pintarFotos();
+  const t = await tok();
+  if(t){
+    try{
+      const r = await fetch(DB + '/blog/midia/' + id + '.json?auth=' + t);
+      const d = r.ok ? await r.json() : null;
+      FOTOS = d ? (Array.isArray(d) ? d : Object.keys(d).sort().map(function(k){ return d[k] })) : [];
+      pintarFotos();
+    }catch(e){}
+  }
   q('#fData').value = p.data || '';
   q('#fKm').value = p.km || ''; q('#fPace').value = p.pace || ''; q('#fTempo').value = p.tempo || '';
   q('#tPt').value = p.t_pt || ''; q('#cPt').value = p.c_pt || '';
@@ -221,7 +316,8 @@ function editar(id){
 
 function novo(){
   atual = null;
-  ['#tPt','#cPt','#tEn','#cEn','#fKm','#fPace','#fTempo'].forEach(function(s){ q(s).value = '' });
+  ['#tPt','#cPt','#tEn','#cEn','#fKm','#fPace','#fTempo','#fVideo'].forEach(function(s){ q(s).value = '' });
+  FOTOS = []; pintarFotos();
   q('#fData').value = new Date().toISOString().slice(0,10);
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -237,6 +333,7 @@ async function gravar(publicado){
     t_pt:q('#tPt').value.trim(), c_pt:q('#cPt').value,
     t_en:q('#tEn').value.trim(), c_en:q('#cEn').value,
     km:q('#fKm').value.trim(), pace:q('#fPace').value.trim(), tempo:q('#fTempo').value.trim(),
+    video:q('#fVideo').value.trim(), nFotos:FOTOS.length,
     publicado:!!publicado,
     alterado:new Date().toISOString()
   };
@@ -248,6 +345,14 @@ async function gravar(publicado){
                               body:JSON.stringify(corpo)});
   if(!r.ok){ estado('Não consegui gravar: HTTP ' + r.status); return }
   if(!atual){ const j = await r.json(); atual = j.name }
+
+  /* as fotos moram num nó separado: assim a página inicial do site
+     carrega leve e só busca imagem quando o texto é aberto */
+  const rm = await fetch(DB + '/blog/midia/' + atual + '.json?auth=' + t,
+    {method:'PUT', headers:{'Content-Type':'application/json'},
+     body:JSON.stringify(FOTOS.length ? FOTOS : null)});
+  if(!rm.ok){ estado('Texto gravado, mas as fotos falharam: HTTP ' + rm.status); return }
+
   estado(publicado ? 'Publicado. Já está no ar.' : 'Rascunho salvo.', true);
   carregar();
 }

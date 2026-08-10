@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Aos 64 anos, um ano depois de uma cirurgia, correndo 64 km e agora a primeira maratona. Run with Gratitude.">
+<meta name="description" content="Aos 64 anos, um ano depois de operar um câncer de próstata, corri 64 km. Agora vem a primeira maratona. Run with Gratitude.">
 <meta property="og:title" content="Run with Gratitude">
 <meta property="og:description" content="64 anos. 64 km. E agora a primeira maratona.">
 <meta property="og:type" content="website">
@@ -62,6 +62,16 @@ article h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1
 .resumo{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
 .resumo span{font-size:11.5px;color:var(--tx2);background:var(--bg2);
   border:1px solid var(--linha);border-radius:20px;padding:4px 11px;font-variant-numeric:tabular-nums}
+.midia{margin:16px 0 4px;display:grid;gap:9px}
+.midia img{width:100%;border-radius:11px;display:block;background:var(--bg2);cursor:zoom-in}
+.midia .duas{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.video{position:relative;width:100%;padding-top:56.25%;border-radius:11px;overflow:hidden;
+  background:var(--bg2);margin:16px 0 4px}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.lupa{position:fixed;inset:0;background:rgba(8,9,8,.94);z-index:99;display:none;
+  align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+.lupa.on{display:flex}
+.lupa img{max-width:100%;max-height:100%;border-radius:8px}
 .mais{background:none;border:0;color:var(--acc);font-family:var(--sans);font-size:13.5px;
   font-weight:600;cursor:pointer;padding:8px 0;margin-top:6px}
 footer{border-top:1px solid var(--linha);padding:30px 0 46px;color:var(--tx3);font-size:12.5px}
@@ -84,6 +94,7 @@ footer p{margin:0 0 8px}
 </div></section>
 
 <main><div class="wrap" id="posts"></div></main>
+<div class="lupa" id="lupa"><img alt=""></div>
 
 <footer><div class="wrap">
   <p id="fTxt"></p>
@@ -97,7 +108,7 @@ const PROVA = '2026-10-18';
 const T = {
   pt:{
     tit:'Aos 64 anos, correndo com <b>gratidão</b>.',
-    sub:'Em junho de 2025 eu fiz uma cirurgia. Um ano depois, no mesmo dia, corri 64 km para comemorar — um por ano de vida. Agora vem a primeira maratona da minha vida, e um índice para Boston.',
+    sub:'Em junho de 2025 operei um câncer de próstata. Um ano depois, no mesmo dia, corri 64 km — um para cada ano de vida. Agora vem a primeira maratona da minha vida, e um índice para Boston.',
     ctxt:'dias para a PEI Marathon,<br>18 de outubro de 2026',
     hoje:'É hoje. PEI Marathon.',
     passou:'A PEI Marathon já passou.',
@@ -108,7 +119,7 @@ const T = {
   },
   en:{
     tit:'At 64, running with <b>gratitude</b>.',
-    sub:'In June 2025 I had surgery. One year later, to the day, I ran 64 km to celebrate — one for each year of my life. Now comes the first marathon of my life, and a Boston qualifying time.',
+    sub:'In June 2025 I had surgery for prostate cancer. One year later, to the day, I ran 64 km — one for every year of my life. Now comes the first marathon of my life, and a Boston qualifying time.',
     ctxt:'days to the PEI Marathon,<br>October 18, 2026',
     hoje:'Today is the day. PEI Marathon.',
     passou:'The PEI Marathon has passed.',
@@ -143,6 +154,50 @@ function dataLonga(iso){
   return idioma === 'pt'
     ? d.getDate() + ' de ' + MES.pt[d.getMonth()] + ' de ' + d.getFullYear()
     : MES.en[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+/* YouTube e Vimeo por link colado; qualquer outro endereço vira link simples */
+function embutir(url){
+  if(!url) return '';
+  const u = String(url).trim();
+  let id = '', src = '';
+  let m = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/);
+  if(m){ id = m[1]; src = 'https://www.youtube-nocookie.com/embed/' + id }
+  if(!src){ m = u.match(/vimeo\.com\/(\d+)/); if(m) src = 'https://player.vimeo.com/video/' + m[1] }
+  if(!src) return '<p style="margin:14px 0 0"><a href="' + esc(u) + '" style="color:var(--acc)">'
+                + esc(u) + '</a></p>';
+  return '<div class="video"><iframe src="' + src + '" loading="lazy" allowfullscreen '
+       + 'referrerpolicy="strict-origin-when-cross-origin"></iframe></div>';
+}
+
+/* As fotos ficam num nó à parte e só descem quando o texto aparece na tela.
+   Se viessem junto com a lista, a página inicial pesaria megabytes. */
+const fotosVistas = {};
+function carregarFotos(){
+  document.querySelectorAll('.midia[data-fotos]').forEach(function(el){
+    const id = el.dataset.fotos;
+    if(fotosVistas[id]){ pintarFotos(el, fotosVistas[id]); return }
+    if(el.dataset.indo) return;
+    el.dataset.indo = '1';
+    fetch(DB + '/blog/midia/' + id + '.json')
+      .then(function(r){ return r.ok ? r.json() : null })
+      .then(function(d){
+        const arr = d ? (Array.isArray(d) ? d : Object.keys(d).sort().map(function(k){ return d[k] })) : [];
+        fotosVistas[id] = arr; pintarFotos(el, arr);
+      })
+      .catch(function(){});
+  });
+}
+function pintarFotos(el, arr){
+  if(!arr || !arr.length){ el.remove ? el.remove() : (el.innerHTML = '') ; return }
+  const html = arr.map(function(src){ return '<img src="' + src + '" alt="" loading="lazy">' }).join('');
+  el.innerHTML = arr.length === 2 ? '<div class="duas">' + html + '</div>' : html;
+  el.querySelectorAll('img').forEach(function(im){
+    im.onclick = function(){
+      const l = document.getElementById('lupa');
+      l.querySelector('img').src = im.src; l.classList.add('on');
+    };
+  });
 }
 
 function contagem(){
@@ -183,11 +238,15 @@ function pintar(){
       + '<div class="data">' + dataLonga(p.data) + '</div>'
       + '<h2>' + esc(tit) + '</h2>'
       + chips
+      + embutir(p.video)
+      + '<div class="midia" data-fotos="' + p.id + '"></div>'
       + '<div class="corpo">' + texto(mostra) + '</div>'
       + (longo ? '<button class="mais" data-id="' + p.id + '">'
                  + (aberto ? t.menos : t.mais) + '</button>' : '')
       + '</article>';
   }).join('');
+
+  carregarFotos();
 
   host.querySelectorAll('.mais').forEach(function(b){
     b.onclick = function(){
@@ -211,6 +270,8 @@ document.querySelectorAll('.idioma button').forEach(function(b){
 document.querySelectorAll('.idioma button').forEach(function(x){
   x.classList.toggle('on', x.dataset.l === idioma);
 });
+
+document.getElementById('lupa').onclick = function(){ this.classList.remove('on') };
 
 pintar();
 
