@@ -60,6 +60,8 @@ header .wrap{display:flex;align-items:center;gap:12px;padding-top:14px;padding-b
   font-variant-numeric:tabular-nums;margin-bottom:3px}
 #menu a .t{display:block;font-size:14.5px;color:var(--tx);line-height:1.35}
 #menu a:hover .t{color:var(--acc)}
+#menu a.aqui .t{color:var(--acc)}
+#menu a.aqui .d{color:var(--acc)}
 #menu .nada{color:var(--tx3);font-size:13.5px;font-style:italic;padding:12px 0}
 
 .hero{padding:52px 0 40px;border-bottom:1px solid var(--linha)}
@@ -165,6 +167,8 @@ const T = {
     menos:'Recolher',
     menuT:'Publicações',
     menuV:'Nada publicado ainda.',
+    escolha:'Toque no menu, no alto à direita, para ler os textos.',
+    voltar:'← voltar ao início',
     rodape:'Um diário de treino e de vida, escrito no caminho até 18 de outubro.'
   },
   en:{
@@ -180,6 +184,8 @@ const T = {
     menos:'Collapse',
     menuT:'Posts',
     menuV:'Nothing published yet.',
+    escolha:'Tap the menu, top right, to read the posts.',
+    voltar:'← back to the top',
     rodape:'A training and life journal, written on the way to October 18.'
   }
 };
@@ -192,6 +198,7 @@ let idioma = (localStorage.getItem('rwg.lang')
   || (navigator.language||'pt').slice(0,2).toLowerCase());
 if(idioma !== 'en') idioma = 'pt';
 let POSTS = [];
+let escolhido = null;          /* qual texto está na tela; o menu manda */
 const abertos = new Set();
 
 const esc = t => String(t==null?'':t)
@@ -296,7 +303,8 @@ function montarMenu(){
   if(!POSTS.length){ el.innerHTML = '<div class="nada">' + t.menuV + '</div>'; return }
   el.innerHTML = POSTS.map(function(p){
     const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '—';
-    return '<a href="#p-' + p.id + '" data-ir="' + p.id + '">'
+    return '<a href="#p-' + p.id + '" data-ir="' + p.id + '"'
+         + (p.id === escolhido ? ' class="aqui"' : '') + '>'
          + '<span class="d">' + curta(p.data) + '</span>'
          + '<span class="t">' + esc(tit) + '</span></a>';
   }).join('');
@@ -304,8 +312,13 @@ function montarMenu(){
     a.onclick = function(e){
       e.preventDefault();
       abrirMenu(false);
-      const alvo = document.getElementById('p-' + a.dataset.ir);
-      if(alvo) setTimeout(function(){ alvo.scrollIntoView({behavior:'smooth', block:'start'}) }, 180);
+      escolhido = a.dataset.ir;
+      abertos.clear();
+      pintar();
+      setTimeout(function(){
+        const m = document.querySelector('main');
+        if(m) m.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 180);
     };
   });
 }
@@ -336,10 +349,22 @@ function pintar(){
 
   pintarEvolucao();
 
+  /* A tela principal é só a história e os números. Texto nenhum
+     aparece aqui até você escolher um no menu das três listinhas. */
   const host = document.getElementById('posts');
-  if(!POSTS.length){ host.innerHTML = '<div class="vazio">' + t.vazio + '</div>'; return }
+  if(!escolhido){
+    host.innerHTML = POSTS.length
+      ? '<div class="vazio">' + t.escolha + '</div>'
+      : '<div class="vazio">' + t.vazio + '</div>';
+    return;
+  }
 
-  host.innerHTML = POSTS.map(function(p){
+  /* Um texto por vez. A tela principal abre no mais recente e o menu
+     das três listinhas serve de índice para os outros — foi assim que
+     ele pediu, e evita a página virar um rolo sem fim. */
+  const atual = POSTS.find(function(p){ return p.id === escolhido });
+  if(!atual){ escolhido = null; host.innerHTML = ''; return }
+  host.innerHTML = [atual].map(function(p){
     const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '';
     const cor = (idioma === 'en' ? p.c_en : p.c_pt) || p.c_pt || p.c_en || '';
     const longo = cor.length > 620;
@@ -359,11 +384,18 @@ function pintar(){
       + '<div class="corpo">' + texto(mostra) + '</div>'
       + (longo ? '<button class="mais" data-id="' + p.id + '">'
                  + (aberto ? t.menos : t.mais) + '</button>' : '')
-      + '</article>';
+      + '</article>'
+      + '<button class="mais" id="btVoltar">' + t.voltar + '</button>';
   }).join('');
 
   montarMenu();
   carregarFotos();
+
+  const bv = document.getElementById('btVoltar');
+  if(bv) bv.onclick = function(){
+    escolhido = null; abertos.clear(); pintar();
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
 
   host.querySelectorAll('.mais').forEach(function(b){
     b.onclick = function(){
