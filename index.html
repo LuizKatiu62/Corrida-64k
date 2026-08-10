@@ -2,57 +2,229 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>runwithgratitude.ca</title>
-<meta http-equiv="refresh" content="0;url=./copa2026.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Aos 64 anos, um ano depois de uma cirurgia, correndo 64 km e agora a primeira maratona. Run with Gratitude.">
+<meta property="og:title" content="Run with Gratitude">
+<meta property="og:description" content="64 anos. 64 km. E agora a primeira maratona.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://runwithgratitude.ca">
+<title>Run with Gratitude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    min-height:100vh;
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    text-align:center;padding:2rem;
-  }
-  .card{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:24px;
-    padding:3rem 2.5rem;
-    max-width:420px;
-    width:100%;
-  }
-  .lock{font-size:3.5rem;margin-bottom:1rem}
-  h1{color:#fff;font-size:1.4rem;font-weight:900;margin-bottom:.5rem}
-  p{color:rgba(255,255,255,.7);font-size:.95rem;line-height:1.6;margin-bottom:1.75rem}
-  .btn{
-    display:inline-block;
-    background:#f1c40f;color:#1a252f;
-    border:none;border-radius:50px;
-    padding:.85rem 2rem;
-    font-size:1rem;font-weight:800;
-    text-decoration:none;cursor:pointer;
-    transition:opacity .2s;
-  }
-  .btn:hover{opacity:.88}
-  .redirect-note{
-    margin-top:1.25rem;
-    font-size:.75rem;
-    color:rgba(255,255,255,.4);
-  }
+:root{
+  --bg:#0e100f; --bg2:#161917; --linha:#242825;
+  --tx:#eceee9; --tx2:#a3a9a1; --tx3:#6f766d;
+  --acc:#c9a227; --acc2:#7fa650;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.6}
+.wrap{max-width:660px;margin:0 auto;padding:0 22px}
+a{color:inherit}
+
+header{border-bottom:1px solid var(--linha);position:sticky;top:0;z-index:10;
+  background:rgba(14,16,15,.88);backdrop-filter:blur(12px)}
+header .wrap{display:flex;align-items:center;gap:12px;padding-top:14px;padding-bottom:14px}
+.marca{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.01em;
+  text-decoration:none;flex:1}
+.marca i{color:var(--acc);font-style:normal}
+.idioma{display:flex;border:1px solid var(--linha);border-radius:20px;overflow:hidden}
+.idioma button{background:none;border:0;color:var(--tx3);font-family:var(--sans);
+  font-size:11.5px;font-weight:600;padding:6px 12px;cursor:pointer;letter-spacing:.04em}
+.idioma button.on{background:var(--acc);color:#161917}
+
+.hero{padding:52px 0 40px;border-bottom:1px solid var(--linha)}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(30px,7vw,46px);
+  line-height:1.15;margin:0 0 18px;letter-spacing:-.02em}
+.hero h1 b{font-weight:600;color:var(--acc)}
+.hero p{color:var(--tx2);font-size:16px;margin:0 0 26px;max-width:52ch}
+.conta{display:flex;align-items:baseline;gap:12px;padding:16px 18px;border-radius:12px;
+  background:var(--bg2);border:1px solid var(--linha)}
+.conta b{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--acc2);line-height:1}
+.conta span{font-size:13px;color:var(--tx2);line-height:1.45}
+
+main{padding:38px 0 60px}
+.vazio{color:var(--tx3);font-size:15px;text-align:center;padding:60px 0;font-style:italic}
+article{padding:30px 0;border-bottom:1px solid var(--linha)}
+article:last-child{border-bottom:0}
+.data{font-size:11.5px;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;
+  font-weight:600;margin-bottom:9px}
+article h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.25;
+  margin:0 0 10px;letter-spacing:-.01em}
+.corpo{color:var(--tx2);font-size:16.5px;line-height:1.75}
+.corpo p{margin:0 0 15px}
+.corpo p:last-child{margin-bottom:0}
+.corpo b{color:var(--tx);font-weight:600}
+.resumo{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
+.resumo span{font-size:11.5px;color:var(--tx2);background:var(--bg2);
+  border:1px solid var(--linha);border-radius:20px;padding:4px 11px;font-variant-numeric:tabular-nums}
+.mais{background:none;border:0;color:var(--acc);font-family:var(--sans);font-size:13.5px;
+  font-weight:600;cursor:pointer;padding:8px 0;margin-top:6px}
+footer{border-top:1px solid var(--linha);padding:30px 0 46px;color:var(--tx3);font-size:12.5px}
+footer p{margin:0 0 8px}
 </style>
 </head>
 <body>
-<div class="card">
-  <div class="lock">🔒</div>
-  <h1>Site Pessoal</h1>
-  <p>Esta página é de uso pessoal e não está disponível ao público.<br>
-  Se você recebeu um convite para o <strong style="color:#fff">Desafio 64km</strong>, clique abaixo.</p>
-  <a href="./convite.html" class="btn">🏃 Ver o Convite</a>
-  <div class="redirect-note">Redirecionando automaticamente em alguns segundos…</div>
-</div>
+
+<header><div class="wrap">
+  <a class="marca" href="/">Run with <i>Gratitude</i></a>
+  <div class="idioma">
+    <button data-l="pt" class="on">PT</button><button data-l="en">EN</button>
+  </div>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1 id="hTit"></h1>
+  <p id="hSub"></p>
+  <div class="conta"><b id="cDias">—</b><span id="cTxt"></span></div>
+</div></section>
+
+<main><div class="wrap" id="posts"></div></main>
+
+<footer><div class="wrap">
+  <p id="fTxt"></p>
+  <p>© <span id="ano"></span> Luiz Silva · Saint John, New Brunswick</p>
+</div></footer>
+
 <script>
-  setTimeout(function(){ window.location.replace('./convite.html'); }, 4000);
+const DB   = 'https://gastos-casa-7f431-default-rtdb.firebaseio.com';
+const PROVA = '2026-10-18';
+
+const T = {
+  pt:{
+    tit:'Aos 64 anos, correndo com <b>gratidão</b>.',
+    sub:'Em junho de 2025 eu fiz uma cirurgia. Um ano depois, no mesmo dia, corri 64 km para comemorar — um por ano de vida. Agora vem a primeira maratona da minha vida, e um índice para Boston.',
+    ctxt:'dias para a PEI Marathon,<br>18 de outubro de 2026',
+    hoje:'É hoje. PEI Marathon.',
+    passou:'A PEI Marathon já passou.',
+    vazio:'Os primeiros textos chegam em breve.',
+    mais:'Continuar lendo',
+    menos:'Recolher',
+    rodape:'Um diário de treino e de vida, escrito no caminho até 18 de outubro.'
+  },
+  en:{
+    tit:'At 64, running with <b>gratitude</b>.',
+    sub:'In June 2025 I had surgery. One year later, to the day, I ran 64 km to celebrate — one for each year of my life. Now comes the first marathon of my life, and a Boston qualifying time.',
+    ctxt:'days to the PEI Marathon,<br>October 18, 2026',
+    hoje:'Today is the day. PEI Marathon.',
+    passou:'The PEI Marathon has passed.',
+    vazio:'The first posts are coming soon.',
+    mais:'Keep reading',
+    menos:'Collapse',
+    rodape:'A training and life journal, written on the way to October 18.'
+  }
+};
+const MES = {
+  pt:['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
+  en:['January','February','March','April','May','June','July','August','September','October','November','December']
+};
+
+let idioma = (localStorage.getItem('rwg.lang')
+  || (navigator.language||'pt').slice(0,2).toLowerCase());
+if(idioma !== 'en') idioma = 'pt';
+let POSTS = [];
+const abertos = new Set();
+
+const esc = t => String(t==null?'':t)
+  .replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* parágrafos por linha em branco, **negrito** por asteriscos duplos */
+function texto(t){
+  return esc(t).trim().split(/\n\s*\n/)
+    .map(p => '<p>' + p.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>') + '</p>')
+    .join('');
+}
+function dataLonga(iso){
+  const d = new Date(iso + 'T12:00:00');
+  return idioma === 'pt'
+    ? d.getDate() + ' de ' + MES.pt[d.getMonth()] + ' de ' + d.getFullYear()
+    : MES.en[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+function contagem(){
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const alvo = new Date(PROVA + 'T00:00:00');
+  const d = Math.round((alvo - hoje) / 864e5);
+  const t = T[idioma];
+  if(d > 0){ document.getElementById('cDias').textContent = d;
+             document.getElementById('cTxt').innerHTML = t.ctxt }
+  else { document.getElementById('cDias').textContent = d === 0 ? '0' : '—';
+         document.getElementById('cTxt').innerHTML = d === 0 ? t.hoje : t.passou }
+}
+
+function pintar(){
+  const t = T[idioma];
+  document.documentElement.lang = idioma;
+  document.getElementById('hTit').innerHTML = t.tit;
+  document.getElementById('hSub').textContent = t.sub;
+  document.getElementById('fTxt').textContent = t.rodape;
+  document.getElementById('ano').textContent = new Date().getFullYear();
+  contagem();
+
+  const host = document.getElementById('posts');
+  if(!POSTS.length){ host.innerHTML = '<div class="vazio">' + t.vazio + '</div>'; return }
+
+  host.innerHTML = POSTS.map(function(p){
+    const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '';
+    const cor = (idioma === 'en' ? p.c_en : p.c_pt) || p.c_pt || p.c_en || '';
+    const longo = cor.length > 620;
+    const aberto = abertos.has(p.id) || !longo;
+    const mostra = aberto ? cor : cor.slice(0, 560).replace(/\s\S*$/,'') + '…';
+    const chips = (p.km || p.pace || p.tempo) ? '<div class="resumo">'
+      + (p.km    ? '<span>' + esc(p.km) + ' km</span>' : '')
+      + (p.pace  ? '<span>' + esc(p.pace) + '/km</span>' : '')
+      + (p.tempo ? '<span>' + esc(p.tempo) + '</span>' : '')
+      + '</div>' : '';
+    return '<article>'
+      + '<div class="data">' + dataLonga(p.data) + '</div>'
+      + '<h2>' + esc(tit) + '</h2>'
+      + chips
+      + '<div class="corpo">' + texto(mostra) + '</div>'
+      + (longo ? '<button class="mais" data-id="' + p.id + '">'
+                 + (aberto ? t.menos : t.mais) + '</button>' : '')
+      + '</article>';
+  }).join('');
+
+  host.querySelectorAll('.mais').forEach(function(b){
+    b.onclick = function(){
+      const i = b.dataset.id;
+      abertos.has(i) ? abertos.delete(i) : abertos.add(i);
+      pintar();
+    };
+  });
+}
+
+document.querySelectorAll('.idioma button').forEach(function(b){
+  b.onclick = function(){
+    idioma = b.dataset.l;
+    try{ localStorage.setItem('rwg.lang', idioma) }catch(e){}
+    document.querySelectorAll('.idioma button').forEach(function(x){
+      x.classList.toggle('on', x.dataset.l === idioma);
+    });
+    pintar();
+  };
+});
+document.querySelectorAll('.idioma button').forEach(function(x){
+  x.classList.toggle('on', x.dataset.l === idioma);
+});
+
+pintar();
+
+/* os textos são públicos: leitura direta, sem login */
+fetch(DB + '/blog/posts.json')
+  .then(function(r){ return r.ok ? r.json() : null })
+  .then(function(d){
+    if(!d) return;
+    POSTS = Object.keys(d).map(function(k){ return Object.assign({id:k}, d[k]) })
+      .filter(function(p){ return p.publicado && p.data })
+      .sort(function(a,b){ return a.data < b.data ? 1 : -1 });
+    pintar();
+  })
+  .catch(function(){});
 </script>
 </body>
 </html>

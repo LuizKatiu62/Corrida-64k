@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Escrever · Run with Gratitude</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e100f;--bg2:#161917;--bg3:#1e221f;--linha:#2a2f2b;
+  --tx:#eceee9;--tx2:#a3a9a1;--tx3:#6f766d;--acc:#c9a227;--ok:#7fa650;--bad:#d4715a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',-apple-system,sans-serif;
+  font-size:15px;line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+h1{font-size:18px;font-weight:600;margin:0}
+button{font-family:inherit;cursor:pointer;border:0;border-radius:9px;font-weight:600}
+input,textarea,select{font-family:inherit;width:100%;background:var(--bg);color:var(--tx);
+  border:1px solid var(--linha);border-radius:9px;padding:11px 12px;font-size:15px}
+textarea{min-height:230px;resize:vertical;line-height:1.65}
+label{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--tx3);font-weight:600;margin:15px 0 6px}
+
+#login{max-width:340px;margin:16vh auto;padding:26px;background:var(--bg2);
+  border:1px solid var(--linha);border-radius:16px}
+#login h1{margin-bottom:4px}
+#login p{color:var(--tx2);font-size:13px;margin:0 0 18px}
+.bt{background:var(--acc);color:#161917;padding:12px;width:100%;margin-top:14px;font-size:15px}
+.bt.sec{background:var(--bg3);color:var(--tx)}
+.erro{color:var(--bad);font-size:12.5px;margin-top:9px;display:none}
+
+#app{display:none}
+.topo{display:flex;align-items:center;gap:10px;padding-bottom:14px;
+  border-bottom:1px solid var(--linha);margin-bottom:16px}
+.topo .sp{flex:1}
+.topo button{padding:8px 14px;font-size:13px;background:var(--bg3);color:var(--tx)}
+.topo button.pri{background:var(--acc);color:#161917}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}}
+.bandeira{font-size:12px;font-weight:600;color:var(--acc);letter-spacing:.06em}
+.linha3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.lista{margin-top:26px;border-top:1px solid var(--linha);padding-top:16px}
+.item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--linha);
+  font-size:14px}
+.item .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .d{color:var(--tx3);font-size:12px;font-variant-numeric:tabular-nums}
+.item button{padding:5px 10px;font-size:12px;background:var(--bg3);color:var(--tx2)}
+.tag{font-size:10.5px;padding:3px 8px;border-radius:12px;font-weight:600}
+.tag.on{background:rgba(127,166,80,.16);color:var(--ok)}
+.tag.off{background:var(--bg3);color:var(--tx3)}
+.aviso{font-size:12.5px;color:var(--tx3);margin-top:8px;line-height:1.5}
+.ok{color:var(--ok)}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>Escrever</h1>
+  <p>Run with Gratitude</p>
+  <form id="fLogin">
+    <input id="mail" type="email" autocomplete="username" placeholder="e-mail">
+    <input id="pass" type="password" autocomplete="current-password" placeholder="senha" style="margin-top:9px">
+    <button class="bt" type="submit" id="btEntrar">Entrar</button>
+    <div class="erro" id="eLogin"></div>
+  </form>
+</div>
+
+<div id="app"><div class="wrap">
+  <div class="topo">
+    <h1>Escrever</h1><span class="sp"></span>
+    <span id="estado" class="aviso" style="margin:0"></span>
+    <button id="btNovo">Novo</button>
+    <button id="btSalvar" class="pri">Salvar</button>
+  </div>
+
+  <label>Data do texto</label>
+  <input id="fData" type="date">
+
+  <div class="linha3" style="margin-top:12px">
+    <div><label style="margin-top:0">Km (opcional)</label><input id="fKm" placeholder="32"></div>
+    <div><label style="margin-top:0">Pace (opcional)</label><input id="fPace" placeholder="5:27"></div>
+    <div><label style="margin-top:0">Tempo (opcional)</label><input id="fTempo" placeholder="3h05"></div>
+  </div>
+
+  <div class="cols" style="margin-top:6px">
+    <div>
+      <label><span class="bandeira">PT</span> &nbsp;Título</label>
+      <input id="tPt" placeholder="O longo que decidiu a prova">
+      <label>Texto</label>
+      <textarea id="cPt" placeholder="Escreva aqui.&#10;&#10;Deixe uma linha em branco para separar parágrafos. Use **asteriscos duplos** para negrito."></textarea>
+    </div>
+    <div>
+      <label><span class="bandeira">EN</span> &nbsp;Title</label>
+      <input id="tEn" placeholder="The long run that decided the race">
+      <label>Text</label>
+      <textarea id="cEn" placeholder="Write here."></textarea>
+    </div>
+  </div>
+
+  <label>Publicação</label>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button id="btPub" class="bt" style="margin:0;width:auto;padding:11px 18px">Publicar</button>
+    <button id="btRasc" class="bt sec" style="margin:0;width:auto;padding:11px 18px">Guardar como rascunho</button>
+  </div>
+  <div class="aviso">Rascunho fica só aqui. Publicado aparece em runwithgratitude.ca na hora.<br>
+    Se um dos idiomas ficar vazio, o site mostra o que existir — não fica em branco.</div>
+
+  <div class="lista" id="lista"></div>
+</div></div>
+
+<script>
+const KEY = 'AIzaSyB0hO4m0XPRqmrYegHtkV4KawJA2py1glU';
+const DB  = 'https://gastos-casa-7f431-default-rtdb.firebaseio.com';
+const K_RT = 'rwg.rt', K_MAIL = 'rwg.mail';
+
+let token = null, expira = 0, atual = null, POSTS = {};
+const q = s => document.querySelector(s);
+const g = k => { try{ return localStorage.getItem(k) }catch(e){ return null } };
+const s_ = (k,v) => { try{ localStorage.setItem(k,v) }catch(e){} };
+
+function estado(txt, bom){
+  const e = q('#estado');
+  e.textContent = txt; e.className = 'aviso ' + (bom ? 'ok' : '');
+  if(txt) setTimeout(function(){ if(e.textContent === txt) e.textContent = '' }, 3500);
+}
+
+async function comSenha(email, senha){
+  const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + KEY,
+    {method:'POST', headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({email:email, password:senha, returnSecureToken:true})});
+  const j = await r.json();
+  if(!r.ok) throw new Error((j.error && j.error.message) || 'HTTP ' + r.status);
+  token = j.idToken; expira = Date.now() + (+j.expiresIn - 120) * 1000;
+  s_(K_RT, j.refreshToken); s_(K_MAIL, email);
+}
+async function comRefresh(){
+  const rt = g(K_RT); if(!rt) return false;
+  const r = await fetch('https://securetoken.googleapis.com/v1/token?key=' + KEY,
+    {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+     body:'grant_type=refresh_token&refresh_token=' + encodeURIComponent(rt)});
+  const j = await r.json();
+  if(!r.ok) return false;
+  token = j.id_token; expira = Date.now() + (+j.expires_in - 120) * 1000;
+  if(j.refresh_token) s_(K_RT, j.refresh_token);
+  return true;
+}
+async function tok(){
+  if(token && Date.now() < expira) return token;
+  if(await comRefresh()) return token;
+  return null;
+}
+
+function abrirApp(){
+  q('#login').style.display = 'none';
+  q('#app').style.display = 'block';
+  if(!q('#fData').value) q('#fData').value = new Date().toISOString().slice(0,10);
+  carregar();
+}
+
+q('#fLogin').onsubmit = async function(e){
+  e.preventDefault();
+  const b = q('#btEntrar'), er = q('#eLogin');
+  b.disabled = true; b.textContent = 'Entrando…'; er.style.display = 'none';
+  try{
+    await comSenha(q('#mail').value.trim(), q('#pass').value);
+    abrirApp();
+  }catch(err){
+    const m = String(err.message);
+    er.textContent = /PASSWORD|EMAIL|CREDENTIAL/.test(m) ? 'E-mail ou senha não conferem.'
+                   : /TOO_MANY/.test(m) ? 'Muitas tentativas. Espere alguns minutos.'
+                   : 'Não consegui entrar: ' + m;
+    er.style.display = 'block';
+    b.disabled = false; b.textContent = 'Entrar';
+  }
+};
+
+async function carregar(){
+  const t = await tok(); if(!t) return;
+  const r = await fetch(DB + '/blog/posts.json?auth=' + t);
+  POSTS = (r.ok && await r.json()) || {};
+  const ks = Object.keys(POSTS).sort(function(a,b){
+    return (POSTS[a].data || '') < (POSTS[b].data || '') ? 1 : -1;
+  });
+  q('#lista').innerHTML = ks.length ? ks.map(function(k){
+    const p = POSTS[k];
+    return '<div class="item">'
+      + '<span class="d">' + (p.data || '—') + '</span>'
+      + '<span class="tag ' + (p.publicado ? 'on' : 'off') + '">'
+      +   (p.publicado ? 'no ar' : 'rascunho') + '</span>'
+      + '<span class="t">' + (p.t_pt || p.t_en || '(sem título)') + '</span>'
+      + '<button data-ed="' + k + '">Editar</button>'
+      + '<button data-rm="' + k + '">Apagar</button></div>';
+  }).join('') : '<div class="aviso">Nenhum texto ainda.</div>';
+
+  q('#lista').querySelectorAll('[data-ed]').forEach(function(b){
+    b.onclick = function(){ editar(b.dataset.ed) };
+  });
+  q('#lista').querySelectorAll('[data-rm]').forEach(function(b){
+    b.onclick = async function(){
+      const p = POSTS[b.dataset.rm];
+      if(!confirm('Apagar "' + (p.t_pt || p.t_en || 'sem título') + '"?\n\nNão tem como desfazer.')) return;
+      const t = await tok(); if(!t) return;
+      await fetch(DB + '/blog/posts/' + b.dataset.rm + '.json?auth=' + t, {method:'DELETE'});
+      if(atual === b.dataset.rm) novo();
+      estado('Apagado.'); carregar();
+    };
+  });
+}
+
+function editar(id){
+  const p = POSTS[id]; if(!p) return;
+  atual = id;
+  q('#fData').value = p.data || '';
+  q('#fKm').value = p.km || ''; q('#fPace').value = p.pace || ''; q('#fTempo').value = p.tempo || '';
+  q('#tPt').value = p.t_pt || ''; q('#cPt').value = p.c_pt || '';
+  q('#tEn').value = p.t_en || ''; q('#cEn').value = p.c_en || '';
+  window.scrollTo({top:0, behavior:'smooth'});
+  estado('Editando.');
+}
+
+function novo(){
+  atual = null;
+  ['#tPt','#cPt','#tEn','#cEn','#fKm','#fPace','#fTempo'].forEach(function(s){ q(s).value = '' });
+  q('#fData').value = new Date().toISOString().slice(0,10);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function gravar(publicado){
+  const t = await tok();
+  if(!t){ estado('Sessão expirou — recarregue a página.'); return }
+  if(!q('#fData').value){ estado('Falta a data.'); return }
+  if(!q('#tPt').value.trim() && !q('#tEn').value.trim()){ estado('Falta o título.'); return }
+
+  const corpo = {
+    data:q('#fData').value,
+    t_pt:q('#tPt').value.trim(), c_pt:q('#cPt').value,
+    t_en:q('#tEn').value.trim(), c_en:q('#cEn').value,
+    km:q('#fKm').value.trim(), pace:q('#fPace').value.trim(), tempo:q('#fTempo').value.trim(),
+    publicado:!!publicado,
+    alterado:new Date().toISOString()
+  };
+  let url, metodo;
+  if(atual){ url = DB + '/blog/posts/' + atual + '.json?auth=' + t; metodo = 'PUT' }
+  else     { url = DB + '/blog/posts.json?auth=' + t;                metodo = 'POST';
+             corpo.criado = corpo.alterado }
+  const r = await fetch(url, {method:metodo, headers:{'Content-Type':'application/json'},
+                              body:JSON.stringify(corpo)});
+  if(!r.ok){ estado('Não consegui gravar: HTTP ' + r.status); return }
+  if(!atual){ const j = await r.json(); atual = j.name }
+  estado(publicado ? 'Publicado. Já está no ar.' : 'Rascunho salvo.', true);
+  carregar();
+}
+
+q('#btNovo').onclick   = novo;
+q('#btSalvar').onclick = function(){ gravar(atual ? !!(POSTS[atual] || {}).publicado : false) };
+q('#btPub').onclick    = function(){ gravar(true) };
+q('#btRasc').onclick   = function(){ gravar(false) };
+
+/* já entrou antes neste aparelho? */
+q('#mail').value = g(K_MAIL) || '';
+(async function(){ if(await comRefresh()) abrirApp() })();
+</script>
+</body>
+</html>
