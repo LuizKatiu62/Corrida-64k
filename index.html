@@ -37,6 +37,31 @@ header .wrap{display:flex;align-items:center;gap:12px;padding-top:14px;padding-b
   font-size:11.5px;font-weight:600;padding:6px 12px;cursor:pointer;letter-spacing:.04em}
 .idioma button.on{background:var(--acc);color:#161917}
 
+.ham{background:none;border:1px solid var(--linha);border-radius:9px;width:34px;height:31px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;
+  cursor:pointer;padding:0;flex:none}
+.ham i{display:block;width:16px;height:1.6px;background:var(--tx2);border-radius:1px}
+.ham:hover{border-color:var(--acc)} .ham:hover i{background:var(--acc)}
+
+.veu{position:fixed;inset:0;background:rgba(8,9,8,.72);z-index:40;opacity:0;
+  pointer-events:none;transition:opacity .22s}
+.veu.on{opacity:1;pointer-events:auto}
+#menu{position:fixed;top:0;right:0;bottom:0;width:min(320px,86vw);z-index:41;
+  background:var(--bg2);border-left:1px solid var(--linha);transform:translateX(100%);
+  transition:transform .24s ease;overflow-y:auto;padding:20px 18px 40px}
+#menu.on{transform:none}
+#menu .cab{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+#menu .cab b{flex:1;font-family:var(--serif);font-size:15px;font-weight:600}
+#menu .cab button{background:none;border:0;color:var(--tx3);font-size:22px;cursor:pointer;
+  line-height:1;padding:0 4px}
+#menu a{display:block;text-decoration:none;padding:11px 0;border-bottom:1px solid var(--linha)}
+#menu a:last-child{border-bottom:0}
+#menu a .d{display:block;font-size:11px;color:var(--tx3);letter-spacing:.06em;font-weight:600;
+  font-variant-numeric:tabular-nums;margin-bottom:3px}
+#menu a .t{display:block;font-size:14.5px;color:var(--tx);line-height:1.35}
+#menu a:hover .t{color:var(--acc)}
+#menu .nada{color:var(--tx3);font-size:13.5px;font-style:italic;padding:12px 0}
+
 .hero{padding:52px 0 40px;border-bottom:1px solid var(--linha)}
 .hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(30px,7vw,46px);
   line-height:1.15;margin:0 0 18px;letter-spacing:-.02em}
@@ -97,7 +122,14 @@ footer p{margin:0 0 8px}
   <div class="idioma">
     <button data-l="pt" class="on">PT</button><button data-l="en">EN</button>
   </div>
+  <button class="ham" id="btMenu" aria-label="Menu"><i></i><i></i><i></i></button>
 </div></header>
+
+<div class="veu" id="veu"></div>
+<nav id="menu">
+  <div class="cab"><b id="mTit"></b><button id="mFecha" aria-label="Fechar">×</button></div>
+  <div id="mLista"></div>
+</nav>
 
 <section class="hero"><div class="wrap">
   <h1 id="hTit"></h1>
@@ -131,6 +163,8 @@ const T = {
     vazio:'Os primeiros textos chegam em breve.',
     mais:'Continuar lendo',
     menos:'Recolher',
+    menuT:'Publicações',
+    menuV:'Nada publicado ainda.',
     rodape:'Um diário de treino e de vida, escrito no caminho até 18 de outubro.'
   },
   en:{
@@ -144,6 +178,8 @@ const T = {
     vazio:'The first posts are coming soon.',
     mais:'Keep reading',
     menos:'Collapse',
+    menuT:'Posts',
+    menuV:'Nothing published yet.',
     rodape:'A training and life journal, written on the way to October 18.'
   }
 };
@@ -244,6 +280,40 @@ function pintarFotos(el, arr){
   });
 }
 
+/* Índice de tudo que já foi publicado, por data e título. Cresce
+   sozinho: cada texto novo entra aqui sem eu tocar em nada. */
+function curta(iso){
+  const d = new Date(iso + 'T12:00:00');
+  const p = n => String(n).padStart(2,'0');
+  return idioma === 'pt'
+    ? p(d.getDate()) + '/' + p(d.getMonth()+1) + '/' + d.getFullYear()
+    : p(d.getMonth()+1) + '/' + p(d.getDate()) + '/' + d.getFullYear();
+}
+function montarMenu(){
+  const t = T[idioma];
+  document.getElementById('mTit').textContent = t.menuT;
+  const el = document.getElementById('mLista');
+  if(!POSTS.length){ el.innerHTML = '<div class="nada">' + t.menuV + '</div>'; return }
+  el.innerHTML = POSTS.map(function(p){
+    const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '—';
+    return '<a href="#p-' + p.id + '" data-ir="' + p.id + '">'
+         + '<span class="d">' + curta(p.data) + '</span>'
+         + '<span class="t">' + esc(tit) + '</span></a>';
+  }).join('');
+  el.querySelectorAll('[data-ir]').forEach(function(a){
+    a.onclick = function(e){
+      e.preventDefault();
+      abrirMenu(false);
+      const alvo = document.getElementById('p-' + a.dataset.ir);
+      if(alvo) setTimeout(function(){ alvo.scrollIntoView({behavior:'smooth', block:'start'}) }, 180);
+    };
+  });
+}
+function abrirMenu(sim){
+  document.getElementById('menu').classList.toggle('on', sim);
+  document.getElementById('veu').classList.toggle('on', sim);
+}
+
 function contagem(){
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const alvo = new Date(PROVA + 'T00:00:00');
@@ -280,7 +350,7 @@ function pintar(){
       + (p.pace  ? '<span>' + esc(p.pace) + '/km</span>' : '')
       + (p.tempo ? '<span>' + esc(p.tempo) + '</span>' : '')
       + '</div>' : '';
-    return '<article>'
+    return '<article id="p-' + p.id + '">'
       + '<div class="data">' + dataLonga(p.data) + '</div>'
       + '<h2>' + esc(tit) + '</h2>'
       + chips
@@ -292,6 +362,7 @@ function pintar(){
       + '</article>';
   }).join('');
 
+  montarMenu();
   carregarFotos();
 
   host.querySelectorAll('.mais').forEach(function(b){
@@ -318,6 +389,10 @@ document.querySelectorAll('.idioma button').forEach(function(x){
 });
 
 document.getElementById('lupa').onclick = function(){ this.classList.remove('on') };
+document.getElementById('btMenu').onclick = function(){ abrirMenu(true) };
+document.getElementById('mFecha').onclick = function(){ abrirMenu(false) };
+document.getElementById('veu').onclick    = function(){ abrirMenu(false) };
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') abrirMenu(false) });
 
 pintar();
 
