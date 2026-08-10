@@ -157,6 +157,7 @@ const DB  = 'https://gastos-casa-7f431-default-rtdb.firebaseio.com';
 const K_RT = 'rwg.rt', K_MAIL = 'rwg.mail';
 
 let token = null, expira = 0, atual = null, POSTS = {}, FOTOS = [];
+let carregandoFotos = false;
 const q = s => document.querySelector(s);
 const g = k => { try{ return localStorage.getItem(k) }catch(e){ return null } };
 const s_ = (k,v) => { try{ localStorage.setItem(k,v) }catch(e){} };
@@ -346,29 +347,47 @@ function marcarEdicao(){
   });
 }
 
-async function editar(id){
+function editar(id){
   const p = POSTS[id];
   if(!p){ estado('Não achei esse texto. Recarregue a página.'); return }
   atual = id;
-  marcarEdicao();
+
+  /* Os campos são preenchidos AGORA, sem esperar rede nenhuma.
+     Enquanto isso era feito depois de um await, dava para clicar em
+     Editar e salvar antes do texto chegar — e o conteúdo anterior ia
+     gravado por cima do texto que você queria editar. Foi assim que
+     três textos diferentes viraram três cópias do mesmo. */
+  q('#fData').value  = p.data || '';
+  q('#fKm').value    = p.km || '';
+  q('#fPace').value  = p.pace || '';
+  q('#fTempo').value = p.tempo || '';
+  q('#tPt').value    = p.t_pt || '';
+  q('#cPt').value    = p.c_pt || '';
+  q('#tEn').value    = p.t_en || '';
+  q('#cEn').value    = p.c_en || '';
   q('#fVideo').value = p.video || '';
   FOTOS = []; pintarFotos();
-  const t = await tok();
-  if(t){
-    try{
-      const r = await fetch(DB + '/blog/midia/' + id + '.json?auth=' + t);
-      const d = r.ok ? await r.json() : null;
-      FOTOS = d ? (Array.isArray(d) ? d : Object.keys(d).sort().map(function(k){ return d[k] })) : [];
-      pintarFotos();
-    }catch(e){}
-  }
-  q('#fData').value = p.data || '';
-  q('#fKm').value = p.km || ''; q('#fPace').value = p.pace || ''; q('#fTempo').value = p.tempo || '';
-  q('#tPt').value = p.t_pt || ''; q('#cPt').value = p.c_pt || '';
-  q('#tEn').value = p.t_en || ''; q('#cEn').value = p.c_en || '';
-  window.scrollTo({top:0, behavior:'smooth'});
   marcarEdicao();
+  window.scrollTo({top:0, behavior:'smooth'});
   estado('Editando "' + (p.t_pt || p.t_en) + '". O que você salvar substitui só este.', true);
+
+  /* as fotos chegam depois, sem travar nada — e salvar antes delas
+     chegarem não apaga: o gravar espera esta bandeira baixar */
+  carregandoFotos = true;
+  (async function(){
+    try{
+      const t = await tok();
+      if(t){
+        const r = await fetch(DB + '/blog/midia/' + id + '.json?auth=' + t);
+        const d = r.ok ? await r.json() : null;
+        if(atual === id){
+          FOTOS = d ? (Array.isArray(d) ? d : Object.keys(d).sort().map(function(k){ return d[k] })) : [];
+          pintarFotos();
+        }
+      }
+    }catch(e){}
+    carregandoFotos = false;
+  })();
 }
 
 function novo(){
@@ -381,6 +400,10 @@ function novo(){
 }
 
 async function gravar(publicado){
+  if(carregandoFotos){
+    estado('Espere um instante — as fotos deste texto ainda estão carregando.');
+    return;
+  }
   estado(publicado ? 'Publicando…' : 'Salvando…', true);
   const t = await tok();
   if(!t){ estado('Sua sessão expirou. Recarregue a página e entre de novo.'); return }
