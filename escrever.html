@@ -58,6 +58,12 @@ label{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:upperca
 #recado.bem{display:block;background:rgba(127,166,80,.13);color:var(--ok);
   border:1px solid rgba(127,166,80,.34)}
 .faltando{border-color:var(--bad) !important}
+#editando{display:none;margin-bottom:14px;padding:10px 13px;border-radius:9px;font-size:13px;
+  background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.34);color:var(--acc)}
+#editando.on{display:flex;gap:10px;align-items:center}
+#editando b{flex:1;font-weight:600}
+#editando button{background:var(--bg3);color:var(--tx2);font-size:12px;padding:5px 11px}
+.item.atual{background:rgba(201,162,39,.08);border-radius:8px;padding-left:8px;padding-right:8px}
 .trad{background:var(--bg3);color:var(--tx2);font-size:12px;padding:6px 12px;
   border-radius:8px;margin-left:8px;font-weight:600}
 .trad:hover{color:var(--acc)}
@@ -93,6 +99,8 @@ label .trad{float:right;margin-top:-4px}
     <button id="btNovo">Novo</button>
     <button id="btSalvar" class="pri">Salvar</button>
   </div>
+
+  <div id="editando"><b></b><button id="btSair" type="button">Cancelar edição</button></div>
 
   <label>Data do texto</label>
   <input id="fData" type="date">
@@ -295,7 +303,7 @@ async function carregar(){
   });
   q('#lista').innerHTML = ks.length ? ks.map(function(k){
     const p = POSTS[k];
-    return '<div class="item">'
+    return '<div class="item" data-id="' + k + '">'
       + '<span class="d">' + (p.data || '—') + '</span>'
       + '<span class="tag ' + (p.publicado ? 'on' : 'off') + '">'
       +   (p.publicado ? 'no ar' : 'rascunho') + '</span>'
@@ -304,6 +312,7 @@ async function carregar(){
       + '<button data-rm="' + k + '">Apagar</button></div>';
   }).join('') : '<div class="aviso">Nenhum texto ainda.</div>';
 
+  marcarEdicao();
   q('#lista').querySelectorAll('[data-ed]').forEach(function(b){
     b.onclick = function(){ editar(b.dataset.ed) };
   });
@@ -320,9 +329,28 @@ async function carregar(){
   });
 }
 
+function marcarEdicao(){
+  const el = q('#editando');
+  if(!el) return;
+  if(atual && POSTS[atual]){
+    el.className = 'on';
+    el.querySelector('b').textContent =
+      'Editando: ' + (POSTS[atual].t_pt || POSTS[atual].t_en || 'sem título')
+      + '  ·  ' + (POSTS[atual].data || '');
+  } else {
+    el.className = '';
+    el.querySelector('b').textContent = '';
+  }
+  q('#lista').querySelectorAll('.item').forEach(function(it){
+    it.classList.toggle('atual', it.dataset.id === atual);
+  });
+}
+
 async function editar(id){
-  const p = POSTS[id]; if(!p) return;
+  const p = POSTS[id];
+  if(!p){ estado('Não achei esse texto. Recarregue a página.'); return }
   atual = id;
+  marcarEdicao();
   q('#fVideo').value = p.video || '';
   FOTOS = []; pintarFotos();
   const t = await tok();
@@ -339,7 +367,8 @@ async function editar(id){
   q('#tPt').value = p.t_pt || ''; q('#cPt').value = p.c_pt || '';
   q('#tEn').value = p.t_en || ''; q('#cEn').value = p.c_en || '';
   window.scrollTo({top:0, behavior:'smooth'});
-  estado('Editando.');
+  marcarEdicao();
+  estado('Editando "' + (p.t_pt || p.t_en) + '". O que você salvar substitui só este.', true);
 }
 
 function novo(){
@@ -347,6 +376,7 @@ function novo(){
   ['#tPt','#cPt','#tEn','#cEn','#fKm','#fPace','#fTempo','#fVideo'].forEach(function(s){ q(s).value = '' });
   FOTOS = []; pintarFotos();
   q('#fData').value = new Date().toISOString().slice(0,10);
+  marcarEdicao();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -369,6 +399,22 @@ async function gravar(publicado){
     publicado:!!publicado,
     alterado:new Date().toISOString()
   };
+  if(!atual){
+    const igual = Object.keys(POSTS).find(function(k){
+      const p = POSTS[k];
+      return p.data === corpo.data
+        && ((corpo.t_pt && p.t_pt === corpo.t_pt) || (corpo.t_en && p.t_en === corpo.t_en));
+    });
+    if(igual){
+      if(!confirm('Já existe um texto com esse título e essa data.\n\n'
+                + 'OK substitui o que já existe.\nCancelar cria um segundo, separado.')){
+        // segue e cria um novo
+      } else {
+        atual = igual;
+        marcarEdicao();
+      }
+    }
+  }
   let url, metodo;
   if(atual){ url = DB + '/blog/posts/' + atual + '.json?auth=' + t; metodo = 'PUT' }
   else     { url = DB + '/blog/posts.json?auth=' + t;                metodo = 'POST';
@@ -389,7 +435,8 @@ async function gravar(publicado){
      body:JSON.stringify(FOTOS.length ? FOTOS : null)});
   if(!rm.ok){ estado('Texto gravado, mas as fotos falharam: HTTP ' + rm.status); return }
 
-  estado(publicado ? 'Publicado. Já está no ar.' : 'Rascunho salvo.', true);
+  estado((publicado ? 'Publicado. Já está no ar.' : 'Rascunho salvo.')
+       + ' (1 texto gravado)', true);
   carregar();
 }
 
@@ -412,6 +459,7 @@ q('#btTrad').onclick = function(){
        + 'a primeira linha é o título.', true);
 };
 
+q('#btSair').onclick = function(){ novo(); estado('Edição cancelada. Agora é um texto novo.', true) };
 q('#btNovo').onclick   = novo;
 q('#btSalvar').onclick = function(){ gravar(atual ? !!(POSTS[atual] || {}).publicado : false) };
 q('#btPub').onclick    = function(e){ e.preventDefault(); gravar(true) };
