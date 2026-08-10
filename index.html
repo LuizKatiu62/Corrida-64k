@@ -352,7 +352,12 @@ function pintar(){
   pintarEvolucao();
 
   /* A tela principal é só a história e os números. Texto nenhum
-     aparece aqui até você escolher um no menu das três listinhas. */
+     aparece aqui até você escolher um no menu das três listinhas.
+
+     O menu é montado ANTES de qualquer saída antecipada: ele existe
+     mesmo quando não há texto escolhido — aliás, é justamente aí que
+     ele é a única porta para os textos. */
+  montarMenu();
   const host = document.getElementById('posts');
   if(!escolhido){
     host.innerHTML = POSTS.length
@@ -390,7 +395,6 @@ function pintar(){
       + '<button class="mais" id="btVoltar">' + t.voltar + '</button>';
   }).join('');
 
-  montarMenu();
   carregarFotos();
 
   const bv = document.getElementById('btVoltar');
