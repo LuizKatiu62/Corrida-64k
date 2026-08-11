@@ -115,6 +115,14 @@ article h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1
 .lupa img{max-width:100%;max-height:100%;border-radius:8px}
 .mais{background:none;border:0;color:var(--acc);font-family:var(--sans);font-size:13.5px;
   font-weight:600;cursor:pointer;padding:8px 0;margin-top:6px}
+.voltar{position:sticky;top:60px;z-index:9;display:block;width:100%;text-align:left;
+  background:var(--bg2);border:1px solid var(--linha);border-radius:10px;color:var(--acc);
+  font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;padding:11px 14px;
+  margin-bottom:18px;backdrop-filter:blur(10px)}
+.voltar:hover{border-color:var(--acc)}
+#menu .inicio{color:var(--acc);font-weight:600;font-size:14px;padding:12px 0;
+  border-bottom:1px solid var(--linha);cursor:pointer;background:none;border-left:0;
+  border-right:0;border-top:0;width:100%;text-align:left;font-family:var(--sans)}
 footer{border-top:1px solid var(--linha);padding:30px 0 46px;color:var(--tx3);font-size:12.5px}
 footer p{margin:0 0 8px}
 </style>
@@ -122,7 +130,7 @@ footer p{margin:0 0 8px}
 <body>
 
 <header><div class="wrap">
-  <a class="marca" href="/">Run with <i>Gratitude</i></a>
+  <a class="marca" href="/" id="btMarca">Run with <i>Gratitude</i></a>
   <div class="idioma">
     <button data-l="pt" class="on">PT</button><button data-l="en">EN</button>
   </div>
@@ -170,7 +178,7 @@ const T = {
     menuT:'Publicações',
     menuV:'Nada publicado ainda.',
     escolha:'Toque no menu, no alto à direita, para ler os textos.',
-    voltar:'← voltar ao início',
+    voltar:'← Voltar ao início',
     rodape:'Um diário de treino e de vida, escrito no caminho até 18 de outubro.'
   },
   en:{
@@ -187,7 +195,7 @@ const T = {
     menuT:'Posts',
     menuV:'Nothing published yet.',
     escolha:'Tap the menu, top right, to read the posts.',
-    voltar:'← back to the top',
+    voltar:'← Back to the top',
     rodape:'A training and life journal, written on the way to October 18.'
   }
 };
@@ -303,13 +311,18 @@ function montarMenu(){
   document.getElementById('mTit').textContent = t.menuT;
   const el = document.getElementById('mLista');
   if(!POSTS.length){ el.innerHTML = '<div class="nada">' + t.menuV + '</div>'; return }
-  el.innerHTML = POSTS.map(function(p){
+  const topo = escolhido
+    ? '<button class="inicio" id="mInicio">' + t.voltar + '</button>' : '';
+  el.innerHTML = topo + POSTS.map(function(p){
     const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '—';
     return '<a href="#p-' + p.id + '" data-ir="' + p.id + '"'
          + (p.id === escolhido ? ' class="aqui"' : '') + '>'
          + '<span class="d">' + curta(p.data) + '</span>'
          + '<span class="t">' + esc(tit) + '</span></a>';
   }).join('');
+  const mi = document.getElementById('mInicio');
+  if(mi) mi.onclick = function(){ abrirMenu(false); aoInicio() };
+
   el.querySelectorAll('[data-ir]').forEach(function(a){
     a.onclick = function(e){
       e.preventDefault();
@@ -324,6 +337,15 @@ function montarMenu(){
     };
   });
 }
+/* Volta para a tela limpa de onde você estiver: pelo botão no alto do
+   texto, pelo menu, pelo fim do texto ou tocando no nome do site. */
+function aoInicio(){
+  escolhido = null;
+  abertos.clear();
+  pintar();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 function abrirMenu(sim){
   document.getElementById('menu').classList.toggle('on', sim);
   document.getElementById('veu').classList.toggle('on', sim);
@@ -371,7 +393,8 @@ function pintar(){
      ele pediu, e evita a página virar um rolo sem fim. */
   const atual = POSTS.find(function(p){ return p.id === escolhido });
   if(!atual){ escolhido = null; host.innerHTML = ''; return }
-  host.innerHTML = [atual].map(function(p){
+  host.innerHTML = '<button class="voltar" id="btTopo">' + t.voltar + '</button>'
+    + [atual].map(function(p){
     const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '';
     const cor = (idioma === 'en' ? p.c_en : p.c_pt) || p.c_pt || p.c_en || '';
     const longo = cor.length > 620;
@@ -400,11 +423,10 @@ function pintar(){
 
   carregarFotos();
 
-  const bv = document.getElementById('btVoltar');
-  if(bv) bv.onclick = function(){
-    escolhido = null; abertos.clear(); pintar();
-    window.scrollTo({top:0, behavior:'smooth'});
-  };
+  ['btVoltar','btTopo'].forEach(function(id){
+    const b = document.getElementById(id);
+    if(b) b.onclick = aoInicio;
+  });
 
   host.querySelectorAll('.mais').forEach(function(b){
     b.onclick = function(){
@@ -430,6 +452,7 @@ document.querySelectorAll('.idioma button').forEach(function(x){
 });
 
 document.getElementById('lupa').onclick = function(){ this.classList.remove('on') };
+document.getElementById('btMarca').onclick = function(e){ e.preventDefault(); aoInicio() };
 document.getElementById('btMenu').onclick = function(){ abrirMenu(true) };
 document.getElementById('mFecha').onclick = function(){ abrirMenu(false) };
 document.getElementById('veu').onclick    = function(){ abrirMenu(false) };
