@@ -58,6 +58,10 @@ label{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:upperca
 #recado.bem{display:block;background:rgba(127,166,80,.13);color:var(--ok);
   border:1px solid rgba(127,166,80,.34)}
 .faltando{border-color:var(--bad) !important}
+.esportes{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px}
+.esportes button{background:var(--bg3);color:var(--tx2);font-size:13px;padding:8px 15px;
+  border:1px solid var(--linha)}
+.esportes button.on{background:var(--acc);color:#161917;border-color:var(--acc)}
 #editando{display:none;margin-bottom:14px;padding:10px 13px;border-radius:9px;font-size:13px;
   background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.34);color:var(--acc)}
 #editando.on{display:flex;gap:10px;align-items:center}
@@ -105,10 +109,18 @@ label .trad{float:right;margin-top:-4px}
   <label>Data do texto</label>
   <input id="fData" type="date">
 
-  <div class="linha3" style="margin-top:12px">
-    <div><label style="margin-top:0">Km (opcional)</label><input id="fKm" placeholder="32"></div>
-    <div><label style="margin-top:0">Pace (opcional)</label><input id="fPace" placeholder="5:27"></div>
-    <div><label style="margin-top:0">Tempo (opcional)</label><input id="fTempo" placeholder="3h05"></div>
+  <label>Este texto é sobre um treino?</label>
+  <div class="esportes" id="fEsporte">
+    <button type="button" data-e="">Não, é só texto</button>
+    <button type="button" data-e="corrida">Corrida</button>
+    <button type="button" data-e="bike">Bike</button>
+    <button type="button" data-e="natacao">Natação</button>
+  </div>
+
+  <div class="linha3" id="camposTreino" style="margin-top:12px;display:none">
+    <div><label style="margin-top:0" id="lb1"></label><input id="fKm"></div>
+    <div><label style="margin-top:0" id="lb2"></label><input id="fPace"></div>
+    <div><label style="margin-top:0" id="lb3"></label><input id="fTempo"></div>
   </div>
 
   <div class="cols" style="margin-top:6px">
@@ -158,6 +170,26 @@ const K_RT = 'rwg.rt', K_MAIL = 'rwg.mail';
 
 let token = null, expira = 0, atual = null, POSTS = {}, FOTOS = [];
 let carregandoFotos = false;
+let esporte = '';
+
+/* Cada esporte mede o esforço de um jeito. Pace por quilômetro não
+   diz nada na bike, e na piscina se conta por 100 metros. Os três
+   campos são os mesmos; o que muda é o rótulo e a unidade. */
+const ESPORTES = {
+  corrida:{r:['Distância (km)','Pace (min/km)','Tempo'], p:['24,86','5:33','2:18:07']},
+  bike   :{r:['Distância (km)','Velocidade (km/h)','Tempo'], p:['27,8','23,2','1:12:00']},
+  natacao:{r:['Distância (m)','Pace (min/100m)','Tempo'],    p:['800','2:15','18:00']}
+};
+function pintarEsporte(){
+  document.querySelectorAll('#fEsporte button').forEach(function(b){
+    b.classList.toggle('on', (b.dataset.e || '') === esporte);
+  });
+  const E = ESPORTES[esporte];
+  q('#camposTreino').style.display = E ? '' : 'none';
+  if(!E) return;
+  ['#lb1','#lb2','#lb3'].forEach(function(sel,i){ q(sel).textContent = E.r[i] });
+  ['#fKm','#fPace','#fTempo'].forEach(function(sel,i){ q(sel).placeholder = E.p[i] });
+}
 const q = s => document.querySelector(s);
 const g = k => { try{ return localStorage.getItem(k) }catch(e){ return null } };
 const s_ = (k,v) => { try{ localStorage.setItem(k,v) }catch(e){} };
@@ -320,10 +352,29 @@ async function carregar(){
   q('#lista').querySelectorAll('[data-rm]').forEach(function(b){
     b.onclick = async function(){
       const p = POSTS[b.dataset.rm];
-      if(!confirm('Apagar "' + (p.t_pt || p.t_en || 'sem título') + '"?\n\nNão tem como desfazer.')) return;
+      if(!confirm('Apagar "' + (p.t_pt || p.t_en || 'sem título') + '"?\n\n'
+                + 'Ele sai do site e vai para a lixeira. Me peça e eu devolvo.')) return;
       const t = await tok(); if(!t) return;
-      await fetch(DB + '/blog/posts/' + b.dataset.rm + '.json?auth=' + t, {method:'DELETE'});
-      await fetch(DB + '/blog/midia/' + b.dataset.rm + '.json?auth=' + t, {method:'DELETE'});
+      const k = b.dataset.rm;
+      /* Vai para a lixeira ANTES de sair da lista. E se a lixeira
+         falhar, o apagar é cancelado — prometer rede de segurança e
+         não ter é pior do que não prometer nada. */
+      let guardou = false;
+      try{
+        const rm = await fetch(DB + '/blog/midia/' + k + '.json?auth=' + t);
+        const fotos = rm.ok ? await rm.json() : null;
+        const rl = await fetch(DB + '/blog_privado/lixeira/' + k + '.json?auth=' + t,
+          {method:'PUT', headers:{'Content-Type':'application/json'},
+           body:JSON.stringify({post:p, midia:fotos, apagadoEm:new Date().toISOString()})});
+        guardou = rl.ok;
+      }catch(e){ console.warn('lixeira:', e) }
+      if(!guardou){
+        estado('NÃO apaguei. A lixeira não está disponível, então o texto sairia sem volta. '
+             + 'As regras do Firebase precisam liberar o blog_privado.');
+        return;
+      }
+      await fetch(DB + '/blog/posts/' + k + '.json?auth=' + t, {method:'DELETE'});
+      await fetch(DB + '/blog/midia/' + k + '.json?auth=' + t, {method:'DELETE'});
       if(atual === b.dataset.rm) novo();
       estado('Apagado.'); carregar();
     };
@@ -357,6 +408,8 @@ function editar(id){
      Editar e salvar antes do texto chegar — e o conteúdo anterior ia
      gravado por cima do texto que você queria editar. Foi assim que
      três textos diferentes viraram três cópias do mesmo. */
+  esporte = p.esporte || (p.km || p.pace ? 'corrida' : '');
+  pintarEsporte();
   q('#fData').value  = p.data || '';
   q('#fKm').value    = p.km || '';
   q('#fPace').value  = p.pace || '';
@@ -393,6 +446,7 @@ function editar(id){
 function novo(){
   atual = null;
   ['#tPt','#cPt','#tEn','#cEn','#fKm','#fPace','#fTempo','#fVideo'].forEach(function(s){ q(s).value = '' });
+  esporte = ''; pintarEsporte();
   FOTOS = []; pintarFotos();
   q('#fData').value = new Date().toISOString().slice(0,10);
   marcarEdicao();
@@ -417,7 +471,10 @@ async function gravar(publicado){
     data:q('#fData').value,
     t_pt:q('#tPt').value.trim(), c_pt:q('#cPt').value,
     t_en:q('#tEn').value.trim(), c_en:q('#cEn').value,
-    km:q('#fKm').value.trim(), pace:q('#fPace').value.trim(), tempo:q('#fTempo').value.trim(),
+    esporte:esporte,
+    km:esporte ? q('#fKm').value.trim() : '',
+    pace:esporte ? q('#fPace').value.trim() : '',
+    tempo:esporte ? q('#fTempo').value.trim() : '',
     video:q('#fVideo').value.trim(), nFotos:FOTOS.length,
     publicado:!!publicado,
     alterado:new Date().toISOString()
@@ -442,6 +499,26 @@ async function gravar(publicado){
   if(atual){ url = DB + '/blog/posts/' + atual + '.json?auth=' + t; metodo = 'PUT' }
   else     { url = DB + '/blog/posts.json?auth=' + t;                metodo = 'POST';
              corpo.criado = corpo.alterado }
+  /* Antes de gravar por cima, guardo a versão que está lá. Foi por
+     falta disso que dois textos se perderam sem volta. O histórico
+     fica num lugar privado — não é lido pelo site. */
+  let comHistorico = true;
+  if(atual && POSTS[atual]){
+    try{
+      const rh = await fetch(DB + '/blog_privado/historico/' + atual + '/' + Date.now() + '.json?auth=' + t,
+        {method:'PUT', headers:{'Content-Type':'application/json'},
+         body:JSON.stringify(POSTS[atual])});
+      comHistorico = rh.ok;
+    }catch(e){ comHistorico = false; console.warn('histórico:', e) }
+    if(!comHistorico &&
+       !confirm('Não consegui guardar uma cópia da versão anterior — as regras do Firebase '
+              + 'ainda não liberam o histórico.\n\nOK grava assim mesmo, sem rede de segurança.'
+              + '\nCancelar não mexe em nada.')){
+      estado('Nada foi gravado.');
+      return;
+    }
+  }
+
   const r = await fetch(url, {method:metodo, headers:{'Content-Type':'application/json'},
                               body:JSON.stringify(corpo)});
   if(!r.ok){
@@ -481,6 +558,11 @@ q('#btTrad').onclick = function(){
   estado('Abri o tradutor numa aba nova. Copie o resultado e cole aqui do lado inglês — '
        + 'a primeira linha é o título.', true);
 };
+
+document.querySelectorAll('#fEsporte button').forEach(function(b){
+  b.onclick = function(){ esporte = b.dataset.e || ''; pintarEsporte() };
+});
+pintarEsporte();
 
 q('#btSair').onclick = function(){ novo(); estado('Edição cancelada. Agora é um texto novo.', true) };
 q('#btNovo').onclick   = novo;

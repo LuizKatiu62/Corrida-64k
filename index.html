@@ -377,9 +377,12 @@ function pintar(){
     const longo = cor.length > 620;
     const aberto = abertos.has(p.id) || !longo;
     const mostra = aberto ? cor : cor.slice(0, 560).replace(/\s\S*$/,'') + '…';
+    /* cada esporte tem a sua unidade: km/h na bike, 100 m na piscina */
+    const UN = {corrida:[' km','/km',''], bike:[' km',' km/h',''], natacao:[' m','/100m','']};
+    const u = UN[p.esporte] || UN.corrida;
     const chips = (p.km || p.pace || p.tempo) ? '<div class="resumo">'
-      + (p.km    ? '<span>' + esc(p.km) + ' km</span>' : '')
-      + (p.pace  ? '<span>' + esc(p.pace) + '/km</span>' : '')
+      + (p.km    ? '<span>' + esc(p.km) + u[0] + '</span>' : '')
+      + (p.pace  ? '<span>' + esc(p.pace) + u[1] + '</span>' : '')
       + (p.tempo ? '<span>' + esc(p.tempo) + '</span>' : '')
       + '</div>' : '';
     return '<article id="p-' + p.id + '">'
