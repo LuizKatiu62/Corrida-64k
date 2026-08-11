@@ -64,6 +64,14 @@ header .wrap{display:flex;align-items:center;gap:12px;padding-top:14px;padding-b
 #menu a.aqui .d{color:var(--acc)}
 #menu .nada{color:var(--tx3);font-size:13.5px;font-style:italic;padding:12px 0}
 
+#versiculo{border-top:1px solid var(--linha);padding:26px 0 28px}
+#versiculo p{font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(16px,3.6vw,19px);line-height:1.6;color:var(--tx);margin:0 0 10px;
+  max-width:46ch}
+#versiculo cite{font-style:normal;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  font-weight:600;color:var(--acc)}
+#versiculo small{display:block;margin-top:9px;font-size:10.5px;color:var(--tx3);letter-spacing:.03em}
+
 .hero{padding:52px 0 40px;border-bottom:1px solid var(--linha)}
 .hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(30px,7vw,46px);
   line-height:1.15;margin:0 0 18px;letter-spacing:-.02em}
@@ -151,6 +159,10 @@ footer p{margin:0 0 8px}
 
 <section id="evo" style="display:none"><div class="wrap" id="evoIn"></div></section>
 
+<section id="versiculo"><div class="wrap">
+  <p id="vTxt"></p><cite id="vRef"></cite><small id="vVer"></small>
+</div></section>
+
 <main><div class="wrap" id="posts"></div></main>
 <div class="lupa" id="lupa"><img alt=""></div>
 
@@ -225,6 +237,60 @@ function dataLonga(iso){
   return idioma === 'pt'
     ? d.getDate() + ' de ' + MES.pt[d.getMonth()] + ' de ' + d.getFullYear()
     : MES.en[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+/* Traduções de domínio público: Almeida em português, King James em
+   inglês. Traduções modernas como NVI e NIV têm direitos e não podem
+   ser reproduzidas assim.
+
+   Troca por DIA, não a cada visita: um versículo que muda enquanto
+   você lê vira ruído, e assim ele acompanha o seu dia. */
+const VERSICULOS = [
+ {r:['Salmos 107:1','Psalm 107:1'],
+  pt:'Louvai ao Senhor, porque ele é bom, porque a sua benignidade dura para sempre.',
+  en:'O give thanks unto the LORD, for he is good: for his mercy endureth for ever.'},
+ {r:['Isaías 40:31','Isaiah 40:31'],
+  pt:'Mas os que esperam no Senhor renovarão as suas forças; subirão com asas como águias; correrão, e não se cansarão; caminharão, e não se fatigarão.',
+  en:'But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.'},
+ {r:['1 Tessalonicenses 5:18','1 Thessalonians 5:18'],
+  pt:'Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.',
+  en:'In every thing give thanks: for this is the will of God in Christ Jesus concerning you.'},
+ {r:['Salmos 103:2','Psalm 103:2'],
+  pt:'Bendize, ó minha alma, ao Senhor, e não te esqueças de nenhum de seus benefícios.',
+  en:'Bless the LORD, O my soul, and forget not all his benefits.'},
+ {r:['Hebreus 12:1','Hebrews 12:1'],
+  pt:'Corramos com paciência a carreira que nos está proposta.',
+  en:'Let us run with patience the race that is set before us.'},
+ {r:['Salmos 118:24','Psalm 118:24'],
+  pt:'Este é o dia que fez o Senhor; regozijemo-nos, e alegremo-nos nele.',
+  en:'This is the day which the LORD hath made; we will rejoice and be glad in it.'},
+ {r:['Salmos 28:7','Psalm 28:7'],
+  pt:'O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido.',
+  en:'The LORD is my strength and my shield; my heart trusted in him, and I am helped.'},
+ {r:['Colossenses 3:17','Colossians 3:17'],
+  pt:'E, quanto fizerdes por palavras ou por obras, fazei tudo em nome do Senhor Jesus, dando por ele graças a Deus.',
+  en:'And whatsoever ye do in word or deed, do all in the name of the Lord Jesus, giving thanks to God and the Father by him.'},
+ {r:['Filipenses 4:6','Philippians 4:6'],
+  pt:'Não estejais inquietos por coisa alguma; antes as vossas petições sejam em tudo conhecidas diante de Deus, pela oração e súplica, com ação de graças.',
+  en:'Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God.'},
+ {r:['1 Coríntios 9:24','1 Corinthians 9:24'],
+  pt:'Correi de tal maneira que o alcanceis.',
+  en:'So run, that ye may obtain.'},
+ {r:['Salmos 100:4','Psalm 100:4'],
+  pt:'Entrai pelas suas portas com gratidão, e em seus átrios com louvor; louvai-o, e bendizei o seu nome.',
+  en:'Enter into his gates with thanksgiving, and into his courts with praise: be thankful unto him, and bless his name.'},
+ {r:['2 Coríntios 9:15','2 Corinthians 9:15'],
+  pt:'Graças a Deus pelo seu dom inefável.',
+  en:'Thanks be unto God for his unspeakable gift.'}
+];
+
+function pintarVersiculo(){
+  const dia = Math.floor(Date.now() / 864e5);
+  const v = VERSICULOS[dia % VERSICULOS.length];
+  document.getElementById('vTxt').textContent = idioma === 'en' ? v.en : v.pt;
+  document.getElementById('vRef').textContent = idioma === 'en' ? v.r[1] : v.r[0];
+  document.getElementById('vVer').textContent = idioma === 'en'
+    ? 'King James Version' : 'Almeida';
 }
 
 let EVO = null;
@@ -371,6 +437,7 @@ function pintar(){
   document.getElementById('ano').textContent = new Date().getFullYear();
   contagem();
 
+  pintarVersiculo();
   pintarEvolucao();
 
   /* A tela principal é só a história e os números. Texto nenhum
