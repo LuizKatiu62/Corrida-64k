@@ -546,15 +546,19 @@ fetch(DB + '/blog/posts.json')
   })
   .catch(function(){});
 </script>
-
-  <script data-goatcounter="https://runwithgratitude.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-  <script>
+<script data-goatcounter="https://runwithgratitude.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
   var gcT = setInterval(function() {
     if (window.goatcounter && window.goatcounter.visit_count) {
       clearInterval(gcT)
-      window.goatcounter.visit_count({append: 'body'})
+      window.goatcounter.visit_count({
+        append: 'body',
+        no_branding: true,
+        style: 'html,body{background:#0d0d0d;margin:0}div{border:none;background:#0d0d0d;color:#555;font-family:system-ui,sans-serif;font-size:11px;text-align:center}'
+      })
     }
   }, 100)
 </script>
+ 
   </body>
 </html>
