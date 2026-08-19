@@ -561,6 +561,19 @@ fetch(DB + '/blog/posts.json')
 </script>
  
 <script data-goatcounter="https://runwithgratitude.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> 
+<script data-goatcounter="https://runwithgratitude.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+(function(){
+  var alvo = document.querySelector('footer .wrap');
+  if(!alvo) return;
+  var el = document.createElement('p');
+  alvo.appendChild(el);
+  fetch('https://runwithgratitude.goatcounter.com/counter/' + encodeURIComponent(location.pathname) + '.json')
+    .then(function(r){ return r.ok ? r.json() : null })
+    .then(function(d){ if(d && d.count) el.textContent = d.count + (d.count === '1' ? ' visita' : ' visitas'); })
+    .catch(function(){});
+})();
+</script>
 </body>
 </html>
   
