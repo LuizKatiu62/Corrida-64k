@@ -84,6 +84,18 @@ header .wrap{display:flex;align-items:center;gap:12px;padding-top:14px;padding-b
 
 main{padding:38px 0 60px}
 .vazio{color:var(--tx3);font-size:15px;text-align:center;padding:60px 0;font-style:italic}
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:6px 0 10px}
+.grade a{display:block;text-decoration:none;color:inherit;border-radius:12px;overflow:hidden;
+  background:var(--bg2);border:1px solid var(--linha)}
+.grade .capa{aspect-ratio:4/3;background:var(--bg2);overflow:hidden}
+.grade .capa img{width:100%;height:100%;object-fit:cover;display:block}
+.grade .capa.sem{display:flex;align-items:center;justify-content:center}
+.grade .capa.sem b{font-family:var(--serif);font-style:italic;font-weight:300;font-size:26px;color:var(--tx3)}
+.grade .txt{padding:9px 11px 12px}
+.grade .txt .d{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3)}
+.grade .txt .t{display:block;margin-top:3px;font-size:14px;line-height:1.35}
+.grade .txt .k{display:block;margin-top:5px;font-size:11.5px;color:var(--tx3)}
+@media(min-width:720px){.grade{grid-template-columns:1fr 1fr 1fr}}
 article{padding:30px 0;border-bottom:1px solid var(--linha)}
 article:last-child{border-bottom:0}
 .data{font-size:11.5px;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;
@@ -363,6 +375,71 @@ function pintarFotos(el, arr){
   });
 }
 
+/* GRADE DA TELA INICIAL
+   Antes daqui a página abria pedindo para tocar no menu das tres listinhas.
+   Os textos existiam, as fotos tambem, mas ficavam escondidos. Agora a
+   capa de cada texto aparece logo abaixo do versiculo.
+
+   So os 9 mais recentes entram, e de cada um desce apenas a PRIMEIRA foto.
+   O resto continua chegando quando o texto e aberto, como sempre foi. */
+const GRADE_N = 9;
+const capasVistas = {};
+
+function montarGrade(){
+  const t = T[idioma];
+  const UN = {corrida:' km', bike:' km', natacao:' m'};
+  return '<div class="grade">' + POSTS.slice(0, GRADE_N).map(function(p){
+    const tit = (idioma === 'en' ? p.t_en : p.t_pt) || p.t_pt || p.t_en || '—';
+    const km  = p.km ? esc(p.km) + (UN[p.esporte] || ' km') : '';
+    return '<a href="#p-' + p.id + '" data-ir="' + p.id + '">'
+      + '<div class="capa sem" data-capa="' + p.id + '"><b>RG</b></div>'
+      + '<div class="txt"><span class="d">' + curta(p.data) + '</span>'
+      + '<span class="t">' + esc(tit) + '</span>'
+      + (km ? '<span class="k">' + km + '</span>' : '')
+      + '</div></a>';
+  }).join('') + '</div>';
+}
+
+function ligarGrade(){
+  document.querySelectorAll('.grade [data-ir]').forEach(function(a){
+    a.onclick = function(e){
+      e.preventDefault();
+      escolhido = a.dataset.ir;
+      abertos.clear();
+      pintar();
+      setTimeout(function(){
+        const m = document.querySelector('main');
+        if(m) m.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 180);
+    };
+  });
+}
+
+function carregarCapas(){
+  document.querySelectorAll('.capa[data-capa]').forEach(function(el){
+    const id = el.dataset.capa;
+    if(capasVistas[id] !== undefined){ pintarCapa(el, capasVistas[id]); return }
+    if(fotosVistas[id]){ capasVistas[id] = fotosVistas[id][0] || null; pintarCapa(el, capasVistas[id]); return }
+    if(el.dataset.indo) return;
+    el.dataset.indo = '1';
+    fetch(DB + '/blog/midia/' + id + '.json')
+      .then(function(r){ return r.ok ? r.json() : null })
+      .then(function(d){
+        const arr = d ? (Array.isArray(d) ? d : Object.keys(d).sort().map(function(k){ return d[k] })) : [];
+        fotosVistas[id] = arr;
+        capasVistas[id] = arr[0] || null;
+        pintarCapa(el, capasVistas[id]);
+      })
+      .catch(function(){ capasVistas[id] = null });
+  });
+}
+
+function pintarCapa(el, src){
+  if(!src) return;                       /* texto sem foto fica com as iniciais */
+  el.classList.remove('sem');
+  el.innerHTML = '<img src="' + src + '" alt="" loading="lazy">';
+}
+
 /* Índice de tudo que já foi publicado, por data e título. Cresce
    sozinho: cada texto novo entra aqui sem eu tocar em nada. */
 function curta(iso){
@@ -450,8 +527,9 @@ function pintar(){
   const host = document.getElementById('posts');
   if(!escolhido){
     host.innerHTML = POSTS.length
-      ? '<div class="vazio">' + t.escolha + '</div>'
+      ? montarGrade()
       : '<div class="vazio">' + t.vazio + '</div>';
+    if(POSTS.length){ ligarGrade(); carregarCapas() }
     return;
   }
 
