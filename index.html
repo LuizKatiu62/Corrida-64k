@@ -145,6 +145,11 @@ article h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1
   border-right:0;border-top:0;width:100%;text-align:left;font-family:var(--sans)}
 footer{border-top:1px solid var(--linha);padding:30px 0 46px;color:var(--tx3);font-size:12.5px}
 footer p{margin:0 0 8px}
+footer .canal{display:inline-flex;align-items:center;gap:7px;color:var(--tx2);
+  text-decoration:none;border:1px solid var(--linha);border-radius:999px;
+  padding:7px 14px;margin:2px 0 12px;font-size:12.5px;transition:border-color .2s}
+footer .canal:hover{border-color:var(--tx3)}
+footer .canal svg{width:16px;height:16px;flex:none}
 </style>
 </head>
 <body>
@@ -179,6 +184,10 @@ footer p{margin:0 0 8px}
 <div class="lupa" id="lupa"><img alt=""></div>
 
 <footer><div class="wrap">
+  <a class="canal" id="fCanal" href="https://www.youtube.com/@luizsilv62" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.8-.5-5.6a2.9 2.9 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.4a2.9 2.9 0 0 0-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6a2.9 2.9 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.4a2.9 2.9 0 0 0 2-2C23 15.8 23 12 23 12zM9.8 15.4V8.6l5.8 3.4-5.8 3.4z"/></svg>
+    <span id="fCanalT"></span>
+  </a>
   <p id="fTxt"></p>
   <p>© <span id="ano"></span> Luiz Silva · Saint John, New Brunswick</p>
 </div></footer>
@@ -203,6 +212,7 @@ const T = {
     menuV:'Nada publicado ainda.',
     escolha:'Toque no menu, no alto à direita, para ler os textos.',
     voltar:'← Voltar ao início',
+    canal:'Acompanhe no YouTube',
     rodape:'Um diário de treino e de vida, escrito no caminho até 18 de outubro.'
   },
   en:{
@@ -220,6 +230,7 @@ const T = {
     menuV:'Nothing published yet.',
     escolha:'Tap the menu, top right, to read the posts.',
     voltar:'← Back to the top',
+    canal:'Follow on YouTube',
     rodape:'A training and life journal, written on the way to October 18.'
   }
 };
@@ -510,6 +521,7 @@ function pintar(){
   document.documentElement.lang = idioma;
   document.getElementById('hTit').innerHTML = t.tit;
   document.getElementById('hSub').textContent = t.sub;
+  document.getElementById('fCanalT').textContent = t.canal;
   document.getElementById('fTxt').textContent = t.rodape;
   document.getElementById('ano').textContent = new Date().getFullYear();
   contagem();
