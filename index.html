@@ -196,7 +196,12 @@ footer .canal svg{width:21px;height:21px;flex:none}
 
 <script>
 const DB   = 'https://gastos-casa-7f431-default-rtdb.firebaseio.com';
-const PROVA = '2026-10-18';
+/* A prova da contagem vem do app de treinos (gastos-casa/treinos-v2):
+   quando o Luiz troca o objetivo de prova lá, o app grava blog/prova
+   no Firebase e este site lê dali. Sem prova definida, a contagem
+   mostra um traço e "próxima prova em breve". */
+let PROVA = null;            // 'AAAA-MM-DD'
+let PROVA_NOME = '';
 
 const T = {
   pt:{
@@ -204,9 +209,10 @@ const T = {
     eCorrida:'corrida', eBike:'bike', eNat:'natação',
     tit:'Aos 64 anos, correndo com <b>gratidão</b>.',
     sub:'Em junho de 2025 operei um câncer de próstata. Um ano depois, no mesmo dia, corri 64 km — um para cada ano de vida. Agora vem a primeira maratona da minha vida, e um índice para Boston.',
-    ctxt:'dias para a PEI Marathon,<br>18 de outubro de 2026',
-    hoje:'É hoje. PEI Marathon.',
-    passou:'A PEI Marathon já passou.',
+    ctxt:(n,d)=>'dias para a ' + n + ',<br>' + d,
+    hoje:n=>'É hoje. ' + n + '.',
+    passou:n=>'A ' + n + ' já passou.',
+    semProva:'Próxima prova<br>em breve.',
     vazio:'Os primeiros textos chegam em breve.',
     mais:'Continuar lendo',
     menos:'Recolher',
@@ -215,16 +221,17 @@ const T = {
     escolha:'Toque no menu, no alto à direita, para ler os textos.',
     voltar:'← Voltar ao início',
     canal:'Acompanhe no YouTube',
-    rodape:'Um diário de treino e de vida, escrito no caminho até 18 de outubro.'
+    rodape:d=>'Um diário de treino e de vida, escrito no caminho' + (d ? ' até ' + d : '') + '.'
   },
   en:{
     evoD:'Since June 13, 2025',
     eCorrida:'running', eBike:'cycling', eNat:'swimming',
     tit:'At 64, running with <b>gratitude</b>.',
     sub:'In June 2025 I had surgery for prostate cancer. One year later, to the day, I ran 64 km — one for every year of my life. Now comes the first marathon of my life, and a Boston qualifying time.',
-    ctxt:'days to the PEI Marathon,<br>October 18, 2026',
-    hoje:'Today is the day. PEI Marathon.',
-    passou:'The PEI Marathon has passed.',
+    ctxt:(n,d)=>'days to the ' + n + ',<br>' + d,
+    hoje:n=>'Today is the day. ' + n + '.',
+    passou:n=>'The ' + n + ' has passed.',
+    semProva:'Next race<br>coming soon.',
     vazio:'The first posts are coming soon.',
     mais:'Keep reading',
     menos:'Collapse',
@@ -233,7 +240,7 @@ const T = {
     escolha:'Tap the menu, top right, to read the posts.',
     voltar:'← Back to the top',
     canal:'Follow on YouTube',
-    rodape:'A training and life journal, written on the way to October 18.'
+    rodape:d=>'A training and life journal, written on the way' + (d ? ' to ' + d : '') + '.'
   }
 };
 const MES = {
@@ -507,15 +514,27 @@ function abrirMenu(sim){
   document.getElementById('veu').classList.toggle('on', sim);
 }
 
+/* "18 de outubro" / "October 18", sem o ano: para o rodapé */
+function dataCurta(iso){
+  const d = new Date(iso + 'T12:00:00');
+  return idioma === 'pt' ? d.getDate() + ' de ' + MES.pt[d.getMonth()]
+                         : MES.en[d.getMonth()] + ' ' + d.getDate();
+}
 function contagem(){
+  const t = T[idioma];
+  const nome = esc(PROVA_NOME);
+  if(!PROVA){
+    document.getElementById('cDias').textContent = '—';
+    document.getElementById('cTxt').innerHTML = t.semProva;
+    return;
+  }
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const alvo = new Date(PROVA + 'T00:00:00');
   const d = Math.round((alvo - hoje) / 864e5);
-  const t = T[idioma];
   if(d > 0){ document.getElementById('cDias').textContent = d;
-             document.getElementById('cTxt').innerHTML = t.ctxt }
+             document.getElementById('cTxt').innerHTML = t.ctxt(nome, dataLonga(PROVA)) }
   else { document.getElementById('cDias').textContent = d === 0 ? '0' : '—';
-         document.getElementById('cTxt').innerHTML = d === 0 ? t.hoje : t.passou }
+         document.getElementById('cTxt').innerHTML = d === 0 ? t.hoje(nome) : t.passou(nome) }
 }
 
 function pintar(){
@@ -524,7 +543,7 @@ function pintar(){
   document.getElementById('hTit').innerHTML = t.tit;
   document.getElementById('hSub').textContent = t.sub;
   document.getElementById('fCanalT').textContent = t.canal;
-  document.getElementById('fTxt').textContent = t.rodape;
+  document.getElementById('fTxt').textContent = t.rodape(PROVA && new Date(PROVA + 'T23:59:59') >= new Date() ? dataCurta(PROVA) : '');
   document.getElementById('ano').textContent = new Date().getFullYear();
   contagem();
 
@@ -621,6 +640,17 @@ pintar();
 
 /* o resumo de treino é público e só tem número: nada de sono,
    estresse, HRV ou onde a corrida passou */
+/* a prova da contagem: gravada pelo app de treinos ao trocar o objetivo */
+fetch(DB + '/blog/prova.json', {cache:'no-store'})
+  .then(function(r){ return r.ok ? r.json() : null })
+  .then(function(p){
+    if(p && /^\d{4}-\d{2}-\d{2}$/.test(p.data || '') && p.nome){
+      PROVA = p.data; PROVA_NOME = String(p.nome);
+    } else { PROVA = null; PROVA_NOME = '' }
+    pintar();
+  })
+  .catch(function(){});
+
 fetch(DB + '/blog/evolucao.json')
   .then(function(r){ return r.ok ? r.json() : null })
   .then(function(d){ if(d && d.corrida){ EVO = d; pintarEvolucao() } })
